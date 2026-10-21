@@ -973,22 +973,37 @@ button, input, textarea, select {
   justify-content: space-between;
   padding: 14px 16px;
   border-bottom: 1px solid var(--border-light);
+  gap: 14px;
 }
 
 .settings-row:last-child {
   border-bottom: none;
 }
 
+.settings-row > div:first-child {
+  flex: 1;
+  min-width: 0;
+}
+
 .settings-label {
   font-size: 14px;
   font-weight: 600;
   color: var(--text-primary);
+  line-height: 1.35;
 }
 
 .settings-sublabel {
   font-size: 12px;
   color: var(--text-muted);
-  margin-top: 2px;
+  margin-top: 3px;
+  line-height: 1.4;
+}
+
+.settings-control {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 }
 
 .settings-control select {
@@ -996,7 +1011,32 @@ button, input, textarea, select {
   border-radius: var(--radius-sm);
   border: 1px solid var(--border-color);
   background: var(--bg-muted);
+  color: var(--text-primary);
+  font-size: 13px;
+  max-width: 200px;
   outline: none;
+  cursor: pointer;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .settings-row {
+    padding: 12px 14px;
+    gap: 10px;
+  }
+  .settings-label {
+    font-size: 13px;
+  }
+  .settings-sublabel {
+    font-size: 11px;
+    line-height: 1.35;
+  }
+  .settings-control select {
+    max-width: 145px;
+    font-size: 12px;
+    padding: 5px 6px;
+  }
 }
 
 /* Bottom Navigation */
@@ -1662,10 +1702,11 @@ button, input, textarea, select {
         <div class="settings-row">
           <div>
             <div class="settings-label" data-i18n="fontSize">Cỡ chữ văn bản</div>
-            <div class="settings-sublabel" id="setting-font-val">28px</div>
+            <div class="settings-sublabel" data-i18n="sublabelFontSize">Điều chỉnh kích thước hiển thị chữ Hán</div>
           </div>
-          <div class="settings-control">
-            <input type="range" id="setting-font-size" min="18" max="44" step="2" value="28" oninput="handleSettingChange('fontSize', this.value)">
+          <div class="settings-control" style="display:flex; align-items:center; gap:8px;">
+            <input type="range" id="setting-font-size" min="18" max="44" step="2" value="28" oninput="handleSettingChange('fontSize', this.value)" style="width:100px; accent-color:var(--accent);">
+            <span id="setting-font-val" style="font-size:13px; font-weight:700; color:var(--accent); min-width:36px; text-align:right;">28px</span>
           </div>
         </div>
       </div>
@@ -1676,7 +1717,9 @@ button, input, textarea, select {
             <div class="settings-label" data-i18n="dictOffline">Từ điển offline</div>
             <div class="settings-sublabel" data-i18n="sublabelDictOffline">Bộ từ điển tích hợp sẵn 1470+ từ HSK 1-6 & 690+ âm Hán Việt</div>
           </div>
-          <span class="badge" style="background:#2EA043; color:white;" data-i18n="badgeReady">Sẵn sàng</span>
+          <div class="settings-control">
+            <span class="badge" style="background:#2EA043; color:white;" data-i18n="badgeReady">Sẵn sàng</span>
+          </div>
         </div>
 
         <div class="settings-row">
@@ -1686,10 +1729,10 @@ button, input, textarea, select {
           </div>
           <div class="settings-control">
             <select id="tts-engine-select" onchange="state.ttsEngine=this.value; saveSettings()">
-              <option value="auto" data-i18n="ttsAuto">Tự động thông minh (Khuyên dùng - Nhanh &amp; Ổn định nhất)</option>
-              <option value="youdao" data-i18n="ttsYoudao">Youdao TTS (Nhanh &amp; Chuẩn bản xứ)</option>
-              <option value="google" data-i18n="ttsGoogle">Google Translate TTS (Online)</option>
-              <option value="system" data-i18n="ttsSystem">Web Speech API (Hệ thống offline - Tức thì)</option>
+              <option value="auto" data-i18n="ttsAuto">Tự động thông minh (Khuyên dùng)</option>
+              <option value="youdao" data-i18n="ttsYoudao">Youdao TTS (Chuẩn bản xứ)</option>
+              <option value="google" data-i18n="ttsGoogle">Google TTS (Trực tuyến)</option>
+              <option value="system" data-i18n="ttsSystem">Web Speech API (Hệ thống)</option>
             </select>
           </div>
         </div>
@@ -1699,9 +1742,11 @@ button, input, textarea, select {
             <div class="settings-label" data-i18n="testVoice">Kiểm tra giọng phát âm</div>
             <div class="settings-sublabel" data-i18n="sublabelTestVoice">Kiểm tra bộ giọng đọc tiếng Trung (Web Speech API)</div>
           </div>
-          <button class="btn btn-secondary btn-sm" onclick="testSpeechVoices()">
-            🔊 <span data-i18n="testVoiceBtn">Kiểm tra</span>
-          </button>
+          <div class="settings-control">
+            <button class="btn btn-secondary btn-sm" onclick="testSpeechVoices()">
+              🔊 <span data-i18n="testVoiceBtn">Kiểm tra</span>
+            </button>
+          </div>
         </div>
 
         <div class="settings-row">
@@ -1709,7 +1754,7 @@ button, input, textarea, select {
             <div class="settings-label" data-i18n="backup">Sao lưu & Khôi phục</div>
             <div class="settings-sublabel" data-i18n="sublabelBackup">Xuất hoặc nhập toàn bộ từ đã lưu và cài đặt</div>
           </div>
-          <div style="display:flex; gap:8px;">
+          <div class="settings-control" style="display:flex; gap:8px;">
             <button class="btn btn-secondary btn-sm" onclick="backupAllData()">
               <span data-i18n="backup">Sao lưu</span>
             </button>
@@ -1725,9 +1770,11 @@ button, input, textarea, select {
             <div class="settings-label" style="color:var(--accent);" data-i18n="clearAllData">Xóa toàn bộ dữ liệu</div>
             <div class="settings-sublabel" data-i18n="sublabelClear">Xóa tất cả từ đã lưu và văn bản gần đây</div>
           </div>
-          <button class="btn btn-outline btn-sm" style="color:var(--accent); border-color:var(--accent);" onclick="clearAllAppData()">
-            <span data-i18n="delete">Xóa</span>
-          </button>
+          <div class="settings-control">
+            <button class="btn btn-outline btn-sm" style="color:var(--accent); border-color:var(--accent);" onclick="clearAllAppData()">
+              <span data-i18n="delete">Xóa</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -1739,14 +1786,14 @@ button, input, textarea, select {
         <div style="font-size:20px; font-weight:800; color:var(--text-primary); letter-spacing:-0.3px;">NCZ翻译</div>
         <div style="font-size:12px; font-weight:600; color:var(--accent); margin-top:2px;">Version 1.0.0 Pro</div>
 
-        <div style="margin:16px auto; max-width:340px; padding:14px; border-radius:12px; background:var(--bg-secondary); border:1px solid var(--border-color); text-align:left;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-            <span style="font-size:12px; color:var(--text-muted);" data-i18n="appAuthor">Tác giả</span>
-            <span style="font-size:13px; font-weight:700; color:var(--text-primary);">聂诚忠 (Nie Thanh Trung)</span>
+        <div style="margin:16px auto; max-width:360px; padding:14px 16px; border-radius:12px; background:var(--bg-secondary); border:1px solid var(--border-color); text-align:left;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:12px;">
+            <span style="font-size:12.5px; color:var(--text-muted); flex-shrink:0;" data-i18n="appAuthor">Tác giả</span>
+            <span style="font-size:13px; font-weight:700; color:var(--text-primary); text-align:right;">聂诚忠 (Nie Thanh Trung)</span>
           </div>
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <span style="font-size:12px; color:var(--text-muted);" data-i18n="appLicense">Bản quyền</span>
-            <span style="font-size:12px; font-weight:600; color:var(--text-secondary);" data-i18n="appCopyrightNote">Bản quyền thuộc về tác giả</span>
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+            <span style="font-size:12.5px; color:var(--text-muted); flex-shrink:0;" data-i18n="appLicense">Bản quyền</span>
+            <span style="font-size:12.5px; font-weight:600; color:var(--text-secondary); text-align:right;" data-i18n="appCopyrightNote">Bản quyền thuộc về tác giả</span>
           </div>
         </div>
 
@@ -2087,16 +2134,17 @@ const I18N_DATA = {
     "sublabelMeaningLang": "Hiển thị giải nghĩa từ và dịch câu",
     "meaningLangAuto": "Cùng với giao diện",
     "sublabelDarkMode": "Tự động theo hệ thống hoặc cố định",
+    "sublabelFontSize": "Điều chỉnh kích thước hiển thị chữ Hán",
     "themeSystem": "Hệ thống",
     "themeLight": "Sáng",
     "themeDark": "Tối",
     "sublabelDictOffline": "Bộ từ điển tích hợp sẵn 1470+ từ HSK 1-6 & 690+ âm Hán Việt",
     "badgeReady": "Sẵn sàng",
     "sublabelTtsEngine": "Chọn nguồn phát âm giọng đọc tiếng Trung",
-    "ttsAuto": "Tự động thông minh (Khuyên dùng - Nhanh & Ổn định nhất)",
-    "ttsYoudao": "Youdao TTS (Nhanh & Chuẩn bản xứ)",
-    "ttsGoogle": "Google Translate TTS (Online)",
-    "ttsSystem": "Web Speech API (Hệ thống offline - Tức thì)",
+    "ttsAuto": "Tự động thông minh (Khuyên dùng)",
+    "ttsYoudao": "Youdao TTS (Chuẩn bản xứ)",
+    "ttsGoogle": "Google TTS (Trực tuyến)",
+    "ttsSystem": "Web Speech API (Hệ thống)",
     "sublabelTestVoice": "Kiểm tra bộ giọng đọc tiếng Trung (Web Speech API)",
     "testVoiceBtn": "Kiểm tra",
     "sublabelBackup": "Xuất hoặc nhập toàn bộ từ đã lưu và cài đặt",
@@ -2271,16 +2319,17 @@ const I18N_DATA = {
     "sublabelMeaningLang": "Show word definitions and sentence translation",
     "meaningLangAuto": "Same as interface",
     "sublabelDarkMode": "Follow system theme or choose manually",
+    "sublabelFontSize": "Adjust reading font size",
     "themeSystem": "System",
     "themeLight": "Light",
     "themeDark": "Dark",
     "sublabelDictOffline": "Built-in offline dictionary with 1,470+ HSK 1-6 words",
     "badgeReady": "Ready",
     "sublabelTtsEngine": "Choose Chinese pronunciation voice engine",
-    "ttsAuto": "Smart Auto (Recommended - Fastest & Most Stable)",
-    "ttsYoudao": "Youdao TTS (Fast & Native)",
-    "ttsGoogle": "Google Translate TTS (Online)",
-    "ttsSystem": "Web Speech API (Offline System - Instant)",
+    "ttsAuto": "Smart Auto (Recommended)",
+    "ttsYoudao": "Youdao TTS (Native Voice)",
+    "ttsGoogle": "Google TTS (Online)",
+    "ttsSystem": "Web Speech API (System)",
     "sublabelTestVoice": "Test Chinese voice playback (Web Speech API)",
     "testVoiceBtn": "Test voice",
     "sublabelBackup": "Export or import all saved words and settings",
@@ -2455,16 +2504,17 @@ const I18N_DATA = {
     "sublabelMeaningLang": "単語の意味と文の翻訳を表示",
     "meaningLangAuto": "インターフェースと同じ",
     "sublabelDarkMode": "システムに自動追従または手動で選択",
+    "sublabelFontSize": "表示フォントサイズを調整",
     "themeSystem": "システム",
     "themeLight": "ライト",
     "themeDark": "ダーク",
     "sublabelDictOffline": "HSK 1-6の1,470語以上を収録したオフライン辞書",
     "badgeReady": "準備完了",
     "sublabelTtsEngine": "中国語の発音エンジンを選択",
-    "ttsAuto": "スマート自動（推奨・最速＆高安定）",
-    "ttsYoudao": "有道 TTS（高速・標準発音）",
-    "ttsGoogle": "Google翻訳 TTS（オンライン）",
-    "ttsSystem": "Web Speech API（端末内蔵・オフライン即時）",
+    "ttsAuto": "スマート自動（推奨）",
+    "ttsYoudao": "有道 TTS（標準音声）",
+    "ttsGoogle": "Google TTS（オンライン）",
+    "ttsSystem": "Web Speech API（システム）",
     "sublabelTestVoice": "中国語の音声合成をテスト (Web Speech API)",
     "testVoiceBtn": "テスト",
     "sublabelBackup": "保存した単語と設定をエクスポート/インポート",
@@ -11383,6 +11433,150 @@ const KANJI_DATA = {
   }
 };
 
+// --- Japanese Dictionary for Common Chinese Words & Compounds ---
+const JA_COMMON_DICT = {
+  // Đại từ, chào hỏi & giao tiếp hàng ngày
+  "你": "あなた", "我": "私", "他": "彼", "她": "彼女", "它": "それ",
+  "我们": "私たち", "你们": "あなたたち", "他们": "彼ら", "她们": "彼女たち",
+  "您": "あなた（敬称）", "好": "良い、こんにちは", "您好": "こんにちは", "你好": "こんにちは",
+  "再见": "さようなら", "谢谢": "ありがとう", "不客气": "どういたしまして",
+  "对不起": "すみません・ごめんなさい", "没关系": "大丈夫です", "请": "どうぞ・お願いします",
+  "请问": "お尋ねしますが", "欢迎": "ようこそ", "加油": "頑張って",
+  
+  // Từ để hỏi & liên từ
+  "什么": "何", "谁": "誰", "哪": "どれ・どこ", "哪里": "どこ", "哪儿": "どこ", "哪个": "どれ",
+  "怎么": "どうやって・なぜ", "怎么样": "どうですか", "为什么": "なぜ・どうして",
+  "多少": "いくら・どのくらい", "几": "いくつ・何", "和": "と", "跟": "と・一緒に",
+  "而且": "それに・しかも", "但是": "しかし", "可是": "でも", "虽然": "～だけれども",
+  "如果": "もし～なら", "因为": "～だから", "所以": "だから・それで", "或者": "または",
+  "还是": "それとも・やはり", "然后": "それから", "其实": "実は",
+  
+  // Động từ thông dụng
+  "是": "～である・はい", "有": "ある・持っている", "在": "いる・ある・～で",
+  "看": "見る・読む", "听": "聞く", "说": "話す・言う", "读": "読む", "写": "書く",
+  "学": "学ぶ", "学习": "勉強する・学ぶ", "吃": "食べる", "喝": "飲む",
+  "去": "行く", "来": "来る", "回": "帰る・戻る", "做": "する・作る", "买": "買う", "卖": "売る",
+  "叫": "呼ぶ・～という名前である", "认识": "知り合う・知っている", "知道": "知っている",
+  "想": "～したい・思う", "要": "～が必要・～したい", "能": "～できる",
+  "可以": "～してよい・できる", "会": "できる・～するはず", "喜欢": "好きである",
+  "爱": "愛する・大好き", "住": "住む", "坐": "座る・乗る", "开": "開ける・運転する",
+  "关": "閉める・消す", "穿": "着る", "等": "待つ", "找": "探す", "帮": "手伝う",
+  "帮助": "助ける・手伝い", "给": "あげる・くれる", "问": "尋ねる・質問する", "回答": "答える",
+  "走": "歩く・行く", "跑": "走る", "开始": "始まる・始める", "结束": "終わる・終える",
+  "准备": "準備する", "希望": "希望する・願う", "觉得": "～と感じる・思う",
+  "认为": "～と思う・考える", "需要": "必要とする", "记得": "覚えている", "忘记": "忘れる",
+  "送": "送る・プレゼントする", "接": "迎える・受ける", "进": "入る", "出": "出る",
+  "到": "着く・至る", "教": "教える", "懂": "わかる・理解する", "明白": "理解する・明白である",
+  "练习": "練習する", "复习": "復習する", "睡觉": "寝る", "起床": "起きる",
+  "上班": "出勤する", "下班": "退勤する", "打球": "球技をする", "游泳": "泳ぐ",
+  "唱歌": "歌う", "跳舞": "踊る", "旅游": "旅行する", "散步": "散歩する",
+  "洗澡": "お風呂に入る", "聊天": "雑談する", "工作": "働く・仕事",
+  
+  // Con người, quan hệ
+  "人": "人", "朋友": "友達", "同学": "同級生", "老师": "先生", "学生": "学生",
+  "医生": "医者", "护士": "看護師", "爸爸": "父・お父さん", "妈妈": "母・お母さん",
+  "父母": "両親", "儿子": "息子", "女儿": "娘", "哥哥": "兄", "弟弟": "弟",
+  "姐姐": "姉", "妹妹": "妹", "先生": "～さん（男性）・夫", "女士": "～さん（女性）",
+  "小姐": "お嬢さん", "孩子": "子供", "男": "男", "女": "女", "客人": "客・ゲスト",
+  "司机": "運転手", "服务员": "店員・係員",
+  
+  // Thời gian & không gian
+  "年": "年", "月": "月", "日": "日", "号": "日・番号", "星期": "曜日・週",
+  "点": "時・少し", "分": "分", "秒": "秒", "现在": "今", "今天": "今日",
+  "明天": "明日", "昨天": "昨日", "前天": "一昨日", "后天": "明後日",
+  "早上": "朝", "上午": "午前", "中午": "正午・昼", "下午": "午後", "晚上": "夜",
+  "半夜": "真夜中", "今年": "今年", "明年": "来年", "去年": "去年",
+  "以前": "以前・前", "以后": "以後・後", "小时候": "子供の頃",
+  "时间": "時間", "时候": "時", "小时": "時間", "分钟": "分間", "天": "日・天",
+  "周": "週", "周末": "週末", "旁边": "隣・そば", "前面": "前", "后面": "後ろ",
+  "左边": "左側", "右边": "右側", "上面": "上", "下面": "下", "里面": "中・内側",
+  "外面": "外", "中间": "真ん中・間", "对面": "向かい側", "这里": "ここ", "这儿": "ここ",
+  "那里": "そこ・あそこ", "那儿": "そこ・あそこ",
+  
+  // Địa điểm, phương tiện, đồ vật
+  "家": "家・家族", "学校": "学校", "教室": "教室", "大学": "大学", "公司": "会社",
+  "办公室": "事務室・オフィス", "医院": "病院", "药店": "薬局", "商店": "店",
+  "超市": "スーパー", "银行": "銀行", "邮局": "郵便局", "机场": "空港",
+  "车站": "駅・バス停", "饭店": "レストラン・ホテル", "宾馆": "ホテル",
+  "图书馆": "図書館", "公园": "公園", "电影院": "映画館", "房间": "部屋",
+  "洗手间": "お手洗い", "厨房": "台所", "客厅": "居間", "书": "本",
+  "本子": "ノート", "笔": "ペン", "纸": "紙", "钱": "お金", "钱包": "財布",
+  "手机": "携帯電話", "电脑": "パソコン", "电视": "テレビ", "电影": "映画",
+  "照片": "写真", "信": "手紙", "飞机": "飛行機", "火车": "電車・列車",
+  "出租车": "タクシー", "公交车": "路線バス", "公共汽车": "バス", "自行车": "自転車",
+  "船": "船", "路": "道", "门": "ドア・門", "桌子": "机・テーブル",
+  "椅子": "椅子", "床": "ベッド", "衣服": "服", "鞋子": "靴", "包": "かばん・包む",
+  "杯子": "コップ", "水": "水", "茶": "お茶", "咖啡": "コーヒー", "牛奶": "牛乳",
+  "饭": "ご飯", "菜": "料理・野菜", "面条": "麺類", "苹果": "りんご",
+  "水果": "果物", "鸡蛋": "卵", "肉": "肉", "鱼": "魚", "药": "薬",
+  "问题": "問題・質問", "事情": "こと・出来事", "东西": "物",
+  
+  // Tính từ thông dụng
+  "大": "大きい", "小": "小さい", "多": "多い", "少": "少ない",
+  "冷": "寒い・冷たい", "热": "暑い・熱い", "高": "高い", "矮": "背が低い",
+  "快": "速い", "慢": "遅い", "远": "遠い", "近": "近い", "新": "新しい",
+  "旧": "古い", "贵": "高い（値段）", "便宜": "安い", "好吃": "美味しい",
+  "好喝": "（飲み物が）美味しい", "好看": "綺麗な・面白い", "好听": "心地よい（音）",
+  "累": "疲れた", "忙": "忙しい", "容易": "簡単・易しい", "难": "難しい",
+  "简单": "簡単な", "复杂": "複雑な", "对": "正しい", "错": "間違っている",
+  "长": "長い", "短": "短い", "漂亮": "美しい・綺麗", "帅": "かっこいい",
+  "可爱": "可愛い", "安静": "静かな", "热闹": "賑やかな", "干净": "清潔な・綺麗な",
+  "脏": "汚い", "舒服": "快適な・気持ちいい", "高兴": "嬉しい", "快乐": "楽しい・幸せ",
+  "难过": "悲しい", "着急": "焦る・急ぐ", "生气": "怒る", "害怕": "恐れる・怖い",
+  "奇怪": "変な・不思議な", "重要": "重要な", "有名": "有名な", "健康": "健康な",
+  "安全": "安全な", "小心": "気をつける", "认真": "真面目な", "热情": "親切な・熱心な",
+  "聪明": "賢い", "饱": "お腹いっぱい", "饿": "お腹が空いた", "渴": "喉が渇いた",
+  
+  // Phó từ & lượng từ
+  "很": "とても", "非常": "非常に", "太": "あまりにも", "真": "本当に",
+  "最": "最も", "更": "もっと", "越": "ますます", "也": "～も", "都": "みんな・すべて",
+  "不": "～ない", "没": "～ない・まだ", "别": "～するな", "只": "ただ・だけ",
+  "才": "やっと・～だけで", "就": "すぐ・～だけ", "已经": "すでに",
+  "正在": "～しているところ", "先": "まず・先に", "马上": "すぐに", "一直": "ずっと",
+  "经常": "よく・しょっちゅう", "常常": "よく", "总是": "いつも", "可能": "たぶん・かもしれない",
+  "一定": "必ず", "突然": "突然", "特别": "特に",
+  "个": "個・人（量詞）", "只": "匹・羽（量詞）", "条": "筋・本・条（量詞）",
+  "张": "枚（量詞）", "本": "冊（量詞）", "件": "着・件（量詞）", "块": "個・塊・元（量詞）",
+  "杯": "杯（量詞）", "瓶": "本・瓶（量詞）", "双": "足・対（量詞）", "次": "回（量詞）",
+  
+  // Từ vựng HSK 4-6 phổ biến
+  "爱好": "趣味", "安排": "手配する・予定", "按时": "時間通りに", "按照": "～に従って",
+  "包括": "含む", "保护": "保護する", "保证": "保証する", "报名": "申し込む",
+  "比较": "比べる・比較的", "必须": "必ず～しなければならない", "表示": "表す・表明する",
+  "表演": "上演する・演技", "部分": "部分", "材料": "材料・資料", "参加": "参加する",
+  "参观": "見学する", "超过": "超える", "成功": "成功する", "成为": "～になる",
+  "城市": "都市", "出发": "出発する", "出现": "現れる", "传统": "伝統",
+  "打扫": "掃除する", "大概": "おそらく", "得到": "手に入れる・得る", "地方": "場所・地方",
+  "地图": "地図", "地址": "住所", "读书": "勉強する・読書する", "发展": "発展する",
+  "翻译": "翻訳する・通訳", "方便": "便利な", "方法": "方法", "放弃": "諦める",
+  "风景": "風景", "复习": "復習する", "感谢": "感謝する", "工资": "給料",
+  "共同": "共同の", "购物": "買い物する", "故事": "物語", "关系": "関係",
+  "管理": "管理する", "广告": "広告", "规定": "規定する・規則", "国际": "国際",
+  "合格": "合格する", "合适": "適している", "活动": "活動", "机会": "機会・チャンス",
+  "积极": "積極的な", "技术": "技術", "检查": "検査する", "建议": "提案する・アドバイス",
+  "将来": "将来", "交流": "交流する", "结婚": "結婚する", "解决": "解決する",
+  "经历": "経験する・経歴", "经济": "経済", "举办": "開催する", "距离": "距離",
+  "开会": "会議をする", "开心": "楽しい", "空气": "空気", "困难": "困難",
+  "礼貌": "礼儀", "联系": "連絡する", "了解": "理解する・よく知る", "满意": "満足する",
+  "免费": "無料の", "目的": "目的", "内容": "内容", "耐心": "忍耐強い",
+  "努力": "努力する", "排队": "並ぶ", "平时": "普段", "情况": "状況",
+  "确实": "確かに", "热情": "情熱的な", "软件": "ソフトウェア", "商量": "相談する",
+  "社会": "社会", "生活": "生活する", "使用": "使用する", "世界": "世界",
+  "失望": "失望する", "收入": "収入", "数量": "数量", "水平": "水準・レベル",
+  "顺序": "順序", "态度": "態度", "提高": "高める・向上する", "条件": "条件",
+  "完成": "完成する", "味道": "味", "文化": "文化", "文件": "ファイル・文書",
+  "限制": "制限する", "相信": "信じる", "信心": "自信", "幸福": "幸せ",
+  "休息": "休む", "选择": "選択する・選ぶ", "压力": "プレッシャー・圧力", "一切": "すべて",
+  "影响": "影響を与える", "语法": "文法", "语言": "言語", "原因": "原因",
+  "责任": "責任", "增加": "増える・増やす", "正常": "正常な", "证明": "証明する",
+  "知识": "知識", "自然": "自然", "总结": "総括する",
+  
+  // Quốc gia & địa danh
+  "中国": "中国", "日本": "日本", "越南": "ベトナム", "美国": "アメリカ",
+  "英国": "イギリス", "法国": "フランス", "德国": "ドイツ", "韩国": "韓国",
+  "北京": "北京", "上海": "上海", "东京": "東京", "河内": "ハノイ"
+};
+
 // --- Curated Corpus of Example Sentences (with Zh, Pinyin, Vi, En, Ja) ---
 const WORD_EXAMPLES_LIST = [
   {
@@ -14278,14 +14472,38 @@ function setUiLang(lang) {
   state.uiLang = lang;
   localStorage.setItem('cr_uiLang', lang);
 
-  // If user hasn't chosen a separate meaningLang, keep meaningLang in sync with uiLang
-  const isCustomMeaning = localStorage.getItem('cr_meaningLang_custom') === 'true';
-  if (!isCustomMeaning) {
-    state.meaningLang = lang;
-    localStorage.setItem('cr_meaningLang', lang);
-  }
+  // App language change automatically sets default translation target:
+  // (Japanese UI -> Translate ZH to JA; English UI -> Translate ZH to EN; Vietnamese UI -> Translate ZH to VI)
+  state.meaningLang = lang;
+  localStorage.setItem('cr_meaningLang', lang);
+  localStorage.removeItem('cr_meaningLang_custom');
 
   document.documentElement.lang = lang;
+
+  // Sync settings dropdowns
+  const uiSelect = document.getElementById('setting-ui-lang');
+  if (uiSelect) uiSelect.value = lang;
+  const meaningSelect = document.getElementById('setting-meaning-lang');
+  if (meaningSelect) meaningSelect.value = 'auto';
+
+  // Update top-bar pill button text
+  const langPill = document.getElementById('top-lang-pill');
+  if (langPill) langPill.textContent = lang.toUpperCase();
+
+  // If a sentence translation box is currently visible, update it to the new language
+  const transBox = document.getElementById('sentence-trans-box');
+  if (transBox && transBox.classList.contains('show')) {
+    translateCurrentSentence();
+  }
+
+  // If word sheet is currently open, refresh it with the new language
+  if (state.activeWord) {
+    const sheet = document.getElementById('word-sheet');
+    if (sheet && sheet.classList.contains('show')) {
+      openWordSheet(state.activeWord);
+    }
+  }
+
   updateThemeAndUI();
   renderCurrentView();
   showToast(t('language') + ': ' + getLangName(lang));
@@ -14999,15 +15217,19 @@ function getWordMiniMeaning(tok, lang) {
   const customKey = lang + ':' + tok;
   if (userDict[customKey]) return userDict[customKey];
 
+  if (lang === 'ja') {
+    if (typeof JA_COMMON_DICT !== 'undefined' && JA_COMMON_DICT[tok]) return JA_COMMON_DICT[tok];
+    const dictInfo = MINI_DICT[tok];
+    if (dictInfo && dictInfo.ja) return dictInfo.ja;
+    const kj = KANJI_DATA[tok];
+    if (kj && kj.ja_meaning) return kj.ja_meaning;
+    if (state.cachedTranslations['ja:' + tok]) return state.cachedTranslations['ja:' + tok];
+    return '';
+  }
+
   const dictInfo = MINI_DICT[tok];
   if (dictInfo) {
     if (lang === 'en') return (dictInfo.en && dictInfo.en[0]) || '';
-    if (lang === 'ja') {
-      if (dictInfo.ja) return dictInfo.ja;
-      const kj = KANJI_DATA[tok];
-      if (kj && kj.ja_meaning) return kj.ja_meaning;
-      return (dictInfo.en && dictInfo.en[0]) || '';
-    }
     return dictInfo.vi || (dictInfo.en && dictInfo.en[0]) || '';
   }
 
@@ -15271,23 +15493,27 @@ async function openWordSheet(word) {
   const secondaryLabel = document.getElementById('sheet-def-secondary-label');
   const addLangBtn = document.getElementById('sheet-btn-add-lang');
 
-  // Helper: lấy nghĩa theo lang từ dictEntry hoặc fallback, ưu tiên nghĩa tùy chỉnh của người dùng
+  // Helper: lấy nghĩa theo lang từ dictEntry, JA_COMMON_DICT, KANJI_DATA, ưu tiên nghĩa tùy chỉnh
   function getMeaningFromEntry(entry, targetLang) {
     const userDict = JSON.parse(localStorage.getItem('cr_userDict') || '{}');
     const customKey = targetLang + ':' + word;
     if (userDict[customKey]) {
       return { text: userDict[customKey], isCustom: true };
     }
-    if (!entry) return null;
+    if (!entry && (typeof JA_COMMON_DICT === 'undefined' || !JA_COMMON_DICT[word]) && (!kanjiInfo)) return null;
+
     let m = null;
-    if (targetLang === 'en') m = entry.en ? entry.en.join('; ') : null;
-    else if (targetLang === 'vi') m = entry.vi || null;
-    else if (targetLang === 'ja') {
-      if (entry.ja) m = entry.ja;
-      else if (kanjiInfo) m = kanjiInfo.ja_meaning;
-      else m = entry.en ? entry.en.join('; ') : null;
+    if (targetLang === 'en') {
+      m = entry && entry.en ? entry.en.join('; ') : null;
+    } else if (targetLang === 'vi') {
+      m = entry && entry.vi ? entry.vi : null;
+    } else if (targetLang === 'ja') {
+      if (entry && entry.ja) m = entry.ja;
+      else if (typeof JA_COMMON_DICT !== 'undefined' && JA_COMMON_DICT[word]) m = JA_COMMON_DICT[word];
+      else if (kanjiInfo && kanjiInfo.ja_meaning) m = kanjiInfo.ja_meaning;
+      else m = null; // Do NOT fallback to English/Vietnamese when Japanese is requested!
     } else {
-      m = entry.vi || (entry.en ? entry.en.join('; ') : null);
+      m = (entry && entry.vi) || (entry && entry.en ? entry.en.join('; ') : null);
     }
     return m ? { text: m, isCustom: false } : null;
   }
@@ -15302,24 +15528,31 @@ async function openWordSheet(word) {
 
     if (userDict[customKey]) {
       primaryEl.innerHTML = `${escapeHtml(userDict[customKey])} <span class="badge" style="background:var(--accent); color:#fff; font-size:10px; margin-left:6px; vertical-align:middle;">${t('customMeaningLabel')}</span>`;
-    } else if (dictEntry) {
-      const res = getMeaningFromEntry(dictEntry, lang);
-      primaryEl.innerHTML = (res && res.text) ? escapeHtml(res.text) : `<span style="color:var(--text-muted)">${t('noMeaning')}</span>`;
     } else {
-      primaryEl.innerHTML = `<em>${t('loadingDict')}</em>`;
-      // Fetch dịch online chỉ cho ngôn ngữ đang chọn
-      translateTextOnline(word, lang).then(trans => {
-        if (state.activeWord === word && primaryEl) {
-          const curUserDict = JSON.parse(localStorage.getItem('cr_userDict') || '{}');
-          if (curUserDict[customKey]) {
-            primaryEl.innerHTML = `${escapeHtml(curUserDict[customKey])} <span class="badge" style="background:var(--accent); color:#fff; font-size:10px; margin-left:6px; vertical-align:middle;">${t('customMeaningLabel')}</span>`;
-          } else {
-            primaryEl.innerHTML = trans
-              ? `${escapeHtml(trans)} <span style="font-size:11px;color:var(--text-muted)">(${t('autoTranslated')})</span>`
-              : `<span style="color:var(--text-muted)">${t('noMeaning')}</span>`;
-          }
+      const res = getMeaningFromEntry(dictEntry, lang);
+      if (res && res.text) {
+        primaryEl.innerHTML = escapeHtml(res.text);
+      } else {
+        const cacheKey = lang + ':' + word;
+        if (state.cachedTranslations[cacheKey]) {
+          primaryEl.innerHTML = `${escapeHtml(state.cachedTranslations[cacheKey])} <span style="font-size:11px;color:var(--text-muted)">(${t('autoTranslated')})</span>`;
+        } else {
+          primaryEl.innerHTML = `<em>${t('loadingDict')}</em>`;
+          translateTextOnline(word, lang).then(trans => {
+            if (state.activeWord === word && primaryEl) {
+              const curUserDict = JSON.parse(localStorage.getItem('cr_userDict') || '{}');
+              if (curUserDict[customKey]) {
+                primaryEl.innerHTML = `${escapeHtml(curUserDict[customKey])} <span class="badge" style="background:var(--accent); color:#fff; font-size:10px; margin-left:6px; vertical-align:middle;">${t('customMeaningLabel')}</span>`;
+              } else if (trans) {
+                primaryEl.innerHTML = `${escapeHtml(trans)} <span style="font-size:11px;color:var(--text-muted)">(${t('autoTranslated')})</span>`;
+              } else {
+                const fallback = (dictEntry && dictEntry.en && dictEntry.en.join('; ')) || (dictEntry && dictEntry.vi) || '';
+                primaryEl.innerHTML = fallback ? escapeHtml(fallback) : `<span style="color:var(--text-muted)">${t('noMeaning')}</span>`;
+              }
+            }
+          });
         }
-      });
+      }
     }
   }
 
@@ -15338,23 +15571,30 @@ async function openWordSheet(word) {
 
         if (userDict2[customKey2]) {
           secondaryEl.innerHTML = `${escapeHtml(userDict2[customKey2])} <span class="badge" style="background:var(--accent); color:#fff; font-size:10px; margin-left:6px;">${t('customMeaningLabel')}</span>`;
-        } else if (dictEntry) {
-          const res2 = getMeaningFromEntry(dictEntry, lang2);
-          secondaryEl.innerHTML = (res2 && res2.text) ? escapeHtml(res2.text) : `<span style="color:var(--text-muted)">${t('noMeaning')}</span>`;
         } else {
-          secondaryEl.innerHTML = `<em>${t('loadingDict')}</em>`;
-          translateTextOnline(word, lang2).then(trans => {
-            if (state.activeWord === word && secondaryEl) {
-              const curUserDict2 = JSON.parse(localStorage.getItem('cr_userDict') || '{}');
-              if (curUserDict2[customKey2]) {
-                secondaryEl.innerHTML = `${escapeHtml(curUserDict2[customKey2])} <span class="badge" style="background:var(--accent); color:#fff; font-size:10px; margin-left:6px;">${t('customMeaningLabel')}</span>`;
-              } else {
-                secondaryEl.innerHTML = trans
-                  ? `${escapeHtml(trans)} <span style="font-size:11px;color:var(--text-muted)">(${t('autoTranslated')})</span>`
-                  : `<span style="color:var(--text-muted)">${t('noMeaning')}</span>`;
-              }
+          const res2 = getMeaningFromEntry(dictEntry, lang2);
+          if (res2 && res2.text) {
+            secondaryEl.innerHTML = escapeHtml(res2.text);
+          } else {
+            const cacheKey2 = lang2 + ':' + word;
+            if (state.cachedTranslations[cacheKey2]) {
+              secondaryEl.innerHTML = `${escapeHtml(state.cachedTranslations[cacheKey2])} <span style="font-size:11px;color:var(--text-muted)">(${t('autoTranslated')})</span>`;
+            } else {
+              secondaryEl.innerHTML = `<em>${t('loadingDict')}</em>`;
+              translateTextOnline(word, lang2).then(trans => {
+                if (state.activeWord === word && secondaryEl) {
+                  const curUserDict2 = JSON.parse(localStorage.getItem('cr_userDict') || '{}');
+                  if (curUserDict2[customKey2]) {
+                    secondaryEl.innerHTML = `${escapeHtml(curUserDict2[customKey2])} <span class="badge" style="background:var(--accent); color:#fff; font-size:10px; margin-left:6px;">${t('customMeaningLabel')}</span>`;
+                  } else if (trans) {
+                    secondaryEl.innerHTML = `${escapeHtml(trans)} <span style="font-size:11px;color:var(--text-muted)">(${t('autoTranslated')})</span>`;
+                  } else {
+                    secondaryEl.innerHTML = `<span style="color:var(--text-muted)">${t('noMeaning')}</span>`;
+                  }
+                }
+              });
             }
-          });
+          }
         }
       } else if (hasKanjiExtra) {
         // Hiện kanji info thêm cho chữ đơn
@@ -16068,9 +16308,26 @@ function renderDictView() {
     const customKey = lang + ':' + item.word;
     let meaning = userDict[customKey];
     if (!meaning) {
-      if (lang === 'en') meaning = item.en ? item.en.join('; ') : '';
-      else if (lang === 'ja') meaning = item.ja || (KANJI_DATA[item.word] && KANJI_DATA[item.word].ja_meaning) || (item.en ? item.en.join('; ') : '');
-      else meaning = item.vi || (item.en ? item.en.join('; ') : '');
+      if (lang === 'en') {
+        meaning = item.en ? item.en.join('; ') : '';
+      } else if (lang === 'ja') {
+        if (item.ja) meaning = item.ja;
+        else if (typeof JA_COMMON_DICT !== 'undefined' && JA_COMMON_DICT[item.word]) meaning = JA_COMMON_DICT[item.word];
+        else if (KANJI_DATA[item.word] && KANJI_DATA[item.word].ja_meaning) meaning = KANJI_DATA[item.word].ja_meaning;
+        else if (state.cachedTranslations['ja:' + item.word]) meaning = state.cachedTranslations['ja:' + item.word];
+        else {
+          meaning = '';
+          // Tải bản dịch tiếng Nhật bất đồng bộ và cập nhật vào card
+          translateTextOnline(item.word, 'ja').then(trans => {
+            if (trans && state.meaningLang === 'ja') {
+              const el = document.getElementById('dict-meaning-' + item.word);
+              if (el) el.textContent = trans;
+            }
+          });
+        }
+      } else {
+        meaning = item.vi || (item.en ? item.en.join('; ') : '');
+      }
     }
 
     let subReadingHtml = '';
@@ -16092,7 +16349,7 @@ function renderDictView() {
             <span class="dict-pinyin">${escapeHtml(item.pinyin)}</span>
             ${subReadingHtml}
           </div>
-          <div class="dict-meaning">${escapeHtml(meaning || t('noMeaning'))}</div>
+          <div id="dict-meaning-${escapeHtml(item.word)}" class="dict-meaning">${escapeHtml(meaning || (lang === 'ja' ? '...' : t('noMeaning')))}</div>
         </div>
         <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
           ${item.hsk ? `<span class="badge badge-hsk">HSK ${item.hsk}</span>` : ''}
