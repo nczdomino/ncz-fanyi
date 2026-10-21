@@ -621,55 +621,230 @@ button, input, textarea, select {
   border-left: 3px solid var(--accent);
 }
 
-/* View: Dictionary */
-.search-bar-wrap {
-  position: relative;
-  margin-bottom: 14px;
-}
-
-.search-input {
+/* View: Dictionary (AI-Centered & Mobile Optimized) */
+.dict-view-container {
   width: 100%;
-  padding: 12px 14px 12px 42px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-  background: var(--bg-surface);
-  font-size: 15px;
-  outline: none;
-  transition: all 0.2s;
+  max-width: 680px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
 }
 
-.search-input:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-subtle);
+.dict-view-container.hero-mode {
+  min-height: calc(100dvh - var(--top-bar-height) - var(--bottom-bar-height) - 100px);
+  justify-content: center;
+  align-items: center;
+  padding: 24px 8px;
 }
 
-.search-icon {
-  position: absolute;
-  left: 14px;
-  top: 50%;
-  transform: translateY(-50%);
+.dict-hero-header {
+  text-align: center;
+  margin-bottom: 22px;
+  width: 100%;
+}
+
+.dict-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-subtle);
+  border: 1px solid rgba(232, 52, 78, 0.2);
+  padding: 4px 14px;
+  border-radius: var(--radius-xl);
+  margin-bottom: 12px;
+}
+
+.dict-hero-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+  letter-spacing: -0.4px;
+}
+
+.dict-hero-subtitle {
+  font-size: 13.5px;
   color: var(--text-muted);
-  pointer-events: none;
+  max-width: 380px;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+.ai-search-card {
+  width: 100%;
+  position: relative;
+  background: var(--bg-surface);
+  border: 1.5px solid var(--border-color);
+  border-radius: 28px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.03);
+  display: flex;
+  align-items: center;
+  padding: 4px 12px 4px 18px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ai-search-card:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 6px 28px rgba(232, 52, 78, 0.12), 0 0 0 4px var(--accent-subtle);
+  transform: translateY(-1px);
+}
+
+.ai-search-icon {
+  color: var(--accent);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 4px;
+}
+
+.ai-search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 12px 8px;
+  font-size: 16px; /* 16px is required on iOS Safari to prevent auto-zoom */
+  color: var(--text-primary);
+  outline: none;
+  min-width: 0;
+  -webkit-appearance: none;
+}
+
+.ai-search-input::placeholder {
+  color: var(--text-muted);
+  font-size: 14.5px;
+}
+
+.ai-search-clear {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+
+.ai-search-clear:hover {
+  background: var(--bg-muted);
+  color: var(--text-primary);
+}
+
+.dict-quick-tags {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.dict-quick-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.dict-quick-tag {
+  font-family: var(--font-hanzi);
+  font-size: 14px;
+  padding: 4px 12px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.dict-quick-tag:hover, .dict-quick-tag:active {
+  background: var(--accent-subtle);
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.dict-hsk-accordion {
+  width: 100%;
+  margin-top: 22px;
+}
+
+.dict-hsk-toggle-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  color: var(--text-secondary);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.dict-hsk-toggle-btn:hover {
+  background: var(--bg-muted);
+  color: var(--text-primary);
+}
+
+.dict-hsk-toggle-btn .chevron {
+  transition: transform 0.25s ease;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.dict-hsk-toggle-btn.expanded .chevron {
+  transform: rotate(180deg);
+}
+
+.dict-hsk-content {
+  margin-top: 10px;
+  padding: 12px 14px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  animation: fadeIn 0.2s ease;
 }
 
 .filter-chips {
   display: flex;
   gap: 8px;
-  margin-bottom: 14px;
   overflow-x: auto;
   padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
 }
 
 .filter-chip {
-  padding: 5px 12px;
+  padding: 6px 14px;
   border-radius: var(--radius-xl);
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 600;
   border: 1px solid var(--border-color);
   background: var(--bg-surface);
   color: var(--text-secondary);
   cursor: pointer;
   white-space: nowrap;
+  transition: all 0.15s;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .filter-chip.active {
@@ -682,6 +857,7 @@ button, input, textarea, select {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  width: 100%;
 }
 
 .dict-item-card {
@@ -691,51 +867,58 @@ button, input, textarea, select {
   padding: 14px 16px;
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   cursor: pointer;
   transition: all 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  -webkit-tap-highlight-color: transparent;
 }
 
 .dict-item-card:hover {
   border-color: var(--accent);
-  transform: translateX(2px);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.05);
 }
 
 .dict-item-left {
   display: flex;
   align-items: baseline;
-  gap: 12px;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .dict-hanzi {
   font-family: var(--font-hanzi);
-  font-size: 24px;
-  font-weight: 700;
+  font-size: 26px;
+  font-weight: 800;
   color: var(--text-primary);
+  line-height: 1.1;
 }
 
 .dict-pinyin {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 700;
   color: var(--accent);
 }
 
 .dict-hanviet {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--info);
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .dict-meaning {
-  font-size: 14px;
-  color: var(--text-secondary);
-  margin-top: 4px;
+  font-size: 16px; /* Prominently readable meaning */
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-top: 6px;
+  line-height: 1.45;
 }
 
 .badge {
   font-size: 11px;
   font-weight: 700;
-  padding: 2px 7px;
+  padding: 3px 8px;
   border-radius: 4px;
   background: var(--bg-muted);
   color: var(--text-secondary);
@@ -995,21 +1178,29 @@ button, input, textarea, select {
 }
 
 .def-section {
-  margin-bottom: 12px;
+  margin-bottom: 14px;
+  padding: 12px 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
 .def-label {
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 700;
   text-transform: uppercase;
+  letter-spacing: 0.5px;
   color: var(--text-muted);
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .def-text {
-  font-size: 15px;
+  font-size: 19px; /* Nghĩa to, rõ nét, dễ đọc trên cả điện thoại */
+  font-weight: 600;
   color: var(--text-primary);
-  line-height: 1.5;
+  line-height: 1.55;
+  letter-spacing: -0.2px;
 }
 
 .external-links {
@@ -1365,22 +1556,67 @@ button, input, textarea, select {
 
     <!-- VIEW: Dictionary -->
     <section id="view-dict" class="view">
-      <div class="search-bar-wrap">
-        <svg class="search-icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-        <input type="search" id="dict-search-input" class="search-input" data-i18n-ph="searchHint" placeholder="Nhập chữ Hán, pinyin, hoặc nghĩa..." oninput="handleDictSearch(this.value)">
-      </div>
+      <div id="dict-view-container" class="dict-view-container hero-mode">
+        
+        <!-- Hero Header ở trung tâm -->
+        <div id="dict-hero-header" class="dict-hero-header">
+          <div class="dict-hero-badge">
+            <span>✨</span> <span data-i18n="dictHeroBadge">NCZ 词典 · AI Dictionary</span>
+          </div>
+          <div class="dict-hero-title" data-i18n="dictHeroTitle">Tra cứu từ điển tiếng Trung</div>
+          <div class="dict-hero-subtitle" data-i18n="dictHeroSubtitle">Nhập chữ Hán, phiên âm pinyin hoặc nghĩa để tra cứu tức thì</div>
+        </div>
 
-      <div class="filter-chips">
-        <div class="filter-chip dict-filter-chip active" data-hsk="all" onclick="setDictFilter('all')" data-i18n="hskAll">Tất cả HSK</div>
-        <div class="filter-chip dict-filter-chip" data-hsk="1" onclick="setDictFilter('1')">HSK 1</div>
-        <div class="filter-chip dict-filter-chip" data-hsk="2" onclick="setDictFilter('2')">HSK 2</div>
-        <div class="filter-chip dict-filter-chip" data-hsk="3" onclick="setDictFilter('3')">HSK 3</div>
-        <div class="filter-chip dict-filter-chip" data-hsk="4" onclick="setDictFilter('4')">HSK 4</div>
-        <div class="filter-chip dict-filter-chip" data-hsk="5" onclick="setDictFilter('5')">HSK 5</div>
-        <div class="filter-chip dict-filter-chip" data-hsk="6" onclick="setDictFilter('6')">HSK 6</div>
-      </div>
+        <!-- AI-Style Search Box ở giữa màn hình -->
+        <div class="ai-search-card">
+          <div class="ai-search-icon">
+            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M21 21l-5.2-5.2m1.7-4.3a7.5 7.5 0 11-15 0 7.5 7.5 0 0115 0z"/>
+            </svg>
+          </div>
+          <input type="text" id="dict-search-input" class="ai-search-input" data-i18n-ph="searchHint" placeholder="Nhập chữ Hán, pinyin, hoặc nghĩa..." oninput="handleDictSearch(this.value)" autocomplete="off" autocapitalize="off" spellcheck="false">
+          <button id="dict-search-clear" class="ai-search-clear" onclick="clearDictSearch()" style="display:none;" title="Xóa tìm kiếm">✕</button>
+        </div>
 
-      <div id="dict-results-container"></div>
+        <!-- Gợi ý từ khóa tìm kiếm nhanh -->
+        <div id="dict-quick-tags" class="dict-quick-tags">
+          <span class="dict-quick-label" data-i18n="quickSuggestions">Gợi ý:</span>
+          <span class="dict-quick-tag" onclick="quickSearchDict('你好')">你好</span>
+          <span class="dict-quick-tag" onclick="quickSearchDict('学习')">学习</span>
+          <span class="dict-quick-tag" onclick="quickSearchDict('坚持')">坚持</span>
+          <span class="dict-quick-tag" onclick="quickSearchDict('朋友')">朋友</span>
+          <span class="dict-quick-tag" onclick="quickSearchDict('工作')">工作</span>
+          <span class="dict-quick-tag" onclick="quickSearchDict('谢谢')">谢谢</span>
+        </div>
+
+        <!-- Accordion Khám phá từ vựng theo HSK (mặc định ẩn) -->
+        <div id="dict-hsk-accordion" class="dict-hsk-accordion">
+          <button id="dict-hsk-toggle-btn" class="dict-hsk-toggle-btn" onclick="toggleHskBrowser()">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span>📂</span>
+              <span id="dict-hsk-toggle-text" data-i18n="browseHsk">Khám phá từ vựng HSK 1 - 6 (Chạm để mở)</span>
+            </div>
+            <span id="dict-hsk-chevron" class="chevron">▼</span>
+          </button>
+          
+          <div id="dict-hsk-content" class="dict-hsk-content" style="display:none;">
+            <div class="filter-chips" style="margin-bottom:8px;">
+              <div class="filter-chip dict-filter-chip active" data-hsk="all" onclick="setDictFilter('all')" data-i18n="hskAll">Tất cả HSK</div>
+              <div class="filter-chip dict-filter-chip" data-hsk="1" onclick="setDictFilter('1')">HSK 1</div>
+              <div class="filter-chip dict-filter-chip" data-hsk="2" onclick="setDictFilter('2')">HSK 2</div>
+              <div class="filter-chip dict-filter-chip" data-hsk="3" onclick="setDictFilter('3')">HSK 3</div>
+              <div class="filter-chip dict-filter-chip" data-hsk="4" onclick="setDictFilter('4')">HSK 4</div>
+              <div class="filter-chip dict-filter-chip" data-hsk="5" onclick="setDictFilter('5')">HSK 5</div>
+              <div class="filter-chip dict-filter-chip" data-hsk="6" onclick="setDictFilter('6')">HSK 6</div>
+            </div>
+            <div id="dict-hsk-count" style="font-size:12px; color:var(--text-muted); margin-bottom:8px;"></div>
+          </div>
+        </div>
+
+        <!-- Vùng hiển thị kết quả tìm kiếm hoặc danh sách từ khi mở HSK -->
+        <div id="dict-results-container" style="width:100%; margin-top:20px;"></div>
+
+      </div>
     </section>
 
     <!-- VIEW: Saved Words -->
@@ -1792,6 +2028,11 @@ const I18N_DATA = {
     "viewSingle": "Từng câu",
     "search": "Tìm kiếm...",
     "searchHint": "Nhập chữ Hán, pinyin, hoặc nghĩa...",
+    "dictHeroBadge": "NCZ 词典 · AI Dictionary",
+    "dictHeroTitle": "Tra cứu từ điển tiếng Trung",
+    "dictHeroSubtitle": "Nhập chữ Hán, phiên âm pinyin hoặc nghĩa để tra cứu tức thì",
+    "quickSuggestions": "Gợi ý:",
+    "browseHsk": "Khám phá từ vựng HSK 1 - 6 (Chạm để mở)",
     "noResults": "Không tìm thấy kết quả",
     "fontSize": "Cỡ chữ",
     "darkMode": "Chế độ tối",
@@ -1970,6 +2211,11 @@ const I18N_DATA = {
     "viewSingle": "Sentence by sentence",
     "search": "Search...",
     "searchHint": "Enter Chinese, pinyin, or meaning...",
+    "dictHeroBadge": "NCZ Dictionary · AI Search",
+    "dictHeroTitle": "Smart Chinese Dictionary",
+    "dictHeroSubtitle": "Enter Chinese, pinyin, or English meaning for instant search",
+    "quickSuggestions": "Suggestions:",
+    "browseHsk": "Browse HSK 1 - 6 vocabulary (Tap to open)",
     "noResults": "No results found",
     "fontSize": "Font size",
     "darkMode": "Dark mode",
@@ -2148,6 +2394,11 @@ const I18N_DATA = {
     "viewSingle": "文ごとに表示",
     "search": "検索...",
     "searchHint": "漢字、ピンイン、または意味を入力...",
+    "dictHeroBadge": "NCZ 辞書 · AI検索",
+    "dictHeroTitle": "中国語スマート辞書",
+    "dictHeroSubtitle": "漢字、ピンイン、または日本語の意味を入力して瞬時に検索",
+    "quickSuggestions": "おすすめ:",
+    "browseHsk": "HSK 1〜6の単語を閲覧（タップして開く）",
     "noResults": "結果が見つかりません",
     "fontSize": "文字サイズ",
     "darkMode": "ダークモード",
@@ -14033,6 +14284,7 @@ const state = {
   hskFilter: 'all',
   searchQuery: '',
   dictFilterHSK: 'all',
+  showHskBrowser: false,
   savedSort: 'date',
   savedFilterHSK: 'all',
   savedFilterStatus: 'all',
@@ -15650,14 +15902,93 @@ function removeToneMarks(str) {
   return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ü/g, 'v');
 }
 
+function toggleHskBrowser() {
+  state.showHskBrowser = !state.showHskBrowser;
+  renderDictView();
+}
+
+function clearDictSearch() {
+  state.searchQuery = '';
+  const input = document.getElementById('dict-search-input');
+  if (input) {
+    input.value = '';
+    if (typeof input.focus === 'function') input.focus();
+  }
+  renderDictView();
+}
+
+function quickSearchDict(word) {
+  state.searchQuery = word;
+  const input = document.getElementById('dict-search-input');
+  if (input) input.value = word;
+  renderDictView();
+}
+
 function renderDictView() {
   const container = document.getElementById('dict-results-container');
+  const viewContainer = document.getElementById('dict-view-container');
+  const heroHeader = document.getElementById('dict-hero-header');
+  const quickTags = document.getElementById('dict-quick-tags');
+  const hskAccordion = document.getElementById('dict-hsk-accordion');
+  const hskContent = document.getElementById('dict-hsk-content');
+  const hskToggleBtn = document.getElementById('dict-hsk-toggle-btn');
+  const hskChevron = document.getElementById('dict-hsk-chevron');
+  const searchInput = document.getElementById('dict-search-input');
+  const clearBtn = document.getElementById('dict-search-clear');
   if (!container) return;
 
   const query = state.searchQuery.trim().toLowerCase();
   const cleanQuery = removeToneMarks(query).replace(/\s+/g, '');
   const filterHSK = state.dictFilterHSK;
+  const isBrowsingHsk = state.showHskBrowser;
 
+  // Toggle clear button
+  if (clearBtn) clearBtn.style.display = query ? 'flex' : 'none';
+
+  // Synchronize input value if needed
+  if (searchInput && searchInput.value !== state.searchQuery) {
+    searchInput.value = state.searchQuery;
+  }
+
+  // Update Accordion UI
+  if (hskContent && hskChevron && hskToggleBtn) {
+    if (isBrowsingHsk) {
+      hskContent.style.display = 'block';
+      hskChevron.style.transform = 'rotate(180deg)';
+      hskToggleBtn.classList.add('expanded');
+    } else {
+      hskContent.style.display = 'none';
+      hskChevron.style.transform = 'rotate(0deg)';
+      hskToggleBtn.classList.remove('expanded');
+    }
+  }
+
+  // If user is searching (query entered)
+  if (query) {
+    if (viewContainer) viewContainer.classList.remove('hero-mode');
+    if (heroHeader) heroHeader.style.display = 'none';
+    if (quickTags) quickTags.style.display = 'none';
+    if (hskAccordion) hskAccordion.style.display = 'none';
+  } else {
+    // No search query
+    if (isBrowsingHsk) {
+      // User expanded HSK browser
+      if (viewContainer) viewContainer.classList.remove('hero-mode');
+      if (heroHeader) heroHeader.style.display = 'block';
+      if (quickTags) quickTags.style.display = 'flex';
+      if (hskAccordion) hskAccordion.style.display = 'block';
+    } else {
+      // Pure clean AI Hero mode
+      if (viewContainer) viewContainer.classList.add('hero-mode');
+      if (heroHeader) heroHeader.style.display = 'block';
+      if (quickTags) quickTags.style.display = 'flex';
+      if (hskAccordion) hskAccordion.style.display = 'block';
+      container.innerHTML = '';
+      return; // Do NOT dump words by default! Keep clean!
+    }
+  }
+
+  // Query or Browse mode: Find matches
   let matches = [];
   const allWords = Object.keys(MINI_DICT);
 
@@ -15668,7 +15999,7 @@ function renderDictView() {
     }
     if (!query) {
       matches.push({ word: w, ...entry });
-      if (matches.length >= 60) break;
+      if (matches.length >= 80) break;
       continue;
     }
 
@@ -15692,28 +16023,48 @@ function renderDictView() {
     }
   }
 
-  // Exact match to top
+  // Sort: exact matches first
   matches.sort((a, b) => {
     if (a.word === query) return -1;
     if (b.word === query) return 1;
     return 0;
   });
 
+  // Update HSK count label if browsing
+  const countEl = document.getElementById('dict-hsk-count');
+  if (countEl && isBrowsingHsk && !query) {
+    countEl.textContent = `${t('hskLevel')}: ${filterHSK === 'all' ? t('hskAll') : 'HSK ' + filterHSK} (${matches.length} ${t('words') || 'từ'})`;
+  }
+
   if (matches.length === 0) {
     container.innerHTML = `
-      <div class="card" style="text-align:center; padding:30px;">
+      <div class="card" style="text-align:center; padding:32px 20px; border-radius:var(--radius-lg); margin-top:10px;">
+        <div style="font-size:36px; margin-bottom:8px;">🔍</div>
         <div style="font-size:16px; font-weight:600; color:var(--text-secondary);">${t('noResults')}</div>
-        ${query ? `
-          <button class="btn btn-outline" style="margin-top:14px;" onclick="searchOnline('${escapeQuotes(query)}')">
-            🔍 ${t('onlineLookup')}: "${escapeHtml(query)}"
-          </button>
-        ` : ''}
+        <div style="font-size:13.5px; color:var(--text-muted); margin-top:4px;">Không tìm thấy từ nào khớp với "${escapeHtml(query)}"</div>
+        <button class="btn btn-primary" style="margin-top:16px; border-radius:20px; padding:8px 20px;" onclick="searchOnline('${escapeQuotes(query)}')">
+          🌐 ${t('onlineLookup') || 'Tra trực tuyến'}: "${escapeHtml(query)}"
+        </button>
       </div>
     `;
     return;
   }
 
-  let html = '<div class="dict-results-list">';
+  let html = '';
+  if (query) {
+    html += `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding:0 4px;">
+        <span style="font-size:13px; color:var(--text-muted); font-weight:500;">
+          Tìm thấy <b>${matches.length}</b> kết quả cho "<b>${escapeHtml(query)}</b>"
+        </span>
+        <button class="btn btn-secondary btn-sm" style="font-size:11.5px; padding:3px 10px; border-radius:14px;" onclick="clearDictSearch()">
+          ✕ Đóng tìm kiếm
+        </button>
+      </div>
+    `;
+  }
+
+  html += '<div class="dict-results-list">';
   matches.forEach(item => {
     const lang = state.meaningLang;
     const userDict = JSON.parse(localStorage.getItem('cr_userDict') || '{}');
@@ -15738,7 +16089,7 @@ function renderDictView() {
 
     html += `
       <div class="dict-item-card" onclick="openWordSheet('${escapeHtml(item.word)}')">
-        <div>
+        <div style="flex:1; min-width:0; padding-right:12px;">
           <div class="dict-item-left">
             <span class="dict-hanzi" lang="zh-CN">${escapeHtml(item.word)}</span>
             <span class="dict-pinyin">${escapeHtml(item.pinyin)}</span>
@@ -15746,8 +16097,11 @@ function renderDictView() {
           </div>
           <div class="dict-meaning">${escapeHtml(meaning || t('noMeaning'))}</div>
         </div>
-        <div>
+        <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
           ${item.hsk ? `<span class="badge badge-hsk">HSK ${item.hsk}</span>` : ''}
+          <button class="icon-btn" style="width:34px; height:34px;" onclick="event.stopPropagation(); speakText('${escapeQuotes(item.word)}')" title="${t('play')}" aria-label="${t('play')}">
+            <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+          </button>
         </div>
       </div>
     `;
