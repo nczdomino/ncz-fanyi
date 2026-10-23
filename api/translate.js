@@ -93,9 +93,6 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG một chuỗi JSON hợp lệ với c
 }`;
     }
 
-    // Use gemini-1.5-flash for ultra fast & free quota
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-
     const geminiBody = {
       contents: [{ parts: [{ text: prompt }] }],
       generationConfig: {
@@ -108,15 +105,34 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG một chuỗi JSON hợp lệ với c
       geminiBody.generationConfig.responseMimeType = 'application/json';
     }
 
-    const response = await fetch(geminiUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(geminiBody)
-    });
+    // Google API 2026: gemini-2.0-flash is current active model, with automatic fallback cascade
+    const CANDIDATE_MODELS = ['gemini-2.0-flash', 'gemini-2.5-flash', 'gemini-2.0-flash-lite', 'gemini-1.5-flash-latest'];
+    let response = null;
+    let errDetails = '';
+    let lastStatus = 500;
 
-    if (!response.ok) {
-      const errDetails = await response.text();
-      return res.status(response.status).json({
+    for (const modelName of CANDIDATE_MODELS) {
+      const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+      try {
+        const resp = await fetch(geminiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(geminiBody)
+        });
+        if (resp.ok) {
+          response = resp;
+          break;
+        } else {
+          lastStatus = resp.status;
+          errDetails = await resp.text();
+        }
+      } catch (fErr) {
+        errDetails = fErr.message;
+      }
+    }
+
+    if (!response || !response.ok) {
+      return res.status(lastStatus || 500).json({
         error: 'Google Gemini API responded with error',
         details: errDetails
       });

@@ -322,20 +322,30 @@ async function getSentenceLensesWithAi(sentence, targetLang) {
   if (directKey) {
     try {
       const prompt = `Bạn là một chuyên gia dịch thuật tiếng Trung sang ${isVi ? 'Tiếng Việt' : (isJa ? 'Tiếng Nhật' : 'Tiếng Anh')}. Hãy phân tích câu: "${sentence}" và dịch sang 3 phong cách theo đúng JSON: {"native": "...", "genz": "...", "business": "..."}`;
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${encodeURIComponent(directKey.trim())}`;
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: {
-            temperature: 0.3,
-            maxOutputTokens: 2048,
-            responseMimeType: 'application/json'
-          }
-        })
-      });
-      if (res.ok) {
+      const CANDIDATE_MODELS = ['gemini-2.0-flash', 'gemini-2.5-flash', 'gemini-2.0-flash-lite', 'gemini-1.5-flash-latest'];
+      let res = null;
+
+      for (const mName of CANDIDATE_MODELS) {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${mName}:generateContent?key=${encodeURIComponent(directKey.trim())}`;
+        const resp = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: {
+              temperature: 0.3,
+              maxOutputTokens: 2048,
+              responseMimeType: 'application/json'
+            }
+          })
+        });
+        if (resp.ok) {
+          res = resp;
+          break;
+        }
+      }
+
+      if (res && res.ok) {
         const data = await res.json();
         const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
         const parsed = JSON.parse(raw.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim());
@@ -574,19 +584,29 @@ async function translateFullText() {
   if (directKey) {
     try {
       const prompt = `Bạn là một chuyên gia dịch thuật cao cấp. Hãy dịch toàn bộ văn bản sau sang ${langName} một cách chuẩn xác, tự nhiên, trôi chảy, giữ nguyên ngữ cảnh và cấu trúc từng đoạn văn:\n\n${fullText}\n\nChỉ xuất ra nội dung bản dịch, không thêm lời dẫn giải thích.`;
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${encodeURIComponent(directKey.trim())}`;
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: {
-            temperature: 0.3,
-            maxOutputTokens: 2048
-          }
-        })
-      });
-      if (res.ok) {
+      const CANDIDATE_MODELS = ['gemini-2.0-flash', 'gemini-2.5-flash', 'gemini-2.0-flash-lite', 'gemini-1.5-flash-latest'];
+      let res = null;
+
+      for (const mName of CANDIDATE_MODELS) {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${mName}:generateContent?key=${encodeURIComponent(directKey.trim())}`;
+        const resp = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: {
+              temperature: 0.3,
+              maxOutputTokens: 2048
+            }
+          })
+        });
+        if (resp.ok) {
+          res = resp;
+          break;
+        }
+      }
+
+      if (res && res.ok) {
         const data = await res.json();
         const fullAiResult = (data?.candidates?.[0]?.content?.parts?.[0]?.text || '').trim();
         if (fullAiResult) {

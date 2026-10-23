@@ -531,20 +531,33 @@ async function analyzeActiveWordWithAi(targetWord) {
   if (directKey) {
     try {
       const prompt = `Bạn là trợ lý từ điển tiếng Trung cao cấp dành cho người Việt học tiếng Trung. Hãy phân tích chuyên sâu từ: "${word}". Trả về JSON hợp lệ gồm: word, pinyin, partOfSpeech, primaryMeaning, secondaryMeanings, nuanceAndUsage, formality, examples (zh, pinyin, vi), synonymsAndDifferences (word, diff), commonMistakes, memoryTip.`;
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${encodeURIComponent(directKey.trim())}`;
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: {
-            temperature: 0.3,
-            maxOutputTokens: 2048,
-            responseMimeType: 'application/json'
-          }
-        })
-      });
-      if (res.ok) {
+      const CANDIDATE_MODELS = ['gemini-2.0-flash', 'gemini-2.5-flash', 'gemini-2.0-flash-lite', 'gemini-1.5-flash-latest'];
+      let res = null;
+
+      for (const mName of CANDIDATE_MODELS) {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${mName}:generateContent?key=${encodeURIComponent(directKey.trim())}`;
+        const resp = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: {
+              temperature: 0.3,
+              maxOutputTokens: 2048,
+              responseMimeType: 'application/json'
+            }
+          })
+        });
+        if (resp.ok) {
+          res = resp;
+          break;
+        } else {
+          const errData = await resp.json().catch(() => null);
+          errorDetail = errData?.error?.message || `Google API Error: HTTP ${resp.status}`;
+        }
+      }
+
+      if (res && res.ok) {
         const data = await res.json();
         const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
         const cleanJson = rawText.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
@@ -556,9 +569,6 @@ async function analyzeActiveWordWithAi(targetWord) {
           renderAiAnalysisCard(container, word, analysis);
         }
         return;
-      } else {
-        const errData = await res.json().catch(() => null);
-        errorDetail = errData?.error?.message || `Google API Error: HTTP ${res.status}`;
       }
     } catch (e) {
       errorDetail = e.message || 'Lỗi khi gọi trực tiếp Google API';
