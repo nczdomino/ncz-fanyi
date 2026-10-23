@@ -84,6 +84,11 @@
   .settings-control { margin-left: auto; }
   .nav-tab span { font-size: 10.5px; }
   .modal-card { padding: 18px; }
+  .trans-lens-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .trans-lens-tabs { width: 100%; overflow-x: auto; padding-bottom: 4px; }
+  .ai-word-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .ai-word-header button { width: 100%; justify-content: center; }
+  .punctuation-token { font-size: 0.85em; padding-bottom: 2px; }
 }
 @media (max-width: 350px) {
   .brand-title { display: none; }

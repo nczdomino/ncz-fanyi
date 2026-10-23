@@ -229,9 +229,9 @@ function renderExamplesEmptyState(container, countBadge, word) {
       <div style="font-size:13px; margin-top:6px; color:var(--text-muted);">${tx('Chưa tìm thấy câu phụ đề đối thoại trực tuyến cho từ này.', 'No subtitle dialogue sentences found for this word.', 'この単語の字幕・会話例文は見つかりませんでした。')}</div>
       <div style="margin-top:10px; font-size:12px; color:var(--text-secondary);">${tx('Xem ngữ cảnh thực tế của người bản xứ trên:', 'See real-life native usage on:', 'ネイティブの実際の使用例を見る:')}</div>
       <div style="display:flex; justify-content:center; gap:8px; flex-wrap:wrap; margin-top:8px;">
-        <a class="btn btn-secondary btn-sm" style="font-size:11.5px; padding:3px 10px; border-radius:14px;" href="https://search.bilibili.com/all?keyword=${enc}%20%E6%84%8F%E6%80%9D" target="_blank" rel="noopener">▶ Bilibili Video</a>
-        <a class="btn btn-secondary btn-sm" style="font-size:11.5px; padding:3px 10px; border-radius:14px;" href="https://www.xiaohongshu.com/search_result?keyword=${enc}" target="_blank" rel="noopener">📕 小红书</a>
-        <a class="btn btn-secondary btn-sm" style="font-size:11.5px; padding:3px 10px; border-radius:14px;" href="https://www.zhihu.com/search?q=${enc}" target="_blank" rel="noopener">知乎</a>
+        <a class="btn btn-secondary btn-sm" style="font-size:11.5px; padding:3px 10px; border-radius:14px;" href="https://search.bilibili.com/all?keyword=${enc}%20%E6%84%8F%E6%80%9D" target="_blank" rel="noopener noreferrer">▶ Bilibili Video</a>
+        <a class="btn btn-secondary btn-sm" style="font-size:11.5px; padding:3px 10px; border-radius:14px;" href="https://www.xiaohongshu.com/search_result?keyword=${enc}" target="_blank" rel="noopener noreferrer">📕 小红书</a>
+        <a class="btn btn-secondary btn-sm" style="font-size:11.5px; padding:3px 10px; border-radius:14px;" href="https://www.zhihu.com/search?q=${enc}" target="_blank" rel="noopener noreferrer">知乎</a>
       </div>
     </div>
   `;

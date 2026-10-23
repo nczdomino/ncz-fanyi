@@ -525,10 +525,10 @@ async function enrichWordSheet(word) {
   }
   html += `<div id="enrich-syn"></div><div id="enrich-wik"></div><div id="enrich-media"></div>`;
   html += `<div class="enrich-footer">
-    <a href="https://search.bilibili.com/all?keyword=${enc}%20%E6%84%8F%E6%80%9D%20%E7%94%A8%E6%B3%95" target="_blank" rel="noopener">▶ Bilibili</a>
-    <a href="https://www.youtube.com/results?search_query=${enc}%20%E6%B1%89%E8%AF%AD%20%E6%84%8F%E6%80%9D%20%E7%94%A8%E6%B3%95" target="_blank" rel="noopener">▶ YouTube</a>
-    <a href="https://www.xiaohongshu.com/search_result?keyword=${enc}" target="_blank" rel="noopener">📕 小红书</a>
-    <a href="https://www.zhihu.com/search?q=${enc}" target="_blank" rel="noopener">知乎</a>
+    <a href="https://search.bilibili.com/all?keyword=${enc}%20%E6%84%8F%E6%80%9D%20%E7%94%A8%E6%B3%95" target="_blank" rel="noopener noreferrer">▶ Bilibili</a>
+    <a href="https://www.youtube.com/results?search_query=${enc}%20%E6%B1%89%E8%AF%AD%20%E6%84%8F%E6%80%9D%20%E7%94%A8%E6%B3%95" target="_blank" rel="noopener noreferrer">▶ YouTube</a>
+    <a href="https://www.xiaohongshu.com/search_result?keyword=${enc}" target="_blank" rel="noopener noreferrer">📕 小红书</a>
+    <a href="https://www.zhihu.com/search?q=${enc}" target="_blank" rel="noopener noreferrer">知乎</a>
   </div>
   <div class="enrich-footer" style="opacity:.8;">
     <a href="javascript:void(0)" onclick="mediaToggle()">${mediaOff ? tx('Bật ảnh/video', 'Show media', 'メディアを表示') : tx('Tắt ảnh/video', 'Hide media', 'メディアを隠す')}</a>
@@ -613,20 +613,20 @@ async function enrichWordSheet(word) {
           (wiki.thumb ? `<img class="concept-thumb" loading="lazy" decoding="async" src="${escapeHtml(wiki.thumb)}" alt="${escapeHtml(wiki.title)}" onerror="this.style.display='none'">` : '') +
           `<div class="concept-body"><div class="concept-title">${escapeHtml(wiki.title)} <span class="badge">${escapeHtml(tag)}</span></div>` +
           `<div class="concept-text">${escapeHtml(wiki.extract)}</div>` +
-          (wiki.page ? `<a class="concept-link" href="${escapeHtml(wiki.page)}" target="_blank" rel="noopener">${tx('Đọc thêm', 'Read more', '続きを読む')} →</a>` : '') +
+          (wiki.page ? `<a class="concept-link" href="${escapeHtml(wiki.page)}" target="_blank" rel="noopener noreferrer">${tx('Đọc thêm', 'Read more', '続きを読む')} →</a>` : '') +
           `</div></div>`;
       }
 
       if (imgs.length) {
         h += `<div class="media-grid" style="margin-top:8px;">` + imgs.map(i =>
-          `<a class="media-fig" href="${escapeHtml(i.page)}" target="_blank" rel="noopener">` +
+          `<a class="media-fig" href="${escapeHtml(i.page)}" target="_blank" rel="noopener noreferrer">` +
           `<img loading="lazy" decoding="async" src="${escapeHtml(i.thumb)}" alt="${escapeHtml(i.title)}" onerror="this.closest('a').style.display='none'">` +
           `<span class="media-cap">${escapeHtml(i.caption)}</span></a>`).join('') + `</div>`;
       }
 
       vids.forEach(v => {
         h += `<video class="media-video" controls preload="none" playsinline poster="${escapeHtml(v.thumb || '')}" src="${escapeHtml(v.url)}"></video>` +
-          `<div class="media-cap" style="margin-top:3px;">${escapeHtml(v.caption)} · <a href="${escapeHtml(v.page)}" target="_blank" rel="noopener" style="color:var(--accent);">Wikimedia</a></div>`;
+          `<div class="media-cap" style="margin-top:3px;">${escapeHtml(v.caption)} · <a href="${escapeHtml(v.page)}" target="_blank" rel="noopener noreferrer" style="color:var(--accent);">Wikimedia</a></div>`;
       });
 
       h += `<div style="font-size:11px;color:var(--text-muted);margin-top:6px;line-height:1.4;">` +

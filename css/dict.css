@@ -786,20 +786,28 @@
   font-weight: 600;
   color: var(--text-primary);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  line-height: 1.4;
+  gap: 8px;
+  line-height: 1.5;
+  word-break: break-word;
+}
+.ai-word-ex-zh span {
+  flex: 1;
 }
 .ai-word-ex-py {
   font-size: 12.5px;
   color: var(--accent);
   margin-top: 3px;
+  line-height: 1.4;
+  word-break: break-word;
 }
 .ai-word-ex-vi {
   font-size: 13.5px;
   color: var(--text-secondary);
   margin-top: 4px;
-  line-height: 1.4;
+  line-height: 1.45;
+  word-break: break-word;
 }
 .ai-word-diff-item {
   background: var(--bg-surface);
@@ -808,6 +816,7 @@
   padding: 8px 12px;
   font-size: 13px;
   line-height: 1.5;
+  word-break: break-word;
 }
 .ai-word-tip-box {
   background: rgba(139, 92, 246, 0.05);

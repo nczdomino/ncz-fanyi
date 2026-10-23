@@ -1,12 +1,13 @@
 // pwa.js - Dynamic PWA manifest blob injection - Dependencies: none
 (function() {
   try {
+    const startUrl = window.location.origin + window.location.pathname;
     const manifest = {
       name: "NCZ 翻译 · Trợ Thủ Đọc & Học Tiếng Trung AI",
       short_name: "NCZ 翻译",
       description: "Ứng dụng tra cứu từ điển HSK 1-6 tức thì, phát âm giọng chuẩn bản xứ AI, nhận diện tài liệu ảnh OCR và dịch tiếng Trung của tác giả 聂诚忠 (Nie Thanh Trung)",
       author: "聂诚忠 (Nie Thanh Trung)",
-      start_url: "./index.html",
+      start_url: startUrl,
       display: "standalone",
       orientation: "portrait-primary",
       background_color: "#F8F9FA",

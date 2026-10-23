@@ -206,11 +206,11 @@ async function openWordSheet(word) {
   const extContainer = document.getElementById('sheet-external-links');
   if (extContainer) {
     extContainer.innerHTML = `
-      <a class="btn btn-secondary btn-sm" href="https://www.mdbg.net/chinese/dictionary?page=worddict&wdrst=0&wdqb=${encodeURIComponent(word)}" target="_blank" rel="noopener">MDBG</a>
-      <a class="btn btn-secondary btn-sm" href="https://translate.google.com/?sl=zh-CN&tl=${state.meaningLang}&text=${encodeURIComponent(word)}" target="_blank" rel="noopener">Google</a>
-      <a class="btn btn-secondary btn-sm" href="https://hanzii.net/search/word/${encodeURIComponent(word)}" target="_blank" rel="noopener">Hanzii</a>
-      <a class="btn btn-secondary btn-sm" href="https://jisho.org/search/${encodeURIComponent(word)}" target="_blank" rel="noopener">Jisho</a>
-      <a class="btn btn-secondary btn-sm" href="https://baike.baidu.com/item/${encodeURIComponent(word)}" target="_blank" rel="noopener">Baidu</a>
+      <a class="btn btn-secondary btn-sm" href="https://www.mdbg.net/chinese/dictionary?page=worddict&wdrst=0&wdqb=${encodeURIComponent(word)}" target="_blank" rel="noopener noreferrer">MDBG</a>
+      <a class="btn btn-secondary btn-sm" href="https://translate.google.com/?sl=zh-CN&tl=${state.meaningLang}&text=${encodeURIComponent(word)}" target="_blank" rel="noopener noreferrer">Google</a>
+      <a class="btn btn-secondary btn-sm" href="https://hanzii.net/search/word/${encodeURIComponent(word)}" target="_blank" rel="noopener noreferrer">Hanzii</a>
+      <a class="btn btn-secondary btn-sm" href="https://jisho.org/search/${encodeURIComponent(word)}" target="_blank" rel="noopener noreferrer">Jisho</a>
+      <a class="btn btn-secondary btn-sm" href="https://baike.baidu.com/item/${encodeURIComponent(word)}" target="_blank" rel="noopener noreferrer">Baidu</a>
     `;
   }
 
@@ -431,18 +431,24 @@ async function renderWordSheetAiSection(word) {
   const container = document.getElementById('sheet-ai-analysis-container');
   if (!container) return;
 
+  const currentLang = state.meaningLang || 'vi';
+  const cacheKey = `${currentLang}:${word}`;
+
   // 1. Kiểm tra cache RAM
-  if (state.cachedAiAnalysis && state.cachedAiAnalysis[word]) {
-    renderAiAnalysisCard(container, word, state.cachedAiAnalysis[word]);
+  if (state.cachedAiAnalysis && (state.cachedAiAnalysis[cacheKey] || state.cachedAiAnalysis[word])) {
+    renderAiAnalysisCard(container, word, state.cachedAiAnalysis[cacheKey] || state.cachedAiAnalysis[word]);
     return;
   }
 
   // 2. Kiểm tra cache IndexedDB
   try {
-    const fromDb = await getFromDB('translations', 'ai_analysis:' + word);
+    let fromDb = await getFromDB('translations', 'ai_analysis:' + cacheKey);
+    if (!fromDb) {
+      fromDb = await getFromDB('translations', 'ai_analysis:' + word);
+    }
     if (fromDb && fromDb.result) {
       if (!state.cachedAiAnalysis) state.cachedAiAnalysis = {};
-      state.cachedAiAnalysis[word] = fromDb.result;
+      state.cachedAiAnalysis[cacheKey] = fromDb.result;
       if (state.activeWord === word) {
         renderAiAnalysisCard(container, word, fromDb.result);
       }
@@ -451,23 +457,50 @@ async function renderWordSheetAiSection(word) {
   } catch (e) {}
 
   // 3. Chưa có cache -> Hiện khung mời gọi phân tích
+  const teaserTexts = {
+    vi: {
+      title: 'AI Phân Tích Chuyên Sâu (AI 解析)',
+      btn: '✨ Phân tích từ này',
+      desc: 'Phân tích chuyên sâu sắc thái ngữ cảnh, khẩu ngữ/tiếng lóng mạng, câu ví dụ thực tế và phân biệt từ gần nghĩa cùng AI.'
+    },
+    ja: {
+      title: 'AI 詳細分析 (AI 解析)',
+      btn: '✨ AIで詳しく分析',
+      desc: 'ニュアンス、ネットスラング/口語表現、実用例文、類義語の使い分けをAIが徹底解説します。'
+    },
+    en: {
+      title: 'AI Deep Analysis (AI 解析)',
+      btn: '✨ Analyze with AI',
+      desc: 'Deep dive into nuances, colloquial/internet slang, real-life examples, and synonym distinctions with AI.'
+    }
+  };
+  const tInfo = teaserTexts[currentLang] || teaserTexts.vi;
+
   container.innerHTML = `
     <div class="ai-word-card">
       <div class="ai-word-header">
         <div class="ai-word-title">
           <span>✨</span>
-          <span>AI Phân Tích Chuyên Sâu (AI 解析)</span>
-          <span class="badge" style="background:rgba(232,52,78,0.12); color:var(--accent); font-size:10.5px; font-weight:700;">Gemini 1.5 Flash</span>
+          <span>${escapeHtml(tInfo.title)}</span>
+          <span class="badge" style="background:rgba(232,52,78,0.12); color:var(--accent); font-size:10.5px; font-weight:700;">Gemini AI</span>
         </div>
         <button id="btn-trigger-ai-word" class="btn btn-primary btn-sm" onclick="analyzeActiveWordWithAi('${escapeQuotes(word)}')">
-          ✨ Phân tích từ này
+          ${escapeHtml(tInfo.btn)}
         </button>
       </div>
       <div style="padding:10px 14px; font-size:12.5px; color:var(--text-muted); line-height:1.45; background:var(--bg-surface);">
-        Phân tích chuyên sâu sắc thái ngữ cảnh, khẩu ngữ/tiếng lóng mạng, câu ví dụ thực tế và phân biệt từ gần nghĩa cùng AI.
+        ${escapeHtml(tInfo.desc)}
       </div>
     </div>
   `;
+}
+
+function sanitizeAiError(msg) {
+  if (!msg || typeof msg !== 'string') return '';
+  return msg
+    .replace(/(key=)[a-zA-Z0-9_\-\.]{8,}/gi, '$1[PROTECTED_KEY]')
+    .replace(/AIza[0-9A-Za-z\-_]{35}/g, 'AIza[PROTECTED_KEY]')
+    .replace(/AQ\.[a-zA-Z0-9_\-\.]{15,}/g, 'AQ.[PROTECTED_KEY]');
 }
 
 async function analyzeActiveWordWithAi(targetWord) {
@@ -477,16 +510,35 @@ async function analyzeActiveWordWithAi(targetWord) {
   const container = document.getElementById('sheet-ai-analysis-container');
   if (!container) return;
 
+  const currentLang = state.meaningLang || 'vi';
+  const cacheKey = `${currentLang}:${word}`;
+
+  const loadingTexts = {
+    vi: {
+      title: `Đang phân tích chuyên sâu "${escapeHtml(word)}"...`,
+      desc: 'Gemini AI đang bóc tách sắc thái, ngữ cảnh, từ loại, câu ví dụ và mẹo nhớ từ...'
+    },
+    ja: {
+      title: `「${escapeHtml(word)}」をAI詳細分析中...`,
+      desc: 'Gemini AI がニュアンス、品詞、実用例文、類義語の使い分けを分析しています...'
+    },
+    en: {
+      title: `Deeply analyzing "${escapeHtml(word)}"...`,
+      desc: 'Gemini AI is examining nuances, context, part of speech, examples, and memory tips...'
+    }
+  };
+  const loadInfo = loadingTexts[currentLang] || loadingTexts.vi;
+
   container.innerHTML = `
     <div class="ai-word-card">
       <div class="ai-word-header">
         <div class="ai-word-title">
           <span class="spinner-small" style="display:inline-block; width:15px; height:15px; border:2px solid var(--accent); border-top-color:transparent; border-radius:50%; animation:spin 0.8s linear infinite;"></span>
-          <span>Đang phân tích chuyên sâu "${escapeHtml(word)}"...</span>
+          <span>${loadInfo.title}</span>
         </div>
       </div>
       <div style="padding:16px 14px; text-align:center; font-size:13px; color:var(--text-muted); font-style:italic;">
-        Gemini AI đang bóc tách sắc thái, ngữ cảnh, từ loại, câu ví dụ và mẹo nhớ từ...
+        ${loadInfo.desc}
       </div>
     </div>
   `;
@@ -497,7 +549,8 @@ async function analyzeActiveWordWithAi(targetWord) {
   const directKey = localStorage.getItem('cr_gemini_api_key');
   if (directKey) {
     try {
-      const prompt = `Bạn là trợ lý từ điển tiếng Trung cao cấp dành cho người Việt học tiếng Trung. Hãy phân tích chuyên sâu từ: "${word}".
+      const langPromptMap = {
+        vi: `Bạn là trợ lý từ điển tiếng Trung cao cấp dành cho người Việt học tiếng Trung. Hãy phân tích chuyên sâu từ: "${word}".
 
 Yêu cầu nội dung phân tích (bằng tiếng Việt):
 1. Nghĩa tiếng Việt chính và các nghĩa phụ (nếu có).
@@ -532,7 +585,82 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG VÀ DUY NHẤT một chuỗi JSON h�
   ],
   "commonMistakes": "lỗi người học hay mắc phải nếu có",
   "memoryTip": "mẹo ghi nhớ từ vựng"
-}`;
+}`,
+        ja: `あなたは中国語学習者向けの高度な辞書AIアシスタントです。単語「${word}」を詳細に分析してください。
+
+分析内容（日本語で回答）：
+1. 主な日本語の意味と副次的意味（あれば）。
+2. 標準ピンインと品詞（名詞、動詞、形容詞、ネットスラングなど）。
+3. 使用コンテキスト、ニュアンス（ユーモア、自嘲、否定的、肯定的など）、フォーマリティ（口語、ネットスラング、書き言葉、ビジネスなど）。
+4. 2〜3つの中国語実用例文（ピンインと日本語訳付き）。
+5. 類義語・反義語と使用上の明確な違い（微妙なニュアンスの比較）。
+6. 学習者がよく犯す間違いや注意点。
+7. 記憶のヒント（漢字の成り立ち、連想、語源など）。
+
+必ず以下のJSONスキーマのみを出力してください（Markdown記法や余計な文字は不要）:
+{
+  "word": "${word}",
+  "pinyin": "ピンイン",
+  "partOfSpeech": "品詞",
+  "primaryMeaning": "主な日本語の意味",
+  "secondaryMeanings": ["副次的意味"],
+  "nuanceAndUsage": "ニュアンスと使い方",
+  "formality": "フォーマリティ（口語/ネットスラング/フォーマル等）",
+  "examples": [
+    {
+      "zh": "中国語例文",
+      "pinyin": "ピンイン",
+      "vi": "日本語訳"
+    }
+  ],
+  "synonymsAndDifferences": [
+    {
+      "word": "類義語（ピンイン付き）",
+      "diff": "ニュアンスの違い"
+    }
+  ],
+  "commonMistakes": "よくある誤用や注意点",
+  "memoryTip": "記憶のヒント"
+}`,
+        en: `You are an advanced Chinese dictionary AI assistant for learners. Thoroughly analyze the word: "${word}".
+
+Requirements (respond in English):
+1. Primary English meaning and secondary meanings (if any).
+2. Standard Pinyin and Part of Speech (noun, verb, adjective, slang, etc.).
+3. Usage context, nuances (humorous, self-deprecating, negative, positive...) and formality level (colloquial, internet slang, formal, business...).
+4. 2 to 3 practical Chinese example sentences with Pinyin and natural English translations.
+5. Synonyms, antonyms, and subtle differences in usage/nuance.
+6. Common mistakes made by learners.
+7. Memory tip or mnemonics (etymology, character breakdown, vivid association).
+
+Return ONLY valid JSON matching this schema (no markdown wrappers):
+{
+  "word": "${word}",
+  "pinyin": "pinyin pronunciation",
+  "partOfSpeech": "part of speech",
+  "primaryMeaning": "primary English meaning",
+  "secondaryMeanings": ["secondary meaning"],
+  "nuanceAndUsage": "context and nuance explanation",
+  "formality": "formality level (colloquial / slang / formal...)",
+  "examples": [
+    {
+      "zh": "Chinese sentence",
+      "pinyin": "sentence pinyin",
+      "vi": "English translation"
+    }
+  ],
+  "synonymsAndDifferences": [
+    {
+      "word": "synonym with pinyin",
+      "diff": "nuance and usage difference"
+    }
+  ],
+  "commonMistakes": "common mistakes",
+  "memoryTip": "memory tip or mnemonic"
+}`
+      };
+
+      const prompt = langPromptMap[currentLang] || langPromptMap.vi;
       const CANDIDATE_MODELS = ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-flash-latest'];
       let res = null;
 
@@ -565,8 +693,8 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG VÀ DUY NHẤT một chuỗi JSON h�
         const cleanJson = rawText.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
         const analysis = JSON.parse(cleanJson);
         if (!state.cachedAiAnalysis) state.cachedAiAnalysis = {};
-        state.cachedAiAnalysis[word] = analysis;
-        await putToDB('translations', { q: 'ai_analysis:' + word, result: analysis });
+        state.cachedAiAnalysis[cacheKey] = analysis;
+        await putToDB('translations', { q: 'ai_analysis:' + cacheKey, result: analysis });
         if (state.activeWord === word) {
           renderAiAnalysisCard(container, word, analysis);
         }
@@ -584,7 +712,7 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG VÀ DUY NHẤT một chuỗi JSON h�
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         text: word,
-        targetLang: state.meaningLang,
+        targetLang: currentLang,
         type: 'analyze_word'
       })
     });
@@ -594,8 +722,8 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG VÀ DUY NHẤT một chuỗi JSON h�
       if (data && data.analysis) {
         const analysis = data.analysis;
         if (!state.cachedAiAnalysis) state.cachedAiAnalysis = {};
-        state.cachedAiAnalysis[word] = analysis;
-        await putToDB('translations', { q: 'ai_analysis:' + word, result: analysis });
+        state.cachedAiAnalysis[cacheKey] = analysis;
+        await putToDB('translations', { q: 'ai_analysis:' + cacheKey, result: analysis });
         if (state.activeWord === word) {
           renderAiAnalysisCard(container, word, analysis);
         }
@@ -612,6 +740,7 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG VÀ DUY NHẤT một chuỗi JSON h�
 
   // 3. Nếu vẫn không được, hiển thị chi tiết lỗi kèm ô dán key trực tiếp
   if (state.activeWord === word) {
+    const safeError = sanitizeAiError(errorDetail);
     container.innerHTML = `
       <div class="ai-word-card" style="border-color:rgba(239, 68, 68, 0.4);">
         <div class="ai-word-header" style="background:rgba(239, 68, 68, 0.08);">
@@ -625,13 +754,13 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG VÀ DUY NHẤT một chuỗi JSON h�
         </div>
         <div style="padding:12px 14px; font-size:13px; color:var(--text-primary); line-height:1.5;">
           <div style="background:rgba(239, 68, 68, 0.06); padding:8px 10px; border-radius:6px; font-family:monospace; font-size:12px; color:#DC2626; margin-bottom:10px; word-break:break-all;">
-            Chi tiết lỗi: ${escapeHtml(errorDetail)}
+            Chi tiết lỗi: ${escapeHtml(safeError)}
           </div>
           <div style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">
-            💡 <b>Gợi ý xử lý:</b> Nếu Cloudflare chưa kịp cập nhật hoặc chưa nhận biến môi trường <code>GEMINI_API_KEY</code>, bạn có thể dán trực tiếp mã API Key vào ô dưới để kích hoạt ngay tức thì trên máy này:
+            💡 <b>Gợi ý xử lý:</b> Bạn có thể dán trực tiếp mã Google Gemini API Key vào ô dưới để kích hoạt tính năng AI trực tiếp trên trình duyệt:
           </div>
           <div style="display:flex; gap:6px;">
-            <input type="password" id="inline-gemini-key" placeholder="Dán mã AIzaSy... vào đây" class="textarea-box" style="padding:6px 10px; font-size:12.5px; height:34px; flex:1; border:1px solid var(--border-color); border-radius:6px;" value="${escapeHtml(directKey || '')}">
+            <input type="password" id="inline-gemini-key" placeholder="Dán mã API Key vào đây" class="textarea-box" style="padding:6px 10px; font-size:12.5px; height:34px; flex:1; border:1px solid var(--border-color); border-radius:6px;" value="${escapeHtml(directKey || '')}">
             <button class="btn btn-primary btn-sm" onclick="saveInlineGeminiKey('${escapeQuotes(word)}')" style="white-space:nowrap;">
               Lưu & Dịch ngay
             </button>
@@ -677,7 +806,7 @@ async function runAiDiagnostic(word) {
     const res = await fetch('/api/translate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: '你好', targetLang: 'vi', type: 'lenses' })
+      body: JSON.stringify({ text: '你好', targetLang: state.meaningLang || 'vi', type: 'lenses' })
     });
     log(`   -> Trạng thái HTTP: ${res.status} ${res.statusText} (${Date.now() - t0}ms)`);
     const text = await res.text();
@@ -686,14 +815,14 @@ async function runAiDiagnostic(word) {
       if (res.ok) {
         log('   -> Cloudflare backend: HOẠT ĐỘNG TỐT (OK)');
       } else {
-        log(`   -> Lỗi từ Cloudflare: ${json.error || text}`);
-        if (json.details) log(`   -> Chi tiết: ${json.details}`);
+        log(`   -> Lỗi từ Cloudflare: ${sanitizeAiError(json.error || text)}`);
+        if (json.details) log(`   -> Chi tiết: ${sanitizeAiError(json.details)}`);
       }
     } catch (e) {
-      log(`   -> Phản hồi: ${text.slice(0, 150)}`);
+      log(`   -> Phản hồi: ${sanitizeAiError(text.slice(0, 150))}`);
     }
   } catch (err) {
-    log(`   -> Lỗi kết nối mạng: ${err.message}`);
+    log(`   -> Lỗi kết nối mạng: ${sanitizeAiError(err.message)}`);
   }
 
   // 2. Kiểm tra key trực tiếp nếu có
@@ -714,33 +843,77 @@ async function runAiDiagnostic(word) {
         const models = (body.models || []).map(m => m.name.replace('models/', ''));
         log(`   -> Key hợp lệ! Danh sách model khả dụng: ${models.slice(0, 5).join(', ')}...`);
       } else {
-        log(`   -> Lỗi từ Google: ${body?.error?.message || JSON.stringify(body)}`);
+        log(`   -> Lỗi từ Google: ${sanitizeAiError(body?.error?.message || JSON.stringify(body))}`);
       }
     } catch (e) {
-      log(`   -> Không thể gọi Google: ${e.message}`);
+      log(`   -> Không thể gọi Google: ${sanitizeAiError(e.message)}`);
     }
   }
 }
 
 function renderAiAnalysisCard(container, word, data) {
+  const currentLang = state.meaningLang || 'vi';
+
+  const i18nTitles = {
+    vi: {
+      header: 'AI Phân Tích Chuyên Sâu (AI 解析)',
+      refresh: 'Làm mới phân tích',
+      listen: 'Phát âm',
+      examples: '💡 Ví dụ thực tế',
+      synonyms: '⚖️ Phân biệt từ gần nghĩa & Sắc thái',
+      meaning: '📖 Nghĩa tiếng Việt',
+      secondary: 'Nghĩa phụ:',
+      nuance: '🎭 Sắc thái & Cách dùng',
+      mistakes: '⚠️ Lưu ý & Lỗi thường gặp',
+      tip: '🧠 Mẹo ghi nhớ từ vựng'
+    },
+    ja: {
+      header: 'AI 詳細分析 (AI 解析)',
+      refresh: '分析を更新',
+      listen: '発音',
+      examples: '💡 実用例文',
+      synonyms: '⚖️ 類義語の使い分けとニュアンス',
+      meaning: '📖 日本語の意味',
+      secondary: '副次的意味:',
+      nuance: '🎭 ニュアンス・使用場面',
+      mistakes: '⚠️ 注意点・よくある間違い',
+      tip: '🧠 記憶のコツ・語源'
+    },
+    en: {
+      header: 'AI Deep Analysis (AI 解析)',
+      refresh: 'Refresh analysis',
+      listen: 'Listen',
+      examples: '💡 Practical Examples',
+      synonyms: '⚖️ Synonyms & Usage Nuances',
+      meaning: '📖 English Meaning',
+      secondary: 'Secondary meanings:',
+      nuance: '🎭 Nuance & Context',
+      mistakes: '⚠️ Common Mistakes & Pitfalls',
+      tip: '🧠 Memory Tip & Mnemonics'
+    }
+  };
+  const labels = i18nTitles[currentLang] || i18nTitles.vi;
+
   let examplesHtml = '';
   if (Array.isArray(data.examples) && data.examples.length > 0) {
     examplesHtml = `
       <div>
-        <div class="ai-word-section-title">💡 Ví dụ thực tế</div>
+        <div class="ai-word-section-title">${escapeHtml(labels.examples)}</div>
         <div class="ai-word-examples-list">
-          ${data.examples.map(ex => `
+          ${data.examples.map(ex => {
+            const exTrans = ex.vi || ex.ja || ex.en || ex.translation || ex.meaning || '';
+            return `
             <div class="ai-word-example-item">
               <div class="ai-word-ex-zh">
                 <span>${escapeHtml(ex.zh)}</span>
-                <button type="button" class="icon-btn" style="width:26px; height:26px; font-size:13px;" onclick="speakText('${escapeQuotes(ex.zh)}')" title="Phát âm">
+                <button type="button" class="icon-btn" style="width:26px; height:26px; font-size:13px;" onclick="speakText('${escapeQuotes(ex.zh)}')" title="${escapeHtml(labels.listen)}">
                   🔊
                 </button>
               </div>
               ${ex.pinyin ? `<div class="ai-word-ex-py">${escapeHtml(ex.pinyin)}</div>` : ''}
-              ${ex.vi ? `<div class="ai-word-ex-vi">${escapeHtml(ex.vi)}</div>` : ''}
+              ${exTrans ? `<div class="ai-word-ex-vi">${escapeHtml(exTrans)}</div>` : ''}
             </div>
-          `).join('')}
+          `;}).join('')}
         </div>
       </div>
     `;
@@ -750,7 +923,7 @@ function renderAiAnalysisCard(container, word, data) {
   if (Array.isArray(data.synonymsAndDifferences) && data.synonymsAndDifferences.length > 0) {
     synonymsHtml = `
       <div>
-        <div class="ai-word-section-title">⚖️ Phân biệt từ gần nghĩa & Sắc thái</div>
+        <div class="ai-word-section-title">${escapeHtml(labels.synonyms)}</div>
         <div>
           ${data.synonymsAndDifferences.map(syn => `
             <div class="ai-word-diff-item">
@@ -768,62 +941,62 @@ function renderAiAnalysisCard(container, word, data) {
       <div class="ai-word-header">
         <div class="ai-word-title">
           <span>✨</span>
-          <span>AI Phân Tích Chuyên Sâu (AI 解析)</span>
+          <span>${escapeHtml(labels.header)}</span>
         </div>
         <div style="display:flex; align-items:center; gap:6px;">
           ${data.formality ? `<span class="badge" style="background:rgba(59,130,246,0.12); color:#2563EB; font-weight:600;">${escapeHtml(data.formality)}</span>` : ''}
-          <button type="button" class="icon-btn" style="width:26px; height:26px; font-size:11px;" onclick="analyzeActiveWordWithAi('${escapeQuotes(word)}')" title="Làm mới phân tích">
+          <button type="button" class="icon-btn" style="width:26px; height:26px; font-size:11px;" onclick="analyzeActiveWordWithAi('${escapeQuotes(word)}')" title="${escapeHtml(labels.refresh)}">
             ↺
           </button>
         </div>
       </div>
       <div class="ai-word-body">
-        <!-- Nghĩa tiếng Việt & Từ loại -->
+        <!-- Meaning & Part of speech -->
         <div>
           <div class="ai-word-section-title">
-            <span>📖 Nghĩa tiếng Việt</span>
+            <span>${escapeHtml(labels.meaning)}</span>
             ${data.partOfSpeech ? `<span style="font-weight:400; text-transform:none; color:var(--text-secondary);">(${escapeHtml(data.partOfSpeech)})</span>` : ''}
           </div>
           <div class="ai-word-meaning-box">
             <b>${escapeHtml(data.primaryMeaning || '')}</b>
             ${Array.isArray(data.secondaryMeanings) && data.secondaryMeanings.length > 0 ? `
               <div style="font-size:13px; color:var(--text-secondary); margin-top:4px;">
-                Nghĩa phụ: ${data.secondaryMeanings.map(m => escapeHtml(m)).join(' • ')}
+                ${escapeHtml(labels.secondary)} ${data.secondaryMeanings.map(m => escapeHtml(m)).join(' • ')}
               </div>
             ` : ''}
           </div>
         </div>
 
-        <!-- Sắc thái & Ngữ cảnh sử dụng -->
+        <!-- Nuance & Usage -->
         ${data.nuanceAndUsage ? `
           <div>
-            <div class="ai-word-section-title">🎭 Sắc thái & Cách dùng</div>
+            <div class="ai-word-section-title">${escapeHtml(labels.nuance)}</div>
             <div class="ai-word-nuance-box">
               ${escapeHtml(data.nuanceAndUsage)}
             </div>
           </div>
         ` : ''}
 
-        <!-- Ví dụ thực tế -->
+        <!-- Examples -->
         ${examplesHtml}
 
-        <!-- Phân biệt từ gần nghĩa -->
+        <!-- Synonyms / Differences -->
         ${synonymsHtml}
 
-        <!-- Lỗi thường gặp -->
+        <!-- Common mistakes -->
         ${data.commonMistakes ? `
           <div>
-            <div class="ai-word-section-title">⚠️ Lưu ý & Lỗi thường gặp</div>
+            <div class="ai-word-section-title">${escapeHtml(labels.mistakes)}</div>
             <div class="ai-word-mistake-box">
               ${escapeHtml(data.commonMistakes)}
             </div>
           </div>
         ` : ''}
 
-        <!-- Mẹo ghi nhớ -->
+        <!-- Memory tips -->
         ${data.memoryTip ? `
           <div>
-            <div class="ai-word-section-title">🧠 Mẹo ghi nhớ từ vựng</div>
+            <div class="ai-word-section-title">${escapeHtml(labels.tip)}</div>
             <div class="ai-word-tip-box">
               ${escapeHtml(data.memoryTip)}
             </div>
