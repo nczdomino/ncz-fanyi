@@ -15,7 +15,7 @@
     })();
   </script>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   
   <!-- Primary Meta Tags -->
   <title>NCZ 翻译 · Trợ Thủ Đọc & Học Tiếng Trung AI Thông Minh</title>
@@ -180,9 +180,9 @@ button, input, textarea, select {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: var(--top-bar-height);
+  height: calc(var(--top-bar-height) + env(safe-area-inset-top, 0px));
   padding: 0 16px;
-  padding-top: env(safe-area-inset-top, 0);
+  padding-top: env(safe-area-inset-top, 0px);
   background-color: var(--bg-surface);
   border-bottom: 1px solid var(--border-color);
   z-index: 100;
@@ -562,6 +562,10 @@ button, input, textarea, select {
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   margin-bottom: 14px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
 }
 
 .toolbar-group {
@@ -645,6 +649,32 @@ button, input, textarea, select {
 .word-token:active {
   transform: scale(0.95);
 }
+
+
+/* Word enrichment */
+.slang-card { padding: 8px 10px; margin-bottom: 6px; border-radius: 10px; border: 1px solid var(--accent); background: var(--accent-subtle); font-size: 14px; }
+.syn-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 6px; }
+.syn-pos { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-right: 4px; }
+.syn-chip { padding: 3px 9px; border-radius: 999px; background: var(--bg-muted); border: 1px solid var(--border-color); font-size: 14px; }
+.wik-row { font-size: 13px; margin-bottom: 4px; line-height: 1.4; }
+.enrich-footer { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; font-size: 12px; }
+.enrich-footer a { color: var(--accent); text-decoration: none; padding: 3px 8px; border: 1px solid var(--border-color); border-radius: 8px; }
+
+/* Phrase selection + karaoke */
+.select-mode .word-token { touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+.word-token.sel-token { background: var(--accent-subtle); box-shadow: 0 0 0 2px var(--accent); }
+.word-token.karaoke-active { background: var(--accent-subtle); box-shadow: 0 0 0 2px var(--accent); transform: translateY(-2px); }
+.word-token.karaoke-active .token-chars { color: var(--accent); }
+.word-token.karaoke-done .token-chars { color: var(--accent); opacity: .65; }
+#phrase-bar {
+  position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%);
+  z-index: 900; display: none; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center;
+  max-width: calc(100vw - 24px); padding: 10px 12px; border-radius: 14px;
+  background: var(--bg-card, #fff); color: var(--text, #222);
+  border: 1px solid var(--accent); box-shadow: 0 6px 24px rgba(0,0,0,.25);
+}
+#phrase-bar.show { display: flex; }
+#phrase-bar .phrase-text { font-size: 18px; font-weight: 700; max-width: 100%; word-break: break-all; }
 
 .word-token.saved-star::after {
   content: "★";
@@ -1157,7 +1187,8 @@ button, input, textarea, select {
 
 @media (max-width: 480px) {
   #top-bar {
-    padding: 0 12px;
+    padding-left: max(12px, env(safe-area-inset-left, 0px));
+    padding-right: max(12px, env(safe-area-inset-right, 0px));
   }
   .brand-icon {
     width: 30px;
@@ -1711,6 +1742,101 @@ button, input, textarea, select {
   }
 }
 
+
+/* ===================================================================
+   v1.1 — Responsive / safe-area hardening + concept media styles
+   =================================================================== */
+
+/* Notch / landscape safe areas */
+#app-shell { padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); }
+#bottom-nav { padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); }
+#top-bar {
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+/* Use the *visible* viewport on mobile browsers (address bar aware) */
+.bottom-sheet { max-height: 86vh; max-height: 86dvh; overscroll-behavior: contain; }
+.modal-card { max-height: 90vh; max-height: 90dvh; overscroll-behavior: contain; }
+#toast-container { top: calc(env(safe-area-inset-top, 0px) + 64px); max-width: calc(100vw - 24px); }
+.toast { text-align: center; }
+
+/* Closed sheet must not be focusable / readable by screen readers */
+.bottom-sheet { visibility: hidden; transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s linear 0.3s; }
+.bottom-sheet.active { visibility: visible; transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s; }
+.sheet-header > div:first-child { min-width: 0; }
+.sheet-hanzi-title { word-break: break-all; }
+
+/* Phrase bar: readable in dark mode (was using an undefined variable) */
+#phrase-bar { color: var(--text-primary); }
+
+/* Onboarding progress dots never changed (inline styles beat the .active class) */
+.onboarding-dot { transition: width 0.2s ease, background-color 0.2s ease; }
+.onboarding-dot.active { background: var(--accent) !important; width: 22px !important; }
+.onboarding-dot:not(.active) { background: var(--border-color) !important; width: 8px !important; }
+
+/* Touch devices: no sticky hover states */
+@media (hover: none) {
+  .word-token:hover:not(.sel-token):not(.karaoke-active) { background-color: transparent; transform: none; }
+  .dict-item-card:hover { transform: none; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02); border-color: var(--border-color); }
+  .recent-item:hover { border-color: var(--border-color); }
+}
+
+/* Tablet portrait & phones: bottom navigation, so floating bar must sit above it */
+@media (max-width: 767px) {
+  #phrase-bar { bottom: calc(var(--bottom-bar-height) + env(safe-area-inset-bottom, 0px) + 12px); }
+}
+
+/* Phones */
+@media (max-width: 480px) {
+  .view { padding: 12px; }
+  .card { padding: 14px; }
+  .action-row { gap: 8px; }
+  .action-row .btn { flex: 1 1 calc(50% - 4px); padding: 10px 8px; font-size: 13px; line-height: 1.25; text-align: center; }
+  .action-row #btn-analyze { flex: 1 1 100%; }
+  .reader-toolbar { padding: 8px 10px; gap: 6px; }
+  .toolbar-group { flex-wrap: wrap; gap: 6px; }
+  .sentence-card { padding: 16px 12px; min-height: 0; }
+  .full-text-container { padding: 14px 10px; }
+  .word-token { margin: 0 1px; padding: 2px; }
+  .bottom-sheet { padding: 16px 16px calc(20px + env(safe-area-inset-bottom, 0px)); }
+  .sheet-hanzi-title { font-size: 34px; }
+  .def-text { font-size: 17px; }
+  .dict-view-container { padding: 20px 10px 40px; }
+  .settings-row { flex-wrap: wrap; }
+  .settings-control { margin-left: auto; }
+  .nav-tab span { font-size: 10.5px; }
+  .modal-card { padding: 18px; }
+}
+@media (max-width: 350px) {
+  .brand-title { display: none; }
+}
+
+/* ---- Concept illustration (word sheet) ---- */
+.concept-card {
+  display: flex; gap: 12px; padding: 10px;
+  border: 1px solid var(--border-color); border-radius: 12px; background: var(--bg-muted);
+}
+.concept-thumb { width: 96px; height: 96px; object-fit: cover; border-radius: 10px; flex-shrink: 0; background: var(--bg-base); }
+.concept-body { min-width: 0; flex: 1; }
+.concept-title { font-size: 14px; font-weight: 700; color: var(--text-primary); display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.concept-text { font-size: 13px; line-height: 1.5; color: var(--text-secondary); margin-top: 4px; }
+.concept-link { display: inline-block; margin-top: 6px; font-size: 12px; color: var(--accent); text-decoration: none; font-weight: 600; }
+@media (max-width: 420px) {
+  .concept-card { flex-direction: column; }
+  .concept-thumb { width: 100%; height: auto; aspect-ratio: 16 / 10; }
+}
+
+.media-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+@media (min-width: 600px) { .media-grid { grid-template-columns: repeat(4, 1fr); } }
+.media-fig { display: block; text-decoration: none; color: var(--text-muted); font-size: 11px; line-height: 1.3; min-width: 0; }
+.media-fig img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 10px; background: var(--bg-muted); display: block; }
+.media-cap {
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  margin-top: 3px; font-size: 11px; color: var(--text-muted);
+}
+.media-video { width: 100%; max-height: 260px; margin-top: 8px; border-radius: 10px; background: #000; display: block; }
+
   </style>
 
   <!-- Dynamic PWA Manifest Blob Injection -->
@@ -1852,6 +1978,7 @@ button, input, textarea, select {
           <button id="btn-toggle-pinyin" class="toggle-btn active" onclick="togglePinyin()">
             <span data-i18n="pinyin">Phiên âm</span>
           </button>
+          <button id="btn-toggle-select" class="toggle-btn" onclick="togglePhraseSelect()">✂ <span id="lbl-select">Chọn cụm</span></button>
           <button id="btn-toggle-meaning" class="toggle-btn" onclick="toggleMeaning()">
             <span data-i18n="meaning">Nghĩa</span>
           </button>
@@ -1891,9 +2018,11 @@ button, input, textarea, select {
         <div id="dict-quick-tags" class="dict-quick-tags">
           <span class="dict-quick-label" data-i18n="quickSuggestions">Gợi ý:</span>
           <span class="dict-quick-tag" onclick="quickSearchDict('你好')">你好</span>
+          <span class="dict-quick-tag" onclick="quickSearchDict('yyds')">yyds</span>
+          <span class="dict-quick-tag" onclick="quickSearchDict('内卷')">内卷</span>
+          <span class="dict-quick-tag" onclick="quickSearchDict('躺平')">躺平</span>
+          <span class="dict-quick-tag" onclick="quickSearchDict('显眼包')">显眼包</span>
           <span class="dict-quick-tag" onclick="quickSearchDict('学习')">学习</span>
-          <span class="dict-quick-tag" onclick="quickSearchDict('坚持')">坚持</span>
-          <span class="dict-quick-tag" onclick="quickSearchDict('朋友')">朋友</span>
           <span class="dict-quick-tag" onclick="quickSearchDict('工作')">工作</span>
           <span class="dict-quick-tag" onclick="quickSearchDict('谢谢')">谢谢</span>
         </div>
@@ -1917,6 +2046,7 @@ button, input, textarea, select {
               <div class="filter-chip dict-filter-chip" data-hsk="4" onclick="setDictFilter('4')">HSK 4</div>
               <div class="filter-chip dict-filter-chip" data-hsk="5" onclick="setDictFilter('5')">HSK 5</div>
               <div class="filter-chip dict-filter-chip" data-hsk="6" onclick="setDictFilter('6')">HSK 6</div>
+              <div class="filter-chip dict-filter-chip" data-hsk="slang" onclick="setDictFilter('slang')" style="background:rgba(232,52,78,0.08); border-color:rgba(232,52,78,0.25); color:var(--accent); font-weight:600;" data-i18n="hskSlang">🔥 Từ lóng Slang</div>
             </div>
             <div id="dict-hsk-count" style="font-size:12px; color:var(--text-muted); margin-bottom:8px;"></div>
           </div>
@@ -2179,6 +2309,8 @@ button, input, textarea, select {
     </div>
   </div>
 
+  <div id="sheet-enrich"></div>
+
   <!-- Ví dụ câu chứa từ vựng -->
   <div id="sheet-examples-section" style="margin-top:16px;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
@@ -2227,7 +2359,9 @@ button, input, textarea, select {
     
     <textarea id="ocr-edit-textarea" class="textarea-box" style="height:160px; font-size:16px;" lang="zh-CN" data-i18n-ph="ocrEditPlaceholder" placeholder="Văn bản nhận diện sẽ hiển thị ở đây..."></textarea>
     
-    <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:16px;">
+    <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:16px; flex-wrap:wrap;">
+      <button class="btn btn-secondary" id="btn-ocr-raw" onclick="ocrRestoreRaw()" style="display:none;"></button>
+      <button class="btn btn-secondary" id="btn-ocr-clean" onclick="ocrCleanNow()"></button>
       <button class="btn btn-secondary" onclick="closeOcrModal()">
         <span data-i18n="cancel">Hủy</span>
       </button>
@@ -2291,6 +2425,20 @@ button, input, textarea, select {
  * Integrated with Tesseract OCR, PDF.js Engine, Hanzi Writer, & 3-Tier TTS.
  * ====================================================================
  */
+
+// --- Storage hardening (private mode / quota / in-app browsers) ---
+(function () {
+  try {
+    const P = Storage.prototype, g = P.getItem, s = P.setItem, r = P.removeItem;
+    P.getItem = function (k) { try { return g.call(this, k); } catch (e) { return null; } };
+    P.setItem = function (k, v) { try { s.call(this, k, v); } catch (e) { console.warn('storage unavailable', k); } };
+    P.removeItem = function (k) { try { r.call(this, k); } catch (e) {} };
+  } catch (e) {}
+})();
+function safeJSON(key, fallback) {
+  try { const v = JSON.parse(localStorage.getItem(key)); return (v === null || v === undefined) ? fallback : v; }
+  catch (e) { return fallback; }
+}
 
 // --- Embedded i18n Data ---
 const I18N_DATA = {
@@ -2396,6 +2544,7 @@ const I18N_DATA = {
     "splitWord": "Tách thành chữ đơn",
     "noMeaning": "Chưa có nghĩa",
     "hskAll": "Tất cả HSK",
+    "hskSlang": "🔥 Từ lóng Slang",
     "filterHSK": "Lọc theo HSK",
     "sortAlpha": "A → Z",
     "sortDate": "Mới nhất",
@@ -2490,7 +2639,8 @@ const I18N_DATA = {
     "notWhatYouLookedFor": "Không phải từ bạn đang tìm?",
     "searchOnlineHere": "Tra cứu trực tuyến tại đây",
     "onlineLookupDesc": "Dịch AI, phát âm giọng chuẩn bản xứ và thứ tự nét",
-    "btnSearchOnline": "Tra online →"
+    "btnSearchOnline": "Tra online →",
+    "words": "từ"
   },
   "en": {
     "appName": "NCZ翻译",
@@ -2594,6 +2744,7 @@ const I18N_DATA = {
     "splitWord": "Split into characters",
     "noMeaning": "No meaning available",
     "hskAll": "All HSK",
+    "hskSlang": "🔥 Hot Slangs",
     "filterHSK": "Filter by HSK",
     "sortAlpha": "A → Z",
     "sortDate": "Newest",
@@ -2688,7 +2839,8 @@ const I18N_DATA = {
     "notWhatYouLookedFor": "Not the word you're looking for?",
     "searchOnlineHere": "Search online here",
     "onlineLookupDesc": "Smart AI translation, native audio & stroke order",
-    "btnSearchOnline": "Search online →"
+    "btnSearchOnline": "Search online →",
+    "words": "words"
   },
   "ja": {
     "appName": "NCZ翻译",
@@ -2792,6 +2944,7 @@ const I18N_DATA = {
     "splitWord": "1文字ずつに分割",
     "noMeaning": "意味がありません",
     "hskAll": "全HSK",
+    "hskSlang": "🔥 流行語スラング",
     "filterHSK": "HSKでフィルター",
     "sortAlpha": "A → Z",
     "sortDate": "新しい順",
@@ -2886,7 +3039,8 @@ const I18N_DATA = {
     "notWhatYouLookedFor": "お探しの単語ではありませんか？",
     "searchOnlineHere": "オンラインで検索",
     "onlineLookupDesc": "AI翻訳・ネイティブ発音・筆順アニメーション",
-    "btnSearchOnline": "オンライン検索 →"
+    "btnSearchOnline": "オンライン検索 →",
+    "words": "語"
   }
 };
 
@@ -9916,7 +10070,7 @@ const MINI_DICT = {
   "冰冻三尺，非一日之寒": { "pinyin": "bīng dòng sān chǐ, fēi yī rì zhī hán", "en": ["Rome was not built in a day"], "vi": "Băng dày ba thước chẳng bởi cái rét một ngày (tích tụ lâu dài)", "hanviet": "băng đống tam xích, phi nhất nhật chi hàn", "type": "proverb", "hsk": 6 },
 };
 
-// --- Embedded Han Viet Table (691 characters) ---
+// --- Embedded Han Viet Table (2379 characters) ---
 const HAN_VIET = {
   "一": "Nhất",
   "乙": "Ất",
@@ -10002,7 +10156,7 @@ const HAN_VIET = {
   "木": "Mộc",
   "五": "Ngũ",
   "支": "Chi",
-  "厅": "Sảnh",
+  "厅": "Thính",
   "不": "Bất",
   "太": "Thái",
   "犬": "Khuyển",
@@ -10070,7 +10224,7 @@ const HAN_VIET = {
   "方": "Phương",
   "火": "Hỏa",
   "为": "Vi",
-  "斗": "Đẩu",
+  "斗": "Đấu",
   "忆": "Ức",
   "计": "Kế",
   "订": "Đính",
@@ -10123,7 +10277,7 @@ const HAN_VIET = {
   "卡": "Tạp",
   "北": "Bắc",
   "占": "Chiêm",
-  "业": "Nhiệp",
+  "业": "Nghiệp",
   "旧": "Cựu",
   "帅": "Soái",
   "归": "Quy",
@@ -10135,11 +10289,11 @@ const HAN_VIET = {
   "申": "Thân",
   "叮": "Đinh",
   "电": "Điện",
-  "号": "Hiệu",
+  "号": "Hào",
   "田": "Điền",
   "由": "Do",
   "史": "Sử",
-  "只": "Chích",
+  "只": "Chỉ",
   "央": "Ương",
   "兄": "Huynh",
   "叼": "Điêu",
@@ -10183,7 +10337,7 @@ const HAN_VIET = {
   "兰": "Lan",
   "半": "Bán",
   "汁": "Trấp",
-  "汇": "Hối",
+  "汇": "Vựng",
   "头": "Đầu",
   "汉": "Hán",
   "宁": "Ninh",
@@ -10199,7 +10353,7 @@ const HAN_VIET = {
   "讯": "Tấn",
   "记": "Ký",
   "永": "Vĩnh",
-  "司": "Ty",
+  "司": "Ti",
   "尼": "Ni",
   "民": "Dân",
   "出": "Xuất",
@@ -10271,7 +10425,7 @@ const HAN_VIET = {
   "夹": "Giáp",
   "轨": "Quỹ",
   "邪": "Tà",
-  "划": "Họa",
+  "划": "Hoạch",
   "迈": "Mại",
   "毕": "Tất",
   "至": "Chí",
@@ -10323,10 +10477,10 @@ const HAN_VIET = {
   "任": "Nhiệm",
   "伤": "Thương",
   "价": "Giá",
-  "份": "Phần",
+  "份": "Phân",
   "华": "Hoa",
   "仰": "Ngưỡng",
-  "仿": "Phỏng",
+  "仿": "Phảng",
   "全": "Toàn",
   "后": "Hậu",
   "向": "Hướng",
@@ -10357,7 +10511,7 @@ const HAN_VIET = {
   "问": "Vấn",
   "闯": "Sấm",
   "羊": "Dương",
-  "并": "Tịnh",
+  "并": "Bính",
   "关": "Quan",
   "米": "Mễ",
   "灯": "Đăng",
@@ -10368,7 +10522,7 @@ const HAN_VIET = {
   "池": "Trì",
   "汤": "Thang",
   "忙": "Mang",
-  "兴": "Hưng",
+  "兴": "Hứng",
   "宇": "Vũ",
   "守": "Thủ",
   "宅": "Trạch",
@@ -10376,7 +10530,7 @@ const HAN_VIET = {
   "安": "An",
   "寻": "Tầm",
   "导": "Đạo",
-  "尽": "Tẫn",
+  "尽": "Tận",
   "孙": "Tôn",
   "阵": "Trận",
   "阳": "Dương",
@@ -10414,7 +10568,7 @@ const HAN_VIET = {
   "迟": "Trì",
   "返": "Phản",
   "走": "Tẩu",
-  "赶": "Cản",
+  "赶": "Cảm",
   "起": "Khởi",
   "超": "Siêu",
   "越": "Việt",
@@ -10516,7 +10670,7 @@ const HAN_VIET = {
   "零": "Linh",
   "雷": "Lôi",
   "震": "Chấn",
-  "霉": "Mốc",
+  "霉": "Môi",
   "霍": "Hoắc",
   "霖": "Lâm",
   "霜": "Sương",
@@ -10534,7 +10688,7 @@ const HAN_VIET = {
   "音": "Âm",
   "韵": "Vận",
   "韶": "Thiều",
-  "顶": "Đỉnh",
+  "顶": "Đính",
   "顷": "Khoảnh",
   "项": "Hạng",
   "顺": "Thuận",
@@ -10545,7 +10699,7 @@ const HAN_VIET = {
   "颁": "Ban",
   "颂": "Tụng",
   "预": "Dự",
-  "领": "Lãnh",
+  "领": "Lĩnh",
   "颇": "Phả",
   "频": "Tần",
   "颗": "Khỏa",
@@ -10608,10 +10762,1698 @@ const HAN_VIET = {
   "鼠": "Thử",
   "鼻": "Tị",
   "龄": "Linh",
-  "齿": "Xỉ"
+  "齿": "Xỉ",
+  "你": "Nhĩ",
+  "我": "Ngã",
+  "她": "Tha",
+  "这": "Giá",
+  "那": "Na",
+  "哪": "Ná",
+  "谁": "Thùy",
+  "些": "Tia",
+  "块": "Khối",
+  "没": "Một",
+  "很": "Hẩn",
+  "和": "Hòa",
+  "的": "Đích",
+  "呢": "Ni",
+  "吧": "Ba",
+  "喂": "Uy",
+  "家": "Gia",
+  "点": "Điểm",
+  "菜": "Thái",
+  "茶": "Trà",
+  "猫": "Miêu",
+  "狗": "Cẩu",
+  "请": "Thỉnh",
+  "是": "Thị",
+  "看": "Khán",
+  "听": "Thính",
+  "读": "Độc",
+  "来": "Lai",
+  "回": "Hồi",
+  "喝": "Hát",
+  "做": "Tác",
+  "坐": "Tọa",
+  "住": "Trú",
+  "想": "Tưởng",
+  "会": "Hội",
+  "能": "Năng",
+  "冷": "Lãnh",
+  "热": "Nhiệt",
+  "您": "Nâm",
+  "每": "Mỗi",
+  "两": "Lưỡng",
+  "还": "Hoàn",
+  "最": "Tối",
+  "真": "Chân",
+  "就": "Tựu",
+  "离": "Ly",
+  "贵": "Quý",
+  "快": "Khoái",
+  "慢": "Mạn",
+  "近": "Cận",
+  "累": "Luy",
+  "新": "Tân",
+  "晴": "Tình",
+  "懂": "Đổng",
+  "笑": "Tiếu",
+  "哭": "Khốc",
+  "到": "Đáo",
+  "穿": "Xuyên",
+  "给": "Cấp",
+  "找": "Trảo",
+  "完": "Hoàn",
+  "玩": "Ngoạn",
+  "送": "Tống",
+  "等": "Đẳng",
+  "票": "Phiếu",
+  "药": "Dược",
+  "敢": "Cảm",
+  "把": "Bả",
+  "被": "Bị",
+  "拿": "Nã",
+  "借": "Tá",
+  "换": "Hoán",
+  "骑": "Kỵ",
+  "搬": "Ban",
+  "祝": "Chúc",
+  "难": "Nan",
+  "渴": "Khát",
+  "饿": "Ngạ",
+  "胖": "Bạng",
+  "瘦": "Sấu",
+  "树": "Thụ",
+  "花": "Hoa",
+  "草": "Thảo",
+  "桥": "Kiều",
+  "河": "Hà",
+  "海": "Hải",
+  "湖": "Hồ",
+  "度": "Độ",
+  "猪": "Trư",
+  "脚": "Cước",
+  "腿": "Thoái",
+  "脸": "Liểm",
+  "胃": "Vị",
+  "疼": "Đông",
+  "赢": "Doanh",
+  "糖": "Đường",
+  "盐": "Diêm",
+  "油": "Du",
+  "醋": "Thố",
+  "甜": "Điềm",
+  "苦": "Khổ",
+  "咸": "Hàm",
+  "碗": "Oản",
+  "篇": "Thiên",
+  "遍": "Biến",
+  "猜": "Sai",
+  "尝": "Thường",
+  "吵": "Sảo",
+  "戴": "Đái",
+  "底": "Để",
+  "掉": "Điệu",
+  "扶": "Phù",
+  "富": "Phú",
+  "各": "Các",
+  "摆": "Bãi",
+  "册": "Sách",
+  "插": "Sáp",
+  "抄": "Sao",
+  "炒": "Sao",
+  "初": "Sơ",
+  "吹": "Xuy",
+  "堆": "Đôi",
+  "朵": "Đóa",
+  "惨": "Thảm",
+  "横": "Hoành",
+  "怎": "Chẩm",
+  "样": "Dạng",
+  "学": "Học",
+  "校": "Hiệu",
+  "店": "Điếm",
+  "商": "Thương",
+  "医": "Y",
+  "院": "Viện",
+  "站": "Trạm",
+  "国": "Quốc",
+  "京": "Kinh",
+  "明": "Minh",
+  "昨": "Tạc",
+  "星": "Tinh",
+  "期": "Kỳ",
+  "现": "Hiện",
+  "时": "Thời",
+  "候": "Hậu",
+  "爸": "Ba",
+  "朋": "Bằng",
+  "姐": "Thư",
+  "服": "Phục",
+  "果": "Quả",
+  "苹": "Bình",
+  "杯": "Bôi",
+  "租": "Tô",
+  "视": "Thị",
+  "脑": "Não",
+  "影": "Ảnh",
+  "语": "Ngữ",
+  "桌": "Trác",
+  "椅": "Ỷ",
+  "谢": "Tạ",
+  "客": "Khách",
+  "系": "Hệ",
+  "说": "Thuyết",
+  "话": "Thoại",
+  "睡": "Thụy",
+  "觉": "Giác",
+  "作": "Tác",
+  "漂": "Phiêu",
+  "亮": "Lượng",
+  "第": "Đệ",
+  "经": "Kinh",
+  "所": "Sở",
+  "但": "Đãn",
+  "虽": "Tuy",
+  "然": "Nhiên",
+  "便": "Tiện",
+  "宜": "Nghi",
+  "答": "Đáp",
+  "帮": "Bang",
+  "助": "Trợ",
+  "准": "Chuẩn",
+  "备": "Bị",
+  "始": "Thủy",
+  "绍": "Thiệu",
+  "旅": "Lữ",
+  "游": "Du",
+  "踢": "Thích",
+  "球": "Cầu",
+  "泳": "Vịnh",
+  "舞": "Vũ",
+  "唱": "Xướng",
+  "歌": "Ca",
+  "告": "Cáo",
+  "诉": "Tố",
+  "事": "Sự",
+  "情": "Tình",
+  "试": "Thí",
+  "房": "Phòng",
+  "教": "Giáo",
+  "室": "Thất",
+  "体": "Thể",
+  "眼": "Nhãn",
+  "睛": "Tình",
+  "蛋": "Đản",
+  "咖": "Cà",
+  "啡": "Phê",
+  "表": "Biểu",
+  "报": "Báo",
+  "纸": "Chỉ",
+  "晚": "Vãn",
+  "旁": "Bàng",
+  "应": "Ưng",
+  "该": "Cai",
+  "意": "Ý",
+  "常": "Thường",
+  "其": "Kỳ",
+  "实": "Thực",
+  "特": "Đặc",
+  "别": "Biệt",
+  "直": "Trực",
+  "定": "Định",
+  "差": "Sai",
+  "突": "Đột",
+  "相": "Tương",
+  "或": "Hoặc",
+  "者": "Giả",
+  "要": "Yếu",
+  "按": "Án",
+  "照": "Chiếu",
+  "参": "Tham",
+  "检": "Kiểm",
+  "查": "Tra",
+  "练": "Luyện",
+  "解": "Giải",
+  "择": "Trạch",
+  "注": "Chú",
+  "响": "Hưởng",
+  "提": "Đề",
+  "信": "Tín",
+  "希": "Hy",
+  "望": "Vọng",
+  "求": "Cầu",
+  "担": "Đam",
+  "奇": "Kỳ",
+  "怪": "Quái",
+  "清": "Thanh",
+  "楚": "Sở",
+  "聪": "Thông",
+  "努": "Nỗ",
+  "简": "Giản",
+  "单": "Đơn",
+  "容": "Dung",
+  "易": "Dị",
+  "净": "Tịnh",
+  "舒": "Thư",
+  "数": "Số",
+  "育": "Dục",
+  "故": "Cố",
+  "赛": "Tái",
+  "绩": "Tích",
+  "惯": "Quán",
+  "法": "Pháp",
+  "理": "Lý",
+  "邻": "Lân",
+  "居": "Cư",
+  "物": "Vật",
+  "行": "Hành",
+  "李": "Lý",
+  "箱": "Tương",
+  "护": "Hộ",
+  "厨": "Trù",
+  "洗": "Tẩy",
+  "图": "Đồ",
+  "园": "Viên",
+  "城": "Thành",
+  "环": "Hoàn",
+  "境": "Cảnh",
+  "季": "Quý",
+  "春": "Xuân",
+  "夏": "Hạ",
+  "秋": "Thu",
+  "词": "Từ",
+  "思": "Tứ",
+  "段": "Đoạn",
+  "落": "Lạc",
+  "界": "Giới",
+  "言": "Ngôn",
+  "活": "Hoạt",
+  "健": "Kiện",
+  "康": "Khang",
+  "复": "Phức",
+  "杂": "Tạp",
+  "持": "Trì",
+  "保": "Bảo",
+  "展": "Triển",
+  "败": "Bại",
+  "结": "Kết",
+  "束": "Thúc",
+  "继": "Kế",
+  "续": "Tục",
+  "改": "Cải",
+  "变": "Biến",
+  "忘": "Vong",
+  "得": "Đắc",
+  "感": "Cảm",
+  "爱": "Ái",
+  "貌": "Mạo",
+  "糊": "Hồ",
+  "涂": "Đồ",
+  "贫": "Bần",
+  "穷": "Cùng",
+  "普": "Phổ",
+  "声": "Thanh",
+  "调": "Điệu",
+  "笔": "Bút",
+  "画": "Họa",
+  "翻": "Phiên",
+  "译": "Dịch",
+  "典": "Điển",
+  "拼": "Bính",
+  "课": "Khóa",
+  "程": "Trình",
+  "授": "Thụ",
+  "留": "Lưu",
+  "格": "Cách",
+  "满": "Mãn",
+  "奖": "Tưởng",
+  "知": "Tri",
+  "识": "Thức",
+  "科": "Khoa",
+  "技": "Kỹ",
+  "息": "Tức",
+  "络": "Lạc",
+  "硬": "Ngạnh",
+  "搜": "Sưu",
+  "索": "Tác",
+  "密": "Mật",
+  "码": "Mã",
+  "账": "Chướng",
+  "登": "Đăng",
+  "录": "Lục",
+  "邮": "Bưu",
+  "短": "Đoản",
+  "微": "Vi",
+  "村": "Thôn",
+  "街": "Nhai",
+  "道": "Đạo",
+  "森": "Sâm",
+  "林": "Lâm",
+  "空": "Không",
+  "温": "Ôn",
+  "植": "Thực",
+  "熊": "Hùng",
+  "虎": "Hổ",
+  "狮": "Sư",
+  "象": "Tượng",
+  "嘴": "Chủy",
+  "病": "Bệnh",
+  "烧": "Thiêu",
+  "冒": "Mạo",
+  "咳": "Khái",
+  "嗽": "Thấu",
+  "受": "Thụ",
+  "散": "Tán",
+  "步": "Bộ",
+  "爬": "Ba",
+  "篮": "Lam",
+  "排": "Bài",
+  "条": "Điều",
+  "蔬": "Sơ",
+  "豆": "Đậu",
+  "柿": "Thị",
+  "蕉": "Tiêu",
+  "葡": "Bồ",
+  "萄": "Đào",
+  "橙": "Trừng",
+  "酱": "Tương",
+  "筷": "Khoái",
+  "盘": "Bàn",
+  "务": "Vụ",
+  "员": "Viên",
+  "贺": "Hạ",
+  "原": "Nguyên",
+  "谅": "Lượng",
+  "抱": "Bão",
+  "歉": "Khiểm",
+  "括": "Quát",
+  "证": "Chứng",
+  "演": "Diễn",
+  "博": "Bác",
+  "管": "Quản",
+  "材": "Tài",
+  "料": "Liệu",
+  "统": "Thống",
+  "概": "Khái",
+  "使": "Sứ",
+  "牌": "Bài",
+  "址": "Chỉ",
+  "梯": "Thê",
+  "放": "Phóng",
+  "弃": "Khí",
+  "景": "Cảnh",
+  "资": "Tư",
+  "购": "Câu",
+  "规": "Quy",
+  "际": "Tế",
+  "盒": "Hạp",
+  "积": "Tích",
+  "极": "Cực",
+  "建": "Kiến",
+  "将": "Tương",
+  "流": "Lưu",
+  "婚": "Hôn",
+  "济": "Tế",
+  "举": "Cử",
+  "距": "Cự",
+  "聚": "Tụ",
+  "困": "Khốn",
+  "联": "Liên",
+  "美": "Mỹ",
+  "丽": "Lệ",
+  "免": "Miễn",
+  "费": "Phí",
+  "耐": "Nại",
+  "培": "Bồi",
+  "养": "Dưỡng",
+  "批": "Phê",
+  "评": "Bình",
+  "品": "Phẩm",
+  "质": "Chất",
+  "签": "Thiêm",
+  "亲": "Thân",
+  "戚": "Thích",
+  "况": "Huống",
+  "假": "Giả",
+  "取": "Thủ",
+  "确": "Xác",
+  "社": "Xã",
+  "售": "Thụ",
+  "货": "Hóa",
+  "序": "Tự",
+  "私": "Tư",
+  "随": "Tùy",
+  "态": "Thái",
+  "填": "Điền",
+  "推": "Thôi",
+  "味": "Vị",
+  "聊": "Liêu",
+  "武": "Vũ",
+  "限": "Hạn",
+  "制": "Chế",
+  "幸": "Hạnh",
+  "福": "Phúc",
+  "需": "Nhu",
+  "前": "Tiền",
+  "局": "Cục",
+  "责": "Trách",
+  "增": "Tăng",
+  "自": "Tự",
+  "总": "Tổng",
+  "厕": "Xí",
+  "衬": "Sấn",
+  "衫": "Sam",
+  "熟": "Thục",
+  "乘": "Thừa",
+  "抽": "Trừu",
+  "烟": "Yên",
+  "除": "Trừ",
+  "窗": "Song",
+  "粗": "Thô",
+  "误": "Ngộ",
+  "案": "Án",
+  "扮": "Bạn",
+  "扰": "Nhiễu",
+  "陆": "Lục",
+  "待": "Đãi",
+  "遇": "Ngộ",
+  "纯": "Thuần",
+  "独": "Độc",
+  "位": "Vị",
+  "耽": "Đam",
+  "倒": "Đảo",
+  "处": "Xứ",
+  "堵": "Đổ",
+  "肚": "Đỗ",
+  "童": "Đồng",
+  "罚": "Phạt",
+  "款": "Khoản",
+  "烦": "Phiền",
+  "恼": "Não",
+  "范": "Phạm",
+  "围": "Vi",
+  "访": "Phỏng",
+  "纷": "Phân",
+  "奋": "Phấn",
+  "愤": "Phẫn",
+  "怒": "Nộ",
+  "俗": "Tục",
+  "险": "Hiểm",
+  "否": "Phủ",
+  "符": "Phù",
+  "脆": "Thúy",
+  "燥": "Táo",
+  "紧": "Khẩn",
+  "隔": "Cách",
+  "壁": "Bích",
+  "根": "Căn",
+  "更": "Canh",
+  "寓": "Ngụ",
+  "贡": "Cống",
+  "献": "Hiến",
+  "励": "Lệ",
+  "冠": "Quán",
+  "军": "Quân",
+  "律": "Luật",
+  "模": "Mô",
+  "则": "Tắc",
+  "柜": "Quỹ",
+  "慰": "Ủy",
+  "熬": "Ngao",
+  "夜": "Dạ",
+  "握": "Ác",
+  "班": "Ban",
+  "含": "Hàm",
+  "怨": "Oán",
+  "背": "Bối",
+  "论": "Luận",
+  "标": "Tiêu",
+  "览": "Lãm",
+  "断": "Đoạn",
+  "财": "Tài",
+  "承": "Thừa",
+  "诚": "Thành",
+  "版": "Bản",
+  "创": "Sáng",
+  "替": "Thế",
+  "致": "Trí",
+  "松": "Tùng",
+  "负": "Phụ",
+  "装": "Trang",
+  "据": "Cứ",
+  "供": "Cung",
+  "沟": "Câu",
+  "估": "Cô",
+  "固": "Cố",
+  "泛": "Phiếm",
+  "何": "Hà",
+  "基": "Cơ",
+  "集": "Tập",
+  "坚": "Kiên",
+  "减": "Giảm",
+  "拒": "Cự",
+  "绝": "Tuyệt",
+  "察": "Sát",
+  "控": "Khống",
+  "劳": "Lao",
+  "例": "Lệ",
+  "临": "Lâm",
+  "灵": "Linh",
+  "域": "Vực",
+  "显": "Hiển",
+  "偶": "Ngẫu",
+  "尔": "Nhĩ",
+  "强": "Cường",
+  "漫": "Mạn",
+  "深": "Thâm",
+  "刻": "Khắc",
+  "命": "Mệnh",
+  "省": "Tỉnh",
+  "略": "Lược",
+  "获": "Hoạch",
+  "损": "Tổn",
+  "补": "Bổ",
+  "善": "Thiện",
+  "往": "Vãng",
+  "稳": "Ổn",
+  "效": "Hiệu",
+  "性": "Tính",
+  "宣": "Tuyên",
+  "讲": "Giảng",
+  "般": "Ban",
+  "依": "Y",
+  "利": "Lợi",
+  "愉": "Du",
+  "接": "Tiếp",
+  "指": "Chỉ",
+  "职": "Chức",
+  "张": "Trương",
+  "细": "Tế",
+  "惜": "Tích",
+  "拜": "Bái",
+  "傍": "Bàng",
+  "裹": "Khỏa",
+  "宝": "Bảo",
+  "悲": "Bi",
+  "哀": "Ai",
+  "彼": "Bỉ",
+  "竟": "Cánh",
+  "避": "Tị",
+  "编": "Biên",
+  "志": "Chí",
+  "毒": "Độc",
+  "播": "Bá",
+  "骤": "Sậu",
+  "采": "Thải",
+  "彩": "Thải",
+  "虹": "Hồng",
+  "残": "Tàn",
+  "疾": "Tật",
+  "灿": "Xán",
+  "烂": "Lạn",
+  "惭": "Tàm",
+  "愧": "Quý",
+  "操": "Thao",
+  "曾": "Tằng",
+  "朝": "Triều",
+  "彻": "Triệt",
+  "沉": "Trầm",
+  "称": "Xưng",
+  "呼": "Hô",
+  "赞": "Tán",
+  "翅": "Xí",
+  "膀": "Bàng",
+  "席": "Tịch",
+  "储": "Trữ",
+  "蓄": "Súc",
+  "递": "Đệ",
+  "染": "Nhiễm",
+  "帘": "Liêm",
+  "刺": "Thứ",
+  "激": "Kích",
+  "匆": "Thông",
+  "促": "Xúc",
+  "措": "Thố",
+  "施": "Thi",
+  "厦": "Hạ",
+  "型": "Hình",
+  "贷": "Thải",
+  "余": "Dư",
+  "恶": "Ác",
+  "抖": "Đẩu",
+  "佛": "Phất",
+  "疯": "Phong",
+  "狂": "Cuồng",
+  "腐": "Hủ",
+  "钢": "Cương",
+  "档": "Đương",
+  "掌": "Chưởng",
+  "暧": "Ái",
+  "昧": "Muội",
+  "废": "Phế",
+  "奔": "Bôn",
+  "政": "Chính",
+  "策": "Sách",
+  "层": "Tầng",
+  "恳": "Khẩn",
+  "诺": "Nặc",
+  "触": "Xúc",
+  "忧": "Ưu",
+  "急": "Cấp",
+  "德": "Đức",
+  "线": "Tuyến",
+  "整": "Chỉnh",
+  "挥": "Huy",
+  "繁": "Phồn",
+  "荣": "Vinh",
+  "析": "Tích",
+  "念": "Niệm",
+  "具": "Cụ",
+  "渡": "Độ",
+  "核": "Hạch",
+  "弘": "Hoằng",
+  "础": "Sở",
+  "降": "Giáng",
+  "低": "Đê",
+  "融": "Dung",
+  "织": "Chức",
+  "精": "Tinh",
+  "神": "Thần",
+  "均": "Quân",
+  "衡": "Hành",
+  "拓": "Thác",
+  "洞": "Đỗng",
+  "框": "Khuông",
+  "架": "Giá",
+  "益": "Ích",
+  "贸": "Mậu",
+  "涵": "Hàm",
+  "凝": "Ngưng",
+  "判": "Phán",
+  "破": "Phá",
+  "坏": "Hoại",
+  "柔": "Nhu",
+  "渗": "Thẩm",
+  "疏": "Sơ",
+  "素": "Tố",
+  "势": "Thế",
+  "虚": "Hư",
+  "构": "Cấu",
+  "研": "Nghiên",
+  "究": "Cứu",
+  "撑": "Xưng",
+  "综": "Tổng",
+  "尊": "Tôn",
+  "悼": "Điệu",
+  "癌": "Nham",
+  "症": "Chứng",
+  "昂": "Ngang",
+  "凹": "Ao",
+  "凸": "Đột",
+  "拔": "Bạt",
+  "苗": "Miêu",
+  "罢": "Bãi",
+  "伴": "Bạn",
+  "庇": "Tí",
+  "袱": "Phục",
+  "暴": "Bạo",
+  "躁": "Táo",
+  "爆": "Bạo",
+  "炸": "Sạ",
+  "卑": "Ti",
+  "波": "Ba",
+  "崩": "Băng",
+  "溃": "Quỵ",
+  "逼": "Bức",
+  "喻": "Dụ",
+  "鄙": "Bỉ",
+  "塞": "Tắc",
+  "垒": "Lũy",
+  "鞭": "Tiên",
+  "缘": "Duyên",
+  "捷": "Tiệp",
+  "浪": "Lãng",
+  "涛": "Đào",
+  "剥": "Bác",
+  "削": "Tước",
+  "搏": "Bác",
+  "偿": "Thường",
+  "堪": "Kham",
+  "禁": "Cấm",
+  "屑": "Tiết",
+  "裁": "Tài",
+  "纳": "Nạp",
+  "谋": "Mưu",
+  "纵": "Túng",
+  "测": "Trắc",
+  "阐": "Xiển",
+  "倡": "Xướng",
+  "畅": "Sướng",
+  "潮": "Triều",
+  "湿": "Thấp",
+  "撤": "Triệt",
+  "淀": "Điện",
+  "陈": "Trần",
+  "钝": "Độn",
+  "疑": "Nghi",
+  "赤": "Xích",
+  "沛": "Bái",
+  "筹": "Trù",
+  "犯": "Phạm",
+  "洁": "Khiết",
+  "粹": "Túy",
+  "弱": "Nhược",
+  "挫": "Tỏa",
+  "折": "Chiết",
+  "搭": "Đáp",
+  "呆": "Ngốc",
+  "板": "Bản",
+  "怠": "Đãi",
+  "逮": "Đãi",
+  "捕": "Bộ",
+  "胆": "Đảm",
+  "怯": "Khiếp",
+  "诞": "Đản",
+  "弹": "Đạn",
+  "航": "Hàng",
+  "厚": "Hậu",
+  "抵": "Để",
+  "惦": "Điếm",
+  "奠": "Điện",
+  "荡": "Đãng",
+  "督": "Đốc",
+  "赌": "Đổ",
+  "杜": "Đỗ",
+  "堕": "Đọa",
+  "官": "Quan",
+  "贯": "Quán",
+  "蛇": "Xà",
+  "添": "Thiêm",
+  "蛙": "Oa",
+  "株": "Chu",
+  "兔": "Thố",
+  "琴": "Cầm",
+  "掩": "Yểm",
+  "盗": "Đạo",
+  "盾": "Thuẫn",
+  "乱": "Loạn",
+  "糟": "Tao",
+  "莫": "Mạc",
+  "妙": "Diệu",
+  "胸": "Hung",
+  "牢": "Lao",
+  "源": "Nguyên",
+  "踏": "Đạp",
+  "欣": "Hân",
+  "瞪": "Trừng",
+  "刮": "Quát",
+  "勇": "Dũng",
+  "旗": "Kỳ",
+  "胜": "Thắng",
+  "赴": "Phó",
+  "抒": "Thư",
+  "循": "Tuần",
+  "渐": "Tiệm",
+  "异": "Dị",
+  "卷": "Quyển",
+  "种": "Chủng",
+  "槽": "Tào",
+  "群": "Quần",
+  "柠": "Ninh",
+  "檬": "Mông",
+  "恐": "Khủng",
+  "值": "Trị",
+  "剁": "Đoái",
+  "刷": "Xoát",
+  "屏": "Bình",
+  "袭": "Tập",
+  "秒": "Miểu",
+  "鲤": "Lý",
+  "杠": "Giang",
+  "带": "Đái",
+  "奏": "Tấu",
+  "雄": "Hùng",
+  "良": "Lương",
+  "忠": "Trung",
+  "両": "Lưỡng",
+  "严": "Nghiêm",
+  "並": "Tịnh",
+  "丨": "Cổn",
+  "乗": "Thừa",
+  "乳": "Nhũ",
+  "予": "Dự",
+  "享": "Hưởng",
+  "仕": "Sĩ",
+  "企": "Xí",
+  "伝": "Truyền",
+  "伞": "Tản",
+  "伦": "Luân",
+  "伸": "Thân",
+  "似": "Tự",
+  "価": "Giá",
+  "係": "Hệ",
+  "修": "Tu",
+  "俱": "Câu",
+  "個": "Cá",
+  "倍": "Bội",
+  "値": "Trị",
+  "倫": "Luân",
+  "倾": "Khuynh",
+  "偉": "Vĩ",
+  "停": "Đình",
+  "側": "Trắc",
+  "偷": "Du",
+  "傑": "Kiệt",
+  "傘": "Tản",
+  "備": "Bị",
+  "催": "Thôi",
+  "傲": "Ngạo",
+  "傾": "Khuynh",
+  "働": "Động",
+  "像": "Tượng",
+  "僚": "Liêu",
+  "儀": "Nghi",
+  "優": "Ưu",
+  "兆": "Triệu",
+  "克": "Khắc",
+  "兑": "Đoái",
+  "兢": "Căng",
+  "兵": "Binh",
+  "円": "Viên",
+  "冊": "Sách",
+  "冥": "Minh",
+  "冻": "Đống",
+  "処": "Xử",
+  "凭": "Bằng",
+  "券": "Khoán",
+  "則": "Tắc",
+  "剔": "Dịch",
+  "剧": "Kịch",
+  "剩": "Thặng",
+  "剪": "Tiễn",
+  "副": "Phó",
+  "割": "Cát",
+  "劇": "Kịch",
+  "劲": "Kính",
+  "労": "Lao",
+  "効": "Hiệu",
+  "勉": "Miễn",
+  "動": "Động",
+  "勘": "Khám",
+  "務": "Vụ",
+  "勝": "Thắng",
+  "募": "Mộ",
+  "勢": "Thế",
+  "勤": "Cần",
+  "勧": "Khuyến",
+  "卒": "Tốt",
+  "卓": "Trác",
+  "協": "Hiệp",
+  "卖": "Mại",
+  "南": "Nam",
+  "単": "Đơn",
+  "危": "Nguy",
+  "即": "Tức",
+  "卵": "Noãn",
+  "厢": "Sương",
+  "厳": "Nghiêm",
+  "収": "Thu",
+  "叙": "Tự",
+  "呂": "Lữ",
+  "周": "Chu",
+  "咲": "Tiếu",
+  "咽": "Yết",
+  "哄": "Hống",
+  "哗": "Hoa",
+  "員": "Viên",
+  "哥": "Ca",
+  "哲": "Triết",
+  "唐": "Đường",
+  "唯": "Duy",
+  "問": "Vấn",
+  "啸": "Khiếu",
+  "喉": "Hầu",
+  "喜": "Hỷ",
+  "喧": "Huyên",
+  "喩": "Dụ",
+  "喪": "Tang",
+  "喫": "Khiết",
+  "嘆": "Thán",
+  "嘱": "Chúc",
+  "噛": "Giảo",
+  "嚼": "Tước",
+  "団": "Đoàn",
+  "囲": "Vi",
+  "図": "Đồ",
+  "圆": "Viên",
+  "園": "Viên",
+  "圧": "Áp",
+  "坎": "Khảm",
+  "坦": "Thản",
+  "坷": "Khả",
+  "垂": "Thùy",
+  "埋": "Mai",
+  "埠": "Phụ",
+  "堂": "Đường",
+  "堅": "Kiên",
+  "報": "Báo",
+  "場": "Trường",
+  "塊": "Khối",
+  "塑": "Tố",
+  "塩": "Diêm",
+  "増": "Tăng",
+  "壊": "Hoại",
+  "壌": "Nhưỡng",
+  "売": "Mại",
+  "変": "Biến",
+  "够": "Cấu",
+  "夢": "Mộng",
+  "契": "Khế",
+  "套": "Sáo",
+  "奥": "Áo",
+  "奨": "Tưởng",
+  "奪": "Đoạt",
+  "奮": "Phấn",
+  "妒": "Đố",
+  "妨": "Phương",
+  "妹": "Muội",
+  "姉": "Tỷ",
+  "姻": "Nhân",
+  "姿": "Tư",
+  "威": "Uy",
+  "娘": "Nương",
+  "媒": "Môi",
+  "媚": "Mị",
+  "嫉": "Tật",
+  "嫌": "Hiềm",
+  "嫖": "Phiêu",
+  "嬉": "Hi",
+  "嬢": "Nương",
+  "孩": "Hài",
+  "宏": "Hoành",
+  "宗": "Tông",
+  "宙": "Trụ",
+  "実": "Thực",
+  "审": "Thẩm",
+  "宫": "Cung",
+  "宮": "Cung",
+  "害": "Hại",
+  "宴": "Yến",
+  "宽": "Khoan",
+  "宾": "Tân",
+  "宿": "Túc",
+  "寂": "Tịch",
+  "寄": "Ký",
+  "寒": "Hàn",
+  "寛": "Khoan",
+  "寝": "Tẩm",
+  "寧": "Ninh",
+  "対": "Đối",
+  "専": "Chuyên",
+  "尋": "Tầm",
+  "屈": "Khuất",
+  "届": "Giới",
+  "屋": "Ốc",
+  "属": "Thuộc",
+  "履": "Lý",
+  "岐": "Kỳ",
+  "岗": "Cương",
+  "岸": "Ngạn",
+  "峰": "Phong",
+  "巻": "Quyển",
+  "帆": "Phàm",
+  "師": "Sư",
+  "帯": "Đới",
+  "帰": "Quy",
+  "帳": "Trướng",
+  "幅": "Bức",
+  "幕": "Mạc",
+  "幽": "U",
+  "幾": "Kỷ",
+  "広": "Quảng",
+  "床": "Sàng",
+  "座": "Tòa",
+  "庭": "Đình",
+  "弁": "Biện",
+  "弛": "Thao",
+  "弟": "Đệ",
+  "弥": "Di",
+  "張": "Trương",
+  "強": "Cường",
+  "彙": "Vị",
+  "彫": "Điêu",
+  "彰": "Chương",
+  "役": "Dịch",
+  "征": "Chinh",
+  "後": "Hậu",
+  "徒": "Đồ",
+  "従": "Tòng",
+  "御": "Ngự",
+  "復": "Phục",
+  "徳": "Đức",
+  "徴": "Trưng",
+  "徹": "Triệt",
+  "忍": "Nhẫn",
+  "応": "Ứng",
+  "忽": "Hốt",
+  "怀": "Hoài",
+  "怕": "Phạ",
+  "怖": "Bố",
+  "怡": "Di",
+  "恒": "Hằng",
+  "恢": "Khôi",
+  "恨": "Hận",
+  "恩": "Ân",
+  "恵": "Huệ",
+  "悄": "Tiễu",
+  "悔": "Hối",
+  "悠": "Du",
+  "患": "Hoạn",
+  "惑": "Hoặc",
+  "惕": "Dịch",
+  "惚": "Hốt",
+  "惫": "Bị",
+  "愈": "Dũ",
+  "愛": "Ái",
+  "慈": "Từ",
+  "態": "Thái",
+  "慌": "Hoảng",
+  "慎": "Thận",
+  "慣": "Quán",
+  "慮": "Lự",
+  "憂": "Ưu",
+  "憶": "Ức",
+  "懐": "Hoài",
+  "懸": "Huyền",
+  "战": "Chiến",
+  "戦": "Chiến",
+  "截": "Tiệt",
+  "戸": "Hộ",
+  "戻": "Lệ",
+  "払": "Phất",
+  "抑": "Ức",
+  "抓": "Trảo",
+  "投": "Đầu",
+  "抜": "Bạt",
+  "択": "Trạch",
+  "押": "Áp",
+  "拂": "Phất",
+  "拍": "Phách",
+  "拖": "Tha",
+  "拙": "Chuyết",
+  "招": "Chiêu",
+  "拠": "Cứ",
+  "拡": "Khuếch",
+  "拥": "Ủng",
+  "拳": "Quyền",
+  "拴": "Thuyên",
+  "拾": "Thập",
+  "挑": "Khiêu",
+  "挖": "Oát",
+  "挚": "Chí",
+  "挡": "Đương",
+  "挤": "Tê",
+  "振": "Chấn",
+  "挽": "Vãn",
+  "捨": "Xả",
+  "掃": "Tảo",
+  "掘": "Quật",
+  "採": "Thải",
+  "探": "Thám",
+  "掴": "Quặc",
+  "揃": "Tiễn",
+  "描": "Miêu",
+  "揚": "Dương",
+  "換": "Hoán",
+  "揮": "Huy",
+  "援": "Viện",
+  "揺": "Dao",
+  "損": "Tổn",
+  "携": "Huề",
+  "摂": "Nhiếp",
+  "摄": "Nhiếp",
+  "摘": "Trích",
+  "摯": "Chí",
+  "撮": "Toát",
+  "撼": "Hám",
+  "攀": "Phàn",
+  "攻": "Công",
+  "敏": "Mẫn",
+  "救": "Cứu",
+  "敗": "Bại",
+  "敛": "Liễm",
+  "敬": "Kính",
+  "斎": "Trai",
+  "斑": "Ban",
+  "斬": "Trảm",
+  "族": "Tộc",
+  "既": "Ký",
+  "旨": "Chỉ",
+  "旷": "Khoáng",
+  "旺": "Vượng",
+  "昇": "Thăng",
+  "映": "Ánh",
+  "昼": "Trú",
+  "時": "Thời",
+  "晨": "Thần",
+  "晩": "Vãn",
+  "晰": "Tích",
+  "晶": "Tinh",
+  "智": "Trí",
+  "暑": "Thử",
+  "暖": "Noãn",
+  "暗": "Ám",
+  "暢": "Sướng",
+  "暮": "Mộ",
+  "曙": "Thự",
+  "曜": "Diệu",
+  "書": "Thư",
+  "朗": "Lãng",
+  "東": "Đông",
+  "杵": "Xử",
+  "枚": "Mai",
+  "柄": "Bính",
+  "柴": "Sài",
+  "査": "Tra",
+  "栄": "Vinh",
+  "栋": "Đống",
+  "栓": "Xuyên",
+  "梁": "Lương",
+  "梦": "Mộng",
+  "梭": "Thoa",
+  "梳": "Sơ",
+  "椎": "Chùy",
+  "検": "Kiểm",
+  "業": "Nghiệp",
+  "極": "Cực",
+  "楽": "Lạc",
+  "榨": "Trá",
+  "構": "Cấu",
+  "様": "Dạng",
+  "標": "Tiêu",
+  "権": "Quyền",
+  "樹": "Thụ",
+  "橋": "Kiều",
+  "機": "Cơ",
+  "欄": "Lan",
+  "欲": "Dục",
+  "欺": "Khi",
+  "歓": "Hoan",
+  "歧": "Kỳ",
+  "歩": "Bộ",
+  "歳": "Tuế",
+  "歴": "Lịch",
+  "殊": "Thù",
+  "殿": "Điện",
+  "毅": "Nghị",
+  "毎": "Mỗi",
+  "毫": "Hào",
+  "気": "Khí",
+  "氛": "Phân",
+  "氷": "Băng",
+  "汚": "Ô",
+  "汲": "Cấp",
+  "汹": "Hung",
+  "決": "Quyết",
+  "汽": "Khí",
+  "沙": "Sa",
+  "治": "Trị",
+  "沿": "Duyên",
+  "況": "Huống",
+  "泌": "Tiết",
+  "泣": "Khấp",
+  "泰": "Thái",
+  "泽": "Trạch",
+  "洋": "Dương",
+  "浓": "Nồng",
+  "浩": "Hạo",
+  "浮": "Phù",
+  "浴": "Dục",
+  "消": "Tiêu",
+  "涯": "Nhai",
+  "淡": "Đạm",
+  "混": "Hỗn",
+  "渇": "Khát",
+  "済": "Tế",
+  "渋": "Sáp",
+  "減": "Giảm",
+  "渣": "Tra",
+  "港": "Cảng",
+  "湯": "Thang",
+  "湾": "Loan",
+  "満": "Mãn",
+  "準": "Chuẩn",
+  "溜": "Lựu",
+  "溢": "Dật",
+  "滋": "Tư",
+  "滑": "Hoạt",
+  "滞": "Trệ",
+  "滴": "Tích",
+  "漢": "Hán",
+  "漾": "Dạng",
+  "潔": "Khiết",
+  "潜": "Tiềm",
+  "澡": "Tảo",
+  "濃": "Nồng",
+  "濯": "Trạc",
+  "瀚": "Hãn",
+  "災": "Tai",
+  "炎": "Viêm",
+  "炭": "Than",
+  "為": "Vị",
+  "炼": "Luyện",
+  "烈": "Liệt",
+  "烤": "Khảo",
+  "焉": "Yên",
+  "無": "Vô",
+  "焦": "Tiêu",
+  "焰": "Diễm",
+  "煙": "Yên",
+  "煮": "Chử",
+  "煲": "Bao",
+  "熱": "Nhiệt",
+  "燃": "Nhiên",
+  "爽": "Sảng",
+  "牵": "Khiên",
+  "状": "Trạng",
+  "犹": "Do",
+  "獲": "Hoạch",
+  "率": "Suất",
+  "珍": "Trân",
+  "珠": "Châu",
+  "現": "Hiện",
+  "環": "Hoàn",
+  "瓶": "Bình",
+  "産": "Sản",
+  "男": "Nam",
+  "町": "Đinh",
+  "畏": "Úy",
+  "畔": "Bạn",
+  "番": "Phiên",
+  "異": "Dị",
+  "疗": "Liệu",
+  "疫": "Dịch",
+  "疲": "Bì",
+  "瘾": "Dẫn",
+  "療": "Liệu",
+  "癒": "Dũ",
+  "癖": "Phích",
+  "発": "Phát",
+  "皆": "Giai",
+  "盖": "Cái",
+  "盛": "Thịnh",
+  "盤": "Bàn",
+  "盲": "Manh",
+  "眠": "Miên",
+  "眺": "Thiếu",
+  "着": "Trước",
+  "睐": "Lại",
+  "瞑": "Minh",
+  "瞬": "Thuấn",
+  "矮": "Oải",
+  "矿": "Khoáng",
+  "碌": "Lục",
+  "碳": "Thán",
+  "確": "Xác",
+  "磅": "Bàng",
+  "磋": "Tha",
+  "磨": "Ma",
+  "礎": "Sở",
+  "礴": "Bạc",
+  "祈": "Kỳ",
+  "祖": "Tổ",
+  "秀": "Tú",
+  "秩": "Trật",
+  "移": "Di",
+  "種": "Chủng",
+  "積": "Tích",
+  "穏": "Ổn",
+  "竞": "Cạnh",
+  "章": "Chương",
+  "端": "Đoan",
+  "競": "Cạnh",
+  "笃": "Đốc",
+  "筆": "Bút",
+  "筋": "Cân",
+  "筑": "Trúc",
+  "算": "Toán",
+  "箭": "Tiễn",
+  "節": "Tiết",
+  "範": "Phạm",
+  "築": "Trúc",
+  "簡": "Giản",
+  "簿": "Bộ",
+  "籍": "Tịch",
+  "类": "Loại",
+  "粉": "Phấn",
+  "粋": "Túy",
+  "粘": "Niêm",
+  "粛": "Túc",
+  "粮": "Lương",
+  "約": "Ước",
+  "紅": "Hồng",
+  "紆": "U",
+  "納": "Nạp",
+  "純": "Thuần",
+  "紙": "Chỉ",
+  "級": "Cấp",
+  "紫": "Tử",
+  "細": "Tế",
+  "紹": "Thiệu",
+  "終": "Chung",
+  "組": "Tổ",
+  "経": "Kinh",
+  "結": "Kết",
+  "絞": "Giảo",
+  "絡": "Lạc",
+  "給": "Cấp",
+  "統": "Thống",
+  "絵": "Hội",
+  "絶": "Tuyệt",
+  "維": "Duy",
+  "綺": "Khởi",
+  "緊": "Khẩn",
+  "総": "Tổng",
+  "緑": "Lục",
+  "緒": "Tự",
+  "線": "Tuyến",
+  "締": "Đế",
+  "編": "Biên",
+  "練": "Luyện",
+  "緻": "Trí",
+  "縮": "Súc",
+  "績": "Tích",
+  "繕": "Thiện",
+  "繰": "Tảo",
+  "组": "Tổ",
+  "终": "Chung",
+  "绕": "Nhiễu",
+  "绘": "Hội",
+  "绚": "Huyễn",
+  "绪": "Tự",
+  "维": "Duy",
+  "绵": "Miên",
+  "绷": "Băng",
+  "绿": "Lục",
+  "缀": "Chuế",
+  "缓": "Hoãn",
+  "缺": "Khuyết",
+  "置": "Trí",
+  "署": "Thự",
+  "義": "Nghĩa",
+  "翁": "Ông",
+  "翌": "Dực",
+  "習": "Tập",
+  "耀": "Diệu",
+  "耗": "Hao",
+  "聂": "Nhiếp",
+  "聘": "Sính",
+  "聞": "Văn",
+  "聴": "Thính",
+  "職": "Chức",
+  "肌": "Cơ",
+  "肠": "Tràng",
+  "肩": "Kiên",
+  "胡": "Hồ",
+  "脊": "Tích",
+  "脏": "Tạng",
+  "脳": "Não",
+  "腸": "Tràng",
+  "腹": "Phúc",
+  "腻": "Nị",
+  "膳": "Thiện",
+  "臆": "Ức",
+  "臨": "Lâm",
+  "舆": "Dư",
+  "興": "Hưng",
+  "舎": "Xá",
+  "舔": "Thiểm",
+  "舗": "Phố",
+  "船": "Thuyền",
+  "艰": "Gian",
+  "芭": "Ba",
+  "芸": "Vân",
+  "苏": "Tô",
+  "苒": "Nhiễm",
+  "苟": "Cẩu",
+  "若": "Nhược",
+  "英": "Anh",
+  "茜": "Thiến",
+  "茹": "Như",
+  "荏": "Nhẫm",
+  "荷": "Hà",
+  "莲": "Liên",
+  "莹": "Oánh",
+  "菌": "Khuẩn",
+  "華": "Hoa",
+  "营": "Doanh",
+  "葉": "Diệp",
+  "著": "Trước",
+  "蓝": "Lam",
+  "蓮": "Liên",
+  "蔵": "Tàng",
+  "蕴": "Uẩn",
+  "薄": "Bạc",
+  "薪": "Tân",
+  "薬": "Dược",
+  "藏": "Tàng",
+  "藕": "Ngẫu",
+  "蚌": "Bạng",
+  "血": "Huyết",
+  "術": "Thuật",
+  "衛": "Vệ",
+  "衝": "Xung",
+  "衷": "Trung",
+  "裏": "Lý",
+  "製": "Chế",
+  "複": "Phức",
+  "襟": "Khâm",
+  "覆": "Phúc",
+  "見": "Kiến",
+  "規": "Quy",
+  "視": "Thị",
+  "覚": "Giác",
+  "覧": "Lãm",
+  "親": "Thân",
+  "観": "Quan",
+  "計": "Kế",
+  "訓": "Huấn",
+  "記": "Ký",
+  "訪": "Phóng",
+  "設": "Thiết",
+  "許": "Hứa",
+  "訳": "Dịch",
+  "診": "Chẩn",
+  "証": "Chứng",
+  "評": "Bình",
+  "詞": "Từ",
+  "試": "Thí",
+  "詩": "Thi",
+  "話": "Thoại",
+  "該": "Cai",
+  "詳": "Tường",
+  "誇": "Khoa",
+  "誉": "Dự",
+  "認": "Nhận",
+  "誕": "Đản",
+  "誘": "Dụ",
+  "語": "Ngữ",
+  "誠": "Thành",
+  "誤": "Ngộ",
+  "説": "Thuyết",
+  "読": "Độc",
+  "誰": "Thùy",
+  "課": "Khóa",
+  "調": "Điều",
+  "談": "Đàm",
+  "論": "Luận",
+  "諦": "Đế",
+  "謙": "Khiêm",
+  "講": "Giảng",
+  "謝": "Tạ",
+  "謡": "Dao",
+  "識": "Thức",
+  "警": "Cảnh",
+  "議": "Nghị",
+  "護": "Hộ",
+  "许": "Hứa",
+  "设": "Thiết",
+  "诊": "Chẩn",
+  "诗": "Thi",
+  "详": "Tường",
+  "诱": "Dụ",
+  "诸": "Chư",
+  "谈": "Đàm",
+  "谊": "Nghị",
+  "谚": "Ngạn",
+  "谦": "Khiêm",
+  "谧": "Mật",
+  "谨": "Cẩn",
+  "谱": "Phổ",
+  "豊": "Phong",
+  "豪": "Hào",
+  "豫": "Dự",
+  "負": "Phụ",
+  "財": "Tài",
+  "貢": "Cống",
+  "貧": "Bần",
+  "貨": "Hóa",
+  "販": "Phiến",
+  "責": "Trách",
+  "貯": "Trữ",
+  "貴": "Quý",
+  "買": "Mãi",
+  "貸": "Thải",
+  "費": "Phí",
+  "貼": "Thiếp",
+  "貿": "Mậu",
+  "賃": "Nhẫm",
+  "資": "Tư",
+  "賑": "Chấn",
+  "賛": "Tán",
+  "賢": "Hiền",
+  "質": "Chất",
+  "赏": "Thưởng",
+  "赠": "Tặng",
+  "跡": "Tích",
+  "踊": "Dũng",
+  "蹈": "Đạo",
+  "躍": "Dược",
+  "車": "Xa",
+  "転": "Chuyển",
+  "軽": "Khinh",
+  "較": "Giác",
+  "載": "Tải",
+  "輝": "Huy",
+  "辙": "Triệt",
+  "込": "Vu",
+  "迅": "Tấn",
+  "迹": "Tích",
+  "連": "Liên",
+  "週": "Chu",
+  "進": "Tiến",
+  "逸": "Dật",
+  "逻": "La",
+  "遂": "Toại",
+  "遅": "Trì",
+  "遊": "Du",
+  "運": "Vận",
+  "過": "Quá",
+  "達": "Đạt",
+  "違": "Vi",
+  "遠": "Viễn",
+  "遣": "Khiển",
+  "適": "Thích",
+  "遭": "Tao",
+  "遮": "Già",
+  "遵": "Tuân",
+  "遷": "Thiên",
+  "選": "Tuyển",
+  "邃": "Thúy",
+  "郁": "Úc",
+  "郊": "Giao",
+  "郑": "Trịnh",
+  "郵": "Bưu",
+  "郷": "Hương",
+  "醤": "Tương",
+  "释": "Thích",
+  "鈴": "Linh",
+  "鉄": "Thiết",
+  "鉴": "Giám",
+  "銀": "Ngân",
+  "銭": "Tiền",
+  "鋭": "Nhuệ",
+  "録": "Lục",
+  "鍋": "Oa",
+  "鍛": "Đoán",
+  "鍵": "Kiện",
+  "钻": "Toản",
+  "铺": "Phố",
+  "锐": "Nhuệ",
+  "锻": "Đoán",
+  "長": "Trường",
+  "門": "Môn",
+  "閉": "Bế",
+  "開": "Khai",
+  "間": "Gian",
+  "関": "Quan",
+  "閲": "Duyệt",
+  "闘": "Đấu",
+  "阻": "Trở",
+  "附": "Phụ",
+  "陌": "Mạch",
+  "陪": "Bồi",
+  "陰": "Âm",
+  "険": "Hiểm",
+  "陽": "Dương",
+  "階": "Giai",
+  "隐": "Ẩn",
+  "際": "Tế",
+  "障": "Chướng",
+  "隠": "Ẩn",
+  "隣": "Lân",
+  "雅": "Nhã",
+  "雑": "Tạp",
+  "雕": "Điêu",
+  "離": "Ly",
+  "難": "Nan",
+  "雰": "Phân",
+  "雲": "Vân",
+  "電": "Điện",
+  "靴": "Ngoa",
+  "韓": "Hàn",
+  "韧": "Nhận",
+  "韩": "Hàn",
+  "響": "Hưởng",
+  "頂": "Đỉnh",
+  "頃": "Khoảnh",
+  "順": "Thuận",
+  "須": "Tu",
+  "頑": "Ngoan",
+  "頭": "Đầu",
+  "頻": "Tần",
+  "頼": "Lại",
+  "題": "Đề",
+  "顔": "Nhan",
+  "願": "Nguyện",
+  "類": "Loại",
+  "顧": "Cố",
+  "颈": "Cảnh",
+  "颐": "Di",
+  "颖": "Dĩnh",
+  "風": "Phong",
+  "飛": "Phi",
+  "飯": "Phạn",
+  "飲": "Ẩm",
+  "飾": "Sức",
+  "養": "Dưỡng",
+  "館": "Quán",
+  "饶": "Nhiêu",
+  "馈": "Quỹ",
+  "馬": "Mã",
+  "駄": "Đà",
+  "駅": "Dịch",
+  "験": "Nghiệm",
+  "骼": "Cách",
+  "髄": "Tủy",
+  "魄": "Phách",
+  "魅": "Mị",
+  "魚": "Ngư",
+  "鮮": "Tiên",
+  "鳥": "Điểu",
+  "麗": "Lệ",
+  "麺": "Miến",
+  "黒": "Hắc",
+  "黙": "Mặc",
+  "齢": "Linh",
+  "佳": "Giai",
+  "妬": "Đố",
+  "継": "Kế",
+  "続": "Tục"
 };
 
-// --- Embedded Kanji Data (230 characters) ---
+// --- Japanese Kanji Info Table (319 characters) ---
 const KANJI_DATA = {
   "人": {
     "on": "ジン・ニン",
@@ -10621,7 +12463,7 @@ const KANJI_DATA = {
   "日": {
     "on": "ニチ・ジツ",
     "kun": "ひ・か",
-    "ja_meaning": "日、太陽、昼"
+    "ja_meaning": "日、太陽、毎日"
   },
   "一": {
     "on": "イチ・イツ",
@@ -10631,22 +12473,22 @@ const KANJI_DATA = {
   "国": {
     "on": "コク",
     "kun": "くに",
-    "ja_meaning": "国、国家"
+    "ja_meaning": "国、国家、故郷"
   },
   "会": {
     "on": "カイ・エ",
     "kun": "あ・う",
-    "ja_meaning": "会う、集まり"
+    "ja_meaning": "会う、集まり、できる (能力)"
   },
   "年": {
     "on": "ネン",
     "kun": "とし",
-    "ja_meaning": "年、歳月"
+    "ja_meaning": "年、年齢、歳月"
   },
   "大": {
     "on": "ダイ・タイ",
     "kun": "おお・きい",
-    "ja_meaning": "大きい、偉大な"
+    "ja_meaning": "大きい、重大な"
   },
   "十": {
     "on": "ジュウ・ジッ",
@@ -10661,12 +12503,12 @@ const KANJI_DATA = {
   "本": {
     "on": "ホン",
     "kun": "もと",
-    "ja_meaning": "本、根源、基本"
+    "ja_meaning": "本、根本、書籍"
   },
   "中": {
     "on": "チュウ",
     "kun": "なか",
-    "ja_meaning": "中央、内部"
+    "ja_meaning": "中、中央、中国"
   },
   "長": {
     "on": "チョウ",
@@ -10675,8 +12517,8 @@ const KANJI_DATA = {
   },
   "出": {
     "on": "シュツ・スイ",
-    "kun": "で・る・だ・す",
-    "ja_meaning": "出る、出す"
+    "kun": "で・る、だ・す",
+    "ja_meaning": "出る、出す、出発"
   },
   "三": {
     "on": "サン",
@@ -10726,12 +12568,12 @@ const KANJI_DATA = {
   "月": {
     "on": "ゲツ・ガツ",
     "kun": "つき",
-    "ja_meaning": "月、カレンダーの月"
+    "ja_meaning": "月、月日、１ヶ月"
   },
   "分": {
     "on": "ブン・フン・ブ",
-    "kun": "わ・ける・わ・かる",
-    "ja_meaning": "分ける、わかる、分"
+    "kun": "わ・ける、わ・かる",
+    "ja_meaning": "分ける、わかる、１分"
   },
   "議": {
     "on": "ギ",
@@ -10746,7 +12588,7 @@ const KANJI_DATA = {
   "前": {
     "on": "ゼン",
     "kun": "まえ",
-    "ja_meaning": "まえ、以前"
+    "ja_meaning": "前、以前、前方"
   },
   "民": {
     "on": "ミン",
@@ -10755,8 +12597,8 @@ const KANJI_DATA = {
   },
   "生": {
     "on": "セイ・ショウ",
-    "kun": "い・きる・う・まれる",
-    "ja_meaning": "生きる、生まれる"
+    "kun": "い・きる、う・まれる、なま",
+    "ja_meaning": "生きる、生まれる、生徒"
   },
   "連": {
     "on": "レン",
@@ -10780,8 +12622,8 @@ const KANJI_DATA = {
   },
   "上": {
     "on": "ジョウ・ショウ",
-    "kun": "うえ・あ・がる",
-    "ja_meaning": "うえ、あがる"
+    "kun": "うえ・あ・がる、のぼ・る",
+    "ja_meaning": "上、登る、進む"
   },
   "東": {
     "on": "トウ",
@@ -10796,7 +12638,7 @@ const KANJI_DATA = {
   "今": {
     "on": "コン・キン",
     "kun": "いま",
-    "ja_meaning": "いま、現在"
+    "ja_meaning": "今、現在、今年"
   },
   "金": {
     "on": "キン・コン",
@@ -10810,18 +12652,18 @@ const KANJI_DATA = {
   },
   "入": {
     "on": "ニュウ",
-    "kun": "はい・る・い・れる",
-    "ja_meaning": "はいる、いれる"
+    "kun": "い・る、はい・る",
+    "ja_meaning": "入る、入れる、入学"
   },
   "学": {
     "on": "ガク",
     "kun": "まな・ぶ",
-    "ja_meaning": "まなぶ、学問"
+    "ja_meaning": "学ぶ、学問、学校"
   },
   "高": {
     "on": "コウ",
     "kun": "たか・い",
-    "ja_meaning": "たかい、高める"
+    "ja_meaning": "高い、高級、高まる"
   },
   "円": {
     "on": "エン",
@@ -10850,13 +12692,13 @@ const KANJI_DATA = {
   },
   "下": {
     "on": "カ・ゲ",
-    "kun": "した・さ・がる・くだ・る",
-    "ja_meaning": "した、さがる"
+    "kun": "した・さ・がる、くだ・る",
+    "ja_meaning": "下、降りる、下がる"
   },
   "来": {
     "on": "ライ",
-    "kun": "く・る・きた・る",
-    "ja_meaning": "くる、将来"
+    "kun": "く・る、きた・る",
+    "ja_meaning": "来る、やってくる、将来"
   },
   "気": {
     "on": "キ・ケ",
@@ -10865,8 +12707,8 @@ const KANJI_DATA = {
   },
   "小": {
     "on": "ショウ",
-    "kun": "ちい・さい・こ・お",
-    "ja_meaning": "ちいさい"
+    "kun": "ちい・さい、こ・お",
+    "ja_meaning": "小さい、少ない"
   },
   "七": {
     "on": "シチ",
@@ -10891,7 +12733,7 @@ const KANJI_DATA = {
   "北": {
     "on": "ホク",
     "kun": "きた",
-    "ja_meaning": "きた、北方"
+    "ja_meaning": "北、北方"
   },
   "午": {
     "on": "ゴ",
@@ -10911,12 +12753,12 @@ const KANJI_DATA = {
   "先": {
     "on": "セン",
     "kun": "さき・ま・ず",
-    "ja_meaning": "さき、先生"
+    "ja_meaning": "先、前、先生"
   },
   "名": {
     "on": "メイ・ミョウ",
     "kun": "な",
-    "ja_meaning": "なまえ、有名"
+    "ja_meaning": "名前、名誉、評判"
   },
   "川": {
     "on": "セン",
@@ -10931,7 +12773,7 @@ const KANJI_DATA = {
   "水": {
     "on": "スイ",
     "kun": "みず",
-    "ja_meaning": "みず、水分"
+    "ja_meaning": "水、水分、川"
   },
   "半": {
     "on": "ハン",
@@ -10946,7 +12788,7 @@ const KANJI_DATA = {
   "西": {
     "on": "セイ・サイ",
     "kun": "にし",
-    "ja_meaning": "にし、西洋"
+    "ja_meaning": "西、西洋"
   },
   "電": {
     "on": "デン",
@@ -10955,8 +12797,8 @@ const KANJI_DATA = {
   },
   "校": {
     "on": "コウ",
-    "kun": "かせ",
-    "ja_meaning": "がっこう、校舎"
+    "kun": "-",
+    "ja_meaning": "学校、比べる"
   },
   "語": {
     "on": "ゴ",
@@ -10996,7 +12838,7 @@ const KANJI_DATA = {
   "南": {
     "on": "ナン・ナ",
     "kun": "みなみ",
-    "ja_meaning": "みなみ、南国"
+    "ja_meaning": "南、南方"
   },
   "万": {
     "on": "マン・バン",
@@ -11011,7 +12853,7 @@ const KANJI_DATA = {
   "天": {
     "on": "テン",
     "kun": "あめ・あま",
-    "ja_meaning": "そら、天気、天国"
+    "ja_meaning": "空、天、自然、天気"
   },
   "母": {
     "on": "ボ",
@@ -11026,7 +12868,7 @@ const KANJI_DATA = {
   "右": {
     "on": "ウ・ユウ",
     "kun": "みぎ",
-    "ja_meaning": "みぎ、右手"
+    "ja_meaning": "右、右側"
   },
   "読": {
     "on": "ドク・トク",
@@ -11036,12 +12878,12 @@ const KANJI_DATA = {
   "友": {
     "on": "ユウ",
     "kun": "とも",
-    "ja_meaning": "ともだち、友人"
+    "ja_meaning": "友達、友人"
   },
   "左": {
     "on": "サ",
     "kun": "ひだり",
-    "ja_meaning": "ひだり、左手"
+    "ja_meaning": "左、左側"
   },
   "休": {
     "on": "キュウ",
@@ -11065,13 +12907,13 @@ const KANJI_DATA = {
   },
   "新": {
     "on": "シン",
-    "kun": "あたら・しい",
-    "ja_meaning": "あたらしい、新年"
+    "kun": "あたら・しい、にい",
+    "ja_meaning": "新しい、新鮮な"
   },
   "手": {
     "on": "シュ",
-    "kun": "て・た",
-    "ja_meaning": "て、手段"
+    "kun": "て",
+    "ja_meaning": "手、技量、〜する人"
   },
   "言": {
     "on": "ゲン・ゴン",
@@ -11080,8 +12922,8 @@ const KANJI_DATA = {
   },
   "目": {
     "on": "モク・ボク",
-    "kun": "め・ま",
-    "ja_meaning": "め、目標"
+    "kun": "め",
+    "ja_meaning": "目、目標、項目"
   },
   "立": {
     "on": "リツ・リュウ",
@@ -11095,18 +12937,18 @@ const KANJI_DATA = {
   },
   "文": {
     "on": "ブン・モン",
-    "kun": "ふみ",
-    "ja_meaning": "ぶんしょう、文字"
+    "kun": "ふみ・あや",
+    "ja_meaning": "文字、文章、文化"
   },
   "多": {
     "on": "タ",
     "kun": "おお・い",
-    "ja_meaning": "おおい、多数"
+    "ja_meaning": "多い、多数、余分"
   },
   "少": {
     "on": "ショウ",
-    "kun": "すく・ない・すこ・し",
-    "ja_meaning": "すくない、すこし"
+    "kun": "すく・ない、すこ・し",
+    "ja_meaning": "少ない、少し、若い"
   },
   "古": {
     "on": "コ",
@@ -11115,8 +12957,8 @@ const KANJI_DATA = {
   },
   "白": {
     "on": "ハク・ビャク",
-    "kun": "しろ・しろ・い",
-    "ja_meaning": "しろい、潔白"
+    "kun": "しろ・い",
+    "ja_meaning": "白い、純白、明白"
   },
   "黒": {
     "on": "コク",
@@ -11130,8 +12972,8 @@ const KANJI_DATA = {
   },
   "青": {
     "on": "セイ・ショウ",
-    "kun": "あお・あお・い",
-    "ja_meaning": "あおい、青年"
+    "kun": "あお・い",
+    "ja_meaning": "青い、若い、青春"
   },
   "買": {
     "on": "バイ",
@@ -11156,12 +12998,12 @@ const KANJI_DATA = {
   "知": {
     "on": "チ",
     "kun": "し・る",
-    "ja_meaning": "しる、知識"
+    "ja_meaning": "知る、理解する、知識"
   },
   "走": {
     "on": "ソウ",
-    "kun": "はし・る",
-    "ja_meaning": "はしる、走行"
+    "kun": "はし・る、い・く",
+    "ja_meaning": "歩く、去る、走る"
   },
   "歩": {
     "on": "ホ・ブ",
@@ -11181,7 +13023,7 @@ const KANJI_DATA = {
   "道": {
     "on": "ドウ・トウ",
     "kun": "みち",
-    "ja_meaning": "みち、道路、道徳"
+    "ja_meaning": "道、道理、言う"
   },
   "通": {
     "on": "ツウ・ツ",
@@ -11215,8 +13057,8 @@ const KANJI_DATA = {
   },
   "店": {
     "on": "テン",
-    "kun": "みせ",
-    "ja_meaning": "みせ、店舗"
+    "kun": "みせ・たな",
+    "ja_meaning": "店、店舗、宿"
   },
   "屋": {
     "on": "オク",
@@ -11250,13 +13092,13 @@ const KANJI_DATA = {
   },
   "茶": {
     "on": "チャ・サ",
-    "kun": "",
-    "ja_meaning": "おちゃ、喫茶"
+    "kun": "-",
+    "ja_meaning": "お茶、茶道"
   },
   "肉": {
     "on": "ニク",
-    "kun": "しし",
-    "ja_meaning": "にく、筋肉"
+    "kun": "-",
+    "ja_meaning": "肉、筋肉、果肉"
   },
   "魚": {
     "on": "ギョ",
@@ -11295,8 +13137,8 @@ const KANJI_DATA = {
   },
   "足": {
     "on": "ソク",
-    "kun": "あし・た・りる",
-    "ja_meaning": "あし、満足"
+    "kun": "あし、た・りる",
+    "ja_meaning": "足、足りる、満足"
   },
   "頭": {
     "on": "トウ・ズ",
@@ -11311,17 +13153,17 @@ const KANJI_DATA = {
   "耳": {
     "on": "ジ",
     "kun": "みみ",
-    "ja_meaning": "みみ、聴覚"
+    "ja_meaning": "耳、聴覚"
   },
   "口": {
     "on": "コウ・ク",
     "kun": "くち",
-    "ja_meaning": "くち、入口"
+    "ja_meaning": "口、出入口、人口"
   },
   "心": {
     "on": "シン",
     "kun": "こころ",
-    "ja_meaning": "こころ、安心"
+    "ja_meaning": "心、気持ち、中心"
   },
   "病": {
     "on": "ビョウ・ヘイ",
@@ -11330,13 +13172,13 @@ const KANJI_DATA = {
   },
   "院": {
     "on": "イン",
-    "kun": "",
-    "ja_meaning": "たてもの、病院、大学院"
+    "kun": "-",
+    "ja_meaning": "施設、役所、病院"
   },
   "医": {
     "on": "イ",
-    "kun": "い・やす",
-    "ja_meaning": "いしゃ、医学"
+    "kun": "いや・す",
+    "ja_meaning": "医者、医療、治療"
   },
   "薬": {
     "on": "ヤク",
@@ -11346,12 +13188,12 @@ const KANJI_DATA = {
   "身": {
     "on": "シン",
     "kun": "み",
-    "ja_meaning": "からだ、自身"
+    "ja_meaning": "身、身体、自分"
   },
   "体": {
     "on": "タイ・テイ",
     "kun": "からだ",
-    "ja_meaning": "からだ、体力"
+    "ja_meaning": "体、身体、形式"
   },
   "春": {
     "on": "シュン",
@@ -11431,7 +13273,7 @@ const KANJI_DATA = {
   "写": {
     "on": "シャ",
     "kun": "うつ・す",
-    "ja_meaning": "うつす、写真"
+    "ja_meaning": "書く、写す、描写"
   },
   "真": {
     "on": "シン",
@@ -11481,7 +13323,7 @@ const KANJI_DATA = {
   "答": {
     "on": "トウ",
     "kun": "こた・える",
-    "ja_meaning": "こたえる、回答"
+    "ja_meaning": "答える、返答、解答"
   },
   "試": {
     "on": "シ",
@@ -11526,7 +13368,7 @@ const KANJI_DATA = {
   "作": {
     "on": "サク・サ",
     "kun": "つく・る",
-    "ja_meaning": "つくる、作文"
+    "ja_meaning": "働く、作る、作品"
   },
   "業": {
     "on": "ギョウ・ゴウ",
@@ -11580,8 +13422,8 @@ const KANJI_DATA = {
   },
   "明": {
     "on": "メイ・ミョウ",
-    "kun": "あか・るい・あき・らか",
-    "ja_meaning": "あかるい、明日"
+    "kun": "あか・るい、あ・ける",
+    "ja_meaning": "明るい、明日、明らか"
   },
   "暗": {
     "on": "アン",
@@ -11611,17 +13453,17 @@ const KANJI_DATA = {
   "情": {
     "on": "ジョウ・セイ",
     "kun": "なさ・け",
-    "ja_meaning": "こころ、愛情、情報"
+    "ja_meaning": "感情、事情、友情"
   },
   "感": {
     "on": "カン",
-    "kun": "",
-    "ja_meaning": "かんじる、感謝"
+    "kun": "かん・じる",
+    "ja_meaning": "感じる、感覚、感謝"
   },
   "想": {
     "on": "ソウ・ソ",
     "kun": "おも・う",
-    "ja_meaning": "おもう、感想、想像"
+    "ja_meaning": "思う、想像する、〜したい"
   },
   "愛": {
     "on": "アイ",
@@ -11630,8 +13472,8 @@ const KANJI_DATA = {
   },
   "好": {
     "on": "コウ",
-    "kun": "す・く・この・む",
-    "ja_meaning": "すき、好意"
+    "kun": "この・む、よ・い",
+    "ja_meaning": "良い、好む、仲良し"
   },
   "嫌": {
     "on": "ケン・ゲン",
@@ -11649,19 +13491,19 @@ const KANJI_DATA = {
     "ja_meaning": "なく、号泣"
   },
   "怒": {
-    "on": "ド・ヌ",
-    "kun": "おこ・る・いか・る",
-    "ja_meaning": "おこる、激怒"
+    "on": "ド",
+    "kun": "いか・る、おこ・る",
+    "ja_meaning": "怒る、激怒"
   },
   "悲": {
     "on": "ヒ",
     "kun": "かな・しい",
-    "ja_meaning": "かなしい、悲劇"
+    "ja_meaning": "悲しい、悲痛"
   },
   "喜": {
     "on": "キ",
     "kun": "よろこ・ぶ",
-    "ja_meaning": "よろこぶ、喜劇"
+    "ja_meaning": "喜ぶ、好む、嬉しい"
   },
   "開": {
     "on": "カイ",
@@ -11686,7 +13528,7 @@ const KANJI_DATA = {
   "送": {
     "on": "ソウ",
     "kun": "おく・る",
-    "ja_meaning": "おくる、送信"
+    "ja_meaning": "送る、見送る、プレゼントする"
   },
   "受": {
     "on": "ジュ",
@@ -11736,7 +13578,7 @@ const KANJI_DATA = {
   "住": {
     "on": "ジュウ",
     "kun": "す・む",
-    "ja_meaning": "すむ、住所"
+    "ja_meaning": "住む、泊まる、止まる"
   },
   "旅": {
     "on": "リョ",
@@ -11762,151 +13604,2245 @@ const KANJI_DATA = {
     "on": "コウ",
     "kun": "お・りる・ふ・る",
     "ja_meaning": "おりる、ふる、降雨"
+  },
+  "师": {
+    "on": "シ",
+    "kun": "-",
+    "ja_meaning": "先生、師匠、手本"
+  },
+  "朋": {
+    "on": "ホウ",
+    "kun": "とも",
+    "ja_meaning": "友、仲間"
+  },
+  "字": {
+    "on": "ジ",
+    "kun": "あざ",
+    "ja_meaning": "文字、漢字、あざな"
+  },
+  "汉": {
+    "on": "カン",
+    "kun": "-",
+    "ja_meaning": "漢、中国、男"
+  },
+  "语": {
+    "on": "ゴ",
+    "kun": "かた・る",
+    "ja_meaning": "言葉、語る、言語"
+  },
+  "书": {
+    "on": "ショ",
+    "kun": "か・く",
+    "ja_meaning": "書く、本、手紙"
+  },
+  "电": {
+    "on": "デン",
+    "kun": "-",
+    "ja_meaning": "電気、稲妻、電話"
+  },
+  "脑": {
+    "on": "ノウ",
+    "kun": "-",
+    "ja_meaning": "脳、頭脳、知恵"
+  },
+  "话": {
+    "on": "ワ",
+    "kun": "はな・す、はなし",
+    "ja_meaning": "話す、言葉、相談"
+  },
+  "视": {
+    "on": "シ",
+    "kun": "み・る",
+    "ja_meaning": "見る、視覚、テレビ"
+  },
+  "影": {
+    "on": "エイ",
+    "kun": "かげ",
+    "ja_meaning": "影、光、映画"
+  },
+  "机": {
+    "on": "キ",
+    "kun": "はた・つくえ",
+    "ja_meaning": "機械、機会、飛行機"
+  },
+  "车": {
+    "on": "シャ",
+    "kun": "くるま",
+    "ja_meaning": "車、自動車、車両"
+  },
+  "气": {
+    "on": "キ・ケ",
+    "kun": "いき",
+    "ja_meaning": "気、空気、気持ち、天気"
+  },
+  "昨": {
+    "on": "サク",
+    "kun": "-",
+    "ja_meaning": "昨日、過去"
+  },
+  "时": {
+    "on": "ジ",
+    "kun": "とき",
+    "ja_meaning": "時間、時刻、季節"
+  },
+  "秒": {
+    "on": "ビョウ",
+    "kun": "-",
+    "ja_meaning": "秒 (時間の単位)"
+  },
+  "点": {
+    "on": "テン",
+    "kun": "つ・ける",
+    "ja_meaning": "点、時刻 (〜時)、点数"
+  },
+  "钱": {
+    "on": "セン",
+    "kun": "ぜに",
+    "ja_meaning": "お金、銭、硬貨"
+  },
+  "买": {
+    "on": "バイ",
+    "kun": "か・う",
+    "ja_meaning": "買う、購入する"
+  },
+  "卖": {
+    "on": "バイ",
+    "kun": "う・る",
+    "ja_meaning": "売る、販売する"
+  },
+  "吃": {
+    "on": "キツ",
+    "kun": "く・らう",
+    "ja_meaning": "食べる、飲む、喫する"
+  },
+  "喝": {
+    "on": "カツ",
+    "kun": "-",
+    "ja_meaning": "飲む、大声を出す"
+  },
+  "饭": {
+    "on": "ハン",
+    "kun": "めし",
+    "ja_meaning": "ご飯、食事"
+  },
+  "菜": {
+    "on": "サイ",
+    "kun": "な",
+    "ja_meaning": "野菜、おかず、料理"
+  },
+  "鱼": {
+    "on": "ギョ",
+    "kun": "うお・さかな",
+    "ja_meaning": "魚、魚類"
+  },
+  "果": {
+    "on": "カ",
+    "kun": "は・たす、くだ",
+    "ja_meaning": "果物、結果、果たす"
+  },
+  "家": {
+    "on": "カ・ケ",
+    "kun": "いえ・や",
+    "ja_meaning": "家、家族、専門家"
+  },
+  "商": {
+    "on": "ショウ",
+    "kun": "あきな・う",
+    "ja_meaning": "商売、商業、商人"
+  },
+  "站": {
+    "on": "タン",
+    "kun": "た・つ",
+    "ja_meaning": "立つ、駅、停留所"
+  },
+  "市": {
+    "on": "シ",
+    "kun": "いち",
+    "ja_meaning": "都市、市、市場"
+  },
+  "路": {
+    "on": "ロ",
+    "kun": "じ・みち",
+    "ja_meaning": "道、通路、道路"
+  },
+  "门": {
+    "on": "モン",
+    "kun": "かど・と",
+    "ja_meaning": "門、出入口、分野"
+  },
+  "房": {
+    "on": "ボウ",
+    "kun": "ふさ",
+    "ja_meaning": "部屋、家、房"
+  },
+  "间": {
+    "on": "カン・ケン",
+    "kun": "あいだ・ま",
+    "ja_meaning": "間、部屋、隙間"
+  },
+  "后": {
+    "on": "コウ・ゴ",
+    "kun": "のち・うし・ろ、あと",
+    "ja_meaning": "後ろ、後、以後"
+  },
+  "东": {
+    "on": "トウ",
+    "kun": "ひがし",
+    "ja_meaning": "東、東方"
+  },
+  "低": {
+    "on": "テイ",
+    "kun": "ひく・い",
+    "ja_meaning": "低い、下がる"
+  },
+  "长": {
+    "on": "チョウ",
+    "kun": "なが・い、おさ",
+    "ja_meaning": "長い、リーダー、成長する"
+  },
+  "短": {
+    "on": "タン",
+    "kun": "みじか・い",
+    "ja_meaning": "短い、欠点"
+  },
+  "冷": {
+    "on": "レイ",
+    "kun": "つめ・たい、ひ・える",
+    "ja_meaning": "冷たい、冷える、冷静"
+  },
+  "热": {
+    "on": "ネツ",
+    "kun": "あつ・い",
+    "ja_meaning": "熱い、熱、情熱"
+  },
+  "快": {
+    "on": "カイ",
+    "kun": "こころよ・い、はや・い",
+    "ja_meaning": "速い、快適な、心地よい"
+  },
+  "慢": {
+    "on": "マン",
+    "kun": "おそ・い",
+    "ja_meaning": "遅い、のんびり、怠る"
+  },
+  "坏": {
+    "on": "カイ",
+    "kun": "こわ・す、わる・い",
+    "ja_meaning": "悪い、壊れる、腐る"
+  },
+  "旧": {
+    "on": "キュウ",
+    "kun": "ふる・い",
+    "ja_meaning": "古い、昔の、旧式"
+  },
+  "对": {
+    "on": "ツイ・タイ",
+    "kun": "こた・える",
+    "ja_meaning": "正しい、向かい合う、対照"
+  },
+  "错": {
+    "on": "サク",
+    "kun": "まじ・る",
+    "ja_meaning": "間違い、交錯する"
+  },
+  "红": {
+    "on": "コウ・ク",
+    "kun": "べに・あか・い",
+    "ja_meaning": "赤い、紅色、人気がある"
+  },
+  "黑": {
+    "on": "コク",
+    "kun": "くろ・い",
+    "ja_meaning": "黒い、暗い、秘密の"
+  },
+  "黄": {
+    "on": "コウ・オウ",
+    "kun": "き",
+    "ja_meaning": "黄色い、黄金"
+  },
+  "绿": {
+    "on": "リョク・ロク",
+    "kun": "みどり",
+    "ja_meaning": "緑の、みどり、自然"
+  },
+  "蓝": {
+    "on": "ラン",
+    "kun": "あい",
+    "ja_meaning": "青い、藍色"
+  },
+  "能": {
+    "on": "ノウ",
+    "kun": "あた・う",
+    "ja_meaning": "できる、能力、才能"
+  },
+  "看": {
+    "on": "カン",
+    "kun": "み・る",
+    "ja_meaning": "見る、眺める、看病する"
+  },
+  "听": {
+    "on": "チョウ",
+    "kun": "き・く",
+    "ja_meaning": "聞く、従う、聴力"
+  },
+  "说": {
+    "on": "セツ・ゼイ",
+    "kun": "と・く、はな・す",
+    "ja_meaning": "話す、説く、意見"
+  },
+  "给": {
+    "on": "キュウ",
+    "kun": "たま・う",
+    "ja_meaning": "あげる、渡す、供給する"
+  },
+  "问": {
+    "on": "モン",
+    "kun": "と・う",
+    "ja_meaning": "尋ねる、問う、質問"
+  },
+  "得": {
+    "on": "トク",
+    "kun": "え・る、う・る",
+    "ja_meaning": "得る、できる、〜でなければならない"
+  },
+  "打": {
+    "on": "ダ・チョウ",
+    "kun": "う・つ",
+    "ja_meaning": "打つ、叩く、電話をかける"
+  },
+  "做": {
+    "on": "サ・サク",
+    "kun": "つく・る",
+    "ja_meaning": "する、作る、従事する"
+  },
+  "去": {
+    "on": "キョ・コ",
+    "kun": "さ・る、い・く",
+    "ja_meaning": "行く、去る、離れる"
+  },
+  "开": {
+    "on": "カイ",
+    "kun": "ひら・く、あ・く",
+    "ja_meaning": "開く、運転する、開始"
+  },
+  "关": {
+    "on": "カン",
+    "kun": "せき・かか・わる",
+    "ja_meaning": "閉める、関わる、関係"
+  },
+  "跑": {
+    "on": "ホウ",
+    "kun": "はし・る",
+    "ja_meaning": "走る、逃げる、ランニング"
+  },
+  "飞": {
+    "on": "ヒ",
+    "kun": "と・ぶ",
+    "ja_meaning": "飛ぶ、飛行機"
+  },
+  "坐": {
+    "on": "ザ",
+    "kun": "すわ・る",
+    "ja_meaning": "座る、乗る、席"
+  },
+  "等": {
+    "on": "トウ",
+    "kun": "ひと・しい、ま・つ",
+    "ja_meaning": "待つ、等しい、〜など"
+  },
+  "迎": {
+    "on": "ゲイ",
+    "kun": "むか・える",
+    "ja_meaning": "迎える、歓迎する"
+  },
+  "接": {
+    "on": "セツ",
+    "kun": "つ・ぐ",
+    "ja_meaning": "受け取る、迎える、接続する"
+  },
+  "找": {
+    "on": "ソウ",
+    "kun": "さが・す",
+    "ja_meaning": "探す、お釣りを渡す"
+  },
+  "见": {
+    "on": "ケン",
+    "kun": "み・る、み・える",
+    "ja_meaning": "見る、会う、意見"
+  },
+  "帮": {
+    "on": "ホウ",
+    "kun": "たす・ける",
+    "ja_meaning": "助ける、手伝う、グループ"
+  },
+  "助": {
+    "on": "ジョ",
+    "kun": "たす・ける",
+    "ja_meaning": "助ける、援助する"
+  },
+  "工": {
+    "on": "コウ・ク",
+    "kun": "-",
+    "ja_meaning": "仕事、工夫、技術者"
+  },
+  "习": {
+    "on": "シュウ",
+    "kun": "なら・う",
+    "ja_meaning": "習う、練習、習慣"
+  },
+  "动": {
+    "on": "ドウ",
+    "kun": "うご・く",
+    "ja_meaning": "動く、運動、行動"
+  },
+  "头": {
+    "on": "トウ・ズ",
+    "kun": "あたま・かしら",
+    "ja_meaning": "頭、リーダー、最初"
+  },
+  "眼": {
+    "on": "ガン・ゲン",
+    "kun": "め",
+    "ja_meaning": "眼、目、視力"
+  },
+  "鼻": {
+    "on": "ビ",
+    "kun": "はな",
+    "ja_meaning": "鼻、嗅覚"
+  },
+  "齿": {
+    "on": "シ",
+    "kun": "は",
+    "ja_meaning": "歯、年齢"
+  },
+  "面": {
+    "on": "メン",
+    "kun": "おもて・つら",
+    "ja_meaning": "顔、表面、麺類"
+  },
+  "爱": {
+    "on": "アイ",
+    "kun": "いと・しい",
+    "ja_meaning": "愛する、慈しむ、大好き"
+  },
+  "乐": {
+    "on": "ラク・ガク",
+    "kun": "たの・しい",
+    "ja_meaning": "楽しい、音楽、気楽"
+  },
+  "怕": {
+    "on": "ハ",
+    "kun": "おそ・れる",
+    "ja_meaning": "恐れる、怖がる、〜かもしれない"
+  },
+  "惊": {
+    "on": "キョウ",
+    "kun": "おどろ・く",
+    "ja_meaning": "驚く、びっくりする"
+  },
+  "奇": {
+    "on": "キ",
+    "kun": "く・しき",
+    "ja_meaning": "珍しい、奇妙な、不思議"
+  },
+  "怪": {
+    "on": "カイ・ケ",
+    "kun": "あや・しい",
+    "ja_meaning": "怪しい、不思議な、怪物"
   }
 };
 
-// --- Japanese Dictionary for Common Chinese Words & Compounds ---
+// --- Japanese Dictionary for Common Chinese Words & Compounds (1789 entries) ---
 const JA_COMMON_DICT = {
-  // Đại từ, chào hỏi & giao tiếp hàng ngày
-  "你": "あなた", "我": "私", "他": "彼", "她": "彼女", "它": "それ",
-  "我们": "私たち", "你们": "あなたたち", "他们": "彼ら", "她们": "彼女たち",
-  "您": "あなた（敬称）", "好": "良い、こんにちは", "您好": "こんにちは", "你好": "こんにちは",
-  "再见": "さようなら", "谢谢": "ありがとう", "不客气": "どういたしまして",
-  "对不起": "すみません・ごめんなさい", "没关系": "大丈夫です", "请": "どうぞ・お願いします",
-  "请问": "お尋ねしますが", "欢迎": "ようこそ", "加油": "頑張って",
-  
-  // Từ để hỏi & liên từ
-  "什么": "何", "谁": "誰", "哪": "どれ・どこ", "哪里": "どこ", "哪儿": "どこ", "哪个": "どれ",
-  "怎么": "どうやって・なぜ", "怎么样": "どうですか", "为什么": "なぜ・どうして",
-  "多少": "いくら・どのくらい", "几": "いくつ・何", "和": "と", "跟": "と・一緒に",
-  "而且": "それに・しかも", "但是": "しかし", "可是": "でも", "虽然": "～だけれども",
-  "如果": "もし～なら", "因为": "～だから", "所以": "だから・それで", "或者": "または",
-  "还是": "それとも・やはり", "然后": "それから", "其实": "実は",
-  
-  // Động từ thông dụng
-  "是": "～である・はい", "有": "ある・持っている", "在": "いる・ある・～で",
-  "看": "見る・読む", "听": "聞く", "说": "話す・言う", "读": "読む", "写": "書く",
-  "学": "学ぶ", "学习": "勉強する・学ぶ", "吃": "食べる", "喝": "飲む",
-  "去": "行く", "来": "来る", "回": "帰る・戻る", "做": "する・作る", "买": "買う", "卖": "売る",
-  "叫": "呼ぶ・～という名前である", "认识": "知り合う・知っている", "知道": "知っている",
-  "想": "～したい・思う", "要": "～が必要・～したい", "能": "～できる",
-  "可以": "～してよい・できる", "会": "できる・～するはず", "喜欢": "好きである",
-  "爱": "愛する・大好き", "住": "住む", "坐": "座る・乗る", "开": "開ける・運転する",
-  "关": "閉める・消す", "穿": "着る", "等": "待つ", "找": "探す", "帮": "手伝う",
-  "帮助": "助ける・手伝い", "给": "あげる・くれる", "问": "尋ねる・質問する", "回答": "答える",
-  "走": "歩く・行く", "跑": "走る", "开始": "始まる・始める", "结束": "終わる・終える",
-  "准备": "準備する", "希望": "希望する・願う", "觉得": "～と感じる・思う",
-  "认为": "～と思う・考える", "需要": "必要とする", "记得": "覚えている", "忘记": "忘れる",
-  "送": "送る・プレゼントする", "接": "迎える・受ける", "进": "入る", "出": "出る",
-  "到": "着く・至る", "教": "教える", "懂": "わかる・理解する", "明白": "理解する・明白である",
-  "练习": "練習する", "复习": "復習する", "睡觉": "寝る", "起床": "起きる",
-  "上班": "出勤する", "下班": "退勤する", "打球": "球技をする", "游泳": "泳ぐ",
-  "唱歌": "歌う", "跳舞": "踊る", "旅游": "旅行する", "散步": "散歩する",
-  "洗澡": "お風呂に入る", "聊天": "雑談する", "工作": "働く・仕事",
-  
-  // Con người, quan hệ
-  "人": "人", "朋友": "友達", "同学": "同級生", "老师": "先生", "学生": "学生",
-  "医生": "医者", "护士": "看護師", "爸爸": "父・お父さん", "妈妈": "母・お母さん",
-  "父母": "両親", "儿子": "息子", "女儿": "娘", "哥哥": "兄", "弟弟": "弟",
-  "姐姐": "姉", "妹妹": "妹", "先生": "～さん（男性）・夫", "女士": "～さん（女性）",
-  "小姐": "お嬢さん", "孩子": "子供", "男": "男", "女": "女", "客人": "客・ゲスト",
-  "司机": "運転手", "服务员": "店員・係員",
-  
-  // Thời gian & không gian
-  "年": "年", "月": "月", "日": "日", "号": "日・番号", "星期": "曜日・週",
-  "点": "時・少し", "分": "分", "秒": "秒", "现在": "今", "今天": "今日",
-  "明天": "明日", "昨天": "昨日", "前天": "一昨日", "后天": "明後日",
-  "早上": "朝", "上午": "午前", "中午": "正午・昼", "下午": "午後", "晚上": "夜",
-  "半夜": "真夜中", "今年": "今年", "明年": "来年", "去年": "去年",
-  "以前": "以前・前", "以后": "以後・後", "小时候": "子供の頃",
-  "时间": "時間", "时候": "時", "小时": "時間", "分钟": "分間", "天": "日・天",
-  "周": "週", "周末": "週末", "旁边": "隣・そば", "前面": "前", "后面": "後ろ",
-  "左边": "左側", "右边": "右側", "上面": "上", "下面": "下", "里面": "中・内側",
-  "外面": "外", "中间": "真ん中・間", "对面": "向かい側", "这里": "ここ", "这儿": "ここ",
-  "那里": "そこ・あそこ", "那儿": "そこ・あそこ",
-  
-  // Địa điểm, phương tiện, đồ vật
-  "家": "家・家族", "学校": "学校", "教室": "教室", "大学": "大学", "公司": "会社",
-  "办公室": "事務室・オフィス", "医院": "病院", "药店": "薬局", "商店": "店",
-  "超市": "スーパー", "银行": "銀行", "邮局": "郵便局", "机场": "空港",
-  "车站": "駅・バス停", "饭店": "レストラン・ホテル", "宾馆": "ホテル",
-  "图书馆": "図書館", "公园": "公園", "电影院": "映画館", "房间": "部屋",
-  "洗手间": "お手洗い", "厨房": "台所", "客厅": "居間", "书": "本",
-  "本子": "ノート", "笔": "ペン", "纸": "紙", "钱": "お金", "钱包": "財布",
-  "手机": "携帯電話", "电脑": "パソコン", "电视": "テレビ", "电影": "映画",
-  "照片": "写真", "信": "手紙", "飞机": "飛行機", "火车": "電車・列車",
-  "出租车": "タクシー", "公交车": "路線バス", "公共汽车": "バス", "自行车": "自転車",
-  "船": "船", "路": "道", "门": "ドア・門", "桌子": "机・テーブル",
-  "椅子": "椅子", "床": "ベッド", "衣服": "服", "鞋子": "靴", "包": "かばん・包む",
-  "杯子": "コップ", "水": "水", "茶": "お茶", "咖啡": "コーヒー", "牛奶": "牛乳",
-  "饭": "ご飯", "菜": "料理・野菜", "面条": "麺類", "苹果": "りんご",
-  "水果": "果物", "鸡蛋": "卵", "肉": "肉", "鱼": "魚", "药": "薬",
-  "问题": "問題・質問", "事情": "こと・出来事", "东西": "物",
-  
-  // Tính từ thông dụng
-  "大": "大きい", "小": "小さい", "多": "多い", "少": "少ない",
-  "冷": "寒い・冷たい", "热": "暑い・熱い", "高": "高い", "矮": "背が低い",
-  "快": "速い", "慢": "遅い", "远": "遠い", "近": "近い", "新": "新しい",
-  "旧": "古い", "贵": "高い（値段）", "便宜": "安い", "好吃": "美味しい",
-  "好喝": "（飲み物が）美味しい", "好看": "綺麗な・面白い", "好听": "心地よい（音）",
-  "累": "疲れた", "忙": "忙しい", "容易": "簡単・易しい", "难": "難しい",
-  "简单": "簡単な", "复杂": "複雑な", "对": "正しい", "错": "間違っている",
-  "长": "長い", "短": "短い", "漂亮": "美しい・綺麗", "帅": "かっこいい",
-  "可爱": "可愛い", "安静": "静かな", "热闹": "賑やかな", "干净": "清潔な・綺麗な",
-  "脏": "汚い", "舒服": "快適な・気持ちいい", "高兴": "嬉しい", "快乐": "楽しい・幸せ",
-  "难过": "悲しい", "着急": "焦る・急ぐ", "生气": "怒る", "害怕": "恐れる・怖い",
-  "奇怪": "変な・不思議な", "重要": "重要な", "有名": "有名な", "健康": "健康な",
-  "安全": "安全な", "小心": "気をつける", "认真": "真面目な", "热情": "親切な・熱心な",
-  "聪明": "賢い", "饱": "お腹いっぱい", "饿": "お腹が空いた", "渴": "喉が渇いた",
-  
-  // Phó từ & lượng từ
-  "很": "とても", "非常": "非常に", "太": "あまりにも", "真": "本当に",
-  "最": "最も", "更": "もっと", "越": "ますます", "也": "～も", "都": "みんな・すべて",
-  "不": "～ない", "没": "～ない・まだ", "别": "～するな", "只": "ただ・だけ",
-  "才": "やっと・～だけで", "就": "すぐ・～だけ", "已经": "すでに",
-  "正在": "～しているところ", "先": "まず・先に", "马上": "すぐに", "一直": "ずっと",
-  "经常": "よく・しょっちゅう", "常常": "よく", "总是": "いつも", "可能": "たぶん・かもしれない",
-  "一定": "必ず", "突然": "突然", "特别": "特に",
-  "个": "個・人（量詞）", "只": "匹・羽（量詞）", "条": "筋・本・条（量詞）",
-  "张": "枚（量詞）", "本": "冊（量詞）", "件": "着・件（量詞）", "块": "個・塊・元（量詞）",
-  "杯": "杯（量詞）", "瓶": "本・瓶（量詞）", "双": "足・対（量詞）", "次": "回（量詞）",
-  
-  // Từ vựng HSK 4-6 phổ biến
-  "爱好": "趣味", "安排": "手配する・予定", "按时": "時間通りに", "按照": "～に従って",
-  "包括": "含む", "保护": "保護する", "保证": "保証する", "报名": "申し込む",
-  "比较": "比べる・比較的", "必须": "必ず～しなければならない", "表示": "表す・表明する",
-  "表演": "上演する・演技", "部分": "部分", "材料": "材料・資料", "参加": "参加する",
-  "参观": "見学する", "超过": "超える", "成功": "成功する", "成为": "～になる",
-  "城市": "都市", "出发": "出発する", "出现": "現れる", "传统": "伝統",
-  "打扫": "掃除する", "大概": "おそらく", "得到": "手に入れる・得る", "地方": "場所・地方",
-  "地图": "地図", "地址": "住所", "读书": "勉強する・読書する", "发展": "発展する",
-  "翻译": "翻訳する・通訳", "方便": "便利な", "方法": "方法", "放弃": "諦める",
-  "风景": "風景", "复习": "復習する", "感谢": "感謝する", "工资": "給料",
-  "共同": "共同の", "购物": "買い物する", "故事": "物語", "关系": "関係",
-  "管理": "管理する", "广告": "広告", "规定": "規定する・規則", "国际": "国際",
-  "合格": "合格する", "合适": "適している", "活动": "活動", "机会": "機会・チャンス",
-  "积极": "積極的な", "技术": "技術", "检查": "検査する", "建议": "提案する・アドバイス",
-  "将来": "将来", "交流": "交流する", "结婚": "結婚する", "解决": "解決する",
-  "经历": "経験する・経歴", "经济": "経済", "举办": "開催する", "距离": "距離",
-  "开会": "会議をする", "开心": "楽しい", "空气": "空気", "困难": "困難",
-  "礼貌": "礼儀", "联系": "連絡する", "了解": "理解する・よく知る", "满意": "満足する",
-  "免费": "無料の", "目的": "目的", "内容": "内容", "耐心": "忍耐強い",
-  "努力": "努力する", "排队": "並ぶ", "平时": "普段", "情况": "状況",
-  "确实": "確かに", "热情": "情熱的な", "软件": "ソフトウェア", "商量": "相談する",
-  "社会": "社会", "生活": "生活する", "使用": "使用する", "世界": "世界",
-  "失望": "失望する", "收入": "収入", "数量": "数量", "水平": "水準・レベル",
-  "顺序": "順序", "态度": "態度", "提高": "高める・向上する", "条件": "条件",
-  "完成": "完成する", "味道": "味", "文化": "文化", "文件": "ファイル・文書",
-  "限制": "制限する", "相信": "信じる", "信心": "自信", "幸福": "幸せ",
-  "休息": "休む", "选择": "選択する・選ぶ", "压力": "プレッシャー・圧力", "一切": "すべて",
-  "影响": "影響を与える", "语法": "文法", "语言": "言語", "原因": "原因",
-  "责任": "責任", "增加": "増える・増やす", "正常": "正常な", "证明": "証明する",
-  "知识": "知識", "自然": "自然", "总结": "総括する",
-  
-  // Quốc gia & địa danh
-  "中国": "中国", "日本": "日本", "越南": "ベトナム", "美国": "アメリカ",
-  "英国": "イギリス", "法国": "フランス", "德国": "ドイツ", "韩国": "韓国",
-  "北京": "北京", "上海": "上海", "东京": "東京", "河内": "ハノイ"
+  "你": "あなた",
+  "我": "私",
+  "他": "彼",
+  "她": "彼女",
+  "它": "それ",
+  "我们": "私たち",
+  "你们": "あなたたち",
+  "他们": "彼ら",
+  "她们": "彼女たち",
+  "您": "あなた（敬称）",
+  "好": "良い、こんにちは",
+  "您好": "こんにちは",
+  "你好": "こんにちは",
+  "再见": "さようなら",
+  "谢谢": "ありがとう",
+  "不客气": "どういたしまして",
+  "对不起": "すみません・ごめんなさい",
+  "没关系": "大丈夫です",
+  "请": "どうぞ・お願いします",
+  "请问": "お尋ねしますが",
+  "欢迎": "ようこそ",
+  "加油": "頑張って",
+  "什么": "何",
+  "谁": "誰",
+  "哪": "どれ・どこ",
+  "哪里": "どこ",
+  "哪儿": "どこ",
+  "哪个": "どれ",
+  "怎么": "どうやって・なぜ",
+  "怎么样": "どうですか",
+  "为什么": "なぜ・どうして",
+  "多少": "いくら・どのくらい",
+  "几": "いくつ・何",
+  "和": "と",
+  "跟": "と・一緒に",
+  "而且": "それに・しかも",
+  "但是": "しかし",
+  "可是": "でも",
+  "虽然": "～だけれども",
+  "如果": "もし～なら",
+  "因为": "～だから",
+  "所以": "だから・それで",
+  "或者": "または",
+  "还是": "それとも・やはり",
+  "然后": "それから",
+  "其实": "実は",
+  "是": "～である・はい",
+  "有": "ある・持っている",
+  "在": "いる・ある・～で",
+  "看": "見る・読む",
+  "听": "聞く",
+  "说": "話す・言う",
+  "读": "読む (よむ)",
+  "写": "書く (かく)",
+  "学": "学ぶ",
+  "学习": "勉強する・学ぶ",
+  "吃": "食べる",
+  "喝": "飲む",
+  "去": "行く",
+  "来": "来る",
+  "回": "帰る・戻る",
+  "做": "する・作る",
+  "买": "買う (かう)",
+  "卖": "売る",
+  "叫": "呼ぶ・～という名前である",
+  "认识": "知り合う・知っている",
+  "知道": "知っている",
+  "想": "～したい・思う",
+  "要": "～が必要・～したい",
+  "能": "～できる",
+  "可以": "～してよい・できる",
+  "会": "できる・～するはず",
+  "喜欢": "好きである",
+  "爱": "愛する・大好き",
+  "住": "住む、泊まる (すむ/とまる)",
+  "坐": "座る、乗る (すわる/のる)",
+  "开": "開ける、運転する (ひらく/うんてんする)",
+  "关": "閉める・消す",
+  "穿": "着る",
+  "等": "待つ",
+  "找": "探す",
+  "帮": "手伝う",
+  "帮助": "助ける・手伝い",
+  "给": "あげる・くれる",
+  "问": "尋ねる・質問する",
+  "回答": "答える",
+  "走": "歩く・行く",
+  "跑": "走る",
+  "开始": "始まる・始める",
+  "结束": "終わる・終える",
+  "准备": "準備する",
+  "希望": "希望する・願う",
+  "觉得": "～と感じる・思う",
+  "认为": "～と思う・考える",
+  "需要": "必要とする",
+  "记得": "覚えている",
+  "忘记": "忘れる",
+  "送": "送る・プレゼントする",
+  "接": "迎える・受ける",
+  "进": "入る",
+  "出": "出る",
+  "到": "着く・至る",
+  "教": "教える",
+  "懂": "わかる・理解する",
+  "明白": "わかる、明らかな",
+  "练习": "練習する (れんしゅう)",
+  "复习": "復習する (ふくしゅう)",
+  "睡觉": "寝る",
+  "起床": "起きる",
+  "上班": "出勤する",
+  "下班": "退勤する",
+  "打球": "球技をする",
+  "游泳": "泳ぐ",
+  "唱歌": "歌う",
+  "跳舞": "踊る",
+  "旅游": "旅行する",
+  "散步": "散歩する",
+  "洗澡": "お風呂に入る",
+  "聊天": "雑談する",
+  "工作": "働く・仕事",
+  "人": "人",
+  "朋友": "友達",
+  "同学": "同級生",
+  "老师": "先生",
+  "学生": "学生",
+  "医生": "医者",
+  "护士": "看護師",
+  "爸爸": "父・お父さん",
+  "妈妈": "母・お母さん",
+  "父母": "両親",
+  "儿子": "息子",
+  "女儿": "娘",
+  "哥哥": "兄",
+  "弟弟": "弟",
+  "姐姐": "姉",
+  "妹妹": "妹",
+  "先生": "～さん（男性）・夫",
+  "女士": "～さん（女性）",
+  "小姐": "お嬢さん",
+  "孩子": "子供",
+  "男": "男",
+  "女": "女",
+  "客人": "客・ゲスト",
+  "司机": "運転手、ドライバー (うんてんしゅ)",
+  "服务员": "ウェイター、接客係 (てんいん)",
+  "年": "年",
+  "月": "月",
+  "日": "日",
+  "号": "日・番号",
+  "星期": "曜日・週",
+  "点": "時・少し",
+  "分": "分",
+  "秒": "秒",
+  "现在": "今",
+  "今天": "今日",
+  "明天": "明日",
+  "昨天": "昨日",
+  "前天": "一昨日",
+  "后天": "明後日",
+  "早上": "朝",
+  "上午": "午前",
+  "中午": "正午・昼",
+  "下午": "午後",
+  "晚上": "夜",
+  "半夜": "真夜中",
+  "今年": "今年",
+  "明年": "来年",
+  "去年": "去年",
+  "以前": "以前・前",
+  "以后": "以後・後",
+  "小时候": "子供の頃",
+  "时间": "時間",
+  "时候": "時",
+  "小时": "時間",
+  "分钟": "分間",
+  "天": "日・天",
+  "周": "週",
+  "周末": "週末",
+  "旁边": "隣・そば",
+  "前面": "前",
+  "后面": "後ろ",
+  "左边": "左側",
+  "右边": "右側",
+  "上面": "上",
+  "下面": "下",
+  "里面": "中・内側",
+  "外面": "外",
+  "中间": "真ん中・間",
+  "对面": "向かい側",
+  "这里": "ここ",
+  "这儿": "ここ",
+  "那里": "そこ・あそこ",
+  "那儿": "そこ・あそこ",
+  "家": "家・家族",
+  "学校": "学校 (がっこう)",
+  "教室": "教室",
+  "大学": "大学 (だいがく)",
+  "公司": "会社、企業 (かいしゃ/きぎょう)",
+  "办公室": "事務室、オフィス (じむしつ)",
+  "医院": "病院 (びょういん)",
+  "药店": "薬局、ドラッグストア (やっきょく)",
+  "商店": "店",
+  "超市": "スーパーマーケット",
+  "银行": "銀行 (ぎんこう)",
+  "邮局": "郵便局 (ゆうびんきょく)",
+  "机场": "空港",
+  "车站": "駅、停留所 (えき/ていりゅうじょ)",
+  "饭店": "レストラン・ホテル",
+  "宾馆": "ホテル、旅館",
+  "图书馆": "図書館 (としょかん)",
+  "公园": "公園",
+  "电影院": "映画館",
+  "房间": "部屋",
+  "洗手间": "お手洗い",
+  "厨房": "台所",
+  "客厅": "居間",
+  "书": "本",
+  "本子": "ノート",
+  "笔": "ペン",
+  "纸": "紙",
+  "钱": "お金",
+  "钱包": "財布 (さいふ)",
+  "手机": "携帯電話、スマホ",
+  "电脑": "パソコン、コンピュータ",
+  "电视": "テレビ",
+  "电影": "映画",
+  "照片": "写真",
+  "信": "手紙 (てがみ)",
+  "飞机": "飛行機 (ひこうき)",
+  "火车": "列車、電車 (れっしゃ)",
+  "出租车": "タクシー",
+  "公交车": "路線バス、バス",
+  "公共汽车": "バス",
+  "自行车": "自転車",
+  "船": "船",
+  "路": "道",
+  "门": "ドア・門",
+  "桌子": "机・テーブル",
+  "椅子": "椅子",
+  "床": "ベッド",
+  "衣服": "服",
+  "鞋子": "靴",
+  "包": "かばん・包む",
+  "杯子": "コップ、グラス",
+  "水": "水",
+  "茶": "お茶",
+  "咖啡": "コーヒー",
+  "牛奶": "牛乳",
+  "饭": "ご飯",
+  "菜": "料理・野菜",
+  "面条": "麺、うどん・ラーメン",
+  "苹果": "りんご",
+  "水果": "果物",
+  "鸡蛋": "卵",
+  "肉": "肉 (にく)",
+  "鱼": "魚 (さかな)",
+  "药": "薬",
+  "问题": "問題・質問",
+  "事情": "こと・出来事",
+  "东西": "物",
+  "大": "大きい",
+  "小": "小さい",
+  "多": "多い",
+  "少": "少ない",
+  "冷": "寒い・冷たい",
+  "热": "暑い・熱い",
+  "高": "高い",
+  "矮": "背が低い (ひくい)",
+  "快": "速い",
+  "慢": "遅い",
+  "远": "遠い",
+  "近": "近い",
+  "新": "新しい",
+  "旧": "古い",
+  "贵": "高い（値段）",
+  "便宜": "安い",
+  "好吃": "美味しい",
+  "好喝": "（飲み物が）美味しい",
+  "好看": "綺麗な・面白い",
+  "好听": "心地よい（音）",
+  "累": "疲れた (つかれた)",
+  "忙": "忙しい",
+  "容易": "やさしい、たやすい",
+  "难": "難しい",
+  "简单": "簡単な (かんたん)",
+  "复杂": "複雑な (ふくざつ)",
+  "对": "正しい",
+  "错": "間違っている",
+  "长": "長い",
+  "短": "短い",
+  "漂亮": "美しい・綺麗",
+  "帅": "かっこいい",
+  "可爱": "可愛い",
+  "安静": "静かな (しずか)",
+  "热闹": "賑やかな",
+  "干净": "清潔な、きれいな (せいけつ)",
+  "脏": "汚い (きたない)",
+  "舒服": "快適な、心地よい (きもちいい)",
+  "高兴": "嬉しい",
+  "快乐": "楽しい・幸せ",
+  "难过": "悲しい、辛い (かなしい)",
+  "着急": "焦る、気をもむ (あせる)",
+  "生气": "怒る、腹を立てる (おこる)",
+  "害怕": "恐れる、怖がる (こわがる)",
+  "奇怪": "奇妙な、おかしい (へん/おかしい)",
+  "重要": "重要な、大切な (じゅうよう)",
+  "有名": "有名な (ゆうめい)",
+  "健康": "健康な",
+  "安全": "安全な (あんぜん)",
+  "小心": "気をつける",
+  "认真": "真面目な、真剣な (まじめ)",
+  "热情": "親切な、情熱的な (しんせつ)",
+  "聪明": "賢い、利口な (かしこい)",
+  "饱": "お腹がいっぱいだ",
+  "饿": "お腹が空いた (すいた)",
+  "渴": "喉が渇いた (かわいた)",
+  "很": "とても",
+  "非常": "非常に",
+  "太": "あまりにも",
+  "真": "本当に",
+  "最": "最も",
+  "更": "もっと",
+  "越": "ますます",
+  "也": "～も",
+  "都": "みんな・すべて",
+  "不": "～ない",
+  "没": "～ない・まだ",
+  "别": "～するな",
+  "只": "匹・羽（量詞）",
+  "才": "やっと・～だけで",
+  "就": "すぐに、まさに、〜なら",
+  "已经": "すでに",
+  "正在": "～しているところ",
+  "先": "まず・先に",
+  "马上": "すぐに",
+  "一直": "ずっと",
+  "经常": "よく・しょっちゅう",
+  "常常": "よく",
+  "总是": "いつも",
+  "可能": "たぶん・かもしれない",
+  "一定": "必ず",
+  "突然": "突然",
+  "特别": "特別な、特に (とくべつ)",
+  "个": "個・人（量詞）",
+  "条": "筋・本・条（量詞）",
+  "张": "枚（量詞）",
+  "本": "〜冊 (書籍の量詞)",
+  "件": "〜件、〜着 (服・事柄の量詞)",
+  "块": "個・塊・元（量詞）",
+  "杯": "杯（量詞）",
+  "瓶": "本・瓶（量詞）",
+  "双": "足・対（量詞）",
+  "次": "〜回、〜度",
+  "爱好": "趣味、嗜好 (しゅみ)",
+  "安排": "手配する・予定",
+  "按时": "時間通りに",
+  "按照": "～に従って",
+  "包括": "含む",
+  "保护": "保護する",
+  "保证": "保証する",
+  "报名": "申し込む",
+  "比较": "比べる・比較的",
+  "必须": "必ず～しなければならない",
+  "表示": "表す・表明する",
+  "表演": "上演する・演技",
+  "部分": "部分",
+  "材料": "材料・資料",
+  "参加": "参加する",
+  "参观": "見学する",
+  "超过": "超える",
+  "成功": "成功する",
+  "成为": "～になる",
+  "城市": "都市",
+  "出发": "出発する",
+  "出现": "現れる",
+  "传统": "伝統",
+  "打扫": "掃除する",
+  "大概": "おそらく",
+  "得到": "手に入れる・得る",
+  "地方": "場所・地方",
+  "地图": "地図 (ちず)",
+  "地址": "住所、アドレス (じゅうしょ)",
+  "读书": "勉強する・読書する",
+  "发展": "発展する",
+  "翻译": "翻訳する、通訳する (ほんやく/つうやく)",
+  "方便": "便利な (べんり)",
+  "方法": "方法",
+  "放弃": "諦める",
+  "风景": "風景",
+  "感谢": "感謝する",
+  "工资": "給料、賃金 (きゅうりょう)",
+  "共同": "共同の",
+  "购物": "買い物する",
+  "故事": "物語、ストーリー (ものがたり)",
+  "关系": "関係",
+  "管理": "管理する",
+  "广告": "広告",
+  "规定": "規定する・規則",
+  "国际": "国際",
+  "合格": "合格する",
+  "合适": "適している",
+  "活动": "活動",
+  "机会": "機会・チャンス",
+  "积极": "積極的な",
+  "技术": "技術",
+  "检查": "検査する",
+  "建议": "提案する・アドバイス",
+  "将来": "将来",
+  "交流": "交流する",
+  "结婚": "結婚する",
+  "解决": "解決する",
+  "经历": "経歴、経験 (けいれき/けいけん)",
+  "经济": "経済",
+  "举办": "開催する",
+  "距离": "距離",
+  "开会": "会議をする",
+  "开心": "楽しい",
+  "空气": "空気",
+  "困难": "困難な、難しい (こんなん)",
+  "礼貌": "礼儀、お行儀 (れいぎ)",
+  "联系": "連絡する",
+  "了解": "理解する・よく知る",
+  "满意": "満足する",
+  "免费": "無料の、タダ (むりょう)",
+  "目的": "目的",
+  "内容": "内容",
+  "耐心": "辛抱強い、忍耐力がある",
+  "努力": "努力する、一生懸命",
+  "排队": "並ぶ",
+  "平时": "普段",
+  "情况": "状況",
+  "确实": "確かに",
+  "软件": "ソフトウェア",
+  "商量": "相談する",
+  "社会": "社会",
+  "生活": "生活する",
+  "使用": "使用する",
+  "世界": "世界",
+  "失望": "失望する",
+  "收入": "収入",
+  "数量": "数量 (すうりょう)",
+  "水平": "水準・レベル",
+  "顺序": "順序",
+  "态度": "態度",
+  "提高": "高める・向上する",
+  "条件": "条件",
+  "完成": "完成する",
+  "味道": "味",
+  "文化": "文化",
+  "文件": "ファイル・文書",
+  "限制": "制限する",
+  "相信": "信じる",
+  "信心": "自信",
+  "幸福": "幸せな、幸福 (こうふく)",
+  "休息": "休む",
+  "选择": "選択する・選ぶ",
+  "压力": "プレッシャー・圧力",
+  "一切": "すべて",
+  "影响": "影響を与える",
+  "语法": "文法 (ぶんぽう)",
+  "语言": "言語",
+  "原因": "原因",
+  "责任": "責任",
+  "增加": "増える・増やす",
+  "正常": "正常な (せいじょう)",
+  "证明": "証明する",
+  "知识": "知識",
+  "自然": "自然",
+  "总结": "総括する",
+  "中国": "中国",
+  "日本": "日本",
+  "越南": "ベトナム",
+  "美国": "アメリカ",
+  "英国": "イギリス",
+  "法国": "フランス",
+  "德国": "ドイツ",
+  "韩国": "韓国",
+  "北京": "北京",
+  "上海": "上海",
+  "东京": "東京",
+  "河内": "ハノイ",
+  "这": "これ、この",
+  "那": "あれ、あの、それ、その",
+  "一": "1、一 (いち/ひとつ)",
+  "二": "2、二 (に/ふたつ)",
+  "三": "3、三 (さん/みっつ)",
+  "四": "4、四 (よん/し)",
+  "五": "5、五 (ご/いつつ)",
+  "六": "6、六 (ろく/むっつ)",
+  "七": "7、七 (なな/しち)",
+  "八": "8、八 (はち/やっつ)",
+  "九": "9、九 (きゅう/く)",
+  "十": "10、十 (じゅう/とお)",
+  "零": "ゼロ、零 (れい)",
+  "岁": "〜歳",
+  "些": "いくつか、少し",
+  "的": "〜の、〜なもの",
+  "了": "〜した (完了・変化)",
+  "吗": "〜ですか (疑問)",
+  "呢": "〜は？(進行・疑問)",
+  "吧": "〜しましょう、〜だろう",
+  "喂": "もしもし、おーい",
+  "火车站": "鉄道駅、駅 (えき)",
+  "米饭": "ご飯、白米 (ごはん)",
+  "天气": "天気 (てんき)",
+  "猫": "猫 (ねこ)",
+  "狗": "犬 (いぬ)",
+  "名字": "名前 (なまえ)",
+  "汉语": "中国語 (ちゅうごくご)",
+  "字": "文字、漢字",
+  "说话": "話す、おしゃべりする",
+  "看见": "目に入る、見かける (みかける)",
+  "打电话": "電話をかける (でんわをかける)",
+  "每": "〜ごとに、各〜",
+  "两": "2、二つ (ペア・数量)",
+  "百": "百 (ひゃく)",
+  "千": "千 (せん)",
+  "第一": "第1、最初 (だいいち)",
+  "下": "下、降りる、〜回",
+  "斤": "500グラム (中国の斤)",
+  "还": "まだ、また、さらに",
+  "再": "もう一度、また",
+  "从": "〜から (起点)",
+  "向": "〜に向かって",
+  "离": "〜から離れて (距離・時間)",
+  "比": "〜と比べて",
+  "一起": "一緒に (いっしょに)",
+  "白": "白い、白 (しろい)",
+  "黑": "黒い、黒 (くろい)",
+  "红": "赤い、赤 (あかい)",
+  "晴": "晴れ、晴れる (はれ)",
+  "阴": "曇り、曇る (くもり)",
+  "笑": "笑う (わらう)",
+  "哭": "泣く (なく)",
+  "完": "終わる、完了する",
+  "玩": "遊ぶ (あそぶ)",
+  "让": "〜させる、譲る (ゆずる)",
+  "踢足球": "サッカーをする",
+  "考试": "試験、テスト (しけん)",
+  "票": "チケット、切符 (きっぷ)",
+  "牛肉": "牛肉 (ぎゅうにく)",
+  "题": "問題、題 (もんだい)",
+  "应该": "〜すべきである、はずだ",
+  "愿意": "喜んで〜する、望む (のぞむ)",
+  "敢": "思い切って〜する、敢えて〜する",
+  "刚才": "さっき、いましがた",
+  "一共": "合計で、合わせて (ごうけいで)",
+  "差不多": "だいたい、ほぼ同じ",
+  "互相": "お互いに (おたがいに)",
+  "只要": "〜しさえすれば",
+  "关于": "〜に関して、〜について",
+  "为了": "〜のために (目的)",
+  "把": "〜を (処置文)",
+  "被": "〜される (受身)",
+  "拿": "持つ、取る (もつ/とる)",
+  "借": "借りる、貸す (かりる/かす)",
+  "换": "変える、両替する (かえる/りょうがえ)",
+  "骑": "乗る (自転車・バイク・馬)",
+  "搬": "運ぶ、引っ越す (はこぶ/ひっこす)",
+  "祝": "祝う、祈る (いわう/いのる)",
+  "包子": "中華まん、肉まん (にくまん)",
+  "饺子": "餃子 (ギョーザ)",
+  "筷子": "箸 (はし)",
+  "碗": "茶碗、お椀 (わん)",
+  "树": "木 (き)",
+  "花": "花 (はな)",
+  "草": "草 (くさ)",
+  "鸟": "鳥 (とり)",
+  "桥": "橋 (はし)",
+  "河": "川 (かわ)",
+  "海": "海 (うみ)",
+  "湖": "湖 (みずうみ)",
+  "山": "山 (やま)",
+  "森林": "森林、森 (しんりん/もり)",
+  "阳光": "日光、日差し (にっこう/ひざし)",
+  "雨": "雨 (あめ)",
+  "雪": "雪 (ゆき)",
+  "风": "風 (かぜ)",
+  "云": "雲 (くも)",
+  "温度": "温度 (おんど)",
+  "度": "度 (ど)",
+  "动物": "動物 (どうぶつ)",
+  "植物": "植物 (しょくぶつ)",
+  "熊猫": "パンダ",
+  "马": "馬 (うま)",
+  "牛": "牛 (うし)",
+  "羊": "羊 (ひつじ)",
+  "猪": "豚 (ぶた)",
+  "鸡": "鶏、チキン (にわとり)",
+  "鸭": "アヒル、鴨 (かも)",
+  "腿": "脚、足 (あし/もも)",
+  "脸": "顔 (かお)",
+  "头": "頭 (あたま)",
+  "耳朵": "耳 (みみ)",
+  "嘴": "口 (くち)",
+  "鼻子": "鼻 (はな)",
+  "牙齿": "歯 (は)",
+  "心": "心、心臓 (こころ/しんぞう)",
+  "胃": "胃 (い)",
+  "疼": "痛い (いたい)",
+  "感冒": "風邪をひく (かぜ)",
+  "发烧": "熱が出る、発熱する (はつねつ)",
+  "咳嗽": "咳が出る (せき)",
+  "头疼": "頭痛がする (ずつう)",
+  "牙疼": "歯が痛い (はがいたい)",
+  "胖": "太っている (ふとっている)",
+  "瘦": "痩せている (やせている)",
+  "大方": "気前が良い、堂々とした",
+  "小气": "けちな、度量の小さい",
+  "笨": "不器用な、頭が鈍い",
+  "客气": "遠慮する、礼儀正しい",
+  "勇敢": "勇敢な (ゆうかん)",
+  "马虎": "おっちょこちょいな、大雑把な",
+  "吵": "うるさい、喧嘩する",
+  "担心": "心配する (しんぱい)",
+  "放心": "安心する (あんしん)",
+  "伤心": "傷心する、悲嘆に暮れる",
+  "愉快": "愉快な、楽しい (ゆかい)",
+  "轻松": "気楽な、リラックスした",
+  "紧张": "緊張する、張り詰めた (きんちょう)",
+  "清楚": "明瞭な、はっきりした",
+  "主要": "主要な、主な (おもな)",
+  "一般": "一般的な、普通 (いっぱん)",
+  "普通": "普通の (ふつう)",
+  "特殊": "特殊な (とくしゅ)",
+  "著名": "著名な、有名な (ゆうめい)",
+  "危险": "危険な (きけん)",
+  "乱": "散らかった、無秩序な (みだれた)",
+  "整齐": "整然とした、整っている",
+  "甜": "甘い (あまい)",
+  "酸": "酸っぱい (すっぱい)",
+  "苦": "苦い (にがい)",
+  "辣": "辛い (からい)",
+  "咸": "塩辛い、しょっぱい",
+  "新鲜": "新鮮な (しんせん)",
+  "香": "香ばしい、いい匂い",
+  "臭": "臭い (くさい)",
+  "暖和": "暖かい (あたたかい)",
+  "凉快": "涼しい (すずしい)",
+  "湿润": "湿った、潤いのある (しめった)",
+  "干燥": "乾燥した (かんそう)",
+  "深": "深い (ふかい)",
+  "浅": "浅い (あさい)",
+  "粗": "太い、粗い (ふとい/あらい)",
+  "细": "細い、細かい (ほそい)",
+  "硬": "硬い (かたい)",
+  "软": "柔らかい (やわらかい)",
+  "厚": "厚い (あつい)",
+  "薄": "薄い (うすい)",
+  "轻": "軽い (かるい)",
+  "重": "重い (おもい)",
+  "赢": "勝つ (かつ)",
+  "输": "負ける (まける)",
+  "平": "引き分け、平らな",
+  "汤": "スープ (スープ/しる)",
+  "糖": "砂糖、飴 (さとう/あめ)",
+  "盐": "塩 (しお)",
+  "油": "油 (あぶら)",
+  "醋": "酢 (す)",
+  "酱油": "醤油 (しょうゆ)",
+  "啤酒": "ビール",
+  "饮料": "飲み物、飲料 (のみもの)",
+  "香蕉": "バナナ",
+  "葡萄": "ぶどう",
+  "西瓜": "すいか",
+  "草莓": "いちご",
+  "桔子": "みかん",
+  "桃子": "桃 (もも)",
+  "蔬菜": "野菜 (やさい)",
+  "土豆": "じゃがいも",
+  "西红柿": "トマト",
+  "黄瓜": "きゅうり",
+  "白菜": "白菜 (はくさい)",
+  "蘑菇": "キノコ",
+  "虾": "エビ",
+  "螃蟹": "カニ",
+  "海鲜": "シーフード、海産物",
+  "猪肉": "豚肉 (ぶたにく)",
+  "鸡肉": "鶏肉 (とりにく)",
+  "鸭肉": "鴨肉、合鴨 (かもにく)",
+  "羊肉": "羊肉、マトン (ようにく)",
+  "面包": "パン",
+  "蛋糕": "ケーキ",
+  "饼干": "クッキー、ビスケット",
+  "巧克力": "チョコレート",
+  "冰激凌": "アイスクリーム",
+  "酸奶": "ヨーグルト",
+  "绿茶": "緑茶 (りょくちゃ)",
+  "红茶": "紅茶 (こうちゃ)",
+  "乌龙茶": "烏龍茶 (ウーロンちゃ)",
+  "花茶": "ジャスミン茶、花茶",
+  "果汁": "ジュース、果汁",
+  "矿泉水": "ミネラルウォーター",
+  "开水": "湯、お湯 (おゆ)",
+  "餐巾纸": "ペーパーナプキン、ティッシュ",
+  "勺子": "スプーン、さじ",
+  "叉子": "フォーク",
+  "刀子": "ナイフ、包丁",
+  "盘子": "お皿、プレート (さら)",
+  "瓶子": "ボトル、瓶 (びん)",
+  "壶": "急須、ポット",
+  "冰箱": "冷蔵庫 (れいぞうこ)",
+  "洗衣机": "洗濯機 (せんたくき)",
+  "空调": "エアコン、クーラー",
+  "微波炉": "電子レンジ",
+  "吸尘器": "掃除機 (そうじき)",
+  "电风扇": "扇風機 (せんぷうき)",
+  "电视机": "テレビ",
+  "笔记本": "ノート、ノートパソコン",
+  "照相机": "カメラ、写真機",
+  "手表": "腕時計 (うでどけい)",
+  "钟": "時計、鐘 (とけい)",
+  "闹钟": "目覚まし時計 (めざましどけい)",
+  "钥匙": "鍵 (かぎ)",
+  "眼镜": "眼鏡 (めがね)",
+  "墨镜": "サングラス",
+  "雨伞": "雨傘 (あまがさ)",
+  "书包": "ランドセル、カバン",
+  "箱子": "スーツケース、箱 (はこ)",
+  "行李": "荷物 (にもつ)",
+  "护照": "パスポート (旅券)",
+  "签证": "ビザ (査証)",
+  "机票": "航空券 (こうくうけん)",
+  "火车票": "列車の切符 (きっぷ)",
+  "门票": "入場券、チケット",
+  "地铁": "地下鉄 (ちかてつ)",
+  "高铁": "高速鉄道、新幹線 (こうそくてつどう)",
+  "轮船": "汽船、客船 (ふね)",
+  "摩托车": "オートバイ、バイク",
+  "电瓶车": "電動バイク、スクーター",
+  "飞机场": "空港、飛行場 (くうこう)",
+  "站台": "プラットホーム (ホーム)",
+  "售票处": "切符売り場 (きっぷうりば)",
+  "检票口": "改札口 (かいさつぐち)",
+  "登机牌": "搭乗券 (とうじょうけん)",
+  "安检": "保安検査、セキュリティチェック",
+  "行李箱": "スーツケース",
+  "背包": "リュックサック",
+  "手提包": "ハンドバッグ",
+  "塑料袋": "ビニール袋、レジ袋",
+  "垃圾桶": "ゴミ箱 (ごみばこ)",
+  "导游": "ツアーガイド、案内人",
+  "旅行社": "旅行代理店、旅行社",
+  "酒店": "ホテル、酒場",
+  "前台": "フロント、受付 (うけつけ)",
+  "押金": "保証金、敷金 (ほしょうきん)",
+  "收据": "領収証 (りょうしゅうしょう)",
+  "发票": "インボイス、公式領収書",
+  "信用卡": "クレジットカード",
+  "现金": "現金 (げんきん)",
+  "零钱": "小銭、お釣り (こぜに)",
+  "找钱": "お釣りを渡す",
+  "打折": "割引する、ディスカウント",
+  "降价": "値下げする (ねさげ)",
+  "价格": "価格、値段 (かかく/ねだん)",
+  "质量": "品質、クオリティ (ひんしつ)",
+  "牌子": "ブランド、銘柄 (めいがら)",
+  "尺码": "サイズ (服や靴の)",
+  "试穿": "試着する (しちゃく)",
+  "适合": "似合う、適している (にあう)",
+  "退货": "返品する (へんぴん)",
+  "换货": "商品を交換する",
+  "售货员": "店員、販売員 (てんいん)",
+  "顾客": "顧客、客 (おきゃくさま)",
+  "菜市场": "生鮮市場 (しじょう)",
+  "商场": "ショッピングモール、百貨店",
+  "书店": "書店、本屋 (しょてん/ほんや)",
+  "理发店": "理髪店、美容院 (びよういん)",
+  "门诊": "外来診療 (がいらい)",
+  "急诊": "救急外来、緊急医療",
+  "打针": "注射する (ちゅうしゃ)",
+  "输液": "点滴を受ける (てんてき)",
+  "做手术": "手術をする (しゅじゅつ)",
+  "住院": "入院する (にゅういん)",
+  "出院": "退院する (たいいん)",
+  "中学": "中学校・高校 (ちゅうがっこう)",
+  "小学": "小学校 (しょうがっこう)",
+  "幼儿园": "幼稚園、保育園 (ようちえん)",
+  "体育馆": "体育館、ジム (たいいくかん)",
+  "操场": "運動場、グラウンド (うんどうじょう)",
+  "实验室": "実験室、ラボ (じっけんしつ)",
+  "会议室": "会議室 (かいぎしつ)",
+  "宿舍": "寮、宿舎 (りょう)",
+  "食堂": "食堂 (しょくどう)",
+  "教授": "教授 (きょうじゅ)",
+  "辅导员": "学生指導員、カウンセラー",
+  "班长": "クラス委員長 (がっきゅういいんちょう)",
+  "同桌": "机を並べる席メイト",
+  "校長": "校長先生、学長 (こうちょう)",
+  "功课": "宿題、授業課題 (しゅくだい)",
+  "作业": "宿題、課題 (しゅくだい)",
+  "成绩": "成績、成果 (せいせき)",
+  "学分": "単位 (大学のたんい)",
+  "毕业": "卒業する (そつぎょう)",
+  "留学生": "留学生 (りゅうがくせい)",
+  "文凭": "卒業証書、学位記 (めんじょう)",
+  "奖学金": "奨学金 (しょうがくきん)",
+  "专业": "専攻、専門 (せんこう/せんもん)",
+  "课程": "カリキュラム、講義 (こうぎ)",
+  "寒假": "冬休み (ふゆやすみ)",
+  "暑假": "夏休み (なつやすみ)",
+  "放假": "休暇に入る、休みになる",
+  "请假": "休暇を申請する (きゅうか)",
+  "旷课": "授業をサボる、無断欠席",
+  "迟到": "遅刻する (ちこく)",
+  "早退": "早退する (そうたい)",
+  "缺席": "欠席する (けっせき)",
+  "出席": "出席する (しゅっせき)",
+  "预习": "予習する (よしゅう)",
+  "抄写": "書き写す (かきうつす)",
+  "背诵": "暗記して暗唱する (あんしょう)",
+  "听写": "ディクテーション、書き取り",
+  "口译": "通訳する (つうやく)",
+  "笔译": "翻訳する、筆訳 (ほんやく)",
+  "字典": "辞書、辞典 (じしょ)",
+  "词典": "辞典、辞書 (じてん)",
+  "发音": "発音 (はつおん)",
+  "声调": "声調、四声 (せいちょう)",
+  "拼音": "ピンイン (中国語の表音記号)",
+  "汉字": "漢字 (かんじ)",
+  "词汇": "語彙 (ごい)",
+  "句子": "文、文章 (ぶん)",
+  "段落": "段落、パラグラフ (だんらく)",
+  "文章": "文章、記事 (ぶんしょう/きじ)",
+  "小说": "小説 (しょうせつ)",
+  "寓言": "寓話 (ぐうわ)",
+  "诗歌": "詩、詩歌 (しいか)",
+  "日记": "日記 (にっき)",
+  "明信片": "絵葉書、ポストカード",
+  "包裹": "小包 (こづつみ)",
+  "快递": "宅配便、速達 (たくはいびん)",
+  "邮票": "切手 (きって)",
+  "信封": "封筒 (ふうとう)",
+  "姓名": "氏名 (しめい)",
+  "性别": "性別 (せいべつ)",
+  "年龄": "年齢 (ねんれい)",
+  "国籍": "国籍 (こくせき)",
+  "职业": "職業 (しょくぎょう)",
+  "学历": "学歴 (がくれき)",
+  "特长": "特技、長所 (とくぎ)",
+  "简历": "履歴書 (りれきしょ)",
+  "面试": "面接を受ける (めんせつ)",
+  "录取": "採用する、合格させる (さいよう)",
+  "辞职": "辞職する、仕事を辞める",
+  "失业": "失業する (しつぎょう)",
+  "退休": "定年退職する (たいしょく)",
+  "加班": "残業する (ざんぎょう)",
+  "出差": "出張する (しゅっちょう)",
+  "奖金": "ボーナス、賞与 (しょうよ)",
+  "待遇": "待遇、福利厚生 (たいぐう)",
+  "合同": "契約、契約書 (けいやく)",
+  "保险": "保険 (ほけん)",
+  "工厂": "工場 (こうじょう)",
+  "企业": "企業 (きぎょう)",
+  "部门": "部門、部署 (ぶしょ)",
+  "同事": "同僚 (どうりょう)",
+  "老板": "上司、経営者、社長 (しゃちょう)",
+  "经理": "マネージャー、支配人 (しはいにん)",
+  "职员": "会社員、職員 (しょくいん)",
+  "秘书": "秘書 (ひしょ)",
+  "会计": "会計士、経理 (かいけい)",
+  "律师": "弁護士 (べんごし)",
+  "工程师": "エンジニア、技術者 (ぎじゅつしゃ)",
+  "建筑师": "建築家 (けんちくか)",
+  "设计师": "デザイナー",
+  "记者": "記者、ジャーナリスト (きしゃ)",
+  "作家": "作家 (さっか)",
+  "画家": "画家 (がか)",
+  "音乐家": "音楽家 (おんがくか)",
+  "演员": "俳優、役者 (はいゆう)",
+  "导演": "映画監督、ディレクター (かんとく)",
+  "歌手": "歌手 (かしゅ)",
+  "运动员": "アスリート、選手 (せんしゅ)",
+  "警察": "警察官、お巡りさん (けいさつ)",
+  "军人": "軍人、兵士 (ぐんじん)",
+  "厨师": "コック、料理人 (りょうりにん)",
+  "清洁工": "清掃員 (せいそういん)",
+  "保安": "警備員、セキュリティ (けいびいん)",
+  "农民": "農民、農家 (のうみん)",
+  "工人": "労働者、作業員 (こういん)",
+  "商人": "商人、ビジネスパーソン (しょうにん)",
+  "科学家": "科学者 (かがくしゃ)",
+  "大家": "皆さん、みんな (みなさん)",
+  "介绍": "紹介する (しょうかい)",
+  "告诉": "伝える、教える (つたえる)",
+  "身体": "体、健康 (からだ/けんこう)",
+  "眼睛": "目 (め)",
+  "报纸": "新聞 (しんぶん)",
+  "颜色": "色 (いろ)",
+  "经过": "通る、経由する、プロセス (けいか)",
+  "注意": "注意する、気をつける (ちゅうい)",
+  "照顾": "世話をする、面倒を見る (せわ)",
+  "发现": "発見する、気づく (はっけん)",
+  "决定": "決定する、決める (けってい)",
+  "年轻": "若い (わかい)",
+  "音乐": "音楽 (おんがく)",
+  "节目": "番組、プログラム (ばんぐみ)",
+  "新闻": "ニュース、報道 (しんぶん/ニュース)",
+  "比赛": "試合、競技大会 (しあい)",
+  "办法": "方法、やり方 (ほうほう/てだて)",
+  "邻居": "隣人、近所の人 (となりびと)",
+  "礼物": "プレゼント、贈り物 (おくりもの)",
+  "季节": "季節 (きせつ)",
+  "春天": "春 (はる)",
+  "夏天": "夏 (なつ)",
+  "秋天": "秋 (あき)",
+  "冬天": "冬 (ふゆ)",
+  "太阳": "太陽 (たいよう)",
+  "月亮": "月 (つき)",
+  "词语": "語句、言葉 (ごく/ことば)",
+  "意思": "意味、意図 (いみ)",
+  "同意": "同意する、賛成する (どうい)",
+  "反对": "反対する (はんたい)",
+  "支持": "サポートする、支持する",
+  "继续": "続ける、継続する (つづける)",
+  "改变": "変える、改める (かえる)",
+  "感觉": "感じる、感覚 (かんかく)",
+  "爱情": "愛情、恋愛 (あいじょう)",
+  "友好": "友好的な、仲良し",
+  "次要": "副次的な、二次的な",
+  "真正": "本物の、真の (ほんもの)",
+  "糊涂": "ぼんやりした、混乱した",
+  "丰富": "豊かな、豊富な (ゆたか)",
+  "贫穷": "貧しい、貧窮した (まずしい)",
+  "富有": "裕福な、富んだ (ゆうふく)",
+  "普通话": "標準中国語、北京官話",
+  "方言": "方言 (ほうげん)",
+  "笔画": "筆画 (ひっかく)",
+  "部首": "部首 (ぶしゅ)",
+  "成语": "成語、故事成語 (せいご)",
+  "阅读": "読書する、閲覧する (どくしょ)",
+  "写作": "執筆する、作文 (さくぶん)",
+  "口语": "話し言葉、口語 (こうご)",
+  "听力": "リスニング力、聴解 (ちょうかい)",
+  "声母": "声母、語頭子音",
+  "韵母": "韻母、母音部",
+  "校长": "校長、学長 (こうちょう)",
+  "留学": "留学する (りゅうがく)",
+  "及格": "合格する、及第する (ごうかく)",
+  "满分": "満点 (まんてん)",
+  "网络": "ネットワーク、インターネット",
+  "网站": "ウェブサイト (サイト)",
+  "硬件": "ハードウェア",
+  "下载": "ダウンロードする",
+  "上传": "アップロードする",
+  "搜索": "検索する (けんさく)",
+  "密码": "パスワード、暗証番号 (パスワード)",
+  "账号": "アカウント、口座番号",
+  "登录": "ログインする",
+  "注册": "新規登録する、サインアップ",
+  "邮箱": "メールアドレス、ポスト",
+  "短信": "ショートメッセージ (SMS)",
+  "微信": "WeChat、ウィーチャット",
+  "视频": "動画、ビデオ (どうが)",
+  "相机": "カメラ",
+  "声音": "声、音 (こえ/おと)",
+  "农村": "農村、田舎 (のうそん)",
+  "街道": "通り、街並み (とおり)",
+  "马路": "大通り、車道 (どうろ)",
+  "老虎": "トラ (虎)",
+  "狮子": "ライオン (獅子)",
+  "大象": "ゾウ (象)",
+  "虫子": "虫、昆虫 (むし)",
+  "嘴巴": "口 (くち)",
+  "头发": "髪の毛 (かみのけ)",
+  "手": "手 (て)",
+  "脚": "足 (あし)",
+  "生病": "病気になる (びょうき)",
+  "难受": "苦しい、気分が悪い",
+  "病人": "患者、病人 (びょうにん)",
+  "运动": "運動する、スポーツ (うんどう)",
+  "跑步": "走る、ランニングする",
+  "爬山": "登山する、山登り (とざん)",
+  "打篮球": "バスケットボールをする",
+  "打羽毛球": "バドミントンをする",
+  "打乒乓球": "卓球をする (ピンポン)",
+  "网球": "テニス",
+  "排球": "バレーボール",
+  "健身房": "フィットネスジム",
+  "早餐": "朝食、朝ごはん (ちょうしょく)",
+  "午餐": "昼食、ランチ (ちゅうしょく)",
+  "晚餐": "夕食、ディナー (ゆうしょく)",
+  "橙子": "オレンジ",
+  "买单": "お会計をする、チェック",
+  "菜单": "メニュー、献立 (こんだて)",
+  "点菜": "料理を注文する (ちゅうもん)",
+  "打包": "持ち帰り用に包む (テイクアウト)",
+  "祝贺": "祝賀する、おめでとう (おいわい)",
+  "原谅": "許す、大目に見る (ゆるす)",
+  "抱歉": "申し訳ない、すまないと思う",
+  "博士": "博士 (はくし)",
+  "不得不": "〜せざるを得ない",
+  "不管": "〜にかかわらず、たとえ〜でも",
+  "不过": "ただし、しかし (でも)",
+  "不仅": "〜だけでなく",
+  "长城": "万里の長城 (ばんりのちょうじょう)",
+  "长江": "長江、揚子江 (ちょうこう)",
+  "大使馆": "大使館 (たいしかん)",
+  "当然": "当然、もちろん (とうぜん)",
+  "电梯": "エレベーター、エスカレーター",
+  "电子邮件": "電子メール、Eメール",
+  "对于": "〜に対して、〜について",
+  "服务": "サービスを提供する、奉仕する",
+  "感情": "感情、気持ち (かんじょう)",
+  "公里": "キロメートル (km)",
+  "功夫": "カンフー、クンフー、手間",
+  "过去": "過去、昔 (かこ)",
+  "盒子": "小箱、ケース (はこ)",
+  "加油站": "ガソリンスタンド",
+  "举行": "開催する、執り行う (かいさい)",
+  "聚会": "集まり、パーティー (あつまり)",
+  "来不及": "間に合わない (まにあわない)",
+  "毛巾": "タオル",
+  "美丽": "美しい、綺麗な (うつくしい)",
+  "难道": "まさか〜ではあるまいか",
+  "年级": "学年 (がくねん)",
+  "培养": "育成する、養う (そだてる)",
+  "批评": "批判する、叱る (ひはん)",
+  "篇": "〜編 (文章・論文の量詞)",
+  "品质": "品質、気品 (ひんしつ)",
+  "其次": "その次、次に (つぎに)",
+  "其中": "その中、そのうち (そのなか)",
+  "亲戚": "親戚、親族 (しんせき)",
+  "青春": "青春 (せいしゅん)",
+  "取得": "取得する、手に入れる (える)",
+  "全部": "全部、すべて (ぜんぶ)",
+  "入口": "入口 (いりぐち)",
+  "上网": "ネットサーフィンする、ネット接続",
+  "输入": "入力する、インポートする",
+  "双方": "双方、両者 (そうほう)",
+  "私人": "個人的な、プライベートな",
+  "随便": "ご自由に、何でもいい (おすきに)",
+  "题目": "問題、テーマ (だいもく)",
+  "填写": "記入する、書き込む (きにゅう)",
+  "推迟": "延期する、先送りにする (えんき)",
+  "文明": "文明、マナーが良い (ぶんめい)",
+  "无聊": "退屈な、つまらない (たいくつ)",
+  "武术": "武術、格闘技 (ぶじゅつ)",
+  "叶子": "葉、木の葉 (はっぱ)",
+  "主意": "アイデア、考え (考え)",
+  "本来": "もともと、本来 (ほんらい)",
+  "遍": "〜回、〜遍 (通読・通して行う回数)",
+  "表格": "表、フォーム (ひょう)",
+  "表扬": "褒める、表彰する (ほめる)",
+  "猜": "当てる、推測する (あてる)",
+  "餐厅": "レストラン、食堂",
+  "厕所": "トイレ、お手洗い",
+  "尝": "味わう、味見する (あじわう)",
+  "场": "場所、広場、〜回",
+  "衬衫": "ワイシャツ、シャツ",
+  "成熟": "成熟した、大人びた (せいじゅく)",
+  "乘坐": "乗車する、搭乗する (のる)",
+  "吃惊": "びっくりする、驚く (おどろく)",
+  "重新": "改めて、もう一度 (やり直す)",
+  "抽烟": "タバコを吸う (きつえん)",
+  "出生": "生まれる、誕生する (うまれる)",
+  "初级": "初級、ビギナー (しょきゅう)",
+  "除了": "〜を除いて、〜のほかに",
+  "传真": "ファックス (FAX)",
+  "窗户": "窓 (まど)",
+  "春节": "旧正月、春節 (しゅんせつ)",
+  "粗心": "おっちょこちょいな、不注意な",
+  "存": "預ける、保存する (ほぞん)",
+  "错误": "過ち、ミス (まちがい)",
+  "答案": "解答、答え (かいとう)",
+  "达到": "到達する、達成する (たっする)",
+  "打扮": "身なりを整える、おしゃれする",
+  "打扰": "邪魔する、お邪魔する",
+  "打印": "印刷する、プリントアウト",
+  "大夫": "医師、医者 (おいしゃさん)",
+  "大陆": "大陸 (たいりく)",
+  "大约": "およそ、約 (およそ)",
+  "戴": "身につける (帽子・眼鏡・指輪)",
+  "代表": "代表する、代表者 (だいひょう)",
+  "单纯": "単純な、ピュアな (たんじゅん)",
+  "单调": "単調な、一本調子の",
+  "单独": "単独の、一人で (たんどく)",
+  "单位": "職場、所属機関、単位 (たんい)",
+  "单元": "ユニット、小単元 (ゆにっと)",
+  "耽误": "遅らせる、時間を無駄にする",
+  "倒霉": "運が悪い、ついてない",
+  "到处": "いたる所、あちこち",
+  "到底": "いったい、結局 (けっきょく)",
+  "得意": "得意げな、満足気な",
+  "等待": "待つ、待機する (まつ)",
+  "底": "底、末 (そこ)",
+  "地球": "地球 (ちきゅう)",
+  "掉": "落ちる、抜ける (おちる)",
+  "丢": "失う、なくす、捨てる",
+  "堵车": "渋滞する (じゅうたい)",
+  "肚子": "お腹 (おなか)",
+  "对话": "対話する、会話 (たいわ)",
+  "对手": "相手、好敵手、ライバル",
+  "对象": "相手、恋人、対象 (たいしょう)",
+  "儿童": "児童、子ども (じどう)",
+  "发生": "発生する、起こる (はっせい)",
+  "发言": "発言する、演説する (はつげん)",
+  "罚款": "罰金を科す、罰金 (ばっきん)",
+  "法院": "裁判所 (さいばんしょ)",
+  "烦恼": "悩む、煩悩 (なやみ)",
+  "反应": "反応する、リアクション (はんのう)",
+  "访问": "訪問する (ほうもん)",
+  "费用": "費用、コスト (ひよう)",
+  "分配": "分配する、割り当てる (ぶんぱい)",
+  "分手": "別れる (恋人関係を解消する)",
+  "纷纷": "次から次へと、続々と",
+  "奋斗": "奮闘する、努力を重ねる",
+  "愤怒": "激怒する、怒り (いかり)",
+  "风险": "リスク、危険性 (きけん)",
+  "否定": "否定する (ひてい)",
+  "扶": "手を貸す、支える (ささえる)",
+  "服从": "服従する、従う (したがう)",
+  "符合": "合致する、適合する (てきごう)",
+  "辅导": "個人指導する、チューター",
+  "富": "裕福な、豊かな (ゆたか)",
+  "改进": "改善する、改良する (かいりょう)",
+  "干杯": "乾杯する (かんぱい)",
+  "干脆": "思い切って、サバサバした",
+  "赶紧": "急いで、素早く",
+  "赶快": "急いで、早急に",
+  "感动": "感動する (かんどう)",
+  "高速公路": "高速道路 (こうそくどうろ)",
+  "格外": "格別に、とりわけ (かくべつ)",
+  "隔壁": "隣の部屋、お隣さん",
+  "个别": "個別の、ごく少数の (こべつ)",
+  "各": "各々、それぞれ (おのおの)",
+  "根本": "根本的な、全く〜ない",
+  "更加": "いっそう、さらに (もっと)",
+  "公布": "公布する、公表する (こうひょう)",
+  "公开": "公開する、オープンにする",
+  "公寓": "マンション、アパート",
+  "贡献": "貢献する、寄与する (こうけん)",
+  "鼓励": "激励する、励ます (はげます)",
+  "鼓舞": "鼓舞する、勇気づける",
+  "故意": "故意に、わざと (わざと)",
+  "关键": "肝心な、キーポイント (かんじん)",
+  "观众": "観客、オーディエンス (かんきゃく)",
+  "冠军": "チャンピオン、優勝者 (ゆうしょう)",
+  "规律": "規則性、法則 (ほうそく)",
+  "柜台": "カウンター、受付窓口",
+  "过程": "プロセス、過程 (かてい)",
+  "安慰": "慰める (なぐさめる)",
+  "熬夜": "徹夜する、夜更かしする",
+  "把握": "つかむ、把握する (はあく)",
+  "摆": "並べる、置く (ならべる)",
+  "包含": "包含する、含む (ふくむ)",
+  "抱怨": "不平を言う、愚痴る (ぐちる)",
+  "背景": "背景、バックグラウンド (はいけい)",
+  "本质": "本質 (ほんしつ)",
+  "辩论": "ディベートする、弁論 (べんろん)",
+  "表达": "表現する、伝える (ひょうげん)",
+  "表面": "表面、うわべ (ひょうめん)",
+  "并且": "かつ、そして (ならびに)",
+  "博览会": "博覧会、エキスポ (はくらんかい)",
+  "不安": "不安な、落ち着かない (ふあん)",
+  "不断": "絶え間なく、絶えず (たえず)",
+  "财富": "富、財産 (ざいさん)",
+  "参考": "参考にする (さんこう)",
+  "差距": "格差、ギャップ (さ)",
+  "承担": "引き受ける、担う (になう)",
+  "诚实": "正直な、誠実な (せいじつ)",
+  "充分": "十分な、たっぷりの (じゅうぶん)",
+  "充满": "満ち溢れる (みちあふれる)",
+  "出版": "出版する (しゅっぱん)",
+  "出口": "輸出する、出口 (ゆしゅつ/でぐち)",
+  "出色": "傑出した、素晴らしい",
+  "创造": "創造する、生み出す (そうぞう)",
+  "从事": "従事する、携わる (たずさわる)",
+  "存在": "存在する (そんざい)",
+  "打工": "アルバイトする (バイト)",
+  "代替": "代わる、代替する (だいたい)",
+  "当地": "地元、現地 (じもと/げんち)",
+  "当时": "当時、その時 (とうじ)",
+  "导致": "引き起こす、招く (まねく)",
+  "的确": "確かに、本当に (たしかに)",
+  "底部": "底部、底の部分 (そこ)",
+  "地位": "地位、ポジション (ちい)",
+  "顶部": "頂上、トップ (てっぺん)",
+  "对比": "対比する、コントラスト (たいひ)",
+  "放松": "リラックスする、緩める",
+  "风格": "スタイル、作風 (ふうかく)",
+  "负责": "責任を持つ、担当する",
+  "服装": "服装、アパレル (ふくそう)",
+  "感受": "実感する、感じ取る (かんじる)",
+  "告别": "別れを告げる (わかれ)",
+  "个人": "個人、プライベート (こじん)",
+  "根据": "〜に基づき、根拠 (こんきょ)",
+  "工程": "プロジェクト、土木工事 (こうじ)",
+  "供应": "供給する (きょうきゅう)",
+  "沟通": "コミュニケーションをとる",
+  "估计": "見積もる、推測する (すいそく)",
+  "固定": "固定する (こてい)",
+  "关注": "注目する、フォローする (ちゅうもく)",
+  "广泛": "幅広い、広範な (こうはん)",
+  "过分": "行き過ぎた、過度な (かど)",
+  "合法": "合法的な (ごうほう)",
+  "何况": "ましてや、なおさら",
+  "后果": "結果、ゆくゆくの結末",
+  "划分": "区分する、割り振る (くぶん)",
+  "回忆": "思い出す、追憶 (おもいで)",
+  "积累": "積み重ねる、蓄積する (ちくせき)",
+  "基本": "基本的な、ベース (きほん)",
+  "集中": "集中する (しゅうちゅう)",
+  "坚持": "堅持する、やり抜く (やりぬく)",
+  "减少": "減少する、減らす (へらす)",
+  "结合": "結びつける、結合する (けつごう)",
+  "进行": "行う、進める (おこなう)",
+  "就业": "就職する (しゅうしょく)",
+  "拒绝": "拒絶する、断る (ことわる)",
+  "开发": "開発する (かいはつ)",
+  "考察": "実地調査する、視察する (しさつ)",
+  "可靠": "信頼できる、頼もしい",
+  "客观": "客観的な (きゃっかんてき)",
+  "空间": "スペース、空間 (くうかん)",
+  "空闲": "暇な、空き時間 (ひま)",
+  "控制": "コントロールする、制御する (せいぎょ)",
+  "扩大": "拡大する、広げる (かくだい)",
+  "劳动": "労働する (ろうどう)",
+  "理解": "理解する、汲み取る (りかい)",
+  "理论": "理論 (りろん)",
+  "例如": "例えば (たとえば)",
+  "联合": "連合する、提携する (れんごう)",
+  "临时": "臨時の、一時的な (りんじ)",
+  "灵活": "柔軟な、フレキシブルな",
+  "领域": "領域、専門分野 (りょういき)",
+  "流行": "流行する、トレンド (りゅうこう)",
+  "论文": "学術論文 (ろんぶん)",
+  "明显": "明らかな、明白な (めいはく)",
+  "目前": "現在、目下のところ (もっか)",
+  "难免": "免れがたい、どうしても〜になる",
+  "内部": "内部 (ないぶ)",
+  "宁可": "むしろ〜した方がましだ",
+  "偶尔": "たまに、偶に (たまに)",
+  "平等": "平等な (びょうどう)",
+  "批准": "承認する、批准する (ひじゅん)",
+  "普遍": "普遍的な、広く行き渡った",
+  "强调": "強調する、力説する (きょうちょう)",
+  "亲自": "自ら、自ら出向いて (みずから)",
+  "请求": "要請する、願い出る (ようせい)",
+  "确保": "確保する、確実に保証する (かくほ)",
+  "确认": "確認する (かくにん)",
+  "热爱": "心から愛する、熱愛する",
+  "人才": "人材、有能な人物 (じんざい)",
+  "人口": "人口 (じんこう)",
+  "如何": "どのように、いかに (いかに)",
+  "如今": "今日、いまや (いまや)",
+  "散漫": "散漫な、しまりのない",
+  "商务": "ビジネス、商務 (しょうむ)",
+  "深刻": "深い、深刻な (しんこく)",
+  "申请": "申請する、申し込む (しんせい)",
+  "省略": "省略する (しょうりゃく)",
+  "十分": "非常に、極めて (とても)",
+  "实际": "実際の、リアルの (じっさい)",
+  "实现": "実現する、果たす (じつげん)",
+  "适当": "適切な、適度な (てきせつ)",
+  "收获": "収穫、実り (しゅうかく)",
+  "损失": "損失、損害 (そんしつ)",
+  "提供": "提供する、供給する (ていきょう)",
+  "体现": "具現化する、体現する (たいげん)",
+  "填补": "埋め合わせる、補填する",
+  "调查": "調査する、リサーチ (ちょうさ)",
+  "通过": "通過する、〜を通じて (つうじて)",
+  "推广": "普及させる、プロモーション",
+  "完善": "完備させる、磨き上げる",
+  "往往": "往々にして、よく (よく)",
+  "稳定": "安定した (あんてい)",
+  "物质": "物質、モノ (ぶっしつ)",
+  "系统": "システム、体系 (けいとう)",
+  "先进": "先進的な、進んだ (せんしん)",
+  "相关": "関連する (かんれん)",
+  "心理": "心理、精神 (しんり)",
+  "信任": "信頼する、信用する (しんらい)",
+  "宣传": "宣伝する、PRする (せんでん)",
+  "寻找": "探し求める (さがし求める)",
+  "演讲": "スピーチする、講演する (こうえん)",
+  "依靠": "頼る、依存する (たよる)",
+  "影子": "影 (かげ)",
+  "由于": "〜のため、〜ゆえに",
+  "有利": "有利な (ゆうり)",
+  "于是": "そこで、こうして",
+  "与其": "〜よりはむしろ",
+  "展示": "展示する、アピールする",
+  "直接": "直接的な (ちょくせつ)",
+  "指导": "指導する (しどう)",
+  "重视": "重視する (じゅうし)",
+  "主张": "主張する (しゅちょう)",
+  "仔细": "入念な、綿密な (ていねい)",
+  "爱惜": "大切にする、愛惜する (たいせつ)",
+  "拜访": "表敬訪問する (ほうもん)",
+  "拜年": "新年の挨拶をする (ねんが)",
+  "颁发": "授与する、交付する (じゅよ)",
+  "傍晚": "夕暮れ、日暮れ時 (ゆうがた)",
+  "保存": "保存する (ほぞん)",
+  "保留": "保留する、残しておく",
+  "宝贵": "貴重な、かけがえのない",
+  "报社": "新聞社 (しんぶんしゃ)",
+  "悲哀": "悲哀、深い悲しみ (かなしみ)",
+  "悲观": "悲観的な (ひかんてき)",
+  "本领": "腕前、スキル (うでまえ)",
+  "彼此": "お互い、彼此 (おたがい)",
+  "必然": "必然的な (ひつぜん)",
+  "必要": "必要な (ひつよう)",
+  "毕竟": "何といっても、結局のところ",
+  "避免": "避ける、回避する (さける)",
+  "编辑": "編集する、編集者 (へんしゅう)",
+  "变化": "変化する (へんか)",
+  "标志": "標識、シンボル (めじるし)",
+  "表明": "表明する、はっきり示す",
+  "表情": "表情、顔つき (ひょうじょう)",
+  "病毒": "ウイルス (病原体)",
+  "要求": "要求する、求める (ようきゅう)",
+  "历史": "歴史 (れきし)",
+  "数学": "数学 (すうがく)",
+  "体育": "体育、スポーツ (たいいく)",
+  "习惯": "習慣、慣れ (しゅうかん)",
+  "作用": "作用、働き、効果 (さよう)",
+  "环境": "環境 (かんきょう)",
+  "国家": "国家、国 (こっか/くに)",
+  "失败": "失敗する (しっぱい)",
+  "科学": "科学 (かがく)",
+  "信息": "情報、メッセージ (じょうほう)",
+  "相反": "正反対の、逆の (そうはん)",
+  "范围": "範囲 (はんい)",
+  "风俗": "風習、風俗 (ふうしゅう)",
+  "改革": "改革する (かいかく)",
+  "规模": "規模、スケール (きぼ)",
+  "规则": "規則、ルール (きそく)",
+  "爱心": "思いやり、愛情 (あいじょう)",
+  "标准": "基準、スタンダード (きじゅん)",
+  "高度": "高さ、高度 (こうど)",
+  "化学": "化学 (かがく)",
+  "任务": "任務、タスク (にんむ)",
+  "生命": "命、生命 (いのち/せいめい)",
+  "效果": "効果 (こうか)",
+  "性格": "性格、人柄 (せいかく)",
+  "优点": "長所、メリット (ちょうしょ)",
+  "制度": "制度 (せいど)",
+  "播放": "放送する、再生する (ほうそう/さいせい)",
+  "补充": "補充する、補う (ほじゅう)",
+  "不必": "〜する必要はない (およばない)",
+  "步骤": "手順、ステップ (てじゅん)",
+  "财产": "財産、資産 (ざいさん)",
+  "采访": "取材する、インタビューする (しゅざい)",
+  "采取": "講じる、採用する (こうじる)",
+  "彩虹": "虹 (にじ)",
+  "残疾": "身体障害、不自由 (しょうがい)",
+  "残酷": "残酷な、過酷な (ざんこく)",
+  "灿烂": "燦然と輝く、輝かしい (かがやかしい)",
+  "惭愧": "恥じ入る、面目ない (はずかしい)",
+  "操心": "気をもむ、心配する (しんぱい)",
+  "册": "冊 (書籍の単位)",
+  "曾经": "かつて、以前 (かつて)",
+  "插": "差し込む、挿入する (さしこむ)",
+  "产生": "生じる、生まれる (しょうじる)",
+  "长途": "長距離の、長旅 (ちょうきょり)",
+  "常识": "常識 (じょうしき)",
+  "抄": "書き写す、コピーする (うつす)",
+  "朝代": "王朝、時代 (おうちょう)",
+  "炒": "炒める (いためる)",
+  "彻底": "徹底的な、とことん (てっていてき)",
+  "沉默": "沈黙する (ちんもく)",
+  "沉重": "重苦しい、深刻な (おもくるしい)",
+  "称呼": "呼ぶ、呼び名 (よびな)",
+  "称赞": "称賛する、褒める (しょうさん)",
+  "承受": "耐える、受け止める (たえる)",
+  "成果": "成果、実り (せいか)",
+  "成就": "成就、大業、実績 (じっせき)",
+  "成立": "成立する、設立する (せつりつ)",
+  "成本": "原価、コスト (原価)",
+  "吃亏": "損をする、痛い目にあう (そん)",
+  "迟早": "遅かれ早かれ (おそかれはやかれ)",
+  "持续": "持続する、続く (じぞく)",
+  "尺子": "物差し、定規 (ものさし/じょうぎ)",
+  "翅膀": "翼、羽 (つばさ/はね)",
+  "充电": "充電する (じゅうでん)",
+  "充足": "十分な、満ち足りた (じゅうぶん)",
+  "丑": "醜い、ブサイクな (みにくい)",
+  "初": "初め、初旬 (はじめ)",
+  "除非": "〜でない限り、〜してこそ",
+  "储蓄": "貯蓄する、貯金 (ちょちく)",
+  "传递": "手渡す、伝達する (つたえる)",
+  "传染": "感染する、うつる (かんせん)",
+  "窗帘": "カーテン (カーテン)",
+  "吹": "息を吹く、自慢する (ふく)",
+  "刺激": "刺激する、興奮させる (しげき)",
+  "匆忙": "慌ただしい、急いで (あわただしい)",
+  "从此": "これ以後、それ以来 (これいらい)",
+  "从而": "それによって、したがって",
+  "从前": "昔、以前 (むかし)",
+  "促使": "促す、仕向ける (うながす)",
+  "措施": "措置、対策 (そち/たいさく)",
+  "答应": "応じる、承諾する (しょうだく)",
+  "打听": "尋ねる、問い合わせる (といあわせる)",
+  "大厦": "ビル、高層建築 (ビル)",
+  "大型": "大型の (おおがた)",
+  "代价": "代償、コスト (だいしょう)",
+  "贷款": "融資、ローン (ローン)",
+  "道理": "筋道、道理、理由 (どうり)",
+  "登记": "登記する、登録する (とうろく)",
+  "地震": "地震 (じしん)",
+  "电池": "電池、バッテリー (でんち)",
+  "独立": "独立する (どくりつ)",
+  "度过": "過ごす (時間・休暇をすごす)",
+  "堆": "積み重ねる、山 (つみかさねる)",
+  "队伍": "行列、部隊、チーム (ぎょうれつ)",
+  "多余": "余分な、無駄な (よぶん)",
+  "朵": "〜輪 (花や雲の量詞)",
+  "恶劣": "悪劣な、劣悪な (れつあく)",
+  "发表": "発表する、公表する (はっぴょう)",
+  "发达": "発達した、発展した (はったつ)",
+  "发抖": "震える (ふるえる)",
+  "发明": "発明する (はつめい)",
+  "反而": "かえって、逆に (かえって)",
+  "反复": "繰り返す、反復する (はんぷく)",
+  "反正": "どうせ、いずれにせよ (とにかく)",
+  "仿佛": "あたかも〜のようだ (まるで)",
+  "非法": "違法の、非合法な (いほう)",
+  "分别": "別れる、それぞれ (わかれる)",
+  "分布": "分布する (ぶんぷ)",
+  "分散": "分散する (ぶんさん)",
+  "疯狂": "熱狂的な、狂気じみた (くるった)",
+  "腐败": "腐敗する、汚職 (ふはい)",
+  "钢铁": "鉄鋼 (てっこう)",
+  "高档": "高級な、ハイエンドの (こうきゅう)",
+  "革命": "革命 (かくめい)",
+  "骨头": "骨 (ほね)",
+  "鼓掌": "拍手する (はくしゅ)",
+  "顾问": "顧問、アドバイザー (こもん)",
+  "国防": "国防 (こくぼう)",
+  "爱护": "大切にする、いたわる (あいご)",
+  "暧昧": "曖昧な、あやふやな (あいまい)",
+  "巴不得": "〜したくてたまらない",
+  "颁布": "公布する、発布する (はっぷ)",
+  "半途而废": "中途半端で投げ出す (挫折する)",
+  "抱负": "抱負、大志 (ほうふ)",
+  "奔跑": "疾走する、走る (はしる)",
+  "遍布": "行き渡る、一面に広がる",
+  "比例": "比率、プロポーション (ひりつ)",
+  "变革": "変革する (へんかく)",
+  "博大": "博大なる、広大無辺な",
+  "不惜": "惜しまない (おしまない)",
+  "财政": "財政 (ざいせい)",
+  "惨": "悲惨な、みじめな (ひさん)",
+  "策略": "戦略、タクティクス (さくりゃく)",
+  "层次": "レベル、階層 (かいそう)",
+  "诚恳": "心からの、誠意ある (せいい)",
+  "承诺": "約束する、コミットする (やくそく)",
+  "城乡": "都市と農村 (としとのうそん)",
+  "抽象": "抽象的な (ちゅうしょうてき)",
+  "处分": "処分する、懲戒 (しょぶん)",
+  "处理": "処理する、対応する (しょり)",
+  "触及": "触れる、タッチする (ふれる)",
+  "创新": "イノベーション、革新 (かくしん)",
+  "促进": "促進する (そくしん)",
+  "存储": "保存する、ストレージ (ほぞん)",
+  "打击": "打撃を与える、取り締まる (だげき)",
+  "担忧": "懸念する、心配する (しんぱい)",
+  "当务之急": "焦眉の急、最優先課題",
+  "道德": "道徳、モラル (どうとく)",
+  "得失": "損得、利害 (そんとく)",
+  "底线": "ボトムライン、最低限の基準",
+  "典型": "典型的な (てんけいてき)",
+  "调整": "調整する、見直す (ちょうせい)",
+  "定义": "定義する、定義 (ていぎ)",
+  "独特": "ユニークな、独特の (どくとく)",
+  "对策": "対策、対応策 (たいさく)",
+  "多元": "多元的な、マルチな (たげん)",
+  "发挥": "発揮する (はっき)",
+  "繁荣": "繁栄する (はんえい)",
+  "方向": "方向、方角 (ほうこう)",
+  "分析": "分析する (ぶんせき)",
+  "扶持": "支援する、後押しする (しえん)",
+  "概念": "コンセプト、概念 (がいねん)",
+  "干扰": "妨害する、干渉する (ぼうがい)",
+  "高效": "高効率な (こうこうりつ)",
+  "格局": "枠組み、構造 (こうぞう)",
+  "更新": "アップデートする、更新する",
+  "工具": "ツール、道具 (どうぐ)",
+  "共同体": "共同体、コミュニティ (きょうどうたい)",
+  "惯例": "慣例、しきたり (かんれい)",
+  "规范": "規範、規格 (きはん)",
+  "轨道": "軌道、レール (きどう)",
+  "过渡": "過渡期の、移行する (いこう)",
+  "核心": "コア、核心 (かくしん)",
+  "合作": "協力する、コラボ (きょうりょく)",
+  "横": "横の、水平の (よこ)",
+  "弘扬": "大いに発揚する、高める",
+  "化解": "解消する、和らげる (かいしょう)",
+  "环节": "プロセスの1コマ、輪 (わ)",
+  "具体": "具体的な (ぐたいてき)",
+  "机制": "メカニズム、仕組み (しくみ)",
+  "基础": "基礎、土台 (きそ)",
+  "坚定": "断固たる、揺るぎない (かたい)",
+  "践行": "実践する (じっせん)",
+  "降低": "下げる、低下させる (さげる)",
+  "交融": "融合する、溶け合う (ゆうごう)",
+  "交织": "交錯する、織り交ざる",
+  "节制": "節制する、自制する (じせい)",
+  "精神": "精神、スピリット、元気 (せいしん)",
+  "绝对": "絶対的な (ぜったいてき)",
+  "均衡": "バランスのとれた、均衡 (きんこう)",
+  "开拓": "切り開く、開拓する (かいたく)",
+  "考量": "熟慮する、考慮する (こうりょ)",
+  "可持续": "持続可能な (サステナブル)",
+  "空洞": "空虚な、内容のない (くうきょ)",
+  "框架": "フレームワーク、枠組み (わくぐみ)",
+  "扩充": "拡充する (かくじゅう)",
+  "理念": "理念、フィロソフィー (りねん)",
+  "利益": "利益、メリット (りえき)",
+  "立场": "立場、スタンス (たちば)",
+  "联动": "連動する (れんどう)",
+  "领导": "リーダー、指導者 (しどうしゃ)",
+  "落实": "着実に実行する、落とし込む",
+  "漫长": "気の遠くなるほど長い (ながい)",
+  "贸易": "貿易 (ぼうえき)",
+  "面临": "直面する (ちょくめん)",
+  "模式": "モデル、パターン (もけい/パターン)",
+  "目标": "目標、ゴール (もくひょう)",
+  "内涵": "本質的な意味、内包 (ないほう)",
+  "能动": "能動的な (のうどうてき)",
+  "凝聚": "凝集する、結束する (けっそく)",
+  "能力": "能力、スキル (のうりょく)",
+  "排除": "排除する、取り除く (はいじょ)",
+  "批判": "批判する (ひはん)",
+  "平衡": "バランス、平衡 (きんこう)",
+  "评估": "査定する、アセスメント (ひょうか)",
+  "破坏": "破壊する、台無しにする (はかい)",
+  "驱动": "ドライブする、駆動する (くどう)",
+  "全面": "全面的、全方位の (ぜんめん)",
+  "热议": "白熱した議論、ホットな話題",
+  "融合": "融合する (ゆうごう)",
+  "柔软": "柔軟な、しなやかな (じゅうなん)",
+  "社会主义": "社会主義 (しゃかいしゅぎ)",
+  "深化": "深める、深化させる (しんか)",
+  "渗透": "浸透する (しんとう)",
+  "施工": "施工する、工事 (せこう)",
+  "时代": "時代、ジェネレーション (じだい)",
+  "实施": "実施する、施行する (じっし)",
+  "实质": "実質、本質 (じっしつ)",
+  "世代": "世代、代々 (せだい)",
+  "适应": "適応する、馴染む (てきおう)",
+  "疏导": "導く、円滑にする (そどう)",
+  "说明": "説明する (せつめい)",
+  "素质": "素養、クオリティ (そしつ)",
+  "态势": "情勢、トレンド (じょうせい)",
+  "提升": "高める、アップさせる (こうじょう)",
+  "体系": "体系、システム (たいけい)",
+  "推动": "後押しする、推進する (すいしん)",
+  "完整": "完全な、揃っている (かんぜん)",
+  "稳固": "強固な、ゆるぎない (けんご)",
+  "务实": "プラグマティックな、実利的な",
+  "协同": "協働する、シナジー (きょうどう)",
+  "新型": "新型の、新しいタイプの (しんがた)",
+  "形成": "形成する (けいせい)",
+  "形势": "情勢、形勢 (じょうせい)",
+  "行动": "行動する、アクション (こうどう)",
+  "行为": "振る舞い、行為 (こうい)",
+  "虚构": "フィクション、架空の (かくう)",
+  "选取": "選び取る、チョイスする",
+  "学科": "学科、学問分野 (がっか)",
+  "研究": "研究する、検討する (けんきゅう)",
+  "演化": "進化する、変遷する (しんか)",
+  "有效": "有効な、効力がある (ゆうこう)",
+  "引导": "導く、ガイドする (ゆうどう)",
+  "语境": "文脈、コンテクスト (ぶんみゃく)",
+  "愿景": "ビジョン、将来像 (ビジョン)",
+  "运行": "運行する、作動する (さどう)",
+  "再生": "再生する、リサイクル (さいせい)",
+  "展望": "展望する、見通し (てんぼう)",
+  "整合": "統合する、インテグレート (とうごう)",
+  "政策": "政策、ポリシー (せいさく)",
+  "支撑": "支える、バックボーン (ささえる)",
+  "指向": "志向する、指し示す (しこう)",
+  "制定": "制定する、策定する (さくてい)",
+  "主体": "メイン、主体 (しゅたい)",
+  "转化": "転換する、トランスフォーム",
+  "综合": "総合的な (そうごう)",
+  "尊重": "尊重する、敬意を払う (そんちょう)",
+  "哀悼": "哀悼の意を表する (あいとう)",
+  "癌症": "がん、悪性腫瘍 (がん)",
+  "昂贵": "非常に高価な (こうか)",
+  "凹凸": "凸凹、デコボコ (おうとつ)",
+  "拔苗助长": "苗を抜いて助長する (焦って無理強いする)",
+  "把关": "厳重にチェックする、門番をする",
+  "霸道": "横暴な、強引な (おうぼう)",
+  "罢工": "ストライキをする (スト)",
+  "伴随": "伴う、付随する (ともなう)",
+  "包庇": "かばう、隠蔽する (かばう)",
+  "包袱": "重荷、プレッシャー (おもに)",
+  "保密": "秘密を守る (きみつ)",
+  "保守": "保守的な (ほしゅてき)",
+  "饱满": "満ち満ちた、ふっくらした",
+  "报复": "報復する、仕返しする (ほうふく)",
+  "暴躁": "短気な、怒りっぽい (たんき)",
+  "爆发": "勃発する、爆発する (ばくはつ)",
+  "爆炸": "爆発する (ばくはつ)",
+  "悲愤": "悲憤、悲しみと怒り (ひふん)",
+  "卑微": "卑小な、身分が低い",
+  "备份": "バックアップを取る (バックアップ)",
+  "奔波": "奔走する、東奔西走 (ほんそう)",
+  "本能": "本能 (ほんのう)",
+  "崩溃": "崩壊する、パンクする (ほうかい)",
+  "逼迫": "迫る、強要する (きょうよう)",
+  "比方": "たとえ、比喩 (たとえ)",
+  "比喻": "比喩、メタファー (ひゆ)",
+  "鄙视": "軽蔑する、見下す (けいべつ)",
+  "闭塞": "閉塞した、孤立した (へいそく)",
+  "壁垒": "障壁、バリア (しょうへき)",
+  "鞭策": "鼓舞する、激励する (べんさく)",
+  "编织": "編む、紡ぐ (あむ)",
+  "边缘": "フチ、境界線 (ふち/エッジ)",
+  "便捷": "スピーディーで便利な (べんり)",
+  "变迁": "変遷する (へんせん)",
+  "辩护": "弁護する、擁護する (べんご)",
+  "别致": "ユニークで洒落た、シックな",
+  "并列": "並列する、同格の (へいれつ)",
+  "波浪": "波、うねり (なみ)",
+  "波涛": "大波、荒波 (はとう)",
+  "剥削": "搾取する (さくしゅ)",
+  "搏斗": "格闘する、激闘 (かくとう)",
+  "补偿": "補償する、埋め合わせ (ほしょう)",
+  "不堪": "耐えられない、目も当てられない",
+  "不禁": "思わず〜してしまう (おもわず)",
+  "不料": "思いがけず、案に相違して",
+  "不屑一顾": "歯牙にもかけない、一顧だにしない",
+  "部位": "部位、箇所 (ぶい)",
+  "裁决": "裁決する、判決を下す (さいけつ)",
+  "采购": "仕入れる、調達する (ちょうたつ)",
+  "采纳": "採用する、聞き入れる (さいよう)",
+  "参谋": "参謀、アドバイスする (さんぼう)",
+  "残留": "残留する (ざんりゅう)",
+  "操纵": "操縦する、コントロールする (そうじゅう)",
+  "策划": "企画する、立案する (きかく)",
+  "测量": "測定する、測量する (そくりょう)",
+  "层出不穷": "次から次へと現れる (後を絶たない)",
+  "阐述": "詳述する、説明する (せつめい)",
+  "长远": "長期的な、末永い (ちょうきてき)",
+  "偿还": "返済する、償還する (へんさい)",
+  "倡导": "提唱する、リードする (ていしょう)",
+  "畅销": "ベストセラーの、飛ぶように売れる",
+  "超级": "スーパーな、超ド級の (ちょう)",
+  "超越": "超越する、超える (ちょうえつ)",
+  "潮湿": "じめじめした、湿気のある (しっけ)",
+  "潮流": "トレンド、時代の波 (ちょうりゅう)",
+  "撤退": "撤退する (てったい)",
+  "撤销": "取り消す、撤回する (とりけし)",
+  "沉淀": "沈殿する、定着する (ちんでん)",
+  "陈列": "陳列する、並べる (ちんれつ)",
+  "陈述": "陳述する、述べる (のべる)",
+  "称霸": "覇を唱える、牛耳る (はしゃ)",
+  "承载": "積載する、背負う (になう)",
+  "诚信": "誠実と信用、インテグリティ",
+  "迟钝": "鈍感な、鈍い (にぶい)",
+  "迟疑": "ためらう、躊躇する (ためらい)",
+  "赤字": "赤字 (あかじ)",
+  "充沛": "みなぎる、あふれるばかりの",
+  "充实": "充実した (じゅうじつ)",
+  "筹备": "手配する、準備する (じゅんび)",
+  "储备": "備蓄する、リザーブ (びちく)",
+  "触犯": "抵触する、犯す (ていしょく)",
+  "川流不息": "往来が絶え間なく続く",
+  "传达": "伝達する、取り次ぐ (でんたつ)",
+  "传授": "伝授する、教え込む (でんじゅ)",
+  "纯洁": "純潔な、清らかな (じゅんけつ)",
+  "纯粹": "純粋な、純然たる (じゅんすい)",
+  "脆弱": "脆い、打たれ弱い (もろい)",
+  "挫折": "挫折、つまずき (ざせつ)",
+  "搭档": "相棒、パートナー (あいぼう)",
+  "搭配": "組み合わせる、マッチング (くみあわせ)",
+  "答辩": "口頭試問、弁答 (べんとう)",
+  "打量": "じろじろ見る、値踏みする",
+  "大意": "大意、不注意な (油断)",
+  "大致": "おおよその、大体 (だいたい)",
+  "呆板": "融通が利かない、一本調子の",
+  "怠慢": "粗末にもてなす、怠慢な (たいまん)",
+  "逮捕": "逮捕する (たいほ)",
+  "担保": "保証する、担保 (たんぽ)",
+  "胆怯": "臆病な、気後れした (おくびょう)",
+  "诞生": "誕生する (たんじょう)",
+  "倒闭": "倒産する、潰れる (とうさん)",
+  "导弹": "ミサイル (誘導弾)",
+  "导航": "ナビゲートする、ナビゲーション",
+  "得不偿失": "割に合わない、損して得取れず",
+  "得天独厚": "天の恵みに浴する、恵まれた",
+  "抵制": "ボイコットする、抵抗する (ていこう)",
+  "地步": "境地、羽目 (じょうきょう)",
+  "递增": "漸増する、次第に増える (ぜんぞう)",
+  "惦记": "心にかける、気にかける",
+  "奠定": "据える、固める (きそをきずく)",
+  "定期": "定期的な (ていき)",
+  "动荡": "動揺する、激動の (げきどう)",
+  "动机": "動機、モチベーション (どうき)",
+  "动力": "原動力、パワー (どうりょく)",
+  "动态": "トレンド、動向、ダイナミック (どうこう)",
+  "洞穴": "洞窟、ほら穴 (どうくつ)",
+  "斗争": "闘争する、戦い (とうそう)",
+  "督促": "督促する、急がせる (とくそく)",
+  "赌博": "ギャンブルをする、賭け事",
+  "杜绝": "根絶する、断ち切る (こんぜつ)",
+  "堆积": "堆積する、積み重なる (たいせき)",
+  "对应": "対応する (たいおう)",
+  "对照": "照合する、見比べる (てらしあわせる)",
+  "多元化": "多様化する、マルチ展開 (たようか)",
+  "堕落": "堕落する (だらく)",
+  "官方": "公式の、オフィシャルの (こうしき)",
+  "贯彻": "貫徹する、貫く (かんてつ)",
+  "广阔": "広大な、果てしない (こうだい)",
+  "一见钟情": "一目惚れする (ひとめぼれ)",
+  "画蛇添足": "蛇足 (余計な付け足し、だそく)",
+  "井底之蛙": "井の中の蛙 (見識の狭い人)",
+  "守株待兔": "株を守りて兎を待つ (古い経験にすがる)",
+  "对牛弹琴": "馬の耳に念仏、牛に琴を弾く",
+  "掩耳盗铃": "耳を覆いて鈴を盗む (見え透いたごまかし)",
+  "自相矛盾": "自家撞着、自己矛盾する",
+  "乱七八糟": "めちゃくちゃな、散らかり放題の",
+  "马马虎虎": "いい加減な、まあまあの",
+  "一心一意": "一心不乱に、一途に",
+  "三心二意": "気が散る、優柔不断な",
+  "自由自在": "自由自在な、のびのびとした",
+  "迫不及待": "待ちきれない、一刻の猶予もない",
+  "莫名其妙": "わけがわからない、不可解な",
+  "胸有成竹": "勝算がある、胸に成竹あり",
+  "亡羊补牢": "羊を亡いて牢を補う (失敗の後に善後策をとる)",
+  "饮水思源": "水を飲みて源を思う (恩義を忘れない)",
+  "脚踏实地": "地に足を着けて着実に進む",
+  "欣欣向荣": "栄え栄えとする、繁栄する",
+  "苦尽甘来": "苦尽きて甘来たる (苦あれば楽あり)",
+  "目瞪口呆": "呆気にとられる、目を丸くする",
+  "心满意足": "この上なく満足する、大満足",
+  "举一反三": "一を聞いて十を知る",
+  "熟能生巧": "習うより慣れよ、熟練すれば妙を生ず",
+  "刮目相看": "刮目して相見る (目を見張って評価を改める)",
+  "见义勇为": "義を見てせざるは勇なきなり (進んで人助けする)",
+  "旗开得胜": "緒戦に勝つ、幸先の良いスタートを切る",
+  "心直口快": "歯に衣着せぬ物言い、率直な",
+  "车水马龙": "門前市を成す、往来が絶え間ない",
+  "不可思议": "不可思議な、信じられない",
+  "理直气壮": "道理が通って胸を張る、堂々とした",
+  "全力以赴": "全力を尽くす、全力投球する",
+  "各抒己见": "各々が自分の意見を述べる",
+  "循序渐进": "順序を踏んで一歩ずつ進む",
+  "日新月异": "日進月歩、日ごとに新しくなる",
+  "吐槽": "ツッコミを入れる、愚痴る",
+  "扎心": "胸にグサッと刺さる、心が痛む",
+  "社交牛逼症": "コミュ力お化け、社交の達人",
+  "颜值": "顔面偏差値、ルックスの良さ",
+  "剁手": "爆買いする、ポチる (買い物をやめられない)",
+  "刷屏": "タイムラインを埋め尽くす、TL荒らし",
+  "脑洞大开": "突飛なアイデアが浮かぶ、妄想が広がる",
+  "翻车": "やらかす、事故る、大失敗する",
+  "逆袭": "逆転劇、下剋上、リベンジ",
+  "咸鱼": "やる気のない人 (干物)、負け組",
+  "佛系": "仏系 (執着せずマイペースに生きる)",
+  "秒杀": "瞬殺、秒で売り切れる",
+  "打卡": "聖地巡礼する、チェックインする",
+  "锦鲤": "幸運のシンボル、ラッキーガール/ボーイ",
+  "杠精": "なんでも噛みつくクレーマー、揚げ足取り",
+  "真香": "前言撤回してハマる (最初は嫌がっていたのに掌返し)",
+  "带节奏": "世論を煽る、ミスリードする",
+  "老铁": "親友、ブラザー、マブダチ",
+  "划水": "サボる、手を抜く (手抜き)",
+  "天下无难事，只怕有心人": "為せば成る、志ある者に不可能はない",
+  "一寸光阴一寸金": "一寸の光陰軽んずべからず (時は金なり)",
+  "塞翁失马，焉知非福": "塞翁が馬 (禍福は糾える縄の如し)",
+  "失败是成功之母": "失敗は成功のもと",
+  "活到老，学到老": "生きている限り学び続ける (生涯学習)",
+  "事实胜于雄辩": "事実は雄弁よりも雄弁なり (論より証拠)",
+  "入乡随俗": "郷に入っては郷に従え",
+  "远亲不如近邻": "遠くの親戚より近くの他人",
+  "良药苦口": "良薬は口に苦し",
+  "忠言逆耳": "忠言は耳に逆らう",
+  "千里之行，始于足下": "千里の道も一歩から",
+  "冰冻三尺，非一日之寒": "ローマは一日にして成らず (一朝一夕にはできない)",
+  "差别": "格差、違い、差異 (さ/ちがい)",
+  "经验": "経験 (けいけん)",
+  "数据": "データ、数値 (データ)",
+  "躺平": "寝そべり主義 (競争を降りる)",
+  "摆烂": "自暴自棄になる、投げやりになる",
+  "破防": "メンタルが崩壊する、感情が激しく揺さぶられる",
+  "绝绝子": "最高すぎる、神がかっている",
+  "内卷": "過度な内部競争、不毛な足の引っ張り合い",
+  "打工人": "働く人々、社畜 (労働者の自虐的な呼び名)",
+  "种草": "欲しくなる、おすすめする",
+  "拔草": "ついに買う、熱が冷める",
+  "凡尔赛": "マウンティング、自慢たらしくない自慢",
+  "吃瓜": "野次馬をする、ゴシップを眺める",
+  "吃瓜群众": "野次馬、傍観者たち",
+  "柠檬精": "嫉妬深い人、ひがみっぽい人",
+  "社恐": "社交不安、対人恐怖 (コミュ障)"
 };
 
 // --- Curated Corpus of Example Sentences (with Zh, Pinyin, Vi, En, Ja) ---
@@ -14738,6 +18674,106 @@ function detectInitialMeaningLang(uiLang) {
   return uiLang;
 }
 
+// ===== Module: Slang & Modern Internet Vocabulary (O(1) Hash Map & Offline Dict) =====
+const SLANG_BUILTIN = [
+  {w:'内卷',py:'nèijuǎn',vi:'Cạnh tranh nội bộ kiệt sức mà không tạo giá trị mới; "cuốn" nhau (involution)',en:'involution: exhausting zero-sum competition'},
+  {w:'躺平',py:'tǎngpíng',vi:'"Nằm thẳng": buông, sống tối giản, không chạy theo áp lực thành đạt',en:'lying flat: opting out of the rat race'},
+  {w:'摆烂',py:'bǎilàn',vi:'Mặc kệ, buông xuôi cho "nát" luôn',en:'to give up and let things rot'},
+  {w:'绝绝子',py:'juéjuézi',vi:'Quá đỉnh / tuyệt hết nói (đôi khi dùng mỉa)',en:'absolutely amazing (sometimes sarcastic)'},
+  {w:'yyds',py:'yǒngyuǎn de shén',vi:'Viết tắt của 永远的神: "thần mãi mãi", đỉnh nhất, GOAT',en:'GOAT, the best ever',alias:['YYDS','永远的神']},
+  {w:'破防',py:'pòfáng',vi:'"Vỡ phòng tuyến" cảm xúc: xúc động, cay, tức hoặc bị chạm tim',en:'emotionally overwhelmed / triggered'},
+  {w:'社死',py:'shèsǐ',vi:'"Chết xã hội": quá xấu hổ trước đông người',en:'social death: extreme public embarrassment'},
+  {w:'社恐',py:'shèkǒng',vi:'Sợ giao tiếp xã hội',en:'social anxiety'},
+  {w:'社牛',py:'shèniú',vi:'Cực kỳ hòa đồng, không ngại giao tiếp',en:'extremely outgoing person'},
+  {w:'打工人',py:'dǎgōngrén',vi:'Dân làm công ăn lương (cách tự gọi mang tính tự trào)',en:'wage worker (self-deprecating)'},
+  {w:'996',py:'jiǔjiǔliù',vi:'Làm 9h sáng đến 9h tối, 6 ngày/tuần',en:'work 9am–9pm, 6 days a week'},
+  {w:'凡尔赛',py:'Fán’ěrsài',vi:'Khoe khéo (than thở mà thực chất là khoe)',en:'humblebrag'},
+  {w:'栓Q',py:'shuān Q',vi:'Đọc trại từ "thank you", thường mang ý mỉa/bất lực',en:'"thank you" (often ironic)',alias:['拴Q']},
+  {w:'芭比Q',py:'bābǐ Q',vi:'Chơi chữ từ BBQ: toang rồi, xong đời',en:'we are doomed (pun on BBQ)',alias:['芭比q']},
+  {w:'绷不住',py:'běngbuzhù',vi:'Không nhịn nổi nữa (cười hoặc cảm xúc)',en:'can’t hold it together',alias:['蚌埠住了','绷不住了']},
+  {w:'上头',py:'shàngtóu',vi:'Mê mẩn, nghiện, "lên đầu" không dứt ra được',en:'hooked / carried away'},
+  {w:'种草',py:'zhòngcǎo',vi:'Bị khơi gợi muốn mua; hoặc giới thiệu món hay cho người khác',en:'to recommend / get tempted to buy'},
+  {w:'拔草',py:'bácǎo',vi:'Đã mua/thử xong món mình thèm',en:'to finally buy/try the thing you wanted'},
+  {w:'安利',py:'ānlì',vi:'Nhiệt tình giới thiệu thứ mình thích (từ "Amway")',en:'to enthusiastically recommend'},
+  {w:'吃瓜',py:'chīguā',vi:'Hóng drama, ngồi xem chuyện thiên hạ',en:'to watch the drama unfold'},
+  {w:'内耗',py:'nèihào',vi:'Tự tiêu hao tinh thần vì suy nghĩ quá nhiều',en:'internal friction / overthinking'},
+  {w:'白嫖',py:'báipiáo',vi:'Dùng chùa, hưởng miễn phí',en:'to freeload'},
+  {w:'卷王',py:'juǎnwáng',vi:'"Vua cuốn": người cày/cạnh tranh cực mạnh',en:'extreme overachiever'},
+  {w:'打卡',py:'dǎkǎ',vi:'Check-in (ở địa điểm hot, hoặc hoàn thành thử thách hằng ngày)',en:'to check in'},
+  {w:'网红',py:'wǎnghóng',vi:'Người nổi tiếng mạng, influencer; cũng chỉ thứ đang hot',en:'internet celebrity / trending'},
+  {w:'带货',py:'dàihuò',vi:'Bán hàng qua livestream/video, quảng bá để chốt đơn',en:'to sell products via influence/livestream'},
+  {w:'躺赢',py:'tǎngyíng',vi:'Thắng mà không cần cố gắng (nhờ đồng đội/hoàn cảnh)',en:'to win without effort'},
+  {w:'双标',py:'shuāngbiāo',vi:'Tiêu chuẩn kép',en:'double standards'},
+  {w:'柠檬精',py:'níngméngjīng',vi:'Người hay ghen tị ("chua như chanh")',en:'person who is envious'},
+  {w:'工具人',py:'gōngjùrén',vi:'Người bị lợi dụng như "công cụ", hay nói trong chuyện tình cảm',en:'someone used as a tool / errand-runner'},
+  {w:'舔狗',py:'tiǎngǒu',vi:'Người theo đuổi hạ mình, đối phương không đáp lại',en:'simp'},
+  {w:'绿茶',py:'lǜchá',vi:'Người giả vờ ngây thơ, hiền lành để đạt mục đích (nói về nữ)',en:'seemingly innocent but calculating person'},
+  {w:'渣男',py:'zhānán',vi:'Đàn ông tồi, bạc tình',en:'scumbag guy'},
+  {w:'小确幸',py:'xiǎoquèxìng',vi:'Niềm hạnh phúc nhỏ bé nhưng chắc chắn',en:'small but certain happiness'},
+  {w:'佛系',py:'fóxì',vi:'Sống "Phật hệ": bình thản, không tranh giành',en:'laid-back, no-fuss attitude'},
+  {w:'无语',py:'wúyǔ',vi:'Cạn lời',en:'speechless'},
+  {w:'离谱',py:'lípǔ',vi:'Quá lố, vô lý hết sức',en:'outrageous / absurd'},
+  {w:'真香',py:'zhēnxiāng',vi:'"Thơm thật": lúc đầu chê, sau lại thích (tự vả)',en:'eating one’s words, it’s actually great'},
+  {w:'干饭人',py:'gànfànrén',vi:'Dân mê ăn cơm (cách nói vui)',en:'foodie who loves to eat'},
+  {w:'氛围感',py:'fēnwéigǎn',vi:'Cảm giác không khí/"vibe" của một khung cảnh hay con người',en:'vibe / ambience'},
+  {w:'脑补',py:'nǎobǔ',vi:'Tự tưởng tượng, tự bổ sung tình tiết trong đầu',en:'to fill in the blanks in your mind'},
+  {w:'老铁',py:'lǎotiě',vi:'Anh em thân, bạn bè (khẩu ngữ mạng)',en:'bro / buddy'},
+  {w:'666',py:'liùliùliù',vi:'Giỏi quá, đỉnh quá (6 đọc gần "溜" = trơn tru)',en:'awesome, skillful'},
+  {w:'笑死',py:'xiàosǐ',vi:'Cười chết mất',en:'dying of laughter',alias:['笑死我了']},
+  {w:'小丑',py:'xiǎochǒu',vi:'Chú hề: tự nhận mình bị làm trò cười/hành xử ngớ ngẩn',en:'clown (self-mocking)'},
+  {w:'红温',py:'hóngwēn',vi:'Nóng mặt, tức đỏ cả người (thường trong game/tranh luận)',en:'tilted / flushed with anger'},
+  {w:'松弛感',py:'sōngchígǎn',vi:'Vẻ thư thả, tự nhiên, không gồng',en:'effortless, relaxed vibe'},
+  {w:'班味',py:'bānwèi',vi:'"Mùi công sở": vẻ mệt mỏi, uể oải của dân đi làm',en:'office-worker weariness'},
+  {w:'搭子',py:'dāzi',vi:'Bạn đồng hành theo mục đích (bạn ăn, bạn gym…)',en:'activity buddy',alias:['饭搭子']},
+  {w:'显眼包',py:'xiǎnyǎnbāo',vi:'Người thích gây chú ý theo kiểu hài hước, nổi bần bật',en:'attention-seeking goofball'},
+  {w:'特种兵式旅游',py:'tèzhǒngbīng shì lǚyóu',vi:'Du lịch kiểu "đặc nhiệm": lịch trình dày đặc, đi nhanh trong thời gian ngắn',en:'commando-style travel, cramming in sights'},
+  {w:'牛',py:'niú',vi:'Giỏi, đỉnh (khẩu ngữ)',en:'awesome / impressive'},
+  {w:'电子榨菜',py:'diànzǐ zhàcài',vi:'Video/clip xem cho vui lúc ăn cơm',en:'"digital pickles": videos to watch while eating'}
+];
+
+const ENRICH = { remote: [], loaded: false };
+let SLANG_MAP = {};
+
+function enrichLoadRemoteSlang() {
+  if (ENRICH.loaded) return;
+  ENRICH.loaded = true;
+  try {
+    const c = JSON.parse(localStorage.getItem('cr_slang_remote') || 'null');
+    if (c && Array.isArray(c.items)) ENRICH.remote = c.items;
+  } catch (e) {}
+  rebuildSlangMap();
+}
+
+function rebuildSlangMap() {
+  SLANG_MAP = {};
+  const all = (ENRICH.remote || []).concat(SLANG_BUILTIN || []);
+  for (const it of all) {
+    if (!it || !it.w) continue;
+    const entry = {
+      word: it.w,
+      pinyin: it.py || '',
+      vi: it.vi || '',
+      en: it.en ? (Array.isArray(it.en) ? it.en : [it.en]) : [],
+      ja: it.ja || '',
+      type: 'slang',
+      isSlang: true,
+      alias: it.alias || []
+    };
+    SLANG_MAP[String(it.w).toLowerCase()] = entry;
+    if (it.alias && Array.isArray(it.alias)) {
+      for (const al of it.alias) {
+        if (al) SLANG_MAP[String(al).toLowerCase()] = entry;
+      }
+    }
+  }
+}
+
+function getSlangEntry(word) {
+  if (!word) return null;
+  if (!SLANG_MAP || Object.keys(SLANG_MAP).length === 0) rebuildSlangMap();
+  return SLANG_MAP[String(word).toLowerCase()] || null;
+}
+
 const _initialUiLang = detectInitialLang();
 const state = {
   currentView: 'input',
@@ -14757,8 +18793,8 @@ const state = {
   sentences: [],
   currentSentenceIndex: 0,
   viewMode: 'sentence', // 'sentence' | 'all'
-  savedWords: JSON.parse(localStorage.getItem('cr_savedWords') || '{}'),
-  recentTexts: JSON.parse(localStorage.getItem('cr_recentTexts') || '[]'),
+  savedWords: safeJSON('cr_savedWords', {}),
+  recentTexts: (function(){ const v = safeJSON('cr_recentTexts', []); return Array.isArray(v) ? v : []; })(),
   cachedTranslations: {},
   activeWord: null,
   activeWriters: [],
@@ -14832,7 +18868,7 @@ function setUiLang(lang) {
   // If word sheet is currently open, refresh it with the new language
   if (state.activeWord) {
     const sheet = document.getElementById('word-sheet');
-    if (sheet && sheet.classList.contains('show')) {
+    if (sheet && sheet.classList.contains('active')) {
       openWordSheet(state.activeWord);
     }
   }
@@ -15001,6 +19037,7 @@ function segmentSentence(text) {
 
   function isKnownPhrase(w) {
     if (MINI_DICT[w]) return true;
+    if (getSlangEntry(w)) return true;
     if (userDict['vi:' + w] || userDict['en:' + w] || userDict['ja:' + w]) return true;
     return false;
   }
@@ -15071,6 +19108,8 @@ function segmentSentence(text) {
 // --- Module: Pinyin & Phonetics ---
 function getWordPinyin(word) {
   if (!word) return '';
+  const sl = getSlangEntry(word);
+  if (sl && sl.pinyin) return sl.pinyin;
   // Check if pinyin-pro is loaded on window
   if (window.pinyinPro && typeof window.pinyinPro.pinyin === 'function') {
     try {
@@ -15095,6 +19134,9 @@ function getWordPinyin(word) {
 
 function getWordHanViet(word) {
   if (!word) return '';
+  if (MINI_DICT[word] && MINI_DICT[word].hanviet) {
+    return MINI_DICT[word].hanviet;
+  }
   const parts = [];
   for (const ch of word) {
     parts.push(HAN_VIET[ch] || '');
@@ -15210,12 +19252,13 @@ function speakViaWebSpeech(text) {
 
     // Critical fix: prevent GC from cutting audio
     activeUtterance = utterance;
+    karaokeAttachSpeech(utterance);
     utterance.onend = () => {
-      if (activeUtterance === utterance) activeUtterance = null;
+      if (activeUtterance === utterance) { activeUtterance = null; karaokeFinish(); }
     };
     utterance.onerror = (e) => {
       console.warn('Web Speech error:', e);
-      if (activeUtterance === utterance) activeUtterance = null;
+      if (activeUtterance === utterance) { activeUtterance = null; karaokeStop(); }
     };
 
     // 20ms delay allows any pending cancel() to clear in browser engine
@@ -15251,6 +19294,7 @@ function playAudioUrl(url, timeoutMs = 2000) {
       if (!resolved) {
         resolved = true;
         clearTimeout(timer);
+        try { karaokeAttachAudio(audio); } catch (e) {}
         resolve(audio);
       }
     };
@@ -15298,6 +19342,9 @@ async function speakText(text, btnEl) {
   }
   lastSpeakTime = now;
   lastSpeakText = clean;
+
+  // Karaoke: reset and bind to the matching sentence container (if any)
+  karaokeBegin(clean);
 
   // Stop previous playback
   if (currentAudio) {
@@ -15644,6 +19691,8 @@ function getWordMiniMeaning(tok, lang) {
 function renderReaderView() {
   const container = document.getElementById('reader-content-area');
   if (!container) return;
+  if (typeof phraseClear === 'function') phraseClear();
+  if (typeof karaokeStop === 'function') karaokeStop();
   
   document.documentElement.style.setProperty('--reader-font-size', state.fontSize + 'px');
   
@@ -15677,7 +19726,9 @@ function renderSentenceMode(container) {
   const tokens = segmentSentence(sentence);
 
   let tokensHtml = '';
+  let _off = 0;
   tokens.forEach(tok => {
+    const off = _off; _off += tok.length;
     if (!isChinese(tok)) {
       tokensHtml += `<span class="punctuation-token">${escapeHtml(tok)}</span>`;
     } else {
@@ -15687,7 +19738,7 @@ function renderSentenceMode(container) {
         miniMeaning = getWordMiniMeaning(tok, state.meaningLang);
       }
       tokensHtml += `
-        <div class="word-token" onclick="openWordSheet('${escapeHtml(tok)}')">
+        <div class="word-token" data-tok="${escapeHtml(tok)}" data-s="${off}" data-e="${off + tok.length}" onclick="openWordSheet(this.dataset.tok)">
           <span class="token-pinyin">${escapeHtml(pinyin)}</span>
           <span class="token-chars" lang="zh-CN">${escapeHtml(tok)}</span>
           ${miniMeaning ? `<span class="token-mini-meaning">${escapeHtml(miniMeaning)}</span>` : ''}
@@ -15713,7 +19764,7 @@ function renderSentenceMode(container) {
           </button>
         </div>
       </div>
-      <div class="sentence-content ${pinyinClass} ${meaningClass}">
+      <div class="sentence-content ${pinyinClass} ${meaningClass}" data-ktext="${escapeHtml(sentence)}">
         ${tokensHtml}
       </div>
       <div id="sentence-trans-box" class="translation-box"></div>
@@ -15737,7 +19788,9 @@ function renderFullTextMode(container) {
   state.sentences.forEach((sentence, sIdx) => {
     const tokens = segmentSentence(sentence);
     let tokensHtml = '';
+    let _off = 0;
     tokens.forEach(tok => {
+      const off = _off; _off += tok.length;
       if (!isChinese(tok)) {
         tokensHtml += `<span class="punctuation-token">${escapeHtml(tok)}</span>`;
       } else {
@@ -15747,7 +19800,7 @@ function renderFullTextMode(container) {
           miniMeaning = getWordMiniMeaning(tok, state.meaningLang);
         }
         tokensHtml += `
-          <div class="word-token" onclick="openWordSheet('${escapeHtml(tok)}')">
+          <div class="word-token" data-tok="${escapeHtml(tok)}" data-s="${off}" data-e="${off + tok.length}" onclick="openWordSheet(this.dataset.tok)">
             <span class="token-pinyin">${escapeHtml(pinyin)}</span>
             <span class="token-chars" lang="zh-CN">${escapeHtml(tok)}</span>
             ${miniMeaning ? `<span class="token-mini-meaning">${escapeHtml(miniMeaning)}</span>` : ''}
@@ -15759,7 +19812,7 @@ function renderFullTextMode(container) {
     html += `
       <div class="sentence-paragraph ${sIdx === state.currentSentenceIndex ? 'active-sentence' : ''}" onclick="state.currentSentenceIndex = ${sIdx}">
         <span style="font-size:12px; font-weight:700; color:var(--text-muted); margin-right:8px; cursor:pointer;" onclick="speakText('${escapeQuotes(sentence)}')">🔊 [${sIdx + 1}]</span>
-        <div style="display:inline;" class="${pinyinClass} ${meaningClass}">
+        <div style="display:inline;" class="${pinyinClass} ${meaningClass}" data-ktext="${escapeHtml(sentence)}">
           ${tokensHtml}
         </div>
       </div>
@@ -15767,6 +19820,337 @@ function renderFullTextMode(container) {
   });
   html += '</div>';
   container.innerHTML = html;
+}
+
+
+// ===== Module: UI strings helper (vi/en/ja) =====
+function tx(vi, en, ja) {
+  const l = state.uiLang;
+  return l === 'vi' ? vi : (l === 'ja' ? ja : en);
+}
+
+// ===== Module: Phrase selection =====
+const PSEL = { on: false, start: -1, end: -1, box: null, dragging: false };
+
+function phraseTokens(box) {
+  return box ? Array.from(box.querySelectorAll('.word-token')) : [];
+}
+
+function togglePhraseSelect() {
+  PSEL.on = !PSEL.on;
+  const area = document.getElementById('reader-content-area');
+  if (area) area.classList.toggle('select-mode', PSEL.on);
+  phraseClear();
+  phraseUpdateLabels();
+  if (PSEL.on) showToast(tx('Chạm từ đầu rồi chạm từ cuối (hoặc kéo ngang) để chọn cụm', 'Tap first word then last word (or drag) to select a phrase', '最初と最後の語をタップ（またはドラッグ）してフレーズを選択'));
+}
+
+function phraseUpdateLabels() {
+  const lbl = document.getElementById('lbl-select');
+  if (lbl) lbl.textContent = tx('Chọn cụm', 'Phrase', 'フレーズ');
+  const b = document.getElementById('btn-toggle-select');
+  if (b) b.classList.toggle('active', PSEL.on);
+}
+
+function phraseClear() {
+  PSEL.start = PSEL.end = -1; PSEL.box = null; PSEL.dragging = false;
+  document.querySelectorAll('.word-token.sel-token').forEach(el => el.classList.remove('sel-token'));
+  const bar = document.getElementById('phrase-bar');
+  if (bar) bar.classList.remove('show');
+}
+
+function phraseText() {
+  if (!PSEL.box || PSEL.start < 0) return '';
+  const toks = phraseTokens(PSEL.box);
+  const a = Math.min(PSEL.start, PSEL.end), b = Math.max(PSEL.start, PSEL.end);
+  const first = toks[a], last = toks[b];
+  if (!first || !last) return '';
+  let out = '';
+  let started = false;
+  for (const el of PSEL.box.querySelectorAll('.word-token, .punctuation-token')) {
+    if (el === first) started = true;
+    if (started) out += el.classList.contains('word-token') ? (el.dataset.tok || '') : el.textContent;
+    if (el === last) break;
+  }
+  return out;
+}
+
+function phraseRender() {
+  const toks = phraseTokens(PSEL.box);
+  const a = Math.min(PSEL.start, PSEL.end), b = Math.max(PSEL.start, PSEL.end);
+  toks.forEach((el, i) => el.classList.toggle('sel-token', PSEL.start >= 0 && i >= a && i <= b));
+  let bar = document.getElementById('phrase-bar');
+  if (!bar) {
+    bar = document.createElement('div');
+    bar.id = 'phrase-bar';
+    document.body.appendChild(bar);
+  }
+  const phrase = phraseText();
+  if (!phrase) { bar.classList.remove('show'); return; }
+  bar.innerHTML = `
+    <span class="phrase-text" lang="zh-CN">${escapeHtml(phrase)}</span>
+    <button class="btn btn-primary btn-sm" onclick="phraseLookup()">${tx('Tra / Dịch cụm', 'Look up / Translate', '調べる / 翻訳')}</button>
+    <button class="btn btn-secondary btn-sm" onclick="phraseSpeak()">🔊</button>
+    <button class="btn btn-secondary btn-sm" onclick="phraseClear()">✕</button>`;
+  bar.classList.add('show');
+}
+
+function phraseLookup() {
+  const p = phraseText();
+  if (p) openWordSheet(p);
+}
+function phraseSpeak() {
+  const p = phraseText();
+  if (p) speakText(p);
+}
+
+function phraseTokenFromEvent(e) {
+  const el = e.target && e.target.closest ? e.target.closest('.word-token') : null;
+  if (!el) return null;
+  const box = el.closest('[data-ktext]') || el.parentElement;
+  const idx = phraseTokens(box).indexOf(el);
+  return idx < 0 ? null : { el, box, idx };
+}
+
+function phrasePick(info) {
+  if (PSEL.box !== info.box || PSEL.start < 0) {
+    PSEL.box = info.box; PSEL.start = PSEL.end = info.idx;
+  } else {
+    const a = Math.min(PSEL.start, PSEL.end), b = Math.max(PSEL.start, PSEL.end);
+    if (a === b && a !== info.idx) { PSEL.start = a; PSEL.end = info.idx; }
+    else if (info.idx >= a && info.idx <= b) { PSEL.start = PSEL.end = info.idx; }
+    else { PSEL.start = Math.min(a, info.idx); PSEL.end = Math.max(b, info.idx); }
+  }
+  phraseRender();
+}
+
+(function initPhraseSelect() {
+  // Capture-phase click: in select mode, taps select instead of opening the word sheet
+  document.addEventListener('click', (e) => {
+    if (!PSEL.on) return;
+    const info = phraseTokenFromEvent(e);
+    if (!info) return;
+    e.preventDefault(); e.stopPropagation();
+    if (PSEL._justDragged) { PSEL._justDragged = false; return; }
+    phrasePick(info);
+  }, true);
+
+  // Drag across tokens to extend the selection
+  document.addEventListener('pointerdown', (e) => {
+    if (!PSEL.on) return;
+    const info = phraseTokenFromEvent(e);
+    if (!info) return;
+    PSEL._down = info; PSEL._moved = false;
+  }, true);
+  document.addEventListener('pointermove', (e) => {
+    if (!PSEL.on || !PSEL._down) return;
+    const el = document.elementFromPoint(e.clientX, e.clientY);
+    const tok = el && el.closest ? el.closest('.word-token') : null;
+    if (!tok || tok.closest('[data-ktext]') !== PSEL._down.box) return;
+    const idx = phraseTokens(PSEL._down.box).indexOf(tok);
+    if (idx < 0 || (idx === PSEL._down.idx && !PSEL._moved)) return;
+    PSEL._moved = true;
+    PSEL.box = PSEL._down.box; PSEL.start = PSEL._down.idx; PSEL.end = idx;
+    phraseRender();
+  }, true);
+  const endDrag = () => {
+    if (PSEL._moved) PSEL._justDragged = true;
+    PSEL._down = null; PSEL._moved = false;
+  };
+  document.addEventListener('pointerup', endDrag, true);
+  document.addEventListener('pointercancel', endDrag, true);
+
+  // Do not let sentence-swipe navigation fire while selecting
+  const area = document.getElementById('reader-content-area');
+  if (area) {
+    area.addEventListener('touchend', (e) => { if (PSEL.on) e.stopImmediatePropagation(); }, true);
+  }
+  phraseUpdateLabels();
+  ocrUpdateButtons(false);
+})();
+
+// ===== Module: Karaoke highlight synced with TTS =====
+const KARA = { active: false, run: 0, toks: [], text: '', idx: -1, raf: 0, box: null };
+
+function karaokeClear() {
+  cancelAnimationFrame(KARA.raf);
+  KARA.toks.forEach(el => el.classList.remove('karaoke-active', 'karaoke-done'));
+  KARA.idx = -1;
+}
+
+function karaokeStop() {
+  KARA.run++;
+  karaokeClear();
+  KARA.active = false; KARA.toks = []; KARA.box = null;
+}
+
+function karaokeBegin(clean) {
+  karaokeStop();
+  const norm = (x) => String(x || '').replace(/\s+/g, ' ').trim();
+  const box = Array.from(document.querySelectorAll('[data-ktext]')).find(el => norm(el.dataset.ktext) === clean);
+  if (!box) return;
+  const toks = Array.from(box.querySelectorAll('.word-token[data-s]'));
+  if (!toks.length) return;
+  KARA.active = true; KARA.box = box; KARA.toks = toks; KARA.text = clean;
+  KARA.len = Math.max(1, Number(box.dataset.ktext.length));
+}
+
+function karaokeSetIdx(i) {
+  if (!KARA.active || i === KARA.idx) return;
+  KARA.idx = i;
+  KARA.toks.forEach((el, k) => {
+    el.classList.toggle('karaoke-active', k === i);
+    el.classList.toggle('karaoke-done', k < i);
+  });
+  const cur = KARA.toks[i];
+  if (cur && cur.scrollIntoView) { try { cur.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } catch (e) {} }
+}
+
+function karaokeSetChar(pos) {
+  if (!KARA.active) return;
+  let found = 0;
+  for (let k = 0; k < KARA.toks.length; k++) {
+    if (Number(KARA.toks[k].dataset.s) <= pos) found = k; else break;
+  }
+  karaokeSetIdx(found);
+}
+
+function karaokeSetFrac(f) {
+  karaokeSetChar(Math.floor(Math.min(0.999, Math.max(0, f)) * KARA.len));
+}
+
+function karaokeFinish() {
+  if (!KARA.active) return;
+  const id = ++KARA.run;
+  cancelAnimationFrame(KARA.raf);
+  karaokeSetIdx(KARA.toks.length - 1);
+  setTimeout(() => { if (KARA.run === id) karaokeStop(); }, 500);
+}
+
+function karaokeAttachAudio(a) {
+  if (!KARA.active) return;
+  const id = ++KARA.run;
+  const step = () => {
+    if (KARA.run !== id || currentAudio !== a) return;
+    const d = a.duration;
+    const frac = (isFinite(d) && d > 0) ? a.currentTime / d : Math.min(1, a.currentTime / (KARA.len * 0.28));
+    karaokeSetFrac(frac);
+    KARA.raf = requestAnimationFrame(step);
+  };
+  a.addEventListener('ended', () => { if (KARA.run === id) karaokeFinish(); });
+  step();
+}
+
+function karaokeAttachSpeech(u) {
+  if (!KARA.active) return;
+  const id = ++KARA.run;
+  let gotBoundary = false;
+  u.onboundary = (e) => {
+    if (KARA.run !== id || typeof e.charIndex !== 'number') return;
+    gotBoundary = true;
+    karaokeSetChar(e.charIndex);
+  };
+  u.onstart = () => {
+    const t0 = performance.now();
+    const est = KARA.len * 270 / (u.rate || 1) * 0.88 * 1.0;
+    setTimeout(() => {
+      const step = () => {
+        if (KARA.run !== id || gotBoundary || activeUtterance !== u) return;
+        karaokeSetFrac((performance.now() - t0) / est);
+        KARA.raf = requestAnimationFrame(step);
+      };
+      if (!gotBoundary) step();
+    }, 700);
+  };
+}
+
+// ===== Module: OCR cleanup =====
+function ocrTextFromData(data) {
+  // Rebuild text from Tesseract lines: drop low-confidence junk, restore reading order
+  if (!data || !Array.isArray(data.lines) || !data.lines.length) return '';
+  let lines = data.lines
+    .filter(l => l && l.text && l.bbox)
+    .map(l => ({ text: l.text.replace(/\n/g, ''), conf: l.confidence || 0, x: l.bbox.x0, y: l.bbox.y0, h: Math.max(1, l.bbox.y1 - l.bbox.y0) }));
+  const cjk = /[㐀-鿿豈-﫿]/g;
+  lines = lines.filter(l => {
+    const c = (l.text.match(cjk) || []).length;
+    if (l.conf < 30 && c < 3) return false;
+    if (l.conf < 45 && c === 0) return false;
+    return true;
+  });
+  if (!lines.length) return '';
+  const medH = lines.map(l => l.h).sort((a, b) => a - b)[Math.floor(lines.length / 2)] || 20;
+  lines.sort((a, b) => (Math.abs(a.y - b.y) < medH * 0.5) ? a.x - b.x : a.y - b.y);
+  return lines.map(l => l.text).join('\n');
+}
+
+function cleanOcrText(raw) {
+  if (!raw) return '';
+  const CJK = '\\u3400-\\u9fff\\uf900-\\ufaff';
+  const reCJK = new RegExp('[' + CJK + ']', 'g');
+  const allowed = new RegExp('[^' + CJK + 'A-Za-z0-9\\s，。！？；：、“”‘’「」『』（）《》〈〉【】…—·,.!?;:\'"()\\-%/+=]', 'g');
+  const END = /[。！？…”’」』）.!?]$/;
+  const ANYP = /[，。！？；：、,.!?;:]/;
+
+  let lines = String(raw).replace(/\r/g, '').replace(/\t/g, ' ').split('\n');
+  lines = lines.map(l => {
+    l = l.replace(allowed, '');                                              // stray symbols
+    l = l.replace(new RegExp('(?<=[' + CJK + '，。！？；：、”’」』）]) +(?=[' + CJK + '，。！？；：、“‘「『（])', 'g'), ''); // spaces inside CJK
+    l = l.replace(new RegExp('(?<=[' + CJK + '])[A-Za-z|](?=[' + CJK + '])', 'g'), '');  // lone latin glitch inside CJK
+    l = l.replace(new RegExp('(?<=[' + CJK + '])\\s*,', 'g'), '，').replace(new RegExp('(?<=[' + CJK + '])\\s*\\.(?!\\d)', 'g'), '。')
+         .replace(new RegExp('(?<=[' + CJK + '])\\s*\\?', 'g'), '？').replace(new RegExp('(?<=[' + CJK + '])\\s*!', 'g'), '！')
+         .replace(new RegExp('(?<=[' + CJK + '])\\s*;', 'g'), '；').replace(new RegExp('(?<=[' + CJK + '])\\s*:', 'g'), '：');
+    l = l.replace(/([，。！？；：、])\1+/g, '$1').replace(/ {2,}/g, ' ').trim();
+    return l;
+  });
+
+  // drop junk lines
+  lines = lines.filter(l => {
+    if (!l) return true;
+    const c = (l.match(reCJK) || []).length;
+    const n = l.replace(/\s/g, '').length;
+    if (c === 0) return n > 3 && /[A-Za-z]{3,}|\d{2,}/.test(l);   // keep real latin/numbers, drop 1-3 char noise
+    if (n === 1 && /[一丨]/.test(l)) return false;
+    if (c / n < 0.3 && n < 6) return false;
+    return true;
+  });
+
+  // merge soft-wrapped lines into paragraphs; keep headings separate
+  const paras = [];
+  let buf = '';
+  const flush = () => { if (buf) paras.push(buf); buf = ''; };
+  for (const l of lines) {
+    if (!l) { flush(); continue; }
+    if (buf && paras.length + 0 >= 0 && buf === l) continue;                  // duplicate consecutive line
+    if (!buf) { buf = l; continue; }
+    const bufHeading = buf.length <= 16 && !ANYP.test(buf) && /^(第.{1,5}[章节课篇回部]|[一二三四五六七八九十]+[、.．]|\d+[、.．]|[（(]?[一二三四五六七八九十\d]+[）)])/.test(buf);
+    if (END.test(buf) || bufHeading) { flush(); buf = l; }
+    else {
+      const needSpace = /[A-Za-z0-9]$/.test(buf) && /^[A-Za-z0-9]/.test(l);
+      buf += (needSpace ? ' ' : '') + l;
+    }
+  }
+  flush();
+  return paras.join('\n').trim();
+}
+
+function ocrUpdateButtons(hasRaw) {
+  const c = document.getElementById('btn-ocr-clean');
+  if (c) c.textContent = '🧹 ' + tx('Làm sạch', 'Clean up', '整形');
+  const r = document.getElementById('btn-ocr-raw');
+  if (r) { r.textContent = tx('Bản gốc', 'Original', '元のテキスト'); r.style.display = (hasRaw && window._ocrRaw) ? '' : 'none'; }
+}
+function ocrCleanNow() {
+  const ta = document.getElementById('ocr-edit-textarea');
+  if (!ta) return;
+  if (!window._ocrRaw) window._ocrRaw = ta.value;
+  ta.value = cleanOcrText(ta.value);
+  ocrUpdateButtons(true);
+  showToast(tx('Đã làm sạch văn bản', 'Text cleaned', 'テキストを整形しました'));
+}
+function ocrRestoreRaw() {
+  const ta = document.getElementById('ocr-edit-textarea');
+  if (ta && window._ocrRaw) ta.value = window._ocrRaw;
 }
 
 function prevSentence() {
@@ -15879,7 +20263,10 @@ async function openWordSheet(word) {
   if (dictEntry && dictEntry.hsk) {
     badgesContainer.innerHTML += `<span class="badge badge-hsk">HSK ${dictEntry.hsk}</span>`;
   }
-  if (dictEntry && dictEntry.type) {
+  const sheetSlang = getSlangEntry(word);
+  if (sheetSlang) {
+    badgesContainer.innerHTML += `<span class="badge" style="background:rgba(232,52,78,0.15); color:var(--accent); border:1px solid rgba(232,52,78,0.3); font-weight:700;">🔥 ${tx('Từ lóng', 'Slang', '流行語')}</span>`;
+  } else if (dictEntry && dictEntry.type) {
     badgesContainer.innerHTML += `<span class="badge">${escapeHtml(dictEntry.type)}</span>`;
   }
 
@@ -15901,20 +20288,22 @@ async function openWordSheet(word) {
     if (userDict[customKey]) {
       return { text: userDict[customKey], isCustom: true };
     }
-    if (!entry && (typeof JA_COMMON_DICT === 'undefined' || !JA_COMMON_DICT[word]) && (!kanjiInfo)) return null;
+    const slEntry = getSlangEntry(word);
+    if (!entry && (typeof JA_COMMON_DICT === 'undefined' || !JA_COMMON_DICT[word]) && (!kanjiInfo) && (!slEntry)) return null;
 
     let m = null;
     if (targetLang === 'en') {
-      m = entry && entry.en ? entry.en.join('; ') : null;
+      m = (entry && entry.en ? (Array.isArray(entry.en) ? entry.en.join('; ') : entry.en) : null) || (slEntry && slEntry.en ? (Array.isArray(slEntry.en) ? slEntry.en.join('; ') : slEntry.en) : null);
     } else if (targetLang === 'vi') {
-      m = entry && entry.vi ? entry.vi : null;
+      m = (entry && entry.vi ? entry.vi : null) || (slEntry && slEntry.vi ? slEntry.vi : null);
     } else if (targetLang === 'ja') {
       if (entry && entry.ja) m = entry.ja;
+      else if (slEntry && slEntry.ja) m = slEntry.ja;
       else if (typeof JA_COMMON_DICT !== 'undefined' && JA_COMMON_DICT[word]) m = JA_COMMON_DICT[word];
       else if (kanjiInfo && kanjiInfo.ja_meaning) m = kanjiInfo.ja_meaning;
-      else m = null; // Do NOT fallback to English/Vietnamese when Japanese is requested!
+      else m = null;
     } else {
-      m = (entry && entry.vi) || (entry && entry.en ? entry.en.join('; ') : null);
+      m = (entry && entry.vi) || (slEntry && slEntry.vi) || (entry && entry.en ? (Array.isArray(entry.en) ? entry.en.join('; ') : entry.en) : (slEntry && slEntry.en ? (Array.isArray(slEntry.en) ? slEntry.en.join('; ') : slEntry.en) : null));
     }
     return m ? { text: m, isCustom: false } : null;
   }
@@ -16044,11 +20433,440 @@ async function openWordSheet(word) {
   // Render Hanzi Writer
   renderHanziWriterForWord(word);
 
+  // Extra: synonyms, slang, Wiktionary, media
+  try { enrichWordSheet(word); } catch (e) { console.warn(e); }
+
   // Render Example Sentences
   renderWordExamples(word);
 
   backdrop.classList.add('active');
   sheet.classList.add('active');
+}
+
+// ===== Module: Smart word enrichment (synonyms, slang, online examples, media) =====
+
+
+
+function slangLookup(word) {
+  enrichLoadRemoteSlang();
+  const hits = [];
+  const seen = new Set();
+  const lw = String(word).toLowerCase();
+  const exact = getSlangEntry(lw);
+  if (exact) {
+    seen.add(exact.word);
+    hits.push({ w: exact.word, py: exact.pinyin, vi: exact.vi, en: Array.isArray(exact.en) ? exact.en.join('; ') : exact.en, ja: exact.ja });
+  }
+  if (lw.length > 2) {
+    const all = (ENRICH.remote || []).concat(SLANG_BUILTIN || []);
+    for (const it of all) {
+      if (!it || !it.w || seen.has(it.w)) continue;
+      const keys = [it.w].concat(it.alias || []).map(k => String(k).toLowerCase());
+      if (keys.some(k => k.length >= 2 && lw.includes(k))) {
+        seen.add(it.w);
+        hits.push(it);
+        if (hits.length >= 4) break;
+      }
+    }
+  }
+  return hits;
+}
+
+async function enrichFetchJson(url, ms) {
+  const ctl = new AbortController();
+  const timer = setTimeout(() => ctl.abort(), ms || 7000);
+  try {
+    const r = await fetch(url, { signal: ctl.signal });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return await r.json();
+  } finally { clearTimeout(timer); }
+}
+
+async function enrichCached(key, ttlMs, producer) {
+  try {
+    const hit = await getFromDB('translations', key);
+    if (hit && hit.result && hit.result.ts && (Date.now() - hit.result.ts) < ttlMs) return hit.result.data;
+  } catch (e) {}
+  const data = await producer();
+  if (data && !data.__empty && (!Array.isArray(data) || data.length)) {
+    try { await putToDB('translations', { q: key, result: { ts: Date.now(), data } }); } catch (e) {}
+  }
+  return data;
+}
+
+const POS_NAMES = {
+  noun: ['danh từ', 'noun', '名詞'], verb: ['động từ', 'verb', '動詞'], adjective: ['tính từ', 'adj.', '形容詞'],
+  adverb: ['phó từ', 'adv.', '副詞'], pronoun: ['đại từ', 'pron.', '代名詞'], preposition: ['giới từ', 'prep.', '前置詞'],
+  conjunction: ['liên từ', 'conj.', '接続詞'], interjection: ['thán từ', 'interj.', '感動詞'], particle: ['trợ từ', 'particle', '助詞']
+};
+function posName(p) {
+  const e = POS_NAMES[String(p || '').toLowerCase()];
+  return e ? tx(e[0], e[1], e[2]) : p;
+}
+
+// Google dictionary: alternative translations grouped by part of speech
+async function enrichSynonyms(word, tl) {
+  return enrichCached('enrich-bd:' + tl + ':' + word, 30 * 86400000, async () => {
+    try {
+      const url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=zh-CN&tl=' + tl + '&dt=t&dt=bd&q=' + encodeURIComponent(word);
+      const data = await enrichFetchJson(url, 7000);
+      const main = Array.isArray(data[0]) ? data[0].map(s => (s && s[0]) || '').join('') : '';
+      const groups = Array.isArray(data[1]) ? data[1].map(g => ({ pos: g[0], words: (g[1] || []).slice(0, 7) })).filter(g => g.words.length) : [];
+      return { main, groups };
+    } catch (e) { return null; }
+  });
+}
+
+function stripHtml(h) {
+  try { return new DOMParser().parseFromString(String(h), 'text/html').body.textContent.trim(); } catch (e) { return String(h).replace(/<[^>]+>/g, ''); }
+}
+
+// Wiktionary definitions (English), good for idioms and set phrases
+async function enrichWiktionary(word) {
+  return enrichCached('enrich-wik:' + word, 30 * 86400000, async () => {
+    try {
+      const data = await enrichFetchJson('https://en.wiktionary.org/api/rest_v1/page/definition/' + encodeURIComponent(word), 7000);
+      const zh = data && (data.Chinese || data['Mandarin']);
+      if (!zh) return [];
+      const out = [];
+      for (const sec of zh) {
+        for (const d of (sec.definitions || [])) {
+          const txt = stripHtml(d.definition);
+          if (txt && !/^\s*(alternative|variant|simplified|traditional)/i.test(txt)) out.push({ pos: sec.partOfSpeech, text: txt.slice(0, 160) });
+          if (out.length >= 5) return out;
+        }
+      }
+      return out;
+    } catch (e) { return []; }
+  });
+}
+
+// Real example sentences from Tatoeba (Mandarin, with translations when available)
+async function fetchTatoebaExamples(word) {
+  const lang = state.meaningLang || 'vi';
+  const code = { vi: 'vie', en: 'eng', ja: 'jpn' }[lang] || 'eng';
+  const items = await enrichCached('enrich-tat:' + lang + ':' + word, 14 * 86400000, async () => {
+    try {
+      const url = 'https://tatoeba.org/en/api_v0/search?from=cmn&query=' + encodeURIComponent(word) + '&to=' + code + '&orphans=no&unapproved=no&sort=relevance';
+      const data = await enrichFetchJson(url, 8000);
+      const out = [];
+      for (const r of (data.results || [])) {
+        if (!r.text || r.text.length > 40) continue;
+        const flat = [].concat(...(r.translations || []));
+        const tr = flat.find(x => x && x.lang === code);
+        const it = { zh: r.text, isOnline: true };
+        if (tr) it[lang] = tr.text;
+        out.push(it);
+      }
+      out.sort((a, b) => (b[lang] ? 1 : 0) - (a[lang] ? 1 : 0));
+      return out.slice(0, 5);
+    } catch (e) { return []; }
+  });
+  return Array.isArray(items) ? items.map(x => Object.assign({}, x)) : [];
+}
+
+// ===== Concept-based illustration =====
+// Searches by the word's MEANING (an English concept), never by the written glyph,
+// so "猫" shows cats (not a picture of the character), "游泳" shows swimming, etc.
+const MEDIA_SKIP_TYPES = new Set(['pron', 'num', 'mw', 'adv', 'conj', 'prep', 'part', 'interj', 'phrase', 'expression', 'slang', 'proverb', 'idiom', 'adj']);
+const MEDIA_COLOR_ADJ = new Set(['白', '黑', '红', '黄', '绿', '蓝', '紫', '灰', '橙', '粉']);
+const MEDIA_GENERIC = new Set(['thing', 'things', 'time', 'matter', 'affair', 'place', 'moment', 'way', 'method', 'people', 'area', 'part', 'case',
+  'situation', 'fact', 'idea', 'plan', 'example', 'problem', 'question', 'reason', 'result', 'kind', 'type', 'point', 'number', 'side',
+  'be', 'have', 'can', 'will', 'may', 'must', 'should', 'do', 'make', 'let', 'get', 'give', 'take', 'go', 'come', 'put', 'say', 'tell',
+  'ask', 'know', 'think', 'want', 'need', 'like', 'use', 'become', 'allow', 'dare', 'accord', 'regard', 'include', 'exist', 'show',
+  'going', 'coming', 'having', 'making', 'doing', 'getting', 'giving', 'taking', 'saying', 'telling', 'asking', 'knowing', 'thinking',
+  'wanting', 'needing', 'liking', 'using']);
+// Files that are about the writing system itself (stroke order, calligraphy, glyph tables...) are never wanted.
+const MEDIA_BAD_RE = /\b(stroke|strokes|calligraph\w*|seal script|oracle bone|bronze script|clerical|kaishu|xingshu|caoshu|glyph|glyphs|hanzi|kanji|characters?|radical|handwrit\w*|typeface|font|alphabet|unicode|pinyin|romani[sz]ation|logo|icon|locator|svg|animation|wiktionary|ideograms?|cjk|bw|jbw)\b/i;
+const MEDIA_CJK_RE = /[\u3400-\u9fff\uf900-\ufaff]/;
+
+function mediaCleanTerm(s) {
+  s = String(s || '').toLowerCase()
+    .replace(/\(.*?\)/g, ' ')
+    .replace(/^\s*(to|the|a|an)\s+/, '')
+    .replace(/[^a-z\s'-]/g, ' ')
+    .replace(/\s+/g, ' ').trim();
+  if (!s || s.length < 3 || s.split(' ').length > 3) return '';
+  if (/particle|measure|classifier|aspect|modal|surname|abbr|suffix|prefix|used in|variant|auxiliary/.test(s)) return '';
+  return s;
+}
+
+function mediaGerund(w) {
+  if (/ing$/.test(w)) return w;
+  if (/ie$/.test(w)) return w.slice(0, -2) + 'ying';
+  if (/[^e]e$/.test(w)) return w.slice(0, -1) + 'ing';
+  if (/^[^aeiou]*[aeiou][^aeiouwxy]$/.test(w) && w.length <= 4) return w + w.slice(-1) + 'ing';
+  return w + 'ing';
+}
+
+function mediaFromGloss(gloss, forceVerb) {
+  const verb = !!forceVerb || /^\s*to\s/i.test(String(gloss || ''));
+  let s = mediaCleanTerm(gloss);
+  if (!s || MEDIA_GENERIC.has(s)) return '';
+  if (verb) {
+    if (s.split(' ').length > 1) return '';
+    s = mediaGerund(s);              // "eat" -> "eating": Wikipedia/Commons describe actions by their -ing form
+    if (MEDIA_GENERIC.has(s)) return '';
+  }
+  return s;
+}
+
+// Returns an English concept to illustrate, or '' when the word is not something a picture can explain
+async function mediaConceptTerm(word) {
+  try {
+    const custom = (JSON.parse(localStorage.getItem('cr_media_terms') || '{}')[word] || '').trim();
+    if (custom) return custom;
+  } catch (e) {}
+  const d = MINI_DICT[word];
+  let verbEntry = false;
+  if (d) {
+    const ty = d.type || '';
+    if (MEDIA_SKIP_TYPES.has(ty) && !(ty === 'adj' && MEDIA_COLOR_ADJ.has(word))) return '';
+    verbEntry = (ty === 'verb' || ty === 'v');
+    for (const g of (d.en || [])) {
+      const c = mediaFromGloss(g, verbEntry);
+      if (c) return c;
+    }
+  } else {
+    if (word.length > 6 || slangLookup(word).length) return '';
+  }
+  let en = '';
+  try { en = await translateTextOnline(word, 'en'); } catch (e) {}
+  return mediaFromGloss(en, verbEntry);
+}
+
+// Wikipedia summary: a short description + lead picture, in the learner's meaning language when available
+async function mediaWikiSummary(term, lang) {
+  const sumUrl = (host, title) => 'https://' + host + '.wikipedia.org/api/rest_v1/page/summary/' +
+    encodeURIComponent(String(title).replace(/ /g, '_')) + '?redirect=true';
+  const pack = (d, l) => ({
+    title: d.title,
+    extract: String(d.extract || '').slice(0, 260),
+    thumb: (d.thumbnail && d.thumbnail.source) || '',
+    page: (d.content_urls && d.content_urls.desktop && d.content_urls.desktop.page) || '',
+    lang: l
+  });
+  try {
+    const en = await enrichFetchJson(sumUrl('en', term), 6000);
+    if (!en || en.type !== 'standard' || !en.extract) return null;
+    if (/may (also )?refer to/i.test(en.extract)) return null;
+    let out = pack(en, 'en');
+    if (lang && lang !== 'en') {
+      try {
+        const ll = await enrichFetchJson('https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&redirects=1&prop=langlinks&lllang=' +
+          lang + '&titles=' + encodeURIComponent(en.title), 6000);
+        const pg = ll && ll.query && ll.query.pages ? Object.values(ll.query.pages)[0] : null;
+        const link = pg && pg.langlinks && pg.langlinks[0];
+        const t2 = link && (link['*'] || link.title);
+        if (t2) {
+          const loc = await enrichFetchJson(sumUrl(lang, t2), 6000);
+          if (loc && loc.type === 'standard' && loc.extract) {
+            const p2 = pack(loc, lang);
+            if (!p2.thumb) p2.thumb = out.thumb;
+            out = p2;
+          }
+        }
+      } catch (e) {}
+    }
+    return (out.thumb || out.extract) ? out : null;
+  } catch (e) { return null; }
+}
+
+// Wikimedia Commons photos / videos, filtered hard for relevance to the concept
+async function mediaCommons(term, kind) {
+  const isVideo = kind === 'video';
+  const filter = isVideo ? 'filetype:video' : 'filetype:bitmap';
+  const want = isVideo ? 1 : 4;
+  const toks = term.split(' ').filter(w => w.length > 1);
+  const has = (txt, w) => txt.includes(w) || (w.length > 3 && w.endsWith('s') && txt.includes(w.slice(0, -1)));
+  const queries = ['intitle:"' + term + '" ' + filter, '"' + term + '" ' + filter];
+  const seen = new Set();
+  const out = [];
+  for (const sq of queries) {
+    let pages = [];
+    try {
+      const url = 'https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrnamespace=6&gsrlimit=' +
+        (isVideo ? 10 : 24) + '&gsrsearch=' + encodeURIComponent(sq) +
+        '&prop=imageinfo&iiprop=url|mime|size|extmetadata&iiextmetadatafilter=ImageDescription|Categories&iiurlwidth=480';
+      const data = await enrichFetchJson(url, 8000);
+      pages = data && data.query && data.query.pages ? Object.values(data.query.pages) : [];
+    } catch (e) { continue; }
+    pages.sort((a, b) => (a.index || 0) - (b.index || 0));
+    for (const p of pages) {
+      if (seen.has(p.pageid)) continue;
+      seen.add(p.pageid);
+      const ii = p.imageinfo && p.imageinfo[0];
+      if (!ii) continue;
+      const mime = ii.mime || '';
+      if (isVideo ? !/^(video\/|application\/ogg)/.test(mime) : !/^image\/(jpeg|png|webp)$/.test(mime)) continue;
+      if (!isVideo && ((ii.width || 0) < 320 || (ii.height || 0) < 200)) continue;
+      const title = String(p.title || '').replace(/^File:/, '').replace(/\.[a-z0-9]+$/i, '').replace(/_/g, ' ');
+      const em = ii.extmetadata || {};
+      const desc = stripHtml((em.ImageDescription && em.ImageDescription.value) || '').slice(0, 300);
+      const cats = String((em.Categories && em.Categories.value) || '').replace(/\|/g, ' ');
+      if (MEDIA_CJK_RE.test(title) || MEDIA_BAD_RE.test(title + ' ' + cats)) continue;
+      const lt = title.toLowerCase(), ld = desc.toLowerCase(), lc = cats.toLowerCase();
+      const all = lt + ' ' + ld + ' ' + lc;
+      if (!toks.every(w => has(all, w))) continue;
+      const inTitle = toks.every(w => has(lt, w));
+      const inCats = toks.some(w => has(lc, w));
+      if (!inTitle && !inCats) continue;
+      const score = (inTitle ? 5 : 0) + (inCats ? 2 : 0) + (toks.every(w => has(ld, w)) ? 1 : 0) - out.length * 0.01;
+      out.push({
+        title,
+        caption: (desc || title).slice(0, 110),
+        thumb: ii.thumburl || ii.url,
+        url: ii.url,
+        page: ii.descriptionurl,
+        score
+      });
+    }
+    if (out.length >= want) break;
+  }
+  out.sort((a, b) => b.score - a.score);
+  return out.slice(0, want);
+}
+
+async function enrichMedia(word) {
+  const lang = state.meaningLang || 'vi';
+  const term = await mediaConceptTerm(word);
+  if (!term) return null;
+  const data = await enrichCached('enrich-media3:' + lang + ':' + term, 14 * 86400000, async () => {
+    const [wiki, imgs, vids] = await Promise.all([
+      mediaWikiSummary(term, lang).catch(() => null),
+      mediaCommons(term, 'image').catch(() => []),
+      mediaCommons(term, 'video').catch(() => [])
+    ]);
+    const out = { wiki, imgs, vids };
+    if (!wiki && !imgs.length && !vids.length) out.__empty = true;   // do not cache misses
+    return out;
+  });
+  return data ? Object.assign({ wiki: null, imgs: [], vids: [] }, data, { term }) : null;
+}
+
+function mediaIsOff() {
+  const v = localStorage.getItem('cr_media_off');
+  if (v === '1') return true;
+  if (v === '0') return false;
+  return !!(navigator.connection && navigator.connection.saveData);   // respect "Data Saver" by default
+}
+
+function mediaToggle() {
+  localStorage.setItem('cr_media_off', mediaIsOff() ? '0' : '1');
+  if (state.activeWord) enrichWordSheet(state.activeWord);
+}
+
+
+
+function enrichSaveMeanings(word, lang, words) {
+  const ud = JSON.parse(localStorage.getItem('cr_userDict') || '{}');
+  ud[lang + ':' + word] = words;
+  localStorage.setItem('cr_userDict', JSON.stringify(ud));
+  openWordSheet(word);
+  showToast(tx('Đã lưu làm nghĩa của từ', 'Saved as the word’s meaning', '意味として保存しました'));
+}
+
+async function enrichWordSheet(word) {
+  const box = document.getElementById('sheet-enrich');
+  if (!box) return;
+  const lang = state.meaningLang || 'vi';
+  const enc = encodeURIComponent(word);
+  const mediaOff = mediaIsOff();
+  const sectionTitle = (s) => `<div class="def-label" style="margin:14px 0 6px;">${s}</div>`;
+
+  // --- sync parts: slang + shell
+  let html = '';
+  const slang = slangLookup(word);
+  if (slang.length) {
+    html += sectionTitle('🔥 ' + tx('Từ lóng / ngôn ngữ mạng', 'Slang / internet language', 'ネットスラング'));
+    html += slang.map(s => {
+      const m = s[lang] || s.vi || s.en || s.ja || '';
+      const m2 = (lang !== 'en' && s.en) ? `<div style="font-size:12px;color:var(--text-muted);">EN: ${escapeHtml(s.en)}</div>` : '';
+      return `<div class="slang-card"><b lang="zh-CN">${escapeHtml(s.w)}</b> <span style="color:var(--text-muted);font-size:12px;">${escapeHtml(s.py || '')}</span><div>${escapeHtml(m)}</div>${m2}${s.n ? `<div style="font-size:12px;color:var(--text-muted);">${escapeHtml(s.n)}</div>` : ''}</div>`;
+    }).join('');
+  }
+  html += `<div id="enrich-syn"></div><div id="enrich-wik"></div><div id="enrich-media"></div>`;
+  html += `<div class="enrich-footer">
+    <a href="https://search.bilibili.com/all?keyword=${enc}%20%E6%84%8F%E6%80%9D%20%E7%94%A8%E6%B3%95" target="_blank" rel="noopener">▶ Bilibili</a>
+    <a href="https://www.youtube.com/results?search_query=${enc}%20%E6%B1%89%E8%AF%AD%20%E6%84%8F%E6%80%9D%20%E7%94%A8%E6%B3%95" target="_blank" rel="noopener">▶ YouTube</a>
+    <a href="https://www.xiaohongshu.com/search_result?keyword=${enc}" target="_blank" rel="noopener">📕 小红书</a>
+    <a href="https://www.zhihu.com/search?q=${enc}" target="_blank" rel="noopener">知乎</a>
+  </div>
+  <div class="enrich-footer" style="opacity:.8;">
+    <a href="javascript:void(0)" onclick="mediaToggle()">${mediaOff ? tx('Bật ảnh/video', 'Show media', 'メディアを表示') : tx('Tắt ảnh/video', 'Hide media', 'メディアを隠す')}</a>
+  </div>`;
+  box.innerHTML = html;
+
+  const still = () => state.activeWord === word;
+
+  // --- synonyms / alternative meanings
+  enrichSynonyms(word, lang === 'ja' ? 'ja' : lang).then(async res => {
+    if (!still()) return;
+    let usedLang = lang;
+    if ((!res || !res.groups.length) && lang !== 'en') { res = await enrichSynonyms(word, 'en'); usedLang = 'en'; }
+    if (!still() || !res || !res.groups.length) return;
+    const el = document.getElementById('enrich-syn'); if (!el) return;
+    const flat = [];
+    res.groups.forEach(g => g.words.forEach(w => { if (!flat.includes(w)) flat.push(w); }));
+    el.innerHTML = sectionTitle('🔎 ' + tx('Nghĩa mở rộng', 'More meanings', '関連する意味') + ` (${getLangName(usedLang)})`) +
+      res.groups.map(g => `<div class="syn-row"><span class="syn-pos">${escapeHtml(posName(g.pos))}</span>${g.words.map(w => `<span class="syn-chip">${escapeHtml(w)}</span>`).join('')}</div>`).join('') +
+      `<button class="btn btn-outline btn-sm" style="font-size:12px;padding:4px 10px;margin-top:6px;" id="btn-save-syn">💾 ${tx('Lưu các nghĩa này', 'Save these meanings', 'これらの意味を保存')}</button>`;
+    const b = document.getElementById('btn-save-syn');
+    if (b) b.onclick = () => enrichSaveMeanings(word, usedLang, flat.slice(0, 6).join(', '));
+    state._enrichMainEn = state._enrichMainEn || {};
+  }).catch(() => {});
+
+  // --- Wiktionary
+  enrichWiktionary(word).then(list => {
+    if (!still() || !list || !list.length) return;
+    const el = document.getElementById('enrich-wik'); if (!el) return;
+    el.innerHTML = sectionTitle('📖 Wiktionary (EN)') + list.map(d => `<div class="wik-row"><span class="syn-pos">${escapeHtml(posName(d.pos) || '')}</span>${escapeHtml(d.text)}</div>`).join('');
+  }).catch(() => {});
+
+  // --- Media: illustrates the MEANING (concept), never the written glyph
+  if (!mediaOff) {
+    (async () => {
+      const m = await enrichMedia(word);
+      if (!still() || !m || m.__empty) return;
+      const wiki = m.wiki;
+      const imgs = (m.imgs || []).filter(i => !(wiki && wiki.thumb && i.thumb === wiki.thumb));
+      const vids = m.vids || [];
+      if (!wiki && !imgs.length && !vids.length) return;
+      const el = document.getElementById('enrich-media');
+      if (!el) return;
+
+      let h = sectionTitle('🖼 ' + tx('Minh họa ý nghĩa', 'Illustration of the meaning', '意味の図解') +
+        ` <span class="badge" style="text-transform:none;">${escapeHtml(m.term)}</span>`);
+
+      if (wiki) {
+        const tag = 'Wikipedia · ' + String(wiki.lang || 'en').toUpperCase();
+        h += `<div class="concept-card">` +
+          (wiki.thumb ? `<img class="concept-thumb" loading="lazy" decoding="async" src="${escapeHtml(wiki.thumb)}" alt="${escapeHtml(wiki.title)}" onerror="this.style.display='none'">` : '') +
+          `<div class="concept-body"><div class="concept-title">${escapeHtml(wiki.title)} <span class="badge">${escapeHtml(tag)}</span></div>` +
+          `<div class="concept-text">${escapeHtml(wiki.extract)}</div>` +
+          (wiki.page ? `<a class="concept-link" href="${escapeHtml(wiki.page)}" target="_blank" rel="noopener">${tx('Đọc thêm', 'Read more', '続きを読む')} →</a>` : '') +
+          `</div></div>`;
+      }
+
+      if (imgs.length) {
+        h += `<div class="media-grid" style="margin-top:8px;">` + imgs.map(i =>
+          `<a class="media-fig" href="${escapeHtml(i.page)}" target="_blank" rel="noopener">` +
+          `<img loading="lazy" decoding="async" src="${escapeHtml(i.thumb)}" alt="${escapeHtml(i.title)}" onerror="this.closest('a').style.display='none'">` +
+          `<span class="media-cap">${escapeHtml(i.caption)}</span></a>`).join('') + `</div>`;
+      }
+
+      vids.forEach(v => {
+        h += `<video class="media-video" controls preload="none" playsinline poster="${escapeHtml(v.thumb || '')}" src="${escapeHtml(v.url)}"></video>` +
+          `<div class="media-cap" style="margin-top:3px;">${escapeHtml(v.caption)} · <a href="${escapeHtml(v.page)}" target="_blank" rel="noopener" style="color:var(--accent);">Wikimedia</a></div>`;
+      });
+
+      h += `<div style="font-size:11px;color:var(--text-muted);margin-top:6px;line-height:1.4;">` +
+        tx(`Ảnh minh họa theo nghĩa “${escapeHtml(m.term)}”.`,
+           `Pictures are found by the meaning “${escapeHtml(m.term)}”.`,
+           `画像は意味「${escapeHtml(m.term)}」で検索しています。`) + `</div>`;
+      el.innerHTML = h;
+    })().catch(() => {});
+  }
 }
 
 function closeWordSheet() {
@@ -16225,7 +21043,7 @@ function renderHanziWriterForWord(word) {
   container.innerHTML = '';
   state.activeWriters = [];
 
-  const chars = [...word].filter(ch => /[\u4e00-\u9fff]/.test(ch));
+  const chars = [...word].filter(ch => /[\u4e00-\u9fff]/.test(ch)).slice(0, 8);
   if (chars.length === 0) return;
 
   chars.forEach((ch, idx) => {
@@ -16543,6 +21361,15 @@ async function renderWordExamples(word) {
   } else {
     renderExamplesEmptyState(container, countBadge, word);
   }
+
+  // Top up with real sentences from Tatoeba when local examples are scarce
+  if (examples.length < 4 && word.length <= 8) {
+    fetchTatoebaExamples(word).then(extra => {
+      if (state.activeWord !== word || !extra.length) return;
+      const combined = examples.concat(extra.filter(e => !examples.some(x => x.zh === e.zh))).slice(0, 8);
+      if (combined.length > examples.length) renderExampleListItems(container, countBadge, word, combined);
+    }).catch(() => {});
+  }
 }
 
 // --- Module: Dictionary View ---
@@ -16628,36 +21455,95 @@ function renderDictView() {
 
   // Query or Browse mode: Find matches
   let matches = [];
-  const allWords = Object.keys(MINI_DICT);
+  const seenWords = new Set();
 
-  for (const w of allWords) {
-    const entry = MINI_DICT[w];
-    if (filterHSK !== 'all' && String(entry.hsk) !== filterHSK) {
-      continue;
+  if (filterHSK === 'slang') {
+    const allSlang = (ENRICH.remote || []).concat(SLANG_BUILTIN || []);
+    for (const it of allSlang) {
+      if (!it || !it.w || seenWords.has(it.w)) continue;
+      seenWords.add(it.w);
+      const sItem = {
+        word: it.w,
+        pinyin: it.py || '',
+        vi: it.vi || '',
+        en: it.en ? (Array.isArray(it.en) ? it.en : [it.en]) : [],
+        ja: it.ja || '',
+        hanviet: getWordHanViet(it.w),
+        type: 'slang',
+        isSlang: true
+      };
+      if (!query) {
+        matches.push(sItem);
+        continue;
+      }
+      const matchesHanzi = it.w.toLowerCase().includes(query) || (it.alias && it.alias.some(a => a.toLowerCase().includes(query)));
+      const cleanPinyin = removeToneMarks((it.py || '').toLowerCase()).replace(/\s+/g, '');
+      const matchesPinyin = (it.py || '').toLowerCase().includes(query) || cleanPinyin.includes(cleanQuery);
+      const matchesVi = it.vi && it.vi.toLowerCase().includes(query);
+      const matchesEn = it.en && (Array.isArray(it.en) ? it.en.some(e => e.toLowerCase().includes(query)) : it.en.toLowerCase().includes(query));
+      if (matchesHanzi || matchesPinyin || matchesVi || matchesEn) {
+        matches.push(sItem);
+      }
     }
-    if (!query) {
-      matches.push({ word: w, ...entry });
-      if (matches.length >= 80) break;
-      continue;
+  } else {
+    const allWords = Object.keys(MINI_DICT);
+    for (const w of allWords) {
+      const entry = MINI_DICT[w];
+      if (filterHSK !== 'all' && String(entry.hsk) !== filterHSK) {
+        continue;
+      }
+      if (!query) {
+        matches.push({ word: w, ...entry });
+        seenWords.add(w);
+        if (matches.length >= 80) break;
+        continue;
+      }
+
+      const matchesHanzi = w.includes(query);
+      const cleanPinyin = removeToneMarks(entry.pinyin.toLowerCase()).replace(/\s+/g, '');
+      const matchesPinyin = entry.pinyin.toLowerCase().includes(query) || cleanPinyin.includes(cleanQuery);
+      const matchesVi = entry.vi && entry.vi.toLowerCase().includes(query);
+      const matchesEn = entry.en && entry.en.some(e => e.toLowerCase().includes(query));
+      const matchesHanViet = entry.hanviet && entry.hanviet.toLowerCase().includes(query);
+
+      const kanjiEntry = KANJI_DATA[w];
+      const matchesJa = kanjiEntry && (
+        (kanjiEntry.on && kanjiEntry.on.toLowerCase().includes(query)) ||
+        (kanjiEntry.kun && kanjiEntry.kun.toLowerCase().includes(query)) ||
+        (kanjiEntry.ja_meaning && kanjiEntry.ja_meaning.toLowerCase().includes(query))
+      );
+
+      if (matchesHanzi || matchesPinyin || matchesVi || matchesEn || matchesHanViet || matchesJa) {
+        matches.push({ word: w, ...entry });
+        seenWords.add(w);
+        if (matches.length >= 80) break;
+      }
     }
 
-    const matchesHanzi = w.includes(query);
-    const cleanPinyin = removeToneMarks(entry.pinyin.toLowerCase()).replace(/\s+/g, '');
-    const matchesPinyin = entry.pinyin.toLowerCase().includes(query) || cleanPinyin.includes(cleanQuery);
-    const matchesVi = entry.vi && entry.vi.toLowerCase().includes(query);
-    const matchesEn = entry.en && entry.en.some(e => e.toLowerCase().includes(query));
-    const matchesHanViet = entry.hanviet && entry.hanviet.toLowerCase().includes(query);
-
-    const kanjiEntry = KANJI_DATA[w];
-    const matchesJa = kanjiEntry && (
-      (kanjiEntry.on && kanjiEntry.on.toLowerCase().includes(query)) ||
-      (kanjiEntry.kun && kanjiEntry.kun.toLowerCase().includes(query)) ||
-      (kanjiEntry.ja_meaning && kanjiEntry.ja_meaning.toLowerCase().includes(query))
-    );
-
-    if (matchesHanzi || matchesPinyin || matchesVi || matchesEn || matchesHanViet || matchesJa) {
-      matches.push({ word: w, ...entry });
-      if (matches.length >= 80) break;
+    if (query && filterHSK === 'all') {
+      const allSlang = (ENRICH.remote || []).concat(SLANG_BUILTIN || []);
+      for (const it of allSlang) {
+        if (!it || !it.w || seenWords.has(it.w)) continue;
+        const matchesHanzi = it.w.toLowerCase().includes(query) || (it.alias && it.alias.some(a => a.toLowerCase().includes(query)));
+        const cleanPinyin = removeToneMarks((it.py || '').toLowerCase()).replace(/\s+/g, '');
+        const matchesPinyin = (it.py || '').toLowerCase().includes(query) || cleanPinyin.includes(cleanQuery);
+        const matchesVi = it.vi && it.vi.toLowerCase().includes(query);
+        const matchesEn = it.en && (Array.isArray(it.en) ? it.en.some(e => e.toLowerCase().includes(query)) : it.en.toLowerCase().includes(query));
+        if (matchesHanzi || matchesPinyin || matchesVi || matchesEn) {
+          seenWords.add(it.w);
+          matches.push({
+            word: it.w,
+            pinyin: it.py || '',
+            vi: it.vi || '',
+            en: it.en ? (Array.isArray(it.en) ? it.en : [it.en]) : [],
+            ja: it.ja || '',
+            hanviet: getWordHanViet(it.w),
+            type: 'slang',
+            isSlang: true
+          });
+          if (matches.length >= 100) break;
+        }
+      }
     }
   }
 
@@ -16671,7 +21557,8 @@ function renderDictView() {
   // Update HSK count label if browsing
   const countEl = document.getElementById('dict-hsk-count');
   if (countEl && isBrowsingHsk && !query) {
-    countEl.textContent = `${t('hskLevel')}: ${filterHSK === 'all' ? t('hskAll') : 'HSK ' + filterHSK} (${matches.length} ${t('words') || 'từ'})`;
+    const levelLabel = filterHSK === 'slang' ? (t('hskSlang') || '🔥 Từ lóng Slang') : (filterHSK === 'all' ? t('hskAll') : 'HSK ' + filterHSK);
+    countEl.textContent = `${t('hskLevel')}: ${levelLabel} (${matches.length} ${t('words') || 'từ'})`;
   }
 
   if (matches.length === 0) {
@@ -16789,6 +21676,7 @@ function renderDictView() {
         </div>
         <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
           ${item.hsk ? `<span class="badge badge-hsk">HSK ${item.hsk}</span>` : ''}
+          ${(item.type === 'slang' || !!getSlangEntry(item.word)) ? `<span class="badge" style="background:rgba(232,52,78,0.12); color:var(--accent); border:1px solid rgba(232,52,78,0.3); font-weight:700;">🔥 Slang</span>` : ''}
           <button class="icon-btn" style="width:34px; height:34px;" onclick="event.stopPropagation(); speakText('${escapeQuotes(item.word)}')" title="${t('play')}" aria-label="${t('play')}">
             <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
           </button>
@@ -17195,7 +22083,12 @@ async function handleImageUpload(file) {
         }
       });
       progressContainer.style.display = 'none';
-      editArea.value = (res.data && res.data.text) ? res.data.text.trim() : '';
+      const rawOcr = (res.data && res.data.text) ? res.data.text.trim() : '';
+      window._ocrRaw = rawOcr;
+      let smart = rawOcr;
+      try { smart = ocrTextFromData(res.data) || rawOcr; } catch (e) { smart = rawOcr; }
+      editArea.value = cleanOcrText(smart);
+      ocrUpdateButtons(true);
     } else {
       progressContainer.style.display = 'none';
       editArea.value = t('ocrLoadError');
@@ -17511,8 +22404,12 @@ function escapeHtml(str) {
 
 function escapeQuotes(str) {
   if (!str) return '';
-  return String(str).replace(/'/g, "\\'").replace(/"/g, '&quot;');
+  return escapeHtml(String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\r?\n/g, ' '));
 }
+
+try {
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { if (state.darkMode === 'system') applyTheme(); });
+} catch (e) {}
 
 // --- App Initialization ---
 window.addEventListener('DOMContentLoaded', async () => {
