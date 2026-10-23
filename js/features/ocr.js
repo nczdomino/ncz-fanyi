@@ -197,3 +197,8 @@ function closeOcrModal() {
   const modal = document.getElementById('ocr-modal');
   if (modal) modal.classList.remove('active');
 }
+
+// Initialize OCR button labels
+if (typeof ocrUpdateButtons === 'function') {
+  try { ocrUpdateButtons(false); } catch (e) {}
+}

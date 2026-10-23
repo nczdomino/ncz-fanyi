@@ -11,6 +11,7 @@ function backupAllData() {
     cr_darkMode: state.darkMode,
     cr_fontSize: state.fontSize,
     cr_ttsEngine: state.ttsEngine,
+    cr_ttsSpeed: state.ttsSpeed,
     cr_showPinyin: state.showPinyin,
     cr_showMeaning: state.showMeaning,
     cr_userDict: getUserDict(),
@@ -49,13 +50,14 @@ function restoreDataFromFile(file) {
       const rawDarkMode = data.cr_darkMode || (data.settings && data.settings.darkMode);
       const rawFontSize = data.cr_fontSize !== undefined ? data.cr_fontSize : (data.settings && data.settings.fontSize);
       const rawTtsEngine = data.cr_ttsEngine || (data.settings && data.settings.ttsEngine);
+      const rawTtsSpeed = data.cr_ttsSpeed || (data.settings && data.settings.ttsSpeed);
       const rawShowPinyin = data.cr_showPinyin !== undefined ? data.cr_showPinyin : (data.settings && data.settings.showPinyin);
       const rawShowMeaning = data.cr_showMeaning !== undefined ? data.cr_showMeaning : (data.settings && data.settings.showMeaning);
       const rawUserDict = data.cr_userDict || data.userDict;
       const rawRecentTexts = data.cr_recentTexts || data.recentTexts;
 
       const VALID_LANGS = ['vi', 'en', 'ja'];
-      const VALID_TTS = ['auto', 'system', 'google', 'youdao'];
+      const VALID_TTS = ['auto', 'system', 'google', 'youdao', 'baidu'];
       const VALID_THEMES = ['system', 'light', 'dark'];
 
       if (rawUiLang !== undefined && !VALID_LANGS.includes(rawUiLang)) throw new Error('Invalid uiLang');
@@ -178,11 +180,17 @@ function renderSettingsView() {
 
   const ttsSelect = document.getElementById('tts-engine-select');
   if (ttsSelect) ttsSelect.value = state.ttsEngine || 'auto';
+
+  const ttsSpeedSelect = document.getElementById('tts-speed-select');
+  if (ttsSpeedSelect) ttsSpeedSelect.value = String(state.ttsSpeed || 1.0);
 }
 
 function saveSettings() {
   if (state.ttsEngine) {
     localStorage.setItem('cr_ttsEngine', state.ttsEngine);
+  }
+  if (state.ttsSpeed) {
+    localStorage.setItem('cr_ttsSpeed', state.ttsSpeed);
   }
 }
 
@@ -214,5 +222,9 @@ function handleSettingChange(key, val) {
   } else if (key === 'ttsEngine') {
     state.ttsEngine = val;
     saveSettings();
+  } else if (key === 'ttsSpeed') {
+    state.ttsSpeed = parseFloat(val) || 1.0;
+    saveSettings();
+    showToast(t('ttsSpeed') + ': ' + val + 'x');
   }
 }

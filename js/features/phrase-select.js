@@ -61,7 +61,8 @@ function phraseRender() {
   bar.innerHTML = `
     <span class="phrase-text" lang="zh-CN">${escapeHtml(phrase)}</span>
     <button class="btn btn-primary btn-sm" onclick="phraseLookup()">${tx('Tra / Dịch cụm', 'Look up / Translate', '調べる / 翻訳')}</button>
-    <button class="btn btn-secondary btn-sm" onclick="phraseSpeak()">🔊</button>
+    <button class="btn btn-secondary btn-sm" onclick="phraseSpeak()" title="Phát âm chuẩn">🔊</button>
+    <button class="btn btn-secondary btn-sm" onclick="phraseSpeakSlow()" title="Nghe chậm (0.75x)">🐢</button>
     <button class="btn btn-secondary btn-sm" onclick="phraseClear()">✕</button>`;
   bar.classList.add('show');
 }
@@ -73,6 +74,10 @@ function phraseLookup() {
 function phraseSpeak() {
   const p = phraseText();
   if (p) speakText(p);
+}
+function phraseSpeakSlow() {
+  const p = phraseText();
+  if (p) speakText(p, null, 0.75);
 }
 
 function phraseTokenFromEvent(e) {
@@ -137,8 +142,4 @@ function phrasePick(info) {
     area.addEventListener('touchend', (e) => { if (PSEL.on) e.stopImmediatePropagation(); }, true);
   }
   phraseUpdateLabels();
-  ocrUpdateButtons(false);
 })();
-
-// ===== Module: Karaoke highlight synced with TTS =====
-const KARA = { active: false, run: 0, toks: [], text: '', idx: -1, raf: 0, box: null };

@@ -189,8 +189,11 @@ function renderExampleListItems(container, countBadge, word, list) {
           </div>
           <div style="display:flex; align-items:center; gap:4px; flex-shrink:0;">
             <span class="example-badge">${escapeHtml(badgeText)}</span>
-            <button class="example-audio-btn" onclick="speakText('${escapeQuotes(item.zh)}')" title="${t('play')}" aria-label="${t('play')}">
+            <button class="example-audio-btn" onclick="speakText('${escapeQuotes(item.zh)}')" title="${t('play') || 'Phát âm'}" aria-label="${t('play')}">
               <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+            </button>
+            <button class="example-audio-btn" onclick="speakText('${escapeQuotes(item.zh)}', this, 0.75)" title="${t('playSlow') || 'Nghe chậm (0.75x)'}" aria-label="Nghe chậm" style="font-size:13px;">
+              🐢
             </button>
           </div>
         </div>

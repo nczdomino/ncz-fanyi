@@ -1,5 +1,9 @@
 // js/features/karaoke.js - Karaoke word highlighting synced with audio playback - Dependencies: js/core/utils.js
 
+// ===== Module: Karaoke highlight synced with TTS =====
+var KARA = window.KARA || { active: false, run: 0, toks: [], text: '', idx: -1, raf: 0, box: null };
+window.KARA = KARA;
+
 function karaokeClear() {
   cancelAnimationFrame(KARA.raf);
   KARA.toks.forEach(el => el.classList.remove('karaoke-active', 'karaoke-done'));

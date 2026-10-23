@@ -359,9 +359,25 @@
           <div class="settings-control">
             <select id="tts-engine-select" onchange="state.ttsEngine=this.value; saveSettings()">
               <option value="auto" data-i18n="ttsAuto">Tự động thông minh (Khuyên dùng)</option>
-              <option value="youdao" data-i18n="ttsYoudao">Youdao TTS (Chuẩn bản xứ)</option>
+              <option value="baidu" data-i18n="ttsBaidu">Baidu AI (Chuẩn CCTV phát thanh viên)</option>
+              <option value="youdao" data-i18n="ttsYoudao">Youdao TTS (Chuẩn bản xứ Bắc Kinh)</option>
               <option value="google" data-i18n="ttsGoogle">Google TTS (Trực tuyến)</option>
-              <option value="system" data-i18n="ttsSystem">Web Speech API (Hệ thống)</option>
+              <option value="system" data-i18n="ttsSystem">Web Speech API (Hệ thống / Neural)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="settings-row">
+          <div>
+            <div class="settings-label" data-i18n="ttsSpeed">Tốc độ phát âm</div>
+            <div class="settings-sublabel" data-i18n="sublabelTtsSpeed">Tốc độ đọc mặc định (chọn chậm để luyện 4 thanh điệu)</div>
+          </div>
+          <div class="settings-control">
+            <select id="tts-speed-select" onchange="state.ttsSpeed=parseFloat(this.value); saveSettings()">
+              <option value="0.75" data-i18n="speedSlow">0.75x (Chậm - Luyện nghe thanh điệu)</option>
+              <option value="0.85">0.85x (Vừa phải)</option>
+              <option value="1" data-i18n="speedNormal">1.0x (Tự nhiên chuẩn)</option>
+              <option value="1.15" data-i18n="speedFast">1.15x (Nhanh)</option>
             </select>
           </div>
         </div>
@@ -490,8 +506,11 @@
       <div id="sheet-hanviet" class="sheet-hanviet"></div>
     </div>
     <div class="sheet-actions-top">
-      <button class="icon-btn" onclick="speakText(state.activeWord)" title="Phát âm" data-i18n-title="titlePlayAudio">
+      <button class="icon-btn" onclick="speakText(state.activeWord)" title="Phát âm chuẩn (1.0x)" data-i18n-title="titlePlayAudio">
         <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+      </button>
+      <button class="icon-btn" onclick="speakText(state.activeWord, this, 0.75)" title="Nghe chậm (0.75x) - Luyện thanh điệu" data-i18n-title="playSlow" style="font-size:15px;" aria-label="Phát âm chậm">
+        🐢
       </button>
       <button class="icon-btn" onclick="closeWordSheet()" title="Đóng" data-i18n-title="titleClose">✕</button>
     </div>
@@ -658,14 +677,14 @@
   <script src="js/core/utils.js"></script>
   <script src="js/core/db.js"></script>
 
-  <!-- 4. NLP & Translation & Multi-Tier Audio TTS -->
+  <!-- 4. NLP, Translation, Karaoke & Multi-Tier Audio TTS -->
   <script src="js/features/nlp.js"></script>
   <script src="js/features/theme-i18n.js"></script>
   <script src="js/features/translate.js"></script>
+  <script src="js/features/karaoke.js"></script>
   <script src="js/features/tts.js"></script>
 
-  <!-- 5. Interactive Reader, Karaoke & Phrase Selection -->
-  <script src="js/features/karaoke.js"></script>
+  <!-- 5. Interactive Reader & Phrase Selection -->
   <script src="js/features/phrase-select.js"></script>
   <script src="js/features/nav.js"></script>
   <script src="js/features/input.js"></script>

@@ -33,8 +33,12 @@ const state = {
   showMeaning: localStorage.getItem('cr_showMeaning') !== 'false',
   ttsEngine: (() => {
     const saved = localStorage.getItem('cr_ttsEngine');
-    if (saved === 'auto' || saved === 'system' || saved === 'google' || saved === 'youdao') return saved;
+    if (saved === 'auto' || saved === 'system' || saved === 'google' || saved === 'youdao' || saved === 'baidu') return saved;
     return 'auto';
+  })(),
+  ttsSpeed: (() => {
+    const saved = parseFloat(localStorage.getItem('cr_ttsSpeed'));
+    return (saved >= 0.5 && saved <= 1.5) ? saved : 1.0;
   })(),
   currentText: '',
   sentences: [],

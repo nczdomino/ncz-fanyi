@@ -130,9 +130,12 @@ function renderSentenceMode(container) {
     <div class="sentence-card">
       <div class="sentence-header">
         <span class="sentence-index">${t('sentence')} ${currIdx + 1} / ${total}</span>
-        <div style="display:flex; gap:8px;">
-          <button class="icon-btn" onclick="speakText('${escapeQuotes(sentence)}')">
+        <div style="display:flex; gap:6px; align-items:center;">
+          <button class="icon-btn" onclick="speakText('${escapeQuotes(sentence)}')" title="${t('play') || 'Phát âm'}">
             <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
+          </button>
+          <button class="icon-btn" onclick="speakText('${escapeQuotes(sentence)}', this, 0.75)" title="${t('playSlow') || 'Nghe chậm (0.75x)'}" style="font-size:14px; width:32px; height:32px;" aria-label="Nghe chậm">
+            🐢
           </button>
           <button class="btn btn-secondary btn-sm" onclick="translateCurrentSentence()">
             <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>

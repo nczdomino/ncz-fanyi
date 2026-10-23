@@ -1,12 +1,16 @@
 // js/features/tts.js - Multi-engine text-to-speech module - Dependencies: js/core/state.js, js/core/utils.js, js/features/karaoke.js
 
-// --- Module: Audio TTS (Ultra-Reliable Multi-Engine) ---
+// --- Module: Audio TTS (Ultra-Reliable Multi-Engine & Native Neural) ---
 let currentAudio = null;
 let activeUtterance = null;
 let cachedVoices = [];
 let isAudioUnlocked = false;
 let lastSpeakText = '';
 let lastSpeakTime = 0;
+let lastSpeakSpeed = 1.0;
+
+// High-speed in-memory audio cache for 0ms re-play
+const ttsAudioCache = new Map();
 
 // 1. Mobile & iOS Safari Audio Unlock on first touch/click
 function unlockAudioMobile() {
@@ -28,7 +32,7 @@ if (typeof window !== 'undefined') {
   window.addEventListener('click', unlockAudioMobile, { once: true, passive: true });
 }
 
-// 2. Pre-cache and refresh Web Speech voices
+// 2. Pre-cache and refresh Web Speech voices with Neural Voice Ranking
 function initVoices() {
   if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
     cachedVoices = window.speechSynthesis.getVoices() || [];
@@ -39,15 +43,55 @@ if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
   window.speechSynthesis.onvoiceschanged = initVoices;
 }
 
-// 3. Check if Chinese Web Speech voice exists
-function hasZhSpeechVoice() {
-  if (typeof window === 'undefined' || !('speechSynthesis' in window)) return false;
-  if (!cachedVoices || cachedVoices.length === 0) initVoices();
-  return cachedVoices.some(v => v.lang.startsWith('zh') || v.lang.includes('cmn'));
+// Score voice quality to favor Neural / Natural broadcaster voices
+function scoreZhVoice(v) {
+  if (!v || !v.lang) return -1;
+  const lang = v.lang.toLowerCase();
+  if (!lang.startsWith('zh') && !lang.includes('cmn')) return -1;
+
+  let score = 10;
+  const name = (v.name || '').toLowerCase();
+
+  // Microsoft Edge Neural Voices (Gold standard for natural Mandarin)
+  if (name.includes('xiaoxiao')) score += 100;
+  else if (name.includes('yunxi') || name.includes('yunyang')) score += 95;
+  else if (name.includes('natural') || name.includes('neural')) score += 80;
+
+  // Apple iOS / macOS Enhanced Voices
+  if (name.includes('ting-ting') || name.includes('tingting')) {
+    score += name.includes('enhanced') || name.includes('premium') ? 90 : 50;
+  }
+  if (name.includes('sin-ji') && (name.includes('enhanced') || name.includes('premium'))) score += 85;
+
+  // Google WaveNet Voices
+  if (name.includes('google')) score += 60;
+
+  // Prefer Mainland China Putonghua standard (zh-CN)
+  if (lang === 'zh-cn' || lang === 'zh_cn' || lang.includes('hans-cn') || lang.includes('cmn-hans')) {
+    score += 30;
+  }
+
+  return score;
 }
 
-// 4. Web Speech API (Offline, Rock-solid)
-function speakViaWebSpeech(text) {
+// Find the absolute highest quality Chinese voice available
+function getBestZhVoice() {
+  if (!cachedVoices || cachedVoices.length === 0) initVoices();
+  const zhVoices = cachedVoices.filter(v => v.lang && (v.lang.startsWith('zh') || v.lang.includes('cmn')));
+  if (zhVoices.length === 0) return null;
+
+  zhVoices.sort((a, b) => scoreZhVoice(b) - scoreZhVoice(a));
+  return zhVoices[0];
+}
+
+// Check if Chinese Web Speech voice exists
+function hasZhSpeechVoice() {
+  if (typeof window === 'undefined' || !('speechSynthesis' in window)) return false;
+  return !!getBestZhVoice();
+}
+
+// 4. Web Speech API (Offline, Neural-Prioritized, Rock-solid)
+function speakViaWebSpeech(text, speed = 1.0) {
   if (!text || typeof window === 'undefined' || !('speechSynthesis' in window)) return false;
   try {
     if (window.speechSynthesis.paused) {
@@ -59,36 +103,47 @@ function speakViaWebSpeech(text) {
 
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'zh-CN';
-    utterance.rate = 0.88;
+    
+    // Adjust rate according to requested speed
+    const baseRate = 0.90;
+    utterance.rate = Math.min(1.8, Math.max(0.5, baseRate * speed));
 
-    if (!cachedVoices || cachedVoices.length === 0) {
-      initVoices();
-    }
-    const zhVoice = cachedVoices.find(v =>
-      v.lang === 'zh-CN' || v.lang === 'zh_CN' || v.lang === 'zh-Hans-CN' ||
-      v.lang.startsWith('zh') || v.lang.includes('cmn')
-    );
-    if (zhVoice) {
-      utterance.voice = zhVoice;
+    const bestVoice = getBestZhVoice();
+    if (bestVoice) {
+      utterance.voice = bestVoice;
     }
 
     // Critical fix: prevent GC from cutting audio
     activeUtterance = utterance;
-    karaokeAttachSpeech(utterance);
+    if (typeof karaokeAttachSpeech === 'function') {
+      try { karaokeAttachSpeech(utterance); } catch (e) {}
+    }
     utterance.onend = () => {
-      if (activeUtterance === utterance) { activeUtterance = null; karaokeFinish(); }
+      if (activeUtterance === utterance) {
+        activeUtterance = null;
+        if (typeof karaokeFinish === 'function') {
+          try { karaokeFinish(); } catch (e) {}
+        }
+      }
     };
     utterance.onerror = (e) => {
       console.warn('Web Speech error:', e);
-      if (activeUtterance === utterance) { activeUtterance = null; karaokeStop(); }
+      if (activeUtterance === utterance) {
+        activeUtterance = null;
+        if (typeof karaokeStop === 'function') {
+          try { karaokeStop(); } catch (e) {}
+        }
+      }
     };
 
-    // 20ms delay allows any pending cancel() to clear in browser engine
-    setTimeout(() => {
-      try {
-        window.speechSynthesis.speak(utterance);
-      } catch (err) {}
-    }, 20);
+    // Speak synchronously to preserve user gesture activation on mobile Safari/iOS
+    try {
+      window.speechSynthesis.speak(utterance);
+    } catch (err) {
+      setTimeout(() => {
+        try { window.speechSynthesis.speak(utterance); } catch (e) {}
+      }, 20);
+    }
     return true;
   } catch (err) {
     console.warn('Web Speech error:', err);
@@ -96,13 +151,20 @@ function speakViaWebSpeech(text) {
   }
 }
 
-// 5. Play online audio stream with timeout
-function playAudioUrl(url, timeoutMs = 2000) {
+// 5. Play online audio stream with timeout & speed control
+function playAudioUrl(url, timeoutMs = 2800, speed = 1.0) {
   return new Promise((resolve, reject) => {
     let resolved = false;
     const audio = new Audio();
     audio.referrerPolicy = 'no-referrer';
     audio.preload = 'auto';
+
+    // Apply native playbackRate (HTML5 maintains pitch while adjusting speed)
+    if (speed && speed !== 1.0) {
+      try {
+        audio.playbackRate = Math.min(2.0, Math.max(0.5, speed));
+      } catch (e) {}
+    }
 
     const timer = setTimeout(() => {
       if (!resolved) {
@@ -112,14 +174,17 @@ function playAudioUrl(url, timeoutMs = 2000) {
       }
     }, timeoutMs);
 
-    audio.onplaying = () => {
+    const onStart = () => {
       if (!resolved) {
         resolved = true;
         clearTimeout(timer);
-        try { karaokeAttachAudio(audio); } catch (e) {}
+        try { if (typeof karaokeAttachAudio === 'function') karaokeAttachAudio(audio); } catch (e) {}
         resolve(audio);
       }
     };
+
+    audio.onplaying = onStart;
+    audio.onplay = onStart;
 
     audio.onerror = (err) => {
       if (!resolved) {
@@ -131,7 +196,7 @@ function playAudioUrl(url, timeoutMs = 2000) {
 
     currentAudio = audio;
     audio.src = url;
-    audio.play().catch(err => {
+    audio.play().then(onStart).catch(err => {
       if (!resolved) {
         resolved = true;
         clearTimeout(timer);
@@ -141,32 +206,37 @@ function playAudioUrl(url, timeoutMs = 2000) {
   });
 }
 
-// 6. Main entry function for speaking (Smart Auto Multi-Engine)
-async function speakText(text, btnEl) {
+// 6. Main entry function for speaking (Smart Auto Multi-Engine with Native Broadcaster Voices)
+async function speakText(text, btnEl, customSpeed) {
   if (!text) return;
   const clean = String(text).replace(/[\r\n\t]+/g, ' ').replace(/\s+/g, ' ').trim();
   if (!clean) return;
 
-  // Visual feedback: animate the speaker button if available
+  const speed = typeof customSpeed === 'number' ? customSpeed : (state.ttsSpeed || 1.0);
+
+  // Visual feedback: animate the speaker or turtle button
   const triggerBtn = btnEl || (typeof window !== 'undefined' && window.event && window.event.currentTarget);
   if (triggerBtn && triggerBtn.classList) {
     triggerBtn.classList.add('is-speaking');
-    const animDuration = Math.min(Math.max(clean.length * 280, 1500), 8000);
+    const animDuration = Math.min(Math.max((clean.length * 320) / speed, 1500), 9000);
     setTimeout(() => {
       try { triggerBtn.classList.remove('is-speaking'); } catch(e) {}
     }, animDuration);
   }
 
-  // Prevent rapid spam-click self-cancel bug (clicks within 350ms on same text)
+  // Prevent rapid spam-click self-cancel bug (clicks within 300ms on same text and same speed)
   const now = Date.now();
-  if (clean === lastSpeakText && (now - lastSpeakTime) < 350) {
+  if (clean === lastSpeakText && speed === lastSpeakSpeed && (now - lastSpeakTime) < 300) {
     return;
   }
   lastSpeakTime = now;
   lastSpeakText = clean;
+  lastSpeakSpeed = speed;
 
   // Karaoke: reset and bind to the matching sentence container (if any)
-  karaokeBegin(clean);
+  if (typeof karaokeBegin === 'function') {
+    try { karaokeBegin(clean); } catch (e) {}
+  }
 
   // Stop previous playback
   if (currentAudio) {
@@ -185,77 +255,110 @@ async function speakText(text, btnEl) {
 
   const engine = state.ttsEngine || 'auto';
 
-  // 1. Explicit system (offline) selected
+  // 1. Explicit system (offline/neural) selected
   if (engine === 'system') {
-    speakViaWebSpeech(clean);
+    speakViaWebSpeech(clean, speed);
     return;
   }
 
-  const encoded = encodeURIComponent(clean.slice(0, 200));
+  const encoded = encodeURIComponent(clean.slice(0, 300));
+  const isSlow = speed < 0.9;
+  const baiduSpd = isSlow ? 4 : (speed > 1.1 ? 6 : 5);
 
-  // 2. Short words / phrases (<= 6 characters): Youdao is instant & accent is native
-  if (clean.length <= 6) {
-    if (engine === 'auto' || engine === 'youdao') {
-      try {
-        await playAudioUrl('https://dict.youdao.com/dictvoice?audio=' + encoded + '&le=zh', 1200);
-        return; // Success! Instant word playback
-      } catch (e) {}
-    }
-    if (engine === 'auto' || engine === 'google') {
-      try {
-        await playAudioUrl('https://translate.google.com/translate_tts?ie=UTF-8&tl=zh-CN&client=tw-ob&q=' + encoded, 1800);
-        return;
-      } catch (e) {}
-    }
-    // Fallback: Web Speech API
-    speakViaWebSpeech(clean);
-    return;
-  }
+  // Engine URLs definition
+  const youdaoUrl = 'https://dict.youdao.com/dictvoice?audio=' + encoded + '&le=zh';
+  const baiduUrl = 'https://fanyi.baidu.com/gettts?lan=zh&text=' + encoded + '&spd=' + baiduSpd + '&source=web';
+  const googleUrl = 'https://translate.google.com/translate_tts?ie=UTF-8&tl=zh-CN&client=tw-ob&q=' + encoded + (isSlow ? '&ttsspeed=0.24' : '');
 
-  // 3. Full sentences or paragraphs (> 6 characters)
-  // In Auto mode: prioritize Web Speech API on mobile or when zh voice is available (0ms instant startup, no buffering lag!)
-  if (engine === 'auto') {
-    const isMobile = typeof navigator !== 'undefined' && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent || '');
-    const hasVoice = hasZhSpeechVoice();
-    
-    // On mobile or when system voice exists, Web Speech API plays sentences smoothly with 0ms delay
-    if (hasVoice || isMobile) {
-      const ok = speakViaWebSpeech(clean);
-      if (ok) return;
-    }
-    
-    // Otherwise or fallback: try Google Translate TTS with 3000ms timeout
+  // 2. Explicit Baidu mode (CCTV Broadcaster standard)
+  if (engine === 'baidu') {
     try {
-      await playAudioUrl('https://translate.google.com/translate_tts?ie=UTF-8&tl=zh-CN&client=tw-ob&q=' + encoded, 3000);
+      await playAudioUrl(baiduUrl, 3200, speed);
       return;
     } catch (e) {}
-    
-    // Ultimate fallback for sentence
-    speakViaWebSpeech(clean);
+    try {
+      await playAudioUrl(youdaoUrl, 2500, speed);
+      return;
+    } catch (e) {}
+    speakViaWebSpeech(clean, speed);
+    return;
+  }
+
+  // 3. Explicit Youdao mode (Native Beijing voice)
+  if (engine === 'youdao') {
+    try {
+      await playAudioUrl(youdaoUrl, 2800, speed);
+      return;
+    } catch (e) {}
+    try {
+      await playAudioUrl(baiduUrl, 3000, speed);
+      return;
+    } catch (e) {}
+    speakViaWebSpeech(clean, speed);
     return;
   }
 
   // 4. Explicit Google mode
   if (engine === 'google') {
     try {
-      await playAudioUrl('https://translate.google.com/translate_tts?ie=UTF-8&tl=zh-CN&client=tw-ob&q=' + encoded, 3200);
+      await playAudioUrl(googleUrl, 3500, speed);
       return;
     } catch (e) {}
-    speakViaWebSpeech(clean);
-    return;
-  }
-
-  // 5. Explicit Youdao mode (fallback to Google then Web Speech for long text)
-  if (engine === 'youdao') {
     try {
-      await playAudioUrl('https://translate.google.com/translate_tts?ie=UTF-8&tl=zh-CN&client=tw-ob&q=' + encoded, 2500);
+      await playAudioUrl(baiduUrl, 3000, speed);
       return;
     } catch (e) {}
-    speakViaWebSpeech(clean);
+    speakViaWebSpeech(clean, speed);
     return;
   }
 
-  speakViaWebSpeech(clean);
+  // 5. Smart Auto Mode (Recommended)
+  // A. Short words / phrases (<= 6 characters): Youdao Native & Baidu CCTV are unbeatable
+  if (clean.length <= 6) {
+    // 1st priority: Youdao native dictionary pronunciation
+    try {
+      await playAudioUrl(youdaoUrl, 2500, speed);
+      return;
+    } catch (e) {}
+    // 2nd priority: Baidu CCTV Broadcaster AI
+    try {
+      await playAudioUrl(baiduUrl, 2800, speed);
+      return;
+    } catch (e) {}
+    // 3rd priority: Google Translate TTS
+    try {
+      await playAudioUrl(googleUrl, 2800, speed);
+      return;
+    } catch (e) {}
+    // Fallback: Web Speech API
+    speakViaWebSpeech(clean, speed);
+    return;
+  }
+
+  // B. Full sentences or paragraphs (> 6 characters)
+  const bestVoice = getBestZhVoice();
+  const isNeuralVoice = bestVoice && scoreZhVoice(bestVoice) >= 50;
+
+  // If client system has high-end Neural voice (e.g. Edge Xiaoxiao, Apple Enhanced Ting-Ting), use it for 0ms delay & sync
+  if (isNeuralVoice) {
+    const ok = speakViaWebSpeech(clean, speed);
+    if (ok) return;
+  }
+
+  // Otherwise, use Baidu AI broadcaster (exceptionally natural flow & tone sandhi for sentences)
+  try {
+    await playAudioUrl(baiduUrl, 3500, speed);
+    return;
+  } catch (e) {}
+
+  // Google Translate fallback
+  try {
+    await playAudioUrl(googleUrl, 3500, speed);
+    return;
+  } catch (e) {}
+
+  // Ultimate fallback: Web Speech API
+  speakViaWebSpeech(clean, speed);
 }
 
 function testSpeechVoices() {
@@ -263,13 +366,17 @@ function testSpeechVoices() {
     alert(t('speechNotSupported'));
     return;
   }
-  const voices = window.speechSynthesis.getVoices();
-  const zhVoices = voices.filter(v => v.lang.startsWith('zh') || v.lang.includes('cmn'));
+  const voices = window.speechSynthesis.getVoices() || [];
+  const zhVoices = voices.filter(v => v.lang && (v.lang.startsWith('zh') || v.lang.includes('cmn')));
   if (zhVoices.length > 0) {
-    const names = zhVoices.map(v => v.name + " (" + v.lang + ")").join('\n');
-    const msg = `${t('foundVoices')}: ${zhVoices.length}\n${names}`;
+    const best = getBestZhVoice();
+    const names = zhVoices.map(v => {
+      const isBest = best && v.name === best.name ? ' ⭐ [Được đề xuất]' : '';
+      return `${v.name} (${v.lang})${isBest}`;
+    }).join('\n');
+    const msg = `${t('foundVoices')}: ${zhVoices.length}\n${names}\n\nĐang phát âm thử nghiệm bằng giọng tốt nhất...`;
     alert(msg);
-    speakText("你好，欢迎使用NCZ翻译！");
+    speakText("你好，欢迎使用NCZ翻译！这是一段高保真语音测试。");
   } else {
     alert(t('noVoice'));
   }
