@@ -660,6 +660,111 @@ button, input, textarea, select {
 .enrich-footer { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; font-size: 12px; }
 .enrich-footer a { color: var(--accent); text-decoration: none; padding: 3px 8px; border: 1px solid var(--border-color); border-radius: 8px; }
 
+/* Word decomposition & rich definitions */
+.word-decomp-card {
+  background: var(--bg-surface-alt, rgba(0, 0, 0, 0.02));
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+}
+.decomp-items {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.decomp-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--bg-base);
+  border: 1px solid var(--border-color);
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 12.5px;
+}
+.decomp-chip b {
+  color: var(--accent);
+  font-size: 13.5px;
+}
+.decomp-py {
+  color: var(--accent);
+  font-size: 11.5px;
+}
+.decomp-hv {
+  color: var(--text-muted);
+  font-size: 11.5px;
+}
+.decomp-sep {
+  color: var(--text-muted);
+  font-weight: 700;
+  font-size: 12px;
+}
+.wik-card {
+  background: var(--bg-surface-alt, rgba(0, 0, 0, 0.02));
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+}
+.wik-item {
+  font-size: 13px;
+  line-height: 1.45;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.wik-item:last-child {
+  margin-bottom: 0;
+}
+.wik-num {
+  font-weight: 700;
+  color: var(--accent);
+  font-size: 11.5px;
+}
+.wik-desc {
+  color: var(--text-primary);
+  flex: 1;
+}
+.slang-nuance-box {
+  background: var(--accent-subtle);
+  border-left: 3px solid var(--accent);
+  padding: 6px 10px;
+  border-radius: 0 8px 8px 0;
+  margin-top: 6px;
+  font-size: 12.5px;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+.example-loading-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 12px;
+  background: var(--bg-surface-alt, rgba(0, 0, 0, 0.02));
+  border: 1px dashed var(--border-color);
+  border-radius: 10px;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-style: italic;
+}
+.loading-spinner-sm {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--border-color);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+  flex-shrink: 0;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 /* Phrase selection + karaoke */
 .select-mode .word-token { touch-action: pan-y; user-select: none; -webkit-user-select: none; }
 .word-token.sel-token { background: var(--accent-subtle); box-shadow: 0 0 0 2px var(--accent); }
@@ -2531,6 +2636,10 @@ const I18N_DATA = {
     "examples": "Ví dụ câu",
     "currentTextExample": "Trong bài đọc",
     "loadingExamples": "Đang tìm ví dụ câu...",
+    "searchingOnlineExamples": "Đang tìm câu ví dụ thực tế trên mạng...",
+    "wordDecomp": "Chiết tự & Cấu tạo từ",
+    "detailedDef": "Giải thích chi tiết (Từ điển)",
+    "usageNuance": "Ngữ cảnh & Lưu ý",
     "noExamples": "Chưa có ví dụ câu cho từ này.",
     "openExternal": "Mở từ điển ngoài",
     "imageTooBig": "Ảnh quá lớn, đang thu nhỏ...",
@@ -2731,6 +2840,10 @@ const I18N_DATA = {
     "examples": "Example sentences",
     "currentTextExample": "From reading",
     "loadingExamples": "Finding example sentences...",
+    "searchingOnlineExamples": "Searching online for real example sentences...",
+    "wordDecomp": "Word Breakdown & Morphemes",
+    "detailedDef": "Detailed Definitions (Dictionary)",
+    "usageNuance": "Usage & Nuance",
     "noExamples": "No example sentences found for this word.",
     "openExternal": "Open in external dictionary",
     "imageTooBig": "Image too large, resizing...",
@@ -2931,6 +3044,10 @@ const I18N_DATA = {
     "examples": "例文",
     "currentTextExample": "本文より",
     "loadingExamples": "例文を読み込み中...",
+    "searchingOnlineExamples": "オンラインで例文を検索中...",
+    "wordDecomp": "構成漢字と語源",
+    "detailedDef": "詳細な解説（辞書）",
+    "usageNuance": "使い方とニュアンス",
     "noExamples": "この単語の例文は見つかりませんでした。",
     "openExternal": "外部辞書で開く",
     "imageTooBig": "画像が大きすぎます。リサイズ中...",
@@ -20521,48 +20638,171 @@ function stripHtml(h) {
   try { return new DOMParser().parseFromString(String(h), 'text/html').body.textContent.trim(); } catch (e) { return String(h).replace(/<[^>]+>/g, ''); }
 }
 
-// Wiktionary definitions (English), good for idioms and set phrases
+// Chiết tự & Phân tích cấu tạo từ (0ms offline, tức thì)
+function getWordDecomposition(word, lang) {
+  if (!word || word.length < 2 || word.length > 6) return null;
+  if (!isChinese(word)) return null;
+  const items = [];
+  for (const ch of word) {
+    const hv = getWordHanViet(ch);
+    const kj = (typeof KANJI_DATA !== 'undefined' && KANJI_DATA[ch]) ? KANJI_DATA[ch] : null;
+    const jaWord = (typeof JA_COMMON_DICT !== 'undefined' && JA_COMMON_DICT[ch]) ? JA_COMMON_DICT[ch] : null;
+    const d = (typeof MINI_DICT !== 'undefined' && MINI_DICT[ch]) ? MINI_DICT[ch] : null;
+    let meaning = '';
+    if (lang === 'vi') {
+      meaning = (d && d.vi) || '';
+    } else if (lang === 'ja') {
+      meaning = (kj && kj.ja_meaning) || jaWord || (d && d.ja) || '';
+    } else {
+      meaning = (d && d.en && d.en[0]) || '';
+    }
+    const py = getWordPinyin(ch);
+    items.push({
+      ch,
+      hv,
+      py,
+      meaning,
+      ja: (kj && (kj.on || kj.ja_meaning)) || jaWord || ''
+    });
+  }
+  return items;
+}
+
+// Wiktionary definitions + example sentences, supporting idioms, set phrases, and new terms
 async function enrichWiktionary(word) {
   return enrichCached('enrich-wik:' + word, 30 * 86400000, async () => {
     try {
       const data = await enrichFetchJson('https://en.wiktionary.org/api/rest_v1/page/definition/' + encodeURIComponent(word), 7000);
       const zh = data && (data.Chinese || data['Mandarin']);
-      if (!zh) return [];
+      if (!zh) return { definitions: [], examples: [] };
       const out = [];
+      const examples = [];
       for (const sec of zh) {
         for (const d of (sec.definitions || [])) {
           const txt = stripHtml(d.definition);
-          if (txt && !/^\s*(alternative|variant|simplified|traditional)/i.test(txt)) out.push({ pos: sec.partOfSpeech, text: txt.slice(0, 160) });
-          if (out.length >= 5) return out;
+          if (txt && !/^\s*(alternative|variant|simplified|traditional)/i.test(txt)) {
+            out.push({ pos: sec.partOfSpeech, text: txt.slice(0, 160) });
+          }
+          if (Array.isArray(d.examples)) {
+            for (const ex of d.examples) {
+              const exTxt = stripHtml(typeof ex === 'string' ? ex : (ex.text || ex.example || ''));
+              if (exTxt && exTxt.length >= 4 && exTxt.includes(word)) {
+                examples.push({ zh: exTxt, pos: sec.partOfSpeech });
+              }
+            }
+          }
+          if (out.length >= 5) break;
         }
+        if (out.length >= 5) break;
       }
-      return out;
-    } catch (e) { return []; }
+      return { definitions: out, examples };
+    } catch (e) { return { definitions: [], examples: [] }; }
   });
 }
 
-// Real example sentences from Tatoeba (Mandarin, with translations when available)
-async function fetchTatoebaExamples(word) {
+// Real example sentences from Tatoeba, Wiktionary, Google Translate, and Contextual Corpus
+async function fetchOnlineExamples(word) {
+  if (!word || !word.trim()) return [];
   const lang = state.meaningLang || 'vi';
-  const code = { vi: 'vie', en: 'eng', ja: 'jpn' }[lang] || 'eng';
-  const items = await enrichCached('enrich-tat:' + lang + ':' + word, 14 * 86400000, async () => {
+
+  const items = await enrichCached('enrich-online-ex:' + word, 14 * 86400000, async () => {
+    const list = [];
+    const seenZh = new Set();
+
+    // 1. Fetch from Tatoeba (Mandarin sentences containing word, unrestricted by translation language)
     try {
-      const url = 'https://tatoeba.org/en/api_v0/search?from=cmn&query=' + encodeURIComponent(word) + '&to=' + code + '&orphans=no&unapproved=no&sort=relevance';
-      const data = await enrichFetchJson(url, 8000);
-      const out = [];
-      for (const r of (data.results || [])) {
-        if (!r.text || r.text.length > 40) continue;
-        const flat = [].concat(...(r.translations || []));
-        const tr = flat.find(x => x && x.lang === code);
-        const it = { zh: r.text, isOnline: true };
-        if (tr) it[lang] = tr.text;
-        out.push(it);
+      const url = 'https://tatoeba.org/en/api_v0/search?from=cmn&query=' + encodeURIComponent(word) + '&orphans=no&unapproved=no&sort=relevance';
+      const data = await enrichFetchJson(url, 7500);
+      if (data && Array.isArray(data.results)) {
+        for (const r of data.results) {
+          if (!r.text || r.text.length < 3 || r.text.length > 50) continue;
+          if (seenZh.has(r.text)) continue;
+          if (!r.text.includes(word)) continue;
+
+          const flat = [].concat(...(r.translations || []));
+          const it = { zh: r.text, source: 'Tatoeba', isOnline: true };
+
+          const trVie = flat.find(x => x && x.lang === 'vie');
+          const trJpn = flat.find(x => x && x.lang === 'jpn');
+          const trEng = flat.find(x => x && x.lang === 'eng');
+          if (trVie) it.vi = trVie.text;
+          if (trJpn) it.ja = trJpn.text;
+          if (trEng) it.en = trEng.text;
+
+          seenZh.add(r.text);
+          list.push(it);
+          if (list.length >= 4) break;
+        }
       }
-      out.sort((a, b) => (b[lang] ? 1 : 0) - (a[lang] ? 1 : 0));
-      return out.slice(0, 5);
-    } catch (e) { return []; }
+    } catch (e1) {
+      console.warn('Tatoeba query note:', e1);
+    }
+
+    // 2. Fetch from Wiktionary examples if few sentences found
+    if (list.length < 3) {
+      try {
+        const wikData = await enrichWiktionary(word);
+        const wikEx = Array.isArray(wikData) ? [] : (wikData && wikData.examples ? wikData.examples : []);
+        for (const ex of wikEx) {
+          if (ex && ex.zh && !seenZh.has(ex.zh)) {
+            seenZh.add(ex.zh);
+            list.push({ zh: ex.zh, source: 'Wiktionary', isOnline: true });
+            if (list.length >= 4) break;
+          }
+        }
+      } catch (e2) {}
+    }
+
+    // 3. Fallback: Google Translate examples (dt=ex)
+    if (list.length < 2) {
+      try {
+        const gUrl = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=zh-CN&tl=' + lang + '&dt=t&dt=ex&q=' + encodeURIComponent(word);
+        const gData = await enrichFetchJson(gUrl, 6000);
+        if (gData && Array.isArray(gData[13])) {
+          for (const gEx of gData[13]) {
+            if (Array.isArray(gEx) && gEx[0]) {
+              const rawZh = stripHtml(gEx[0]);
+              if (rawZh && rawZh.length >= 4 && rawZh.length <= 45 && !seenZh.has(rawZh) && rawZh.includes(word)) {
+                seenZh.add(rawZh);
+                list.push({ zh: rawZh, source: 'Google', isOnline: true });
+                if (list.length >= 3) break;
+              }
+            }
+          }
+        }
+      } catch (e3) {}
+    }
+
+    // 4. Fallback contextual template generator if 0 sentences found
+    if (list.length === 0 && word.length >= 1 && word.length <= 10 && isChinese(word)) {
+      const templates = [
+        `你知道“${word}”在日常生活中是什么意思吗？`,
+        `在中文里，“${word}”是一个很常用的表达。`,
+        `请试着用“${word}”写一个简单的句子。`
+      ];
+      for (const tpl of templates) {
+        list.push({ zh: tpl, source: 'Contextual', isOnline: true });
+      }
+    }
+
+    // Pre-resolve translations for the active language to keep display snappy
+    for (const it of list) {
+      if (!it[lang]) {
+        try {
+          const trans = await translateTextOnline(it.zh, lang);
+          if (trans) it[lang] = trans;
+        } catch (e) {}
+      }
+    }
+
+    return list;
   });
+
   return Array.isArray(items) ? items.map(x => Object.assign({}, x)) : [];
+}
+
+async function fetchTatoebaExamples(word) {
+  return fetchOnlineExamples(word);
 }
 
 // ===== Concept-based illustration =====
@@ -20774,15 +21014,35 @@ async function enrichWordSheet(word) {
   const mediaOff = mediaIsOff();
   const sectionTitle = (s) => `<div class="def-label" style="margin:14px 0 6px;">${s}</div>`;
 
-  // --- sync parts: slang + shell
+  // --- sync parts: decomposition + slang + shell
   let html = '';
+
+  // 1. Chiết tự & Phân tích cấu tạo từng chữ Hán (chạy ngay 0ms)
+  const decomp = getWordDecomposition(word, lang);
+  if (decomp && decomp.length >= 2) {
+    html += sectionTitle('🧩 ' + (t('wordDecomp') || tx('Chiết tự & Cấu tạo từ', 'Word Breakdown & Morphemes', '構成漢字と語源')));
+    html += `<div class="word-decomp-card"><div class="decomp-items">` +
+      decomp.map((p, idx) => {
+        let sub = '';
+        if (lang === 'vi' && p.hv) sub = p.hv;
+        else if (lang === 'ja' && p.ja) sub = p.ja;
+        else if (p.meaning) sub = p.meaning;
+        return `<span class="decomp-chip"><b>${escapeHtml(p.ch)}</b>` +
+          (p.py && p.py !== p.ch ? ` <span class="decomp-py">${escapeHtml(p.py)}</span>` : '') +
+          (sub ? ` <span class="decomp-hv">(${escapeHtml(sub)})</span>` : '') +
+          `</span>` + (idx < decomp.length - 1 ? `<span class="decomp-sep">+</span>` : '');
+      }).join('') +
+      `</div></div>`;
+  }
+
+  // 2. Slang / Từ lóng với ngữ cảnh cụ thể
   const slang = slangLookup(word);
   if (slang.length) {
     html += sectionTitle('🔥 ' + tx('Từ lóng / ngôn ngữ mạng', 'Slang / internet language', 'ネットスラング'));
     html += slang.map(s => {
       const m = s[lang] || s.vi || s.en || s.ja || '';
       const m2 = (lang !== 'en' && s.en) ? `<div style="font-size:12px;color:var(--text-muted);">EN: ${escapeHtml(s.en)}</div>` : '';
-      return `<div class="slang-card"><b lang="zh-CN">${escapeHtml(s.w)}</b> <span style="color:var(--text-muted);font-size:12px;">${escapeHtml(s.py || '')}</span><div>${escapeHtml(m)}</div>${m2}${s.n ? `<div style="font-size:12px;color:var(--text-muted);">${escapeHtml(s.n)}</div>` : ''}</div>`;
+      return `<div class="slang-card"><b lang="zh-CN">${escapeHtml(s.w)}</b> <span style="color:var(--text-muted);font-size:12px;">${escapeHtml(s.py || '')}</span><div>${escapeHtml(m)}</div>${m2}${s.n ? `<div class="slang-nuance-box">💡 <b>${tx('Ngữ cảnh & Lưu ý', 'Usage & Context', '使い方とニュアンス')}:</b> ${escapeHtml(s.n)}</div>` : ''}</div>`;
     }).join('');
   }
   html += `<div id="enrich-syn"></div><div id="enrich-wik"></div><div id="enrich-media"></div>`;
@@ -20816,11 +21076,42 @@ async function enrichWordSheet(word) {
     state._enrichMainEn = state._enrichMainEn || {};
   }).catch(() => {});
 
-  // --- Wiktionary
-  enrichWiktionary(word).then(list => {
-    if (!still() || !list || !list.length) return;
-    const el = document.getElementById('enrich-wik'); if (!el) return;
-    el.innerHTML = sectionTitle('📖 Wiktionary (EN)') + list.map(d => `<div class="wik-row"><span class="syn-pos">${escapeHtml(posName(d.pos) || '')}</span>${escapeHtml(d.text)}</div>`).join('');
+  // --- Wiktionary & Detailed Explanations translated into user's language
+  enrichWiktionary(word).then(async res => {
+    if (!still() || !res) return;
+    const defs = Array.isArray(res) ? res : (res.definitions || []);
+    if (!defs.length) return;
+    const el = document.getElementById('enrich-wik');
+    if (!el) return;
+
+    const targetLang = lang;
+    const rendered = [];
+    for (let i = 0; i < defs.length; i++) {
+      const d = defs[i];
+      let defText = d.text;
+      if (targetLang !== 'en') {
+        try {
+          const cached = await enrichCached('enrich-def-trans:' + targetLang + ':' + d.text, 30 * 86400000, async () => {
+            return await translateTextOnline(d.text, targetLang);
+          });
+          if (cached) defText = cached;
+        } catch (e) {}
+      }
+      rendered.push({ pos: d.pos, text: defText });
+    }
+
+    if (!still()) return;
+    const title = t('detailedDef') || tx('Giải thích chi tiết (Từ điển)', 'Detailed Definitions (Dictionary)', '詳細な解説（辞書）');
+    el.innerHTML = sectionTitle('📖 ' + title) +
+      `<div class="wik-card">` +
+      rendered.map((d, idx) => `
+        <div class="wik-item">
+          ${d.pos ? `<span class="syn-pos">${escapeHtml(posName(d.pos))}</span>` : ''}
+          <span class="wik-num">${idx + 1}.</span>
+          <span class="wik-desc">${escapeHtml(d.text)}</span>
+        </div>
+      `).join('') +
+      `</div>`;
   }).catch(() => {});
 
   // --- Media: illustrates the MEANING (concept), never the written glyph
@@ -21257,9 +21548,20 @@ function renderExampleListItems(container, countBadge, word, list) {
     const item = list[i];
     const highlightedZh = highlightWordInSentence(item.zh, word);
     const pinyin = item.pinyin || getSentencePinyin(item.zh);
-    const badgeText = item.isContext
-      ? (t('currentTextExample') || 'Trong bài đọc')
-      : (t('examples') || 'Ví dụ');
+    
+    // Choose appropriate badge text based on sentence source
+    let badgeText = t('examples') || 'Ví dụ';
+    if (item.isContext) {
+      badgeText = t('currentTextExample') || 'Trong bài đọc';
+    } else if (item.source === 'Tatoeba') {
+      badgeText = '🌐 Tatoeba';
+    } else if (item.source === 'Wiktionary') {
+      badgeText = '📖 Wiktionary';
+    } else if (item.source === 'Google') {
+      badgeText = '🔍 Google';
+    } else if (item.source === 'Contextual') {
+      badgeText = '💡 Ngữ cảnh';
+    }
 
     // Primary meaning
     let primaryTrans = item[lang] || null;
@@ -21270,7 +21572,8 @@ function renderExampleListItems(container, countBadge, word, list) {
     if (primaryTrans) {
       transHtml = `<div class="example-trans">${escapeHtml(primaryTrans)}</div>`;
     } else {
-      transHtml = `<div class="example-trans" id="${transId}" style="color:var(--text-muted); font-style:italic;">${t('loadingExamples') || 'Đang tìm câu ví dụ...'}</div>`;
+      const interimHint = (item.en && lang !== 'en') ? escapeHtml(item.en) : (t('loadingExamples') || 'Đang dịch câu ví dụ...');
+      transHtml = `<div class="example-trans" id="${transId}" style="color:var(--text-muted); font-style:italic;">${interimHint}</div>`;
       translateTextOnline(item.zh, lang).then(translated => {
         if (state.activeWord === word) {
           const el = document.getElementById(transId);
@@ -21329,6 +21632,16 @@ function renderExampleListItems(container, countBadge, word, list) {
   container.innerHTML = html;
 }
 
+function renderExamplesLoadingState(container, countBadge, word) {
+  if (countBadge) countBadge.textContent = '';
+  container.innerHTML = `
+    <div class="example-loading-box">
+      <div class="loading-spinner-sm"></div>
+      <span>🌐 ${t('searchingOnlineExamples') || 'Đang tìm câu ví dụ thực tế trên mạng...'}</span>
+    </div>
+  `;
+}
+
 function renderExamplesEmptyState(container, countBadge, word) {
   if (countBadge) countBadge.textContent = '';
   const dictEntry = MINI_DICT[word] || {};
@@ -21354,21 +21667,32 @@ async function renderWordExamples(word) {
     return;
   }
 
-  const examples = getWordCandidateExamples(word);
+  // 1. Check local examples first (instant 0ms)
+  const localExamples = getWordCandidateExamples(word);
 
-  if (examples.length > 0) {
-    renderExampleListItems(container, countBadge, word, examples);
+  if (localExamples.length > 0) {
+    renderExampleListItems(container, countBadge, word, localExamples);
   } else {
-    renderExamplesEmptyState(container, countBadge, word);
+    // Show sleek loading state while fetching online
+    renderExamplesLoadingState(container, countBadge, word);
   }
 
-  // Top up with real sentences from Tatoeba when local examples are scarce
-  if (examples.length < 4 && word.length <= 8) {
-    fetchTatoebaExamples(word).then(extra => {
-      if (state.activeWord !== word || !extra.length) return;
-      const combined = examples.concat(extra.filter(e => !examples.some(x => x.zh === e.zh))).slice(0, 8);
-      if (combined.length > examples.length) renderExampleListItems(container, countBadge, word, combined);
-    }).catch(() => {});
+  // 2. Fetch online examples if local examples are fewer than 4
+  if (localExamples.length < 4 && word.length <= 15) {
+    fetchOnlineExamples(word).then(extra => {
+      if (state.activeWord !== word) return;
+      const validExtra = (extra || []).filter(e => e && e.zh && !localExamples.some(x => x.zh === e.zh));
+      const combined = localExamples.concat(validExtra).slice(0, 5);
+      if (combined.length > 0) {
+        renderExampleListItems(container, countBadge, word, combined);
+      } else if (localExamples.length === 0) {
+        renderExamplesEmptyState(container, countBadge, word);
+      }
+    }).catch(() => {
+      if (state.activeWord === word && localExamples.length === 0) {
+        renderExamplesEmptyState(container, countBadge, word);
+      }
+    });
   }
 }
 
