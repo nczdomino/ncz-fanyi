@@ -268,6 +268,60 @@ function generateThreeLenses(zh, baseTrans, lang) {
   };
 }
 
+// Gọi Gemini AI từ serverless backend proxy (nếu có), fallback tự động sang offline rule engine
+async function getSentenceLensesWithAi(sentence, targetLang) {
+  const isVi = !targetLang || targetLang === 'vi';
+  const isJa = targetLang === 'ja';
+
+  // 1. Thử gọi backend Gemini AI trước
+  try {
+    const res = await fetch('/api/translate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: sentence, targetLang, type: 'lenses' })
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.lenses && data.lenses.native) {
+        return {
+          isAi: true,
+          native: {
+            id: 'native',
+            badge: isJa ? '🌱 日常・自然 (Gemini AI)' : (isVi ? '🌱 Thuần Việt Tự Nhiên (Gemini AI)' : '🌱 Natural Casual (Gemini AI)'),
+            title: isJa ? '自然な日常会話' : (isVi ? 'Thuần Việt Tự Nhiên' : 'Natural Casual'),
+            desc: isJa ? '文脈に合わせた自然な表現' : (isVi ? 'Văn phong tự nhiên gọt giũa chuẩn ngữ cảnh' : 'Fluent contextual phrasing'),
+            text: data.lenses.native,
+            color: '#10B981'
+          },
+          genz: {
+            id: 'genz',
+            badge: isJa ? '🔥 若者言葉・流行語 (Gemini AI)' : (isVi ? '🔥 Gen Z & Mạng Xã Hội (Gemini AI)' : '🔥 Gen Z & Slang (Gemini AI)'),
+            title: isJa ? 'ネット流行語・スラング' : (isVi ? 'Gen Z & Mạng Xã Hội' : 'Gen Z & Netizen'),
+            desc: isJa ? 'SNS最新トレンド' : (isVi ? 'Bắt trend mạng xã hội Douyin/Weibo' : 'Trendy social media tone'),
+            text: data.lenses.genz || data.lenses.native,
+            color: '#F59E0B'
+          },
+          business: {
+            id: 'business',
+            badge: isJa ? '👔 ビジネス・敬語 (Gemini AI)' : (isVi ? '👔 Công Sở & Thương Mại (Gemini AI)' : '👔 Business & Formal (Gemini AI)'),
+            title: isJa ? 'ビジネス・敬語表現' : (isVi ? 'Công Sở & Thương Mại' : 'Business & Formal'),
+            desc: isJa ? '公の場にふさわしい丁寧な表現' : (isVi ? 'Trang trọng, lịch thiệp dùng trong công việc' : 'Polite corporate tone'),
+            text: data.lenses.business || data.lenses.native,
+            color: '#3B82F6'
+          }
+        };
+      }
+    }
+  } catch (err) {
+    // Nếu chạy web tĩnh thuần túy hoặc backend chưa deploy, tự động fallback
+  }
+
+  // 2. Fallback: Google Translate + Engine 3 lăng kính nội bộ
+  const baseTrans = await translateTextOnline(sentence, targetLang);
+  return generateThreeLenses(sentence, baseTrans, targetLang);
+}
+
 function renderSentenceLenses(box) {
   if (!box) box = document.getElementById('sentence-trans-box');
   if (!box || !state.currentSentenceLenses) return;
@@ -415,7 +469,52 @@ async function translateFullText() {
     return;
   }
 
-  // Tách theo từng đoạn hoặc từng câu lớn để giữ nguyên cấu trúc bài viết
+  const langName = getLangName(state.meaningLang);
+
+  // 1. Thử gọi backend Gemini AI cho toàn bộ bài viết (chuẩn văn cảnh nhất)
+  try {
+    const res = await fetch('/api/translate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: fullText, targetLang: state.meaningLang, type: 'full' })
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.result) {
+        const fullAiResult = data.result.trim();
+        _lastFullTranslation = fullAiResult;
+        const aiParas = fullAiResult.split(/\n+/).map(p => p.trim()).filter(Boolean);
+
+        box.innerHTML = `
+          <div class="trans-lens-container" style="margin-top:6px;">
+            <div class="trans-lens-header">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-weight:700; font-size:13.5px; color:var(--accent);">✨ Bản Dịch Toàn Bộ Bài Viết (Google Gemini AI · ${langName})</span>
+              </div>
+              <div style="display:flex; gap:6px;">
+                <button type="button" class="trans-lens-copy-btn" onclick="copyFullTextTranslation(this)" title="Sao chép toàn bộ bản dịch">
+                  <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                  <span>Sao chép tất cả</span>
+                </button>
+                <button type="button" class="trans-lens-copy-btn" onclick="document.getElementById('full-text-trans-box').classList.remove('show'); const b = document.getElementById('btn-full-trans-toggle'); if (b) b.classList.remove('active');" title="Đóng bản dịch">
+                  ✕
+                </button>
+              </div>
+            </div>
+            <div class="trans-lens-card lens-native">
+              ${aiParas.map(p => `<p style="margin-bottom:12px; line-height:1.7; font-size:15px; color:var(--text-primary);">${escapeHtml(p)}</p>`).join('')}
+            </div>
+          </div>
+        `;
+        return;
+      }
+    }
+  } catch (err) {
+    // Nếu chưa có backend, fallback xuống Google Translate phía dưới
+  }
+
+  // 2. Fallback: Tách theo từng đoạn hoặc từng câu lớn để giữ nguyên cấu trúc bài viết
   const paras = fullText.split(/\n+/).map(p => p.trim()).filter(Boolean);
   const translatedParas = [];
 
@@ -426,7 +525,6 @@ async function translateFullText() {
 
   const cleanedParas = translatedParas.map(p => cleanNativeVi(p));
   _lastFullTranslation = cleanedParas.join('\n\n');
-  const langName = getLangName(state.meaningLang);
 
   box.innerHTML = `
     <div class="trans-lens-container" style="margin-top:6px;">

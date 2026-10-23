@@ -316,13 +316,13 @@ async function translateCurrentSentence() {
     </div>
   `;
 
-  const trans1 = await translateTextOnline(sentence, state.meaningLang);
   let trans2 = '';
   if (state.meaningLang2 && state.meaningLang2 !== state.meaningLang) {
     trans2 = await translateTextOnline(sentence, state.meaningLang2);
   }
 
-  const lenses = generateThreeLenses(sentence, trans1, state.meaningLang);
+  const lenses = await getSentenceLensesWithAi(sentence, state.meaningLang);
+  const trans1 = lenses?.native?.text || '';
   state.currentSentenceLenses = {
     sentence,
     trans1,
