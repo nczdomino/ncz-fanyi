@@ -1,0 +1,301 @@
+// js/features/reader.js - Reading views, sentence breakdown, contextual pinyin & font control - Dependencies: js/core/state.js, js/core/storage.js, js/core/utils.js, js/features/nlp.js, js/features/tts.js, js/features/translate.js, js/features/word-sheet.js
+
+// --- Module: Mini Dictionary & Inline Meaning ---
+function getWordMiniMeaning(tok, lang) {
+  const userDict = getUserDict();
+  const userKey = lang + ':' + tok;
+  if (userDict[userKey]) return userDict[userKey];
+
+  if (lang === 'ja') {
+    const kj = getWordKanji(tok);
+    if (kj && kj.ja_meaning) return kj.ja_meaning;
+    if (state.cachedTranslations['ja:' + tok]) return state.cachedTranslations['ja:' + tok];
+    return '';
+  }
+
+  const dictInfo = MINI_DICT[tok];
+  if (dictInfo) {
+    if (lang === 'vi') {
+      if (dictInfo.vi) return dictInfo.vi;
+    } else {
+      if (dictInfo.en && dictInfo.en.length > 0) return dictInfo.en[0];
+    }
+  }
+
+  const sl = getSlangEntry(tok);
+  if (sl) {
+    if (lang === 'vi' && sl.vi) return sl.vi;
+    if (lang === 'en' && sl.en) return sl.en;
+    if (lang === 'ja' && sl.ja) return sl.ja;
+    return sl.vi || sl.en || '';
+  }
+
+  const cacheKey = lang + ':' + tok;
+  if (state.cachedTranslations[cacheKey]) {
+    return state.cachedTranslations[cacheKey];
+  }
+  return '';
+}
+
+// --- Module: Reader View ---
+function renderReaderView() {
+  const container = document.getElementById('reader-area');
+  if (!container) return;
+
+  if (state.sentences.length === 0) {
+    container.innerHTML = `
+      <div class="card" style="text-align:center; padding: 40px 20px; color:var(--text-muted);">
+        <p>${t('noContent')}</p>
+        <button class="btn btn-primary" onclick="switchView('input')" style="margin-top:14px;">
+          ${t('enterText')}
+        </button>
+      </div>
+    `;
+    return;
+  }
+
+  if (state.viewMode === 'sentence') {
+    renderSentenceMode(container);
+  } else {
+    renderFullTextMode(container);
+  }
+}
+
+function renderSentenceMode(container) {
+  const total = state.sentences.length;
+  const currIdx = Math.min(Math.max(0, state.currentSentenceIndex), total - 1);
+  state.currentSentenceIndex = currIdx;
+  const sentence = state.sentences[currIdx];
+  const tokens = segmentSentence(sentence);
+
+  // Requirement B1: Calculate sentence pinyin once for accurate polyphonic readings
+  const sentenceChars = Array.from(sentence);
+  let sentencePinyin = null;
+  if (window.pinyinPro && typeof window.pinyinPro.pinyin === 'function') {
+    try {
+      const py = window.pinyinPro.pinyin(sentence, { toneType: 'symbol', type: 'array' });
+      if (Array.isArray(py) && py.length === sentenceChars.length) {
+        sentencePinyin = py;
+      }
+    } catch (e) {
+      console.warn('Sentence pinyin calculation failed', e);
+    }
+  }
+
+  let tokensHtml = '';
+  let _off = 0;
+  let _charOff = 0;
+  tokens.forEach(tok => {
+    const off = _off; _off += tok.length;
+    const tokChars = Array.from(tok);
+    const tokCharLen = tokChars.length;
+    const charOff = _charOff;
+    _charOff += tokCharLen;
+
+    if (!isChinese(tok)) {
+      tokensHtml += `<span class="punctuation-token">${escapeHtml(tok)}</span>`;
+    } else {
+      // Priority: Slang entry (SLANG_MAP) > MINI_DICT[tok].pinyin > Context pinyin > Fallback
+      let pinyin = '';
+      const sl = getSlangEntry(tok);
+      if (sl && sl.pinyin) {
+        pinyin = sl.pinyin;
+      } else if (MINI_DICT[tok] && MINI_DICT[tok].pinyin) {
+        pinyin = MINI_DICT[tok].pinyin;
+      } else if (sentencePinyin) {
+        pinyin = sentencePinyin.slice(charOff, charOff + tokCharLen).join(' ');
+      }
+      if (!pinyin) {
+        pinyin = getWordPinyin(tok);
+      }
+
+      let miniMeaning = '';
+      if (state.showMeaning) {
+        miniMeaning = getWordMiniMeaning(tok, state.meaningLang);
+      }
+      tokensHtml += `
+        <div class="word-token" data-tok="${escapeHtml(tok)}" data-s="${off}" data-e="${off + tok.length}" onclick="openWordSheet(this.dataset.tok)">
+          <span class="token-pinyin">${escapeHtml(pinyin)}</span>
+          <span class="token-chars" lang="zh-CN">${escapeHtml(tok)}</span>
+          ${miniMeaning ? `<span class="token-mini-meaning">${escapeHtml(miniMeaning)}</span>` : ''}
+        </div>
+      `;
+    }
+  });
+
+  const pinyinClass = state.showPinyin ? '' : 'hide-pinyin';
+  const meaningClass = state.showMeaning ? '' : 'hide-meaning';
+
+  container.innerHTML = `
+    <div class="sentence-card">
+      <div class="sentence-header">
+        <span class="sentence-index">${t('sentence')} ${currIdx + 1} / ${total}</span>
+        <div style="display:flex; gap:8px;">
+          <button class="icon-btn" onclick="speakText('${escapeQuotes(sentence)}')">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
+          </button>
+          <button class="btn btn-secondary btn-sm" onclick="translateCurrentSentence()">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>
+            ${t('translateSentence')}
+          </button>
+        </div>
+      </div>
+      <div class="sentence-content ${pinyinClass} ${meaningClass}" data-ktext="${escapeHtml(sentence)}">
+        ${tokensHtml}
+      </div>
+      <div id="sentence-trans-box" class="translation-box"></div>
+      <div class="sentence-nav-bar">
+        <button class="btn btn-secondary" onclick="prevSentence()" ${currIdx === 0 ? 'disabled style="opacity:0.5;"' : ''}>
+          ← ${t('prevSentence')}
+        </button>
+        <button class="btn btn-primary" onclick="nextSentence()" ${currIdx === total - 1 ? 'disabled style="opacity:0.5;"' : ''}>
+          ${t('nextSentence')} →
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function renderFullTextMode(container) {
+  const pinyinClass = state.showPinyin ? '' : 'hide-pinyin';
+  const meaningClass = state.showMeaning ? '' : 'hide-meaning';
+
+  let html = '<div class="full-text-container">';
+  state.sentences.forEach((sentence, sIdx) => {
+    const tokens = segmentSentence(sentence);
+
+    // Requirement B1: Calculate sentence pinyin once for accurate polyphonic readings
+    const sentenceChars = Array.from(sentence);
+    let sentencePinyin = null;
+    if (window.pinyinPro && typeof window.pinyinPro.pinyin === 'function') {
+      try {
+        const py = window.pinyinPro.pinyin(sentence, { toneType: 'symbol', type: 'array' });
+        if (Array.isArray(py) && py.length === sentenceChars.length) {
+          sentencePinyin = py;
+        }
+      } catch (e) {
+        console.warn('Sentence pinyin calculation failed', e);
+      }
+    }
+
+    let tokensHtml = '';
+    let _off = 0;
+    let _charOff = 0;
+    tokens.forEach(tok => {
+      const off = _off; _off += tok.length;
+      const tokChars = Array.from(tok);
+      const tokCharLen = tokChars.length;
+      const charOff = _charOff;
+      _charOff += tokCharLen;
+
+      if (!isChinese(tok)) {
+        tokensHtml += `<span class="punctuation-token">${escapeHtml(tok)}</span>`;
+      } else {
+        // Priority: Slang entry (SLANG_MAP) > MINI_DICT[tok].pinyin > Context pinyin > Fallback
+        let pinyin = '';
+        const sl = getSlangEntry(tok);
+        if (sl && sl.pinyin) {
+          pinyin = sl.pinyin;
+        } else if (MINI_DICT[tok] && MINI_DICT[tok].pinyin) {
+          pinyin = MINI_DICT[tok].pinyin;
+        } else if (sentencePinyin) {
+          pinyin = sentencePinyin.slice(charOff, charOff + tokCharLen).join(' ');
+        }
+        if (!pinyin) {
+          pinyin = getWordPinyin(tok);
+        }
+
+        let miniMeaning = '';
+        if (state.showMeaning) {
+          miniMeaning = getWordMiniMeaning(tok, state.meaningLang);
+        }
+        tokensHtml += `
+          <div class="word-token" data-tok="${escapeHtml(tok)}" data-s="${off}" data-e="${off + tok.length}" onclick="openWordSheet(this.dataset.tok)">
+            <span class="token-pinyin">${escapeHtml(pinyin)}</span>
+            <span class="token-chars" lang="zh-CN">${escapeHtml(tok)}</span>
+            ${miniMeaning ? `<span class="token-mini-meaning">${escapeHtml(miniMeaning)}</span>` : ''}
+          </div>
+        `;
+      }
+    });
+
+    html += `
+      <div class="sentence-paragraph ${sIdx === state.currentSentenceIndex ? 'active-sentence' : ''}" onclick="state.currentSentenceIndex = ${sIdx}">
+        <span style="font-size:12px; font-weight:700; color:var(--text-muted); margin-right:8px; cursor:pointer;" onclick="speakText('${escapeQuotes(sentence)}')">🔊 [${sIdx + 1}]</span>
+        <div style="display:inline;" class="${pinyinClass} ${meaningClass}" data-ktext="${escapeHtml(sentence)}">
+          ${tokensHtml}
+        </div>
+      </div>
+    `;
+  });
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+function prevSentence() {
+  if (state.currentSentenceIndex > 0) {
+    state.currentSentenceIndex--;
+    renderReaderView();
+  }
+}
+
+function nextSentence() {
+  if (state.currentSentenceIndex < state.sentences.length - 1) {
+    state.currentSentenceIndex++;
+    renderReaderView();
+  }
+}
+
+function togglePinyin() {
+  state.showPinyin = !state.showPinyin;
+  localStorage.setItem('cr_showPinyin', state.showPinyin);
+  renderReaderView();
+}
+
+function toggleMeaning() {
+  state.showMeaning = !state.showMeaning;
+  localStorage.setItem('cr_showMeaning', state.showMeaning);
+  renderReaderView();
+}
+
+function toggleViewMode() {
+  state.viewMode = state.viewMode === 'sentence' ? 'all' : 'sentence';
+  renderReaderView();
+}
+
+function changeFontSize(delta) {
+  state.fontSize = Math.min(48, Math.max(18, state.fontSize + delta));
+  localStorage.setItem('cr_fontSize', state.fontSize);
+  renderReaderView();
+}
+
+async function translateCurrentSentence() {
+  const box = document.getElementById('sentence-trans-box');
+  if (!box) return;
+  const sentence = state.sentences[state.currentSentenceIndex];
+  if (!sentence) return;
+
+  box.classList.add('show');
+  box.innerHTML = '<em>' + t('translating') + '</em>';
+
+  const trans1 = await translateTextOnline(sentence, state.meaningLang);
+  let transHtml = '';
+
+  if (state.meaningLang2 && state.meaningLang2 !== state.meaningLang) {
+    const trans2 = await translateTextOnline(sentence, state.meaningLang2);
+    transHtml = `
+      <div style="margin-bottom:6px;">
+        <span class="badge" style="margin-right:6px;">${getLangName(state.meaningLang)}</span>
+        <strong>${escapeHtml(trans1 || t('noMeaning'))}</strong>
+      </div>
+      <div>
+        <span class="badge" style="margin-right:6px;">${getLangName(state.meaningLang2)}</span>
+        <span style="color:var(--text-secondary);">${escapeHtml(trans2 || t('noMeaning'))}</span>
+      </div>
+    `;
+  } else {
+    transHtml = trans1 ? `<strong>${escapeHtml(trans1)}</strong>` : `<span style="color:var(--text-muted);">${t('noMeaning')}</span>`;
+  }
+
+  box.innerHTML = transHtml;
+}

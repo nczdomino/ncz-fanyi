@@ -1,0 +1,200 @@
+/* css/reader.css - Reader view, sentence card, word tokens, karaoke, phrase select & translation */
+/* View: Reader */
+.reader-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px 14px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  margin-bottom: 14px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+
+.toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.toggle-btn {
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  background: var(--bg-muted);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toggle-btn.active {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+.sentence-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 24px 20px;
+  box-shadow: var(--card-shadow);
+  margin-bottom: 16px;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+}
+
+.sentence-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.sentence-index {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.sentence-content {
+  font-size: var(--reader-font-size);
+  line-height: 2.2;
+  font-family: var(--font-hanzi);
+  word-break: break-word;
+  user-select: text;
+}
+
+/* Word Token / Ruby Styling */
+.word-token {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  vertical-align: bottom;
+  margin: 0 3px;
+  padding: 2px 4px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  position: relative;
+}
+
+.word-token:hover {
+  background-color: var(--accent-subtle);
+  transform: translateY(-2px);
+}
+
+.word-token:active {
+  transform: scale(0.95);
+}
+
+/* Phrase selection + karaoke */
+.select-mode .word-token { touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+.word-token.sel-token { background: var(--accent-subtle); box-shadow: 0 0 0 2px var(--accent); }
+.word-token.karaoke-active { background: var(--accent-subtle); box-shadow: 0 0 0 2px var(--accent); transform: translateY(-2px); }
+.word-token.karaoke-active .token-chars { color: var(--accent); }
+.word-token.karaoke-done .token-chars { color: var(--accent); opacity: .65; }
+#phrase-bar {
+  position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%);
+  z-index: 900; display: none; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center;
+  max-width: calc(100vw - 24px); padding: 10px 12px; border-radius: 14px;
+  background: var(--bg-card, #fff); color: var(--text, #222);
+  border: 1px solid var(--accent); box-shadow: 0 6px 24px rgba(0,0,0,.25);
+}
+#phrase-bar.show { display: flex; }
+#phrase-bar .phrase-text { font-size: 18px; font-weight: 700; max-width: 100%; word-break: break-all; }
+
+
+
+.token-pinyin {
+  font-size: 0.45em;
+  line-height: 1.1;
+  font-weight: 600;
+  color: var(--accent);
+  user-select: none;
+  letter-spacing: -0.2px;
+}
+
+.token-chars {
+  font-size: 1em;
+  line-height: 1.1;
+  color: var(--text-primary);
+}
+
+.token-mini-meaning {
+  font-size: 0.35em;
+  line-height: 1;
+  color: var(--text-muted);
+  max-width: 60px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hide-pinyin .token-pinyin {
+  display: none;
+}
+
+.hide-meaning .token-mini-meaning {
+  display: none;
+}
+
+/* Sentence Translation Box */
+.translation-box {
+  margin-top: 16px;
+  padding: 14px;
+  border-radius: var(--radius-md);
+  background-color: var(--bg-muted);
+  border-left: 3px solid var(--accent);
+  font-size: 14px;
+  color: var(--text-primary);
+  user-select: text;
+  display: none;
+}
+
+.translation-box.show {
+  display: block;
+}
+
+.sentence-nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 18px;
+}
+
+/* Full Text Mode */
+.full-text-container {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  font-size: var(--reader-font-size);
+  line-height: 2.3;
+}
+
+.sentence-paragraph {
+  margin-bottom: 20px;
+  padding: 6px;
+  border-radius: var(--radius-sm);
+  transition: background-color 0.2s;
+}
+
+.sentence-paragraph.active-sentence {
+  background-color: var(--accent-subtle);
+  border-left: 3px solid var(--accent);
+}
+
+/* Phrase bar: readable in dark mode (was using an undefined variable) */
+#phrase-bar { color: var(--text-primary); }

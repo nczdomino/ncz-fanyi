@@ -1,0 +1,90 @@
+/* css/responsive.css - Media queries, touch interactions, notch & safe areas */
+/* Desktop Responsiveness */
+@media (min-width: 768px) {
+  #app-shell {
+    margin-top: 12px;
+    margin-bottom: 12px;
+    height: calc(100dvh - 24px);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.08);
+    overflow: hidden;
+  }
+  
+  #bottom-nav {
+    position: static;
+    border-top: none;
+    border-bottom: 1px solid var(--border-color);
+    order: -1;
+    height: 48px;
+    padding-bottom: 0;
+  }
+  
+  .nav-tab {
+    flex-direction: row;
+    gap: 8px;
+  }
+  
+  .nav-tab span {
+    font-size: 13px;
+  }
+  
+  #main-content {
+    padding-bottom: 24px;
+  }
+}
+
+
+/* ===================================================================
+   v1.1 — Responsive / safe-area hardening + concept media styles
+   =================================================================== */
+
+/* Notch / landscape safe areas */
+#app-shell { padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); }
+#bottom-nav { padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); }
+#top-bar {
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+/* Use the *visible* viewport on mobile browsers (address bar aware) */
+.bottom-sheet { max-height: 86vh; max-height: 86dvh; overscroll-behavior: contain; }
+.modal-card { max-height: 90vh; max-height: 90dvh; overscroll-behavior: contain; }
+#toast-container { top: calc(env(safe-area-inset-top, 0px) + 64px); max-width: calc(100vw - 24px); }
+.toast { text-align: center; }
+
+/* Touch devices: no sticky hover states */
+@media (hover: none) {
+  .word-token:hover:not(.sel-token):not(.karaoke-active) { background-color: transparent; transform: none; }
+  .dict-item-card:hover { transform: none; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02); border-color: var(--border-color); }
+  .recent-item:hover { border-color: var(--border-color); }
+}
+
+/* Tablet portrait & phones: bottom navigation, so floating bar must sit above it */
+@media (max-width: 767px) {
+  #phrase-bar { bottom: calc(var(--bottom-bar-height) + env(safe-area-inset-bottom, 0px) + 12px); }
+}
+
+/* Phones */
+@media (max-width: 480px) {
+  .view { padding: 12px; }
+  .card { padding: 14px; }
+  .action-row { gap: 8px; }
+  .action-row .btn { flex: 1 1 calc(50% - 4px); padding: 10px 8px; font-size: 13px; line-height: 1.25; text-align: center; }
+  .action-row #btn-analyze { flex: 1 1 100%; }
+  .reader-toolbar { padding: 8px 10px; gap: 6px; }
+  .toolbar-group { flex-wrap: wrap; gap: 6px; }
+  .sentence-card { padding: 16px 12px; min-height: 0; }
+  .full-text-container { padding: 14px 10px; }
+  .word-token { margin: 0 1px; padding: 2px; }
+  .bottom-sheet { padding: 16px 16px calc(20px + env(safe-area-inset-bottom, 0px)); }
+  .sheet-hanzi-title { font-size: 34px; }
+  .def-text { font-size: 17px; }
+  .dict-view-container { padding: 20px 10px 40px; }
+  .settings-row { flex-wrap: wrap; }
+  .settings-control { margin-left: auto; }
+  .nav-tab span { font-size: 10.5px; }
+  .modal-card { padding: 18px; }
+}
+@media (max-width: 350px) {
+  .brand-title { display: none; }
+}
