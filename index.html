@@ -765,6 +765,139 @@ button, input, textarea, select {
   to { transform: rotate(360deg); }
 }
 
+/* Modern Pro Dictionary styles */
+.dict-recent-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+.dict-recent-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+.dict-recent-chip:hover {
+  border-color: var(--accent);
+  background: var(--accent-subtle);
+  color: var(--accent);
+}
+.recent-chip-word {
+  font-family: var(--font-hanzi);
+  font-weight: 500;
+}
+.recent-chip-del {
+  font-size: 10px;
+  color: var(--text-muted);
+  padding: 1px 3px;
+  border-radius: 50%;
+  transition: color 0.15s;
+}
+.recent-chip-del:hover {
+  color: var(--accent);
+}
+
+.dict-radical-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
+  gap: 6px;
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 4px 2px;
+}
+.radical-item-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 4px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+}
+.radical-item-chip:hover {
+  border-color: var(--accent);
+  background: var(--accent-subtle);
+}
+.radical-item-chip.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.radical-item-chip.active .rad-name,
+.radical-item-chip.active .rad-char {
+  color: #fff;
+}
+.rad-char {
+  font-size: 17px;
+  font-family: var(--font-hanzi);
+  color: var(--accent);
+}
+.rad-name {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  white-space: nowrap;
+}
+
+/* Compounds grid in Word Sheet */
+.dict-compounds-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+.dict-compound-chip {
+  padding: 7px 10px;
+  background: var(--bg-surface-alt, rgba(0,0,0,0.02));
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.dict-compound-chip:hover {
+  border-color: var(--accent);
+  background: var(--accent-subtle);
+  transform: translateY(-1px);
+}
+.compound-zh {
+  font-family: var(--font-hanzi);
+  font-size: 15px;
+  color: var(--text-primary);
+}
+.compound-py {
+  font-size: 11px;
+  color: var(--accent);
+}
+.compound-meaning {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.badge-mini-hsk {
+  font-size: 9px;
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: var(--bg-muted);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  margin-left: auto;
+}
+
 /* Phrase selection + karaoke */
 .select-mode .word-token { touch-action: pan-y; user-select: none; -webkit-user-select: none; }
 .word-token.sel-token { background: var(--accent-subtle); box-shadow: 0 0 0 2px var(--accent); }
@@ -2132,6 +2265,17 @@ button, input, textarea, select {
           <span class="dict-quick-tag" onclick="quickSearchDict('谢谢')">谢谢</span>
         </div>
 
+        <!-- Lịch sử tra cứu gần đây -->
+        <div id="dict-recent-box" style="margin-top:14px; width:100%; display:none;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span style="font-size:12px; font-weight:600; color:var(--text-muted); display:flex; align-items:center; gap:5px;">
+              <span>🕒</span> <span data-i18n="recentSearches">Lịch sử tra gần đây</span>
+            </span>
+            <button class="btn btn-secondary btn-sm" onclick="clearRecentSearches()" style="font-size:11px; padding:2px 8px; border-radius:12px;" data-i18n="clearHistory">Xóa tất cả</button>
+          </div>
+          <div id="dict-recent-chips" class="dict-recent-chips"></div>
+        </div>
+
         <!-- Accordion Khám phá từ vựng theo HSK (mặc định ẩn) -->
         <div id="dict-hsk-accordion" class="dict-hsk-accordion">
           <button id="dict-hsk-toggle-btn" class="dict-hsk-toggle-btn" onclick="toggleHskBrowser()">
@@ -2154,6 +2298,21 @@ button, input, textarea, select {
               <div class="filter-chip dict-filter-chip" data-hsk="slang" onclick="setDictFilter('slang')" style="background:rgba(232,52,78,0.08); border-color:rgba(232,52,78,0.25); color:var(--accent); font-weight:600;" data-i18n="hskSlang">🔥 Từ lóng Slang</div>
             </div>
             <div id="dict-hsk-count" style="font-size:12px; color:var(--text-muted); margin-bottom:8px;"></div>
+          </div>
+        </div>
+
+        <!-- Accordion Tra cứu theo 28 Bộ Thủ (mặc định ẩn) -->
+        <div id="dict-radical-accordion" class="dict-hsk-accordion" style="margin-top:10px;">
+          <button id="dict-radical-toggle-btn" class="dict-hsk-toggle-btn" onclick="toggleRadicalBrowser()">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span>🏮</span>
+              <span id="dict-radical-toggle-text" data-i18n="browseRadicals">Tra cứu theo 28 Bộ Thủ thông dụng (Chạm để mở)</span>
+            </div>
+            <span id="dict-radical-chevron" class="chevron">▼</span>
+          </button>
+          
+          <div id="dict-radical-content" class="dict-hsk-content" style="display:none; padding-top:10px;">
+            <div id="dict-radical-grid" class="dict-radical-grid"></div>
           </div>
         </div>
 
@@ -2416,6 +2575,9 @@ button, input, textarea, select {
 
   <div id="sheet-enrich"></div>
 
+  <!-- Cây từ ghép liên quan & Họ từ vựng -->
+  <div id="sheet-compounds-section" style="margin-top:16px;"></div>
+
   <!-- Ví dụ câu chứa từ vựng -->
   <div id="sheet-examples-section" style="margin-top:16px;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
@@ -2578,6 +2740,11 @@ const I18N_DATA = {
     "dictHeroSubtitle": "Nhập chữ Hán, phiên âm pinyin hoặc nghĩa để tra cứu tức thì",
     "quickSuggestions": "Gợi ý:",
     "browseHsk": "Khám phá từ vựng HSK 1 - 6 (Chạm để mở)",
+    "browseRadicals": "Tra cứu theo 28 Bộ Thủ thông dụng (Chạm để mở)",
+    "recentSearches": "Lịch sử tra gần đây",
+    "relatedCompounds": "Từ ghép liên quan (Họ từ vựng)",
+    "clearHistory": "Xóa lịch sử",
+    "measureWord": "Lượng từ",
     "noResults": "Không tìm thấy kết quả",
     "fontSize": "Cỡ chữ",
     "darkMode": "Chế độ tối",
@@ -2782,6 +2949,11 @@ const I18N_DATA = {
     "dictHeroSubtitle": "Enter Chinese, pinyin, or English meaning for instant search",
     "quickSuggestions": "Suggestions:",
     "browseHsk": "Browse HSK 1 - 6 vocabulary (Tap to open)",
+    "browseRadicals": "Browse by 28 Common Radicals (Tap to open)",
+    "recentSearches": "Recent Searches",
+    "relatedCompounds": "Related Compounds (Word Family)",
+    "clearHistory": "Clear history",
+    "measureWord": "Measure word",
     "noResults": "No results found",
     "fontSize": "Font size",
     "darkMode": "Dark mode",
@@ -2986,6 +3158,11 @@ const I18N_DATA = {
     "dictHeroSubtitle": "漢字、ピンイン、または日本語の意味を入力して瞬時に検索",
     "quickSuggestions": "おすすめ:",
     "browseHsk": "HSK 1〜6の単語を閲覧（タップして開く）",
+    "browseRadicals": "よく使われる28部首から検索（タップして開く）",
+    "recentSearches": "最近の検索",
+    "relatedCompounds": "関連する複合語（語族）",
+    "clearHistory": "履歴を消去",
+    "measureWord": "量詞",
     "noResults": "結果が見つかりません",
     "fontSize": "文字サイズ",
     "darkMode": "ダークモード",
@@ -20338,10 +20515,314 @@ async function translateCurrentSentence() {
   box.innerHTML = transHtml;
 }
 
+// ===== Pro Dictionary Module: Measure Words, Radicals, Compounds & Search History =====
+const MEASURE_WORDS = {
+  '书': { mw: '本', py: 'běn', vi: 'cuốn, quyển' },
+  '课本': { mw: '本', py: 'běn', vi: 'cuốn, quyển' },
+  '杂志': { mw: '本', py: 'běn', vi: 'cuốn, quyển' },
+  '字典': { mw: '本', py: 'běn', vi: 'cuốn, quyển' },
+  '词典': { mw: '本', py: 'běn', vi: 'cuốn, quyển' },
+  '日记': { mw: '本', py: 'běn', vi: 'cuốn, quyển' },
+  '车': { mw: '辆', py: 'liàng', vi: 'chiếc' },
+  '汽车': { mw: '辆', py: 'liàng', vi: 'chiếc' },
+  '自行车': { mw: '辆', py: 'liàng', vi: 'chiếc' },
+  '出租车': { mw: '辆', py: 'liàng', vi: 'chiếc' },
+  '飞机': { mw: '架', py: 'jià', vi: 'chiếc' },
+  '茶': { mw: '杯', py: 'bēi', vi: 'tách, ly' },
+  '咖啡': { mw: '杯', py: 'bēi', vi: 'tách, ly' },
+  '水': { mw: '杯 / 瓶', py: 'bēi / píng', vi: 'cốc / chai' },
+  '牛奶': { mw: '盒 / 杯', py: 'hé / bēi', vi: 'hộp / cốc' },
+  '酒': { mw: '瓶 / 杯', py: 'píng / bēi', vi: 'chai / ly' },
+  '啤酒': { mw: '瓶 / 罐', py: 'píng / guàn', vi: 'chai / lon' },
+  '猫': { mw: '只', py: 'zhī', vi: 'con' },
+  '狗': { mw: '只', py: 'zhī', vi: 'con' },
+  '鸟': { mw: '只', py: 'zhī', vi: 'con' },
+  '衣服': { mw: '件', py: 'jiàn', vi: 'bộ, chiếc' },
+  '衬衫': { mw: '件', py: 'jiàn', vi: 'chiếc' },
+  '大衣': { mw: '件', py: 'jiàn', vi: 'chiếc' },
+  '事': { mw: '件', py: 'jiàn', vi: 'việc, chuyện' },
+  '礼物': { mw: '件 / 份', py: 'jiàn / fèn', vi: 'món' },
+  '工作': { mw: '份', py: 'fèn', vi: 'công việc' },
+  '报纸': { mw: '份', py: 'fèn', vi: 'tờ, bản' },
+  '裤子': { mw: '条', py: 'tiáo', vi: 'chiếc' },
+  '裙子': { mw: '条', py: 'tiáo', vi: 'chiếc váy' },
+  '鱼': { mw: '条', py: 'tiáo', vi: 'con' },
+  '路': { mw: '条', py: 'tiáo', vi: 'con đường' },
+  '河': { mw: '条', py: 'tiáo', vi: 'dòng sông' },
+  '人': { mw: '个 / 位', py: 'gè / wèi', vi: 'người / vị (lịch sự)' },
+  '朋友': { mw: '个 / 位', py: 'gè / wèi', vi: 'người bạn' },
+  '老师': { mw: '位', py: 'wèi', vi: 'vị thầy/cô' },
+  '苹果': { mw: '个', py: 'gè', vi: 'quả, trái' },
+  '西瓜': { mw: '个', py: 'gè', vi: 'quả' },
+  '面包': { mw: '个 / 片', py: 'gè / piàn', vi: 'cái / lát' },
+  '笔': { mw: '支', py: 'zhī', vi: 'cây' },
+  '纸': { mw: '张', py: 'zhāng', vi: 'tờ' },
+  '票': { mw: '张', py: 'zhāng', vi: 'tấm, vé' },
+  '照片': { mw: '张', py: 'zhāng', vi: 'bức ảnh' },
+  '桌子': { mw: '张', py: 'zhāng', vi: 'chiếc bàn' },
+  '床': { mw: '张', py: 'zhāng', vi: 'chiếc giường' },
+  '电脑': { mw: '台', py: 'tái', vi: 'chiếc, máy' },
+  '电视': { mw: '台', py: 'tái', vi: 'chiếc' },
+  '手机': { mw: '部', py: 'bù', vi: 'chiếc' },
+  '电影': { mw: '部', py: 'bù', vi: 'bộ phim' },
+  '花': { mw: '朵 / 束', py: 'duǒ / shù', vi: 'bông / bó' },
+  '树': { mw: '棵', py: 'kē', vi: 'cây' },
+  '米饭': { mw: '碗', py: 'wǎn', vi: 'bát, chén' },
+  '歌': { mw: '首', py: 'shǒu', vi: 'bài' },
+  '房子': { mw: '套 / 栋', py: 'tào / dòng', vi: 'căn / tòa' },
+  '鞋': { mw: '双', py: 'shuāng', vi: 'đôi' },
+  '筷子': { mw: '双', py: 'shuāng', vi: 'đôi' }
+};
+
+function getWordMeasureWord(word) {
+  if (!word || typeof MEASURE_WORDS === 'undefined') return null;
+  const direct = MEASURE_WORDS[word];
+  if (direct) {
+    return {
+      mw: direct.mw,
+      label: tx(`Lượng từ: ${direct.mw} (${direct.vi})`, `Measure: ${direct.mw}`, `量詞: ${direct.mw}`)
+    };
+  }
+  for (const k of Object.keys(MEASURE_WORDS)) {
+    if (word.length > k.length && word.endsWith(k)) {
+      const it = MEASURE_WORDS[k];
+      return {
+        mw: it.mw,
+        label: tx(`Lượng từ: ${it.mw} (${it.vi})`, `Measure: ${it.mw}`, `量詞: ${it.mw}`)
+      };
+    }
+  }
+  return null;
+}
+
+const RADICALS_DATA = [
+  { r: '氵', name: 'Thủy (Nước)', chars: '水河海江洗渴汉流湖游满汽没汗油酒泪活深渐浪洁澡消温漂波液测清' },
+  { r: '亻', name: 'Nhân (Người)', chars: '你他体便件做作住保候借像假倒值健优份停休伯低信倍传伤化付促' },
+  { r: '口', name: 'Khẩu (Miệng)', chars: '吃喝叫听问告诉唱嘴句味哭品响哪呢吧啊吗喂唯呼右知台各古可名' },
+  { r: '扌', name: 'Thủ (Tay)', chars: '打找拿抱挂推拉提接换护抓掉排招指按搬扫摇握捕拒拾拍拨描摘损' },
+  { r: '木', name: 'Mộc (Cây)', chars: '木本机林杯条板桥校树样根极查格检楼概楚松村材束果枯枪柏桃条' },
+  { r: '讠', name: 'Ngôn (Lời nói)', chars: '语话说请读课识认讲谁谈论记诚该词试试译误计设证许评许访让调' },
+  { r: '忄', name: 'Tâm (Lòng/Tình cảm)', chars: '心忙快怕念思忘急想懂愿悠恨慢情感意悬悉忽怒息怨恼忆情悄惊惜' },
+  { r: '女', name: 'Nữ (Phụ nữ)', chars: '她妈姐妹奶奶妻妙好如始姓嫁姑娘好姐妹妈姆婚妨威娶嫌妥妇娱' },
+  { r: '日', name: 'Nhật (Mặt trời/Thời gian)', chars: '日早明时昨晚星晴暖暗暑显晨晶晒普易景量春映晴暴晕晰昂昨' },
+  { r: '月', name: 'Nguyệt (Thịt/Trăng)', chars: '月朋服脑脚脸胖腿肚胳膊脏胆肥育期背胸腰肤腹脑脱朝胜望朋股' },
+  { r: '目', name: 'Mục (Mắt)', chars: '目看见眼睛睡瞧督盲盾睁眨看盯睹盼相盾盼盲省看眠眶眼' },
+  { r: '艹', name: 'Thảo (Cây cỏ)', chars: '茶菜花草药蓝节艺苦英苹苦落著获茶荣药莉花草荷莫获薄苏芳苗' },
+  { r: '钅', name: 'Kim (Kim loại)', chars: '钱银铁错钟钢销链锋锐键镜针铁铜铅锡销铃银锋镜钢钟锦铝' },
+  { r: '辶', name: 'Sước (Bước đi)', chars: '过进远近边迎送还运道选连迟遇遍通这适边道速达返退迎运造' },
+  { r: '火', name: 'Hỏa (Lửa)', chars: '火灭热点照然烧烤烟熊熟烈煮焦灯炸烈烟烦烧焊烦燥烘煤烧煮' },
+  { r: '犭', name: 'Khuyển (Thú)', chars: '狗猫猪狂狠独猜猛猎猴狼猫狡独狗特猛狐狼狱狮狭犹狡猾' },
+  { r: '土', name: 'Thổ (Đất)', chars: '土地场块坡城坚培境增址基埋坏均堆坐幸坪坤垂域坚埃塞' },
+  { r: '饣', name: 'Thực (Ăn)', chars: '饭饱馆饿饺饼饮饲饶饥饮饭饱饰饲饵馋饮馆饱饿饰馄馒' },
+  { r: '门', name: 'Môn (Cửa)', chars: '门问闪闭闲闹阔阁阅闯间关门闭开闲阅阔闪闹阂闻阈' },
+  { r: '纟', name: 'Mịch (Tơ sợi)', chars: '红绿细终经给结级练续绝绍线统绳约纯纷素纺组络给细绝绑' },
+  { r: '子', name: 'Tử (Con cái)', chars: '子孩孙学孤季存孝孔字存季孤学孩孙' },
+  { r: '力', name: 'Lực (Sức mạnh)', chars: '力动加办功助劣勇努勉势勤动劲劳励加劳勇势勒勤' },
+  { r: '车', name: 'Xa (Xe cộ)', chars: '车辆轮辅转轻载较输轰软轻辆较转轮载辑辐输辅轰' },
+  { r: '足', name: 'Túc (Chân)', chars: '跑跳踢舞蹈踏跃跪跟跨路距跌跪路践跳踏蹬踢蹦跟跨' },
+  { r: '页', name: 'Hiệt (Đầu mặt)', chars: '顶项顺须预领频额题颜愿顷项顶顺须顾顿颁颂领预题颇' },
+  { r: '⺮', name: 'Trúc (Tre trúc)', chars: '笑笔等答第箱简筷管策签笑符策简筷算管箱节等答笔竹笛' },
+  { r: '衤', name: 'Y (Quần áo)', chars: '衣衫裤衬袜被初补袍裙袖衫衬被袍袖袱裂装裳裕裤褪褂' },
+  { r: '宀', name: 'Miên (Mái nhà)', chars: '家安字定宝室客完害富容密寄察守宅宇宋宗实审宣宴家害' }
+];
+
+function getWordRadical(char) {
+  if (!char || char.length !== 1 || typeof RADICALS_DATA === 'undefined') return null;
+  for (const r of RADICALS_DATA) {
+    if (r.chars && r.chars.includes(char)) {
+      return {
+        radical: r.r,
+        name: `Bộ ${r.name || r.r}`
+      };
+    }
+  }
+  return null;
+}
+
+function getCompoundWords(targetWord) {
+  if (!targetWord) return [];
+  const chars = [...targetWord].filter(c => /[\u4e00-\u9fff]/.test(c));
+  if (!chars.length) return [];
+  const results = [];
+  const seen = new Set([targetWord]);
+
+  for (const w of Object.keys(MINI_DICT)) {
+    if (seen.has(w)) continue;
+    const matches = targetWord.length === 1 ? w.includes(targetWord) : chars.some(c => w.includes(c));
+    if (matches && w.length <= 4) {
+      seen.add(w);
+      const e = MINI_DICT[w];
+      results.push({
+        word: w,
+        pinyin: e.pinyin || '',
+        vi: e.vi || '',
+        en: (e.en && e.en[0]) || '',
+        ja: e.ja || '',
+        hsk: e.hsk || null
+      });
+      if (results.length >= 14) break;
+    }
+  }
+
+  if (results.length < 14 && typeof SLANG_MAP !== 'undefined') {
+    for (const w of Object.keys(SLANG_MAP)) {
+      if (seen.has(w)) continue;
+      if (chars.some(c => w.includes(c)) && w.length <= 6) {
+        seen.add(w);
+        const s = SLANG_MAP[w];
+        results.push({
+          word: w,
+          pinyin: s.pinyin || '',
+          vi: s.vi || '',
+          en: (s.en && (Array.isArray(s.en) ? s.en[0] : s.en)) || '',
+          ja: s.ja || '',
+          isSlang: true
+        });
+        if (results.length >= 14) break;
+      }
+    }
+  }
+
+  results.sort((a, b) => {
+    if (a.word.startsWith(targetWord)) return -1;
+    if (b.word.startsWith(targetWord)) return 1;
+    return (a.hsk || 99) - (b.hsk || 99);
+  });
+  return results.slice(0, 12);
+}
+
+function renderWordCompounds(word) {
+  const container = document.getElementById('sheet-compounds-section');
+  if (!container) return;
+  const compounds = getCompoundWords(word);
+  if (!compounds || !compounds.length) {
+    container.innerHTML = '';
+    return;
+  }
+  const lang = state.meaningLang || 'vi';
+  let html = `
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+      <div class="def-label" style="margin-bottom:0;">🌳 ${t('relatedCompounds') || tx('Từ ghép liên quan (Họ từ vựng)', 'Related Compound Words', '関連する複合語')}</div>
+      <span style="font-size:11px; color:var(--text-muted);">${compounds.length} ${tx('từ ghép', 'compounds', '語')}</span>
+    </div>
+    <div class="dict-compounds-grid">
+  `;
+  for (const c of compounds) {
+    const m = (lang === 'vi' ? c.vi : (lang === 'ja' ? (c.ja || c.vi) : c.en)) || '';
+    html += `
+      <div class="dict-compound-chip" onclick="openWordSheet('${escapeQuotes(c.word)}')">
+        <div style="display:flex; align-items:baseline; gap:6px;">
+          <b class="compound-zh">${escapeHtml(c.word)}</b>
+          <span class="compound-py">${escapeHtml(c.pinyin)}</span>
+          ${c.hsk ? `<span class="badge-mini-hsk">HSK ${c.hsk}</span>` : ''}
+        </div>
+        ${m ? `<div class="compound-meaning">${escapeHtml(m)}</div>` : ''}
+      </div>
+    `;
+  }
+  html += `</div>`;
+  container.innerHTML = html;
+}
+
+// Recent searches logic
+function getRecentSearches() {
+  try {
+    const list = JSON.parse(localStorage.getItem('cr_recent_searches') || '[]');
+    return Array.isArray(list) ? list : [];
+  } catch (e) { return []; }
+}
+
+function addRecentSearch(word) {
+  if (!word || typeof word !== 'string') return;
+  const clean = word.trim();
+  if (!clean || clean.length > 20) return;
+  let list = getRecentSearches();
+  list = list.filter(w => w !== clean);
+  list.unshift(clean);
+  if (list.length > 15) list = list.slice(0, 15);
+  localStorage.setItem('cr_recent_searches', JSON.stringify(list));
+}
+
+function removeRecentSearch(word, e) {
+  if (e) e.stopPropagation();
+  let list = getRecentSearches();
+  list = list.filter(w => w !== word);
+  localStorage.setItem('cr_recent_searches', JSON.stringify(list));
+  renderRecentSearches();
+}
+
+function clearRecentSearches() {
+  localStorage.removeItem('cr_recent_searches');
+  renderRecentSearches();
+}
+
+function renderRecentSearches() {
+  const box = document.getElementById('dict-recent-box');
+  const container = document.getElementById('dict-recent-chips');
+  if (!box || !container) return;
+  const list = getRecentSearches();
+  if (!list.length || state.searchQuery) {
+    box.style.display = 'none';
+    return;
+  }
+  box.style.display = 'block';
+  container.innerHTML = list.map(w => `
+    <span class="dict-recent-chip" onclick="quickSearchDict('${escapeQuotes(w)}')">
+      <span class="recent-chip-word">${escapeHtml(w)}</span>
+      <span class="recent-chip-del" onclick="removeRecentSearch('${escapeQuotes(w)}', event)" title="Xóa">✕</span>
+    </span>
+  `).join('');
+}
+
+// Radical Browser in Dict View
+function toggleRadicalBrowser() {
+  state.showRadicalBrowser = !state.showRadicalBrowser;
+  renderRadicalBrowser();
+}
+
+function selectRadicalFilter(radChar) {
+  if (state.selectedRadical === radChar) {
+    state.selectedRadical = null;
+  } else {
+    state.selectedRadical = radChar;
+  }
+  renderRadicalBrowser();
+  renderDictView();
+}
+
+function renderRadicalBrowser() {
+  const content = document.getElementById('dict-radical-content');
+  const chevron = document.getElementById('dict-radical-chevron');
+  const toggleBtn = document.getElementById('dict-radical-toggle-btn');
+  const grid = document.getElementById('dict-radical-grid');
+  if (!content || !grid) return;
+
+  if (state.showRadicalBrowser) {
+    content.style.display = 'block';
+    if (chevron) chevron.style.transform = 'rotate(180deg)';
+    if (toggleBtn) toggleBtn.classList.add('expanded');
+
+    grid.innerHTML = RADICALS_DATA.map(r => {
+      const isAct = state.selectedRadical === r.r;
+      return `
+        <div class="radical-item-chip ${isAct ? 'active' : ''}" onclick="selectRadicalFilter('${escapeQuotes(r.r)}')">
+          <b class="rad-char">${escapeHtml(r.r)}</b>
+          <span class="rad-name">${escapeHtml(r.name.split(' ')[0])}</span>
+        </div>
+      `;
+    }).join('');
+  } else {
+    content.style.display = 'none';
+    if (chevron) chevron.style.transform = 'rotate(0deg)';
+    if (toggleBtn) toggleBtn.classList.remove('expanded');
+  }
+}
+
 // --- Module: Word Sheet Modal & Hanzi Writer ---
 async function openWordSheet(word) {
   if (!word) return;
   state.activeWord = word;
+  addRecentSearch(word);
   
   const backdrop = document.getElementById('sheet-backdrop');
   const sheet = document.getElementById('word-sheet');
@@ -20374,7 +20855,7 @@ async function openWordSheet(word) {
   // Save / Bookmark button state
   updateSheetSaveButton(isSaved);
 
-  // Badges
+  // Badges: HSK, Slang, Type, Radical & Measure Word
   const badgesContainer = document.getElementById('sheet-badges');
   badgesContainer.innerHTML = '';
   if (dictEntry && dictEntry.hsk) {
@@ -20385,6 +20866,14 @@ async function openWordSheet(word) {
     badgesContainer.innerHTML += `<span class="badge" style="background:rgba(232,52,78,0.15); color:var(--accent); border:1px solid rgba(232,52,78,0.3); font-weight:700;">🔥 ${tx('Từ lóng', 'Slang', '流行語')}</span>`;
   } else if (dictEntry && dictEntry.type) {
     badgesContainer.innerHTML += `<span class="badge">${escapeHtml(dictEntry.type)}</span>`;
+  }
+  const radInfo = word.length === 1 ? getWordRadical(word) : null;
+  if (radInfo) {
+    badgesContainer.innerHTML += `<span class="badge" style="background:var(--bg-muted); border:1px solid var(--border-color); color:var(--text-secondary);">🏮 ${escapeHtml(radInfo.name)}</span>`;
+  }
+  const mwInfo = getWordMeasureWord(word);
+  if (mwInfo) {
+    badgesContainer.innerHTML += `<span class="badge" style="background:rgba(46,160,67,0.12); color:#2EA043; border:1px solid rgba(46,160,67,0.3); font-weight:600;">📏 ${escapeHtml(mwInfo.label)}</span>`;
   }
 
   // Meanings — chỉ hiển thị theo meaningLang đang chọn
@@ -20553,6 +21042,9 @@ async function openWordSheet(word) {
   // Extra: synonyms, slang, Wiktionary, media
   try { enrichWordSheet(word); } catch (e) { console.warn(e); }
 
+  // Render Compounds (Word Family)
+  try { renderWordCompounds(word); } catch (e) { console.warn(e); }
+
   // Render Example Sentences
   renderWordExamples(word);
 
@@ -20700,45 +21192,116 @@ async function enrichWiktionary(word) {
   });
 }
 
-// Real example sentences from Tatoeba, Wiktionary, Google Translate, and Contextual Corpus
+// Real example sentences from:
+// 1. MyMemory Translation Memory API (Phụ đề phim & Đối thoại đời thực có sẵn câu dịch)
+// 2. Jukuu / Youdao Corpus qua Proxy (Kho câu đối thoại & văn học song ngữ)
+// 3. Tatoeba Global Corpus (Kho câu người bản xứ toàn cầu)
+// 4. Wiktionary Example Quotations (Trích dẫn ngữ cảnh từ điển)
 async function fetchOnlineExamples(word) {
   if (!word || !word.trim()) return [];
   const lang = state.meaningLang || 'vi';
+  const targetCode = { vi: 'vi', ja: 'ja', en: 'en' }[lang] || 'vi';
 
-  const items = await enrichCached('enrich-online-ex:' + word, 14 * 86400000, async () => {
+  const items = await enrichCached('enrich-online-ex3:' + lang + ':' + word, 14 * 86400000, async () => {
     const list = [];
     const seenZh = new Set();
 
-    // 1. Fetch from Tatoeba (Mandarin sentences containing word, unrestricted by translation language)
+    // 1. Ưu tiên số 1: MyMemory API (Kho phụ đề phim ảnh & đối thoại đời thực người dịch)
     try {
-      const url = 'https://tatoeba.org/en/api_v0/search?from=cmn&query=' + encodeURIComponent(word) + '&orphans=no&unapproved=no&sort=relevance';
-      const data = await enrichFetchJson(url, 7500);
-      if (data && Array.isArray(data.results)) {
-        for (const r of data.results) {
-          if (!r.text || r.text.length < 3 || r.text.length > 50) continue;
-          if (seenZh.has(r.text)) continue;
-          if (!r.text.includes(word)) continue;
+      const myMemUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(word)}&langpair=zh|${targetCode}`;
+      const myMemData = await enrichFetchJson(myMemUrl, 6000);
+      if (myMemData && Array.isArray(myMemData.matches)) {
+        for (const m of myMemData.matches) {
+          if (!m || !m.segment || !m.translation) continue;
+          const seg = stripHtml(m.segment).trim();
+          const trans = stripHtml(m.translation).trim();
+          if (trans.includes('MYMEMORY WARNING')) continue;
+          if (!/[\u4e00-\u9fff]/.test(seg)) continue;
+          if (!seg.includes(word)) continue;
+          if (seg.length < 4 || seg.length > 65) continue;
+          if (seenZh.has(seg)) continue;
 
-          const flat = [].concat(...(r.translations || []));
-          const it = { zh: r.text, source: 'Tatoeba', isOnline: true };
-
-          const trVie = flat.find(x => x && x.lang === 'vie');
-          const trJpn = flat.find(x => x && x.lang === 'jpn');
-          const trEng = flat.find(x => x && x.lang === 'eng');
-          if (trVie) it.vi = trVie.text;
-          if (trJpn) it.ja = trJpn.text;
-          if (trEng) it.en = trEng.text;
-
-          seenZh.add(r.text);
+          seenZh.add(seg);
+          const it = {
+            zh: seg,
+            source: '🎬 Phụ đề đời thực',
+            isOnline: true
+          };
+          it[lang] = trans;
           list.push(it);
-          if (list.length >= 4) break;
+          if (list.length >= 3) break;
         }
       }
-    } catch (e1) {
-      console.warn('Tatoeba query note:', e1);
+    } catch (eMem) {
+      console.warn('MyMemory fetch note:', eMem);
     }
 
-    // 2. Fetch from Wiktionary examples if few sentences found
+    // 2. Ưu tiên số 2: Jukuu / Youdao Corpus qua Proxy (Kho câu đối thoại & phim ảnh song ngữ)
+    if (list.length < 3) {
+      try {
+        const jukuuUrl = `https://api.allorigins.win/raw?url=` + encodeURIComponent(`http://www.jukuu.com/search.php?q=${encodeURIComponent(word)}`);
+        const ctl = new AbortController();
+        const timer = setTimeout(() => ctl.abort(), 5500);
+        let jukuuHtml = '';
+        try {
+          const r = await fetch(jukuuUrl, { signal: ctl.signal });
+          if (r.ok) jukuuHtml = await r.text();
+        } finally { clearTimeout(timer); }
+
+        if (jukuuHtml) {
+          const re = /<td class="e">([\s\S]*?)<\/td>[\s\S]*?<td class="c">([\s\S]*?)<\/td>/gi;
+          let match;
+          while ((match = re.exec(jukuuHtml)) !== null) {
+            const enText = stripHtml(match[1]).trim();
+            const zhText = stripHtml(match[2]).trim();
+            if (zhText && zhText.includes(word) && zhText.length >= 4 && zhText.length <= 60 && !seenZh.has(zhText)) {
+              seenZh.add(zhText);
+              const it = {
+                zh: zhText,
+                en: enText,
+                source: '📺 Jukuu / Phim ảnh',
+                isOnline: true
+              };
+              list.push(it);
+              if (list.length >= 4) break;
+            }
+          }
+        }
+      } catch (eJukuu) {
+        console.warn('Jukuu fetch note:', eJukuu);
+      }
+    }
+
+    // 3. Ưu tiên số 3: Tatoeba Global Corpus (Kho câu giao tiếp bản xứ)
+    if (list.length < 3) {
+      try {
+        const url = 'https://tatoeba.org/en/api_v0/search?from=cmn&query=' + encodeURIComponent(word) + '&orphans=no&unapproved=no&sort=relevance';
+        const data = await enrichFetchJson(url, 6500);
+        if (data && Array.isArray(data.results)) {
+          for (const r of data.results) {
+            if (!r.text || r.text.length < 3 || r.text.length > 50) continue;
+            if (seenZh.has(r.text)) continue;
+            if (!r.text.includes(word)) continue;
+
+            const flat = [].concat(...(r.translations || []));
+            const it = { zh: r.text, source: '🌐 Tatoeba', isOnline: true };
+
+            const trVie = flat.find(x => x && x.lang === 'vie');
+            const trJpn = flat.find(x => x && x.lang === 'jpn');
+            const trEng = flat.find(x => x && x.lang === 'eng');
+            if (trVie) it.vi = trVie.text;
+            if (trJpn) it.ja = trJpn.text;
+            if (trEng) it.en = trEng.text;
+
+            seenZh.add(r.text);
+            list.push(it);
+            if (list.length >= 4) break;
+          }
+        }
+      } catch (eTat) {}
+    }
+
+    // 4. Ưu tiên số 4: Wiktionary Examples (Trích dẫn ngữ cảnh từ điển)
     if (list.length < 3) {
       try {
         const wikData = await enrichWiktionary(word);
@@ -20746,52 +21309,23 @@ async function fetchOnlineExamples(word) {
         for (const ex of wikEx) {
           if (ex && ex.zh && !seenZh.has(ex.zh)) {
             seenZh.add(ex.zh);
-            list.push({ zh: ex.zh, source: 'Wiktionary', isOnline: true });
+            list.push({ zh: ex.zh, source: '📖 Wiktionary', isOnline: true });
             if (list.length >= 4) break;
           }
         }
-      } catch (e2) {}
+      } catch (eWik) {}
     }
 
-    // 3. Fallback: Google Translate examples (dt=ex)
-    if (list.length < 2) {
-      try {
-        const gUrl = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=zh-CN&tl=' + lang + '&dt=t&dt=ex&q=' + encodeURIComponent(word);
-        const gData = await enrichFetchJson(gUrl, 6000);
-        if (gData && Array.isArray(gData[13])) {
-          for (const gEx of gData[13]) {
-            if (Array.isArray(gEx) && gEx[0]) {
-              const rawZh = stripHtml(gEx[0]);
-              if (rawZh && rawZh.length >= 4 && rawZh.length <= 45 && !seenZh.has(rawZh) && rawZh.includes(word)) {
-                seenZh.add(rawZh);
-                list.push({ zh: rawZh, source: 'Google', isOnline: true });
-                if (list.length >= 3) break;
-              }
-            }
-          }
-        }
-      } catch (e3) {}
-    }
+    // BỎ HOÀN TOÀN CÁC CÂU MẪU CÔNG THỨC CỨNG NHẮC!
+    // Tuyệt đối không dùng câu mẫu "Bạn có biết từ này nghĩa là gì không?".
 
-    // 4. Fallback contextual template generator if 0 sentences found
-    if (list.length === 0 && word.length >= 1 && word.length <= 10 && isChinese(word)) {
-      const templates = [
-        `你知道“${word}”在日常生活中是什么意思吗？`,
-        `在中文里，“${word}”是一个很常用的表达。`,
-        `请试着用“${word}”写一个简单的句子。`
-      ];
-      for (const tpl of templates) {
-        list.push({ zh: tpl, source: 'Contextual', isOnline: true });
-      }
-    }
-
-    // Pre-resolve translations for the active language to keep display snappy
+    // Tự động dịch sang ngôn ngữ người học nếu câu chưa có bản dịch
     for (const it of list) {
       if (!it[lang]) {
         try {
           const trans = await translateTextOnline(it.zh, lang);
           if (trans) it[lang] = trans;
-        } catch (e) {}
+        } catch (eTr) {}
       }
     }
 
@@ -21550,17 +22084,9 @@ function renderExampleListItems(container, countBadge, word, list) {
     const pinyin = item.pinyin || getSentencePinyin(item.zh);
     
     // Choose appropriate badge text based on sentence source
-    let badgeText = t('examples') || 'Ví dụ';
+    let badgeText = item.source || t('examples') || 'Ví dụ';
     if (item.isContext) {
       badgeText = t('currentTextExample') || 'Trong bài đọc';
-    } else if (item.source === 'Tatoeba') {
-      badgeText = '🌐 Tatoeba';
-    } else if (item.source === 'Wiktionary') {
-      badgeText = '📖 Wiktionary';
-    } else if (item.source === 'Google') {
-      badgeText = '🔍 Google';
-    } else if (item.source === 'Contextual') {
-      badgeText = '💡 Ngữ cảnh';
     }
 
     // Primary meaning
@@ -21646,12 +22172,19 @@ function renderExamplesEmptyState(container, countBadge, word) {
   if (countBadge) countBadge.textContent = '';
   const dictEntry = MINI_DICT[word] || {};
   const viMeaning = dictEntry.vi ? `<div style="color:var(--text-muted);font-size:13px;margin-top:4px;">${escapeHtml(dictEntry.vi)}</div>` : '';
+  const enc = encodeURIComponent(word);
   container.innerHTML = `
-    <div style="text-align:center; padding:20px 16px; color:var(--text-muted);">
-      <div style="font-size:32px; margin-bottom:8px;">📖</div>
-      <div style="font-size:14px; font-weight:500; color:var(--text-secondary);">${escapeHtml(word)}</div>
+    <div style="text-align:center; padding:20px 16px; color:var(--text-muted); background:var(--bg-surface-alt, rgba(0,0,0,0.02)); border:1px dashed var(--border-color); border-radius:12px; margin-top:8px;">
+      <div style="font-size:28px; margin-bottom:6px;">🎬</div>
+      <div style="font-size:14px; font-weight:600; color:var(--text-secondary);">${escapeHtml(word)}</div>
       ${viMeaning}
-      <div style="font-size:13px; margin-top:10px; opacity:0.7;">${t('noExamples') || 'Chưa có ví dụ câu cho từ này.'}</div>
+      <div style="font-size:13px; margin-top:6px; color:var(--text-muted);">${tx('Chưa tìm thấy câu phụ đề đối thoại trực tuyến cho từ này.', 'No subtitle dialogue sentences found for this word.', 'この単語の字幕・会話例文は見つかりませんでした。')}</div>
+      <div style="margin-top:10px; font-size:12px; color:var(--text-secondary);">${tx('Xem ngữ cảnh thực tế của người bản xứ trên:', 'See real-life native usage on:', 'ネイティブの実際の使用例を見る:')}</div>
+      <div style="display:flex; justify-content:center; gap:8px; flex-wrap:wrap; margin-top:8px;">
+        <a class="btn btn-secondary btn-sm" style="font-size:11.5px; padding:3px 10px; border-radius:14px;" href="https://search.bilibili.com/all?keyword=${enc}%20%E6%84%8F%E6%80%9D" target="_blank" rel="noopener">▶ Bilibili Video</a>
+        <a class="btn btn-secondary btn-sm" style="font-size:11.5px; padding:3px 10px; border-radius:14px;" href="https://www.xiaohongshu.com/search_result?keyword=${enc}" target="_blank" rel="noopener">📕 小红书</a>
+        <a class="btn btn-secondary btn-sm" style="font-size:11.5px; padding:3px 10px; border-radius:14px;" href="https://www.zhihu.com/search?q=${enc}" target="_blank" rel="noopener">知乎</a>
+      </div>
     </div>
   `;
 }
@@ -21767,11 +22300,21 @@ function renderDictView() {
   if (query) {
     if (quickTags) quickTags.style.display = 'none';
     if (hskAccordion) hskAccordion.style.display = 'none';
+    const radAcc = document.getElementById('dict-radical-accordion');
+    if (radAcc) radAcc.style.display = 'none';
+    const recBox = document.getElementById('dict-recent-box');
+    if (recBox) recBox.style.display = 'none';
   } else {
     // No search query
     if (quickTags) quickTags.style.display = 'flex';
     if (hskAccordion) hskAccordion.style.display = 'block';
-    if (!isBrowsingHsk) {
+    const radAcc = document.getElementById('dict-radical-accordion');
+    if (radAcc) radAcc.style.display = 'block';
+
+    renderRecentSearches();
+    renderRadicalBrowser();
+
+    if (!isBrowsingHsk && !state.selectedRadical) {
       container.innerHTML = '';
       return; // Do NOT dump words by default! Keep clean!
     }
@@ -21781,7 +22324,19 @@ function renderDictView() {
   let matches = [];
   const seenWords = new Set();
 
-  if (filterHSK === 'slang') {
+  if (state.selectedRadical && !query) {
+    const radItem = (typeof RADICALS_DATA !== 'undefined') ? RADICALS_DATA.find(r => r.r === state.selectedRadical) : null;
+    if (radItem) {
+      const charSet = new Set([...radItem.chars]);
+      for (const w of Object.keys(MINI_DICT)) {
+        if ([...w].some(c => charSet.has(c))) {
+          matches.push({ word: w, ...MINI_DICT[w] });
+          seenWords.add(w);
+          if (matches.length >= 80) break;
+        }
+      }
+    }
+  } else if (filterHSK === 'slang') {
     const allSlang = (ENRICH.remote || []).concat(SLANG_BUILTIN || []);
     for (const it of allSlang) {
       if (!it || !it.w || seenWords.has(it.w)) continue;
@@ -21905,6 +22460,20 @@ function renderDictView() {
   }
 
   let html = '';
+  if (state.selectedRadical && !query) {
+    const radItem = (typeof RADICALS_DATA !== 'undefined') ? RADICALS_DATA.find(r => r.r === state.selectedRadical) : null;
+    const radName = radItem ? radItem.name : state.selectedRadical;
+    html += `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding:8px 14px; background:var(--accent-subtle); border:1px solid var(--accent); border-radius:10px;">
+        <span style="font-size:13px; font-weight:600; color:var(--accent);">
+          🏮 ${tx('Đang lọc theo Bộ', 'Filtered by Radical', '部首で絞り込み')}: <b>${escapeHtml(radName)}</b> (${matches.length} ${tx('từ', 'words', '語')})
+        </span>
+        <button class="btn btn-secondary btn-sm" style="font-size:11px; padding:3px 10px; border-radius:12px;" onclick="selectRadicalFilter(null)">
+          ✕ ${tx('Bỏ lọc', 'Clear filter', '解除')}
+        </button>
+      </div>
+    `;
+  }
   if (query) {
     const exactMatch = matches.some(m => m.word === query);
     let countText = `Tìm thấy <b>${matches.length}</b> kết quả cho "<b>${escapeHtml(query)}</b>"`;
