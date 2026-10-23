@@ -533,7 +533,7 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG VÀ DUY NHẤT một chuỗi JSON h�
   "commonMistakes": "lỗi người học hay mắc phải nếu có",
   "memoryTip": "mẹo ghi nhớ từ vựng"
 }`;
-      const CANDIDATE_MODELS = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-2.5-pro', 'gemini-2.0-flash-lite'];
+      const CANDIDATE_MODELS = ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-flash-latest'];
       let res = null;
 
       for (const mName of CANDIDATE_MODELS) {
