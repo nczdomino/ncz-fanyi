@@ -54,4 +54,6 @@ const state = {
   showHskBrowser: false,
   showRadicalBrowser: false,
   selectedRadical: null,
+  activeLens: localStorage.getItem('cr_active_lens') || 'native',
+  currentSentenceLenses: null,
 };

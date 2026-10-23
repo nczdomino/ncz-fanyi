@@ -39,13 +39,27 @@ function getWordMiniMeaning(tok, lang) {
 
 // --- Module: Reader View ---
 function renderReaderView() {
-  const container = document.getElementById('reader-area');
+  const container = document.getElementById('reader-content-area') || document.getElementById('reader-area');
   if (!container) return;
+  if (typeof phraseClear === 'function') phraseClear();
+  if (typeof karaokeStop === 'function') karaokeStop();
+
+  document.documentElement.style.setProperty('--reader-font-size', state.fontSize + 'px');
+
+  // Update toggle button states
+  const pinyinBtn = document.getElementById('btn-toggle-pinyin');
+  if (pinyinBtn) pinyinBtn.classList.toggle('active', state.showPinyin);
+  const meaningBtn = document.getElementById('btn-toggle-meaning');
+  if (meaningBtn) meaningBtn.classList.toggle('active', state.showMeaning);
+  const viewModeBtn = document.getElementById('btn-toggle-viewmode');
+  if (viewModeBtn) {
+    viewModeBtn.textContent = state.viewMode === 'sentence' ? t('viewSingle') : t('viewAll');
+  }
 
   if (state.sentences.length === 0) {
     container.innerHTML = `
       <div class="card" style="text-align:center; padding: 40px 20px; color:var(--text-muted);">
-        <p>${t('noContent')}</p>
+        <p>${t('noContent') || t('noTextToRead')}</p>
         <button class="btn btn-primary" onclick="switchView('input')" style="margin-top:14px;">
           ${t('enterText')}
         </button>
@@ -163,7 +177,19 @@ function renderFullTextMode(container) {
   const pinyinClass = state.showPinyin ? '' : 'hide-pinyin';
   const meaningClass = state.showMeaning ? '' : 'hide-meaning';
 
-  let html = '<div class="full-text-container">';
+  let html = `
+    <div class="full-text-toolbar" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px; padding:10px 14px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:12px;">
+      <div style="font-size:13px; font-weight:600; color:var(--text-muted);">
+        📄 <span>${state.sentences.length}</span> ${t('sentence') || 'câu'} · <span>${state.currentText ? state.currentText.length : 0}</span> ký tự
+      </div>
+      <button id="btn-full-trans-toggle" class="btn btn-secondary btn-sm" onclick="translateFullText()" style="display:inline-flex; align-items:center; gap:6px;">
+        <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>
+        <span>${t('translateFullText') || 'Dịch toàn bộ bài viết'}</span>
+      </button>
+    </div>
+    <div id="full-text-trans-box" class="translation-box" style="margin-bottom:16px;"></div>
+    <div class="full-text-container">
+  `;
   state.sentences.forEach((sentence, sIdx) => {
     const tokens = segmentSentence(sentence);
 
@@ -237,15 +263,19 @@ function renderFullTextMode(container) {
 
 function prevSentence() {
   if (state.currentSentenceIndex > 0) {
+    const wasOpen = !!document.getElementById('sentence-trans-box')?.classList.contains('show');
     state.currentSentenceIndex--;
     renderReaderView();
+    if (wasOpen) translateCurrentSentence();
   }
 }
 
 function nextSentence() {
   if (state.currentSentenceIndex < state.sentences.length - 1) {
+    const wasOpen = !!document.getElementById('sentence-trans-box')?.classList.contains('show');
     state.currentSentenceIndex++;
     renderReaderView();
+    if (wasOpen) translateCurrentSentence();
   }
 }
 
@@ -279,26 +309,26 @@ async function translateCurrentSentence() {
   if (!sentence) return;
 
   box.classList.add('show');
-  box.innerHTML = '<em>' + t('translating') + '</em>';
+  box.innerHTML = `
+    <div style="display:flex; align-items:center; gap:8px; color:var(--text-muted); padding:6px 0;">
+      <span class="spinner-small" style="display:inline-block; width:14px; height:14px; border:2px solid var(--accent); border-top-color:transparent; border-radius:50%; animation:spin 0.8s linear infinite;"></span>
+      <em>${t('translating')} (Đang phân tích 3 lăng kính...)</em>
+    </div>
+  `;
 
   const trans1 = await translateTextOnline(sentence, state.meaningLang);
-  let transHtml = '';
-
+  let trans2 = '';
   if (state.meaningLang2 && state.meaningLang2 !== state.meaningLang) {
-    const trans2 = await translateTextOnline(sentence, state.meaningLang2);
-    transHtml = `
-      <div style="margin-bottom:6px;">
-        <span class="badge" style="margin-right:6px;">${getLangName(state.meaningLang)}</span>
-        <strong>${escapeHtml(trans1 || t('noMeaning'))}</strong>
-      </div>
-      <div>
-        <span class="badge" style="margin-right:6px;">${getLangName(state.meaningLang2)}</span>
-        <span style="color:var(--text-secondary);">${escapeHtml(trans2 || t('noMeaning'))}</span>
-      </div>
-    `;
-  } else {
-    transHtml = trans1 ? `<strong>${escapeHtml(trans1)}</strong>` : `<span style="color:var(--text-muted);">${t('noMeaning')}</span>`;
+    trans2 = await translateTextOnline(sentence, state.meaningLang2);
   }
 
-  box.innerHTML = transHtml;
+  const lenses = generateThreeLenses(sentence, trans1, state.meaningLang);
+  state.currentSentenceLenses = {
+    sentence,
+    trans1,
+    trans2,
+    lenses
+  };
+
+  renderSentenceLenses(box);
 }
