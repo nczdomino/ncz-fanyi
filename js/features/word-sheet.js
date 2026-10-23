@@ -601,6 +601,12 @@ async function analyzeActiveWordWithAi(targetWord) {
               Lưu & Dịch ngay
             </button>
           </div>
+          <div style="margin-top:10px;">
+            <button type="button" class="btn btn-outline btn-sm" onclick="runAiDiagnostic('${escapeQuotes(word)}')" style="font-size:12px; padding:4px 10px;">
+              🔍 Bấm vào đây để Chẩn đoán lỗi tự động
+            </button>
+            <div id="ai-debug-output" style="display:none; margin-top:8px; padding:10px; background:#1e1e1e; color:#eee; font-family:monospace; font-size:11.5px; border-radius:6px; max-height:220px; overflow:auto; white-space:pre-wrap; line-height:1.4;"></div>
+          </div>
         </div>
       </div>
     `;
@@ -617,6 +623,68 @@ function saveInlineGeminiKey(word) {
   localStorage.setItem('cr_gemini_api_key', key);
   showToast('Đã lưu API Key vào trình duyệt!');
   analyzeActiveWordWithAi(word);
+}
+
+async function runAiDiagnostic(word) {
+  const out = document.getElementById('ai-debug-output');
+  if (!out) return;
+  out.style.display = 'block';
+  out.textContent = '⏳ Đang kiểm tra hệ thống...\n';
+
+  const log = (msg) => {
+    out.textContent += msg + '\n';
+  };
+
+  // 1. Kiểm tra Cloudflare /api/translate
+  log('1. Kiểm tra máy chủ Cloudflare (/api/translate)...');
+  try {
+    const t0 = Date.now();
+    const res = await fetch('/api/translate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: '你好', targetLang: 'vi', type: 'lenses' })
+    });
+    log(`   -> Trạng thái HTTP: ${res.status} ${res.statusText} (${Date.now() - t0}ms)`);
+    const text = await res.text();
+    try {
+      const json = JSON.parse(text);
+      if (res.ok) {
+        log('   -> Cloudflare backend: HOẠT ĐỘNG TỐT (OK)');
+      } else {
+        log(`   -> Lỗi từ Cloudflare: ${json.error || text}`);
+        if (json.details) log(`   -> Chi tiết: ${json.details}`);
+      }
+    } catch (e) {
+      log(`   -> Phản hồi: ${text.slice(0, 150)}`);
+    }
+  } catch (err) {
+    log(`   -> Lỗi kết nối mạng: ${err.message}`);
+  }
+
+  // 2. Kiểm tra key trực tiếp nếu có
+  const directKey = localStorage.getItem('cr_gemini_api_key');
+  log('\n2. Kiểm tra Google Gemini API trực tiếp...');
+  if (!directKey) {
+    log('   -> Chưa dán key vào ô phía trên (cr_gemini_api_key rỗng).');
+    log('   -> Hãy dán mã API Key vào ô rồi bấm "Lưu & Dịch ngay".');
+  } else {
+    log(`   -> Đã tìm thấy key: ${directKey.slice(0, 6)}...${directKey.slice(-4)}`);
+    try {
+      const t0 = Date.now();
+      const listUrl = `https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(directKey.trim())}`;
+      const resp = await fetch(listUrl);
+      log(`   -> Google ListModels HTTP: ${resp.status} ${resp.statusText} (${Date.now() - t0}ms)`);
+      const body = await resp.json();
+      if (resp.ok) {
+        const models = (body.models || []).map(m => m.name.replace('models/', ''));
+        log(`   -> Key hợp lệ! Danh sách model khả dụng: ${models.slice(0, 5).join(', ')}...`);
+      } else {
+        log(`   -> Lỗi từ Google: ${body?.error?.message || JSON.stringify(body)}`);
+      }
+    } catch (e) {
+      log(`   -> Không thể gọi Google: ${e.message}`);
+    }
+  }
 }
 
 function renderAiAnalysisCard(container, word, data) {
