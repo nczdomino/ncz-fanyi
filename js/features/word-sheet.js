@@ -482,7 +482,6 @@ async function renderWordSheetAiSection(word) {
         <div class="ai-word-title">
           <span>✨</span>
           <span>${escapeHtml(tInfo.title)}</span>
-          <span class="badge" style="background:rgba(232,52,78,0.12); color:var(--accent); font-size:10.5px; font-weight:700;">Gemini AI</span>
         </div>
         <button id="btn-trigger-ai-word" class="btn btn-primary btn-sm" onclick="analyzeActiveWordWithAi('${escapeQuotes(word)}')">
           ${escapeHtml(tInfo.btn)}
@@ -516,15 +515,15 @@ async function analyzeActiveWordWithAi(targetWord) {
   const loadingTexts = {
     vi: {
       title: `Đang phân tích chuyên sâu "${escapeHtml(word)}"...`,
-      desc: 'Gemini AI đang bóc tách sắc thái, ngữ cảnh, từ loại, câu ví dụ và mẹo nhớ từ...'
+      desc: 'Đang bóc tách sắc thái, ngữ cảnh, từ loại, câu ví dụ và mẹo nhớ từ...'
     },
     ja: {
       title: `「${escapeHtml(word)}」をAI詳細分析中...`,
-      desc: 'Gemini AI がニュアンス、品詞、実用例文、類義語の使い分けを分析しています...'
+      desc: 'ニュアンス、品詞、実用例文、類義語の使い分けを分析しています...'
     },
     en: {
       title: `Deeply analyzing "${escapeHtml(word)}"...`,
-      desc: 'Gemini AI is examining nuances, context, part of speech, examples, and memory tips...'
+      desc: 'Examining nuances, context, part of speech, examples, and memory tips...'
     }
   };
   const loadInfo = loadingTexts[currentLang] || loadingTexts.vi;
@@ -757,7 +756,7 @@ Return ONLY valid JSON matching this schema (no markdown wrappers):
             Chi tiết lỗi: ${escapeHtml(safeError)}
           </div>
           <div style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">
-            💡 <b>Gợi ý xử lý:</b> Bạn có thể dán trực tiếp mã Google Gemini API Key vào ô dưới để kích hoạt tính năng AI trực tiếp trên trình duyệt:
+            💡 <b>Gợi ý xử lý:</b> Bạn có thể dán trực tiếp mã API Key vào ô dưới để kích hoạt tính năng AI trực tiếp trên trình duyệt:
           </div>
           <div style="display:flex; gap:6px;">
             <input type="password" id="inline-gemini-key" placeholder="Dán mã API Key vào đây" class="textarea-box" style="padding:6px 10px; font-size:12.5px; height:34px; flex:1; border:1px solid var(--border-color); border-radius:6px;" value="${escapeHtml(directKey || '')}">
@@ -827,7 +826,7 @@ async function runAiDiagnostic(word) {
 
   // 2. Kiểm tra key trực tiếp nếu có
   const directKey = localStorage.getItem('cr_gemini_api_key');
-  log('\n2. Kiểm tra Google Gemini API trực tiếp...');
+  log('\n2. Kiểm tra API Key trực tiếp...');
   if (!directKey) {
     log('   -> Chưa dán key vào ô phía trên (cr_gemini_api_key rỗng).');
     log('   -> Hãy dán mã API Key vào ô rồi bấm "Lưu & Dịch ngay".');

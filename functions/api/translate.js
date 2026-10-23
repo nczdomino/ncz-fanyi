@@ -276,7 +276,7 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG một chuỗi JSON hợp lệ với c
     if (!response || !response.ok) {
       return new Response(
         JSON.stringify({
-          error: 'Google Gemini API responded with error',
+          error: 'AI API responded with error',
           details: errDetails,
         }),
         { status: lastStatus || 500, headers: corsHeaders }

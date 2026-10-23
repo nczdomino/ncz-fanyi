@@ -254,7 +254,7 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG một chuỗi JSON hợp lệ với c
 
     if (!response || !response.ok) {
       return res.status(lastStatus || 500).json({
-        error: 'Google Gemini API responded with error',
+        error: 'AI API responded with error',
         details: errDetails
       });
     }

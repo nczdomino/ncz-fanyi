@@ -288,7 +288,7 @@ async function getSentenceLensesWithAi(sentence, targetLang) {
           isAi: true,
           native: {
             id: 'native',
-            badge: isJa ? '🌱 日常・自然 (Gemini AI)' : (isVi ? '🌱 Thuần Việt Tự Nhiên (Gemini AI)' : '🌱 Natural Casual (Gemini AI)'),
+            badge: isJa ? '🌱 日常・自然' : (isVi ? '🌱 Thuần Việt Tự Nhiên' : '🌱 Natural Casual'),
             title: isJa ? '自然な日常会話' : (isVi ? 'Thuần Việt Tự Nhiên' : 'Natural Casual'),
             desc: isJa ? '文脈に合わせた自然な表現' : (isVi ? 'Văn phong tự nhiên gọt giũa chuẩn ngữ cảnh' : 'Fluent contextual phrasing'),
             text: data.lenses.native,
@@ -296,7 +296,7 @@ async function getSentenceLensesWithAi(sentence, targetLang) {
           },
           genz: {
             id: 'genz',
-            badge: isJa ? '🔥 若者言葉・流行語 (Gemini AI)' : (isVi ? '🔥 Gen Z & Mạng Xã Hội (Gemini AI)' : '🔥 Gen Z & Slang (Gemini AI)'),
+            badge: isJa ? '🔥 若者言葉・流行語' : (isVi ? '🔥 Gen Z & Mạng Xã Hội' : '🔥 Gen Z & Slang'),
             title: isJa ? 'ネット流行語・スラング' : (isVi ? 'Gen Z & Mạng Xã Hội' : 'Gen Z & Netizen'),
             desc: isJa ? 'SNS最新トレンド' : (isVi ? 'Bắt trend mạng xã hội Douyin/Weibo' : 'Trendy social media tone'),
             text: data.lenses.genz || data.lenses.native,
@@ -304,7 +304,7 @@ async function getSentenceLensesWithAi(sentence, targetLang) {
           },
           business: {
             id: 'business',
-            badge: isJa ? '👔 ビジネス・敬語 (Gemini AI)' : (isVi ? '👔 Công Sở & Thương Mại (Gemini AI)' : '👔 Business & Formal (Gemini AI)'),
+            badge: isJa ? '👔 ビジネス・敬語' : (isVi ? '👔 Công Sở & Thương Mại' : '👔 Business & Formal'),
             title: isJa ? 'ビジネス・敬語表現' : (isVi ? 'Công Sở & Thương Mại' : 'Business & Formal'),
             desc: isJa ? '公の場にふさわしい丁寧な表現' : (isVi ? 'Trang trọng, lịch thiệp dùng trong công việc' : 'Polite corporate tone'),
             text: data.lenses.business || data.lenses.native,
@@ -354,7 +354,7 @@ async function getSentenceLensesWithAi(sentence, targetLang) {
             isAi: true,
             native: {
               id: 'native',
-              badge: isJa ? '🌱 日常・自然 (Gemini AI)' : (isVi ? '🌱 Thuần Việt Tự Nhiên (Gemini AI)' : '🌱 Natural Casual (Gemini AI)'),
+              badge: isJa ? '🌱 日常・自然' : (isVi ? '🌱 Thuần Việt Tự Nhiên' : '🌱 Natural Casual'),
               title: isJa ? '自然な日常会話' : (isVi ? 'Thuần Việt Tự Nhiên' : 'Natural Casual'),
               desc: isJa ? '文脈に合わせた自然な表現' : (isVi ? 'Văn phong tự nhiên gọt giũa chuẩn ngữ cảnh' : 'Fluent contextual phrasing'),
               text: parsed.native,
@@ -362,7 +362,7 @@ async function getSentenceLensesWithAi(sentence, targetLang) {
             },
             genz: {
               id: 'genz',
-              badge: isJa ? '🔥 若者言葉・流行語 (Gemini AI)' : (isVi ? '🔥 Gen Z & Mạng Xã Hội (Gemini AI)' : '🔥 Gen Z & Slang (Gemini AI)'),
+              badge: isJa ? '🔥 若者言葉・流行語' : (isVi ? '🔥 Gen Z & Mạng Xã Hội' : '🔥 Gen Z & Slang'),
               title: isJa ? 'ネット流行語・スラング' : (isVi ? 'Gen Z & Mạng Xã Hội' : 'Gen Z & Netizen'),
               desc: isJa ? 'SNS最新トレンド' : (isVi ? 'Bắt trend mạng xã hội Douyin/Weibo' : 'Trendy social media tone'),
               text: parsed.genz || parsed.native,
@@ -370,7 +370,7 @@ async function getSentenceLensesWithAi(sentence, targetLang) {
             },
             business: {
               id: 'business',
-              badge: isJa ? '👔 ビジネス・敬語 (Gemini AI)' : (isVi ? '👔 Công Sở & Thương Mại (Gemini AI)' : '👔 Business & Formal (Gemini AI)'),
+              badge: isJa ? '👔 ビジネス・敬語' : (isVi ? '👔 Công Sở & Thương Mại' : '👔 Business & Formal'),
               title: isJa ? 'ビジネス・敬語表現' : (isVi ? 'Công Sở & Thương Mại' : 'Business & Formal'),
               desc: isJa ? '公の場にふさわしい丁寧な表現' : (isVi ? 'Trang trọng, lịch thiệp dùng trong công việc' : 'Polite corporate tone'),
               text: parsed.business || parsed.native,
@@ -555,7 +555,7 @@ async function translateFullText() {
           <div class="trans-lens-container" style="margin-top:6px;">
             <div class="trans-lens-header">
               <div style="display:flex; align-items:center; gap:8px;">
-                <span style="font-weight:700; font-size:13.5px; color:var(--accent);">✨ Bản Dịch Toàn Bộ Bài Viết (Google Gemini AI · ${langName})</span>
+                <span style="font-weight:700; font-size:13.5px; color:var(--accent);">✨ Bản Dịch Toàn Bộ Bài Viết (${langName})</span>
               </div>
               <div style="display:flex; gap:6px;">
                 <button type="button" class="trans-lens-copy-btn" onclick="copyFullTextTranslation(this)" title="Sao chép toàn bộ bản dịch">
@@ -616,7 +616,7 @@ async function translateFullText() {
             <div class="trans-lens-container" style="margin-top:6px;">
               <div class="trans-lens-header">
                 <div style="display:flex; align-items:center; gap:8px;">
-                  <span style="font-weight:700; font-size:13.5px; color:var(--accent);">✨ Bản Dịch Toàn Bộ Bài Viết (Google Gemini AI · ${langName})</span>
+                  <span style="font-weight:700; font-size:13.5px; color:var(--accent);">✨ Bản Dịch Toàn Bộ Bài Viết (${langName})</span>
                 </div>
                 <div style="display:flex; gap:6px;">
                   <button type="button" class="trans-lens-copy-btn" onclick="copyFullTextTranslation(this)" title="Sao chép toàn bộ bản dịch">
