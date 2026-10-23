@@ -493,45 +493,47 @@ async function analyzeActiveWordWithAi(targetWord) {
 
   let errorDetail = '';
 
-  // 1. Thử gọi backend /api/translate trước
-  try {
-    const res = await fetch('/api/translate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        text: word,
-        targetLang: state.meaningLang,
-        type: 'analyze_word'
-      })
-    });
-
-    if (res.ok) {
-      const data = await res.json();
-      if (data && data.analysis) {
-        const analysis = data.analysis;
-        if (!state.cachedAiAnalysis) state.cachedAiAnalysis = {};
-        state.cachedAiAnalysis[word] = analysis;
-        await putToDB('translations', { q: 'ai_analysis:' + word, result: analysis });
-        if (state.activeWord === word) {
-          renderAiAnalysisCard(container, word, analysis);
-        }
-        return;
-      }
-      errorDetail = 'Phản hồi từ AI không đúng cấu trúc.';
-    } else {
-      const errJson = await res.json().catch(() => null);
-      errorDetail = errJson?.error || errJson?.details || `Lỗi máy chủ HTTP ${res.status} (${res.statusText})`;
-    }
-  } catch (netErr) {
-    errorDetail = netErr.message || 'Không thể kết nối đến máy chủ';
-  }
-
-  // 2. Thử gọi trực tiếp với key cá nhân (nếu đã lưu trong trình duyệt)
+  // 1. Ưu tiên: Nếu người dùng đã lưu key trên máy (hoặc dán key), gọi Google trực tiếp luôn (siêu tốc ~300ms)
   const directKey = localStorage.getItem('cr_gemini_api_key');
   if (directKey) {
     try {
-      const prompt = `Bạn là trợ lý từ điển tiếng Trung cao cấp dành cho người Việt học tiếng Trung. Hãy phân tích chuyên sâu từ: "${word}". Trả về JSON hợp lệ gồm: word, pinyin, partOfSpeech, primaryMeaning, secondaryMeanings, nuanceAndUsage, formality, examples (zh, pinyin, vi), synonymsAndDifferences (word, diff), commonMistakes, memoryTip.`;
-      const CANDIDATE_MODELS = ['gemini-2.0-flash', 'gemini-2.5-flash', 'gemini-2.0-flash-lite', 'gemini-1.5-flash-latest'];
+      const prompt = `Bạn là trợ lý từ điển tiếng Trung cao cấp dành cho người Việt học tiếng Trung. Hãy phân tích chuyên sâu từ: "${word}".
+
+Yêu cầu nội dung phân tích (bằng tiếng Việt):
+1. Nghĩa tiếng Việt chính và các nghĩa phụ (nếu có).
+2. Pinyin chuẩn và từ loại (danh từ, động từ, tính từ, từ lóng...).
+3. Ngữ cảnh sử dụng, sắc thái (hài hước, tự trào, tiêu cực, tích cực...) và mức độ trang trọng (khẩu ngữ, mạng xã hội, văn viết, công sở...).
+4. Hai đến ba câu ví dụ tiếng Trung kèm pinyin và bản dịch tiếng Việt thực tế.
+5. Từ đồng nghĩa, trái nghĩa và sự khác biệt rõ nét trong cách dùng (so sánh sắc thái tinh tế).
+6. Lỗi thường gặp của người học khi dùng từ này (nếu có).
+7. Mẹo ghi nhớ từ vựng (chiết tự, hình ảnh, liên tưởng vui hoặc nguồn gốc từ).
+
+YÊU CẦU BẮT BUỘC: Trả về ĐÚNG VÀ DUY NHẤT một chuỗi JSON hợp lệ theo schema sau (không kèm markdown bên ngoài):
+{
+  "word": "${word}",
+  "pinyin": "phiên âm pinyin",
+  "partOfSpeech": "từ loại",
+  "primaryMeaning": "nghĩa tiếng Việt chính",
+  "secondaryMeanings": ["nghĩa phụ 1"],
+  "nuanceAndUsage": "ngữ cảnh sử dụng và sắc thái",
+  "formality": "mức độ trang trọng (khẩu ngữ / mạng xã hội / trang trọng...)",
+  "examples": [
+    {
+      "zh": "câu tiếng Trung ví dụ 1",
+      "pinyin": "pinyin của câu",
+      "vi": "bản dịch tiếng Việt thực tế"
+    }
+  ],
+  "synonymsAndDifferences": [
+    {
+      "word": "từ gần nghĩa kèm pinyin",
+      "diff": "sự khác biệt về sắc thái và cách dùng"
+    }
+  ],
+  "commonMistakes": "lỗi người học hay mắc phải nếu có",
+  "memoryTip": "mẹo ghi nhớ từ vựng"
+}`;
+      const CANDIDATE_MODELS = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-2.5-pro', 'gemini-2.0-flash-lite'];
       let res = null;
 
       for (const mName of CANDIDATE_MODELS) {
@@ -573,6 +575,39 @@ async function analyzeActiveWordWithAi(targetWord) {
     } catch (e) {
       errorDetail = e.message || 'Lỗi khi gọi trực tiếp Google API';
     }
+  }
+
+  // 2. Thử gọi backend /api/translate (nếu chưa có directKey hoặc directKey lỗi)
+  try {
+    const res = await fetch('/api/translate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        text: word,
+        targetLang: state.meaningLang,
+        type: 'analyze_word'
+      })
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.analysis) {
+        const analysis = data.analysis;
+        if (!state.cachedAiAnalysis) state.cachedAiAnalysis = {};
+        state.cachedAiAnalysis[word] = analysis;
+        await putToDB('translations', { q: 'ai_analysis:' + word, result: analysis });
+        if (state.activeWord === word) {
+          renderAiAnalysisCard(container, word, analysis);
+        }
+        return;
+      }
+      errorDetail = 'Phản hồi từ AI không đúng cấu trúc.';
+    } else {
+      const errJson = await res.json().catch(() => null);
+      errorDetail = errJson?.error || errJson?.details || `Lỗi máy chủ HTTP ${res.status} (${res.statusText})`;
+    }
+  } catch (netErr) {
+    if (!errorDetail) errorDetail = netErr.message || 'Không thể kết nối đến máy chủ';
   }
 
   // 3. Nếu vẫn không được, hiển thị chi tiết lỗi kèm ô dán key trực tiếp

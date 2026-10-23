@@ -105,8 +105,8 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG một chuỗi JSON hợp lệ với c
       geminiBody.generationConfig.responseMimeType = 'application/json';
     }
 
-    // Google API 2026: gemini-2.0-flash is current active model, with automatic fallback cascade
-    const CANDIDATE_MODELS = ['gemini-2.0-flash', 'gemini-2.5-flash', 'gemini-2.0-flash-lite', 'gemini-1.5-flash-latest'];
+    // Google API 2026: gemini-2.5-flash is current active model, with automatic fallback cascade
+    const CANDIDATE_MODELS = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-2.5-pro', 'gemini-2.0-flash-lite'];
     let response = null;
     let errDetails = '';
     let lastStatus = 500;

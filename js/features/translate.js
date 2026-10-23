@@ -322,7 +322,7 @@ async function getSentenceLensesWithAi(sentence, targetLang) {
   if (directKey) {
     try {
       const prompt = `Bạn là một chuyên gia dịch thuật tiếng Trung sang ${isVi ? 'Tiếng Việt' : (isJa ? 'Tiếng Nhật' : 'Tiếng Anh')}. Hãy phân tích câu: "${sentence}" và dịch sang 3 phong cách theo đúng JSON: {"native": "...", "genz": "...", "business": "..."}`;
-      const CANDIDATE_MODELS = ['gemini-2.0-flash', 'gemini-2.5-flash', 'gemini-2.0-flash-lite', 'gemini-1.5-flash-latest'];
+      const CANDIDATE_MODELS = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-2.5-pro', 'gemini-2.0-flash-lite'];
       let res = null;
 
       for (const mName of CANDIDATE_MODELS) {
@@ -584,7 +584,7 @@ async function translateFullText() {
   if (directKey) {
     try {
       const prompt = `Bạn là một chuyên gia dịch thuật cao cấp. Hãy dịch toàn bộ văn bản sau sang ${langName} một cách chuẩn xác, tự nhiên, trôi chảy, giữ nguyên ngữ cảnh và cấu trúc từng đoạn văn:\n\n${fullText}\n\nChỉ xuất ra nội dung bản dịch, không thêm lời dẫn giải thích.`;
-      const CANDIDATE_MODELS = ['gemini-2.0-flash', 'gemini-2.5-flash', 'gemini-2.0-flash-lite', 'gemini-1.5-flash-latest'];
+      const CANDIDATE_MODELS = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-2.5-pro', 'gemini-2.0-flash-lite'];
       let res = null;
 
       for (const mName of CANDIDATE_MODELS) {
