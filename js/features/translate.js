@@ -314,7 +314,62 @@ async function getSentenceLensesWithAi(sentence, targetLang) {
       }
     }
   } catch (err) {
-    // Nếu chạy web tĩnh thuần túy hoặc backend chưa deploy, tự động fallback
+    // Nếu chạy web tĩnh thuần túy hoặc backend chưa deploy, tiếp tục kiểm tra direct key
+  }
+
+  // 1.5. Thử gọi trực tiếp bằng key trình duyệt (nếu người dùng đã lưu)
+  const directKey = localStorage.getItem('cr_gemini_api_key');
+  if (directKey) {
+    try {
+      const prompt = `Bạn là một chuyên gia dịch thuật tiếng Trung sang ${isVi ? 'Tiếng Việt' : (isJa ? 'Tiếng Nhật' : 'Tiếng Anh')}. Hãy phân tích câu: "${sentence}" và dịch sang 3 phong cách theo đúng JSON: {"native": "...", "genz": "...", "business": "..."}`;
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${encodeURIComponent(directKey.trim())}`;
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: {
+            temperature: 0.3,
+            maxOutputTokens: 2048,
+            responseMimeType: 'application/json'
+          }
+        })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        const parsed = JSON.parse(raw.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim());
+        if (parsed && parsed.native) {
+          return {
+            isAi: true,
+            native: {
+              id: 'native',
+              badge: isJa ? '🌱 日常・自然 (Gemini AI)' : (isVi ? '🌱 Thuần Việt Tự Nhiên (Gemini AI)' : '🌱 Natural Casual (Gemini AI)'),
+              title: isJa ? '自然な日常会話' : (isVi ? 'Thuần Việt Tự Nhiên' : 'Natural Casual'),
+              desc: isJa ? '文脈に合わせた自然な表現' : (isVi ? 'Văn phong tự nhiên gọt giũa chuẩn ngữ cảnh' : 'Fluent contextual phrasing'),
+              text: parsed.native,
+              color: '#10B981'
+            },
+            genz: {
+              id: 'genz',
+              badge: isJa ? '🔥 若者言葉・流行語 (Gemini AI)' : (isVi ? '🔥 Gen Z & Mạng Xã Hội (Gemini AI)' : '🔥 Gen Z & Slang (Gemini AI)'),
+              title: isJa ? 'ネット流行語・スラング' : (isVi ? 'Gen Z & Mạng Xã Hội' : 'Gen Z & Netizen'),
+              desc: isJa ? 'SNS最新トレンド' : (isVi ? 'Bắt trend mạng xã hội Douyin/Weibo' : 'Trendy social media tone'),
+              text: parsed.genz || parsed.native,
+              color: '#F59E0B'
+            },
+            business: {
+              id: 'business',
+              badge: isJa ? '👔 ビジネス・敬語 (Gemini AI)' : (isVi ? '👔 Công Sở & Thương Mại (Gemini AI)' : '👔 Business & Formal (Gemini AI)'),
+              title: isJa ? 'ビジネス・敬語表現' : (isVi ? 'Công Sở & Thương Mại' : 'Business & Formal'),
+              desc: isJa ? '公の場にふさわしい丁寧な表現' : (isVi ? 'Trang trọng, lịch thiệp dùng trong công việc' : 'Polite corporate tone'),
+              text: parsed.business || parsed.native,
+              color: '#3B82F6'
+            }
+          };
+        }
+      }
+    } catch (e) {}
   }
 
   // 2. Fallback: Google Translate + Engine 3 lăng kính nội bộ
@@ -511,7 +566,57 @@ async function translateFullText() {
       }
     }
   } catch (err) {
-    // Nếu chưa có backend, fallback xuống Google Translate phía dưới
+    // Nếu chưa có backend, fallback kiểm tra key trực tiếp
+  }
+
+  // 1.5. Thử gọi trực tiếp bằng key trình duyệt (nếu có)
+  const directKey = localStorage.getItem('cr_gemini_api_key');
+  if (directKey) {
+    try {
+      const prompt = `Bạn là một chuyên gia dịch thuật cao cấp. Hãy dịch toàn bộ văn bản sau sang ${langName} một cách chuẩn xác, tự nhiên, trôi chảy, giữ nguyên ngữ cảnh và cấu trúc từng đoạn văn:\n\n${fullText}\n\nChỉ xuất ra nội dung bản dịch, không thêm lời dẫn giải thích.`;
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${encodeURIComponent(directKey.trim())}`;
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: {
+            temperature: 0.3,
+            maxOutputTokens: 2048
+          }
+        })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const fullAiResult = (data?.candidates?.[0]?.content?.parts?.[0]?.text || '').trim();
+        if (fullAiResult) {
+          _lastFullTranslation = fullAiResult;
+          const aiParas = fullAiResult.split(/\n+/).map(p => p.trim()).filter(Boolean);
+          box.innerHTML = `
+            <div class="trans-lens-container" style="margin-top:6px;">
+              <div class="trans-lens-header">
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span style="font-weight:700; font-size:13.5px; color:var(--accent);">✨ Bản Dịch Toàn Bộ Bài Viết (Google Gemini AI · ${langName})</span>
+                </div>
+                <div style="display:flex; gap:6px;">
+                  <button type="button" class="trans-lens-copy-btn" onclick="copyFullTextTranslation(this)" title="Sao chép toàn bộ bản dịch">
+                    <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                    <span>Sao chép tất cả</span>
+                  </button>
+                  <button type="button" class="trans-lens-copy-btn" onclick="document.getElementById('full-text-trans-box').classList.remove('show'); const b = document.getElementById('btn-full-trans-toggle'); if (b) b.classList.remove('active');" title="Đóng bản dịch">
+                    ✕
+                  </button>
+                </div>
+              </div>
+              <div class="trans-lens-card lens-native">
+                ${aiParas.map(p => `<p style="margin-bottom:12px; line-height:1.7; font-size:15px; color:var(--text-primary);">${escapeHtml(p)}</p>`).join('')}
+              </div>
+            </div>
+          `;
+          return;
+        }
+      }
+    } catch (e) {}
   }
 
   // 2. Fallback: Tách theo từng đoạn hoặc từng câu lớn để giữ nguyên cấu trúc bài viết

@@ -491,6 +491,9 @@ async function analyzeActiveWordWithAi(targetWord) {
     </div>
   `;
 
+  let errorDetail = '';
+
+  // 1. Thử gọi backend /api/translate trước
   try {
     const res = await fetch('/api/translate', {
       method: 'POST',
@@ -514,28 +517,96 @@ async function analyzeActiveWordWithAi(targetWord) {
         }
         return;
       }
+      errorDetail = 'Phản hồi từ AI không đúng cấu trúc.';
+    } else {
+      const errJson = await res.json().catch(() => null);
+      errorDetail = errJson?.error || errJson?.details || `Lỗi máy chủ HTTP ${res.status} (${res.statusText})`;
     }
-    throw new Error('API response invalid');
-  } catch (err) {
-    if (state.activeWord === word) {
-      container.innerHTML = `
-        <div class="ai-word-card" style="border-color:var(--border-color);">
-          <div class="ai-word-header">
-            <div class="ai-word-title" style="color:var(--text-muted);">
-              <span>⚠️</span>
-              <span>Chưa thể kết nối AI</span>
-            </div>
-            <button class="btn btn-secondary btn-sm" onclick="analyzeActiveWordWithAi('${escapeQuotes(word)}')">
-              ↺ Thử lại
-            </button>
-          </div>
-          <div style="padding:12px 14px; font-size:12.5px; color:var(--text-muted); line-height:1.5;">
-            Không thể gọi Gemini AI. Hãy đảm bảo bạn đang mở app trên đường link Cloudflare và đã cấu hình biến môi trường <code>GEMINI_API_KEY</code>.
-          </div>
-        </div>
-      `;
+  } catch (netErr) {
+    errorDetail = netErr.message || 'Không thể kết nối đến máy chủ';
+  }
+
+  // 2. Thử gọi trực tiếp với key cá nhân (nếu đã lưu trong trình duyệt)
+  const directKey = localStorage.getItem('cr_gemini_api_key');
+  if (directKey) {
+    try {
+      const prompt = `Bạn là trợ lý từ điển tiếng Trung cao cấp dành cho người Việt học tiếng Trung. Hãy phân tích chuyên sâu từ: "${word}". Trả về JSON hợp lệ gồm: word, pinyin, partOfSpeech, primaryMeaning, secondaryMeanings, nuanceAndUsage, formality, examples (zh, pinyin, vi), synonymsAndDifferences (word, diff), commonMistakes, memoryTip.`;
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${encodeURIComponent(directKey.trim())}`;
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: {
+            temperature: 0.3,
+            maxOutputTokens: 2048,
+            responseMimeType: 'application/json'
+          }
+        })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        const cleanJson = rawText.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
+        const analysis = JSON.parse(cleanJson);
+        if (!state.cachedAiAnalysis) state.cachedAiAnalysis = {};
+        state.cachedAiAnalysis[word] = analysis;
+        await putToDB('translations', { q: 'ai_analysis:' + word, result: analysis });
+        if (state.activeWord === word) {
+          renderAiAnalysisCard(container, word, analysis);
+        }
+        return;
+      } else {
+        const errData = await res.json().catch(() => null);
+        errorDetail = errData?.error?.message || `Google API Error: HTTP ${res.status}`;
+      }
+    } catch (e) {
+      errorDetail = e.message || 'Lỗi khi gọi trực tiếp Google API';
     }
   }
+
+  // 3. Nếu vẫn không được, hiển thị chi tiết lỗi kèm ô dán key trực tiếp
+  if (state.activeWord === word) {
+    container.innerHTML = `
+      <div class="ai-word-card" style="border-color:rgba(239, 68, 68, 0.4);">
+        <div class="ai-word-header" style="background:rgba(239, 68, 68, 0.08);">
+          <div class="ai-word-title" style="color:#DC2626;">
+            <span>⚠️</span>
+            <span>Chưa thể kết nối AI</span>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="analyzeActiveWordWithAi('${escapeQuotes(word)}')">
+            ↺ Thử lại
+          </button>
+        </div>
+        <div style="padding:12px 14px; font-size:13px; color:var(--text-primary); line-height:1.5;">
+          <div style="background:rgba(239, 68, 68, 0.06); padding:8px 10px; border-radius:6px; font-family:monospace; font-size:12px; color:#DC2626; margin-bottom:10px; word-break:break-all;">
+            Chi tiết lỗi: ${escapeHtml(errorDetail)}
+          </div>
+          <div style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">
+            💡 <b>Gợi ý xử lý:</b> Nếu Cloudflare chưa kịp cập nhật hoặc chưa nhận biến môi trường <code>GEMINI_API_KEY</code>, bạn có thể dán trực tiếp mã API Key vào ô dưới để kích hoạt ngay tức thì trên máy này:
+          </div>
+          <div style="display:flex; gap:6px;">
+            <input type="password" id="inline-gemini-key" placeholder="Dán mã AIzaSy... vào đây" class="textarea-box" style="padding:6px 10px; font-size:12.5px; height:34px; flex:1; border:1px solid var(--border-color); border-radius:6px;" value="${escapeHtml(directKey || '')}">
+            <button class="btn btn-primary btn-sm" onclick="saveInlineGeminiKey('${escapeQuotes(word)}')" style="white-space:nowrap;">
+              Lưu & Dịch ngay
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+}
+
+function saveInlineGeminiKey(word) {
+  const inp = document.getElementById('inline-gemini-key');
+  if (!inp || !inp.value.trim()) {
+    showToast('Vui lòng dán mã API Key');
+    return;
+  }
+  const key = inp.value.trim();
+  localStorage.setItem('cr_gemini_api_key', key);
+  showToast('Đã lưu API Key vào trình duyệt!');
+  analyzeActiveWordWithAi(word);
 }
 
 function renderAiAnalysisCard(container, word, data) {
