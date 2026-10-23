@@ -36,6 +36,47 @@ export default async function handler(req, res) {
     let prompt = '';
     if (type === 'full') {
       prompt = `Bạn là một chuyên gia dịch thuật cao cấp chuyên ngữ văn tiếng Trung. Hãy dịch toàn bộ văn bản sau sang ${langName} một cách chuẩn xác, nhuần nhuyễn, tự nhiên, giữ trọn vẹn ngữ cảnh và giữ nguyên cấu trúc phân đoạn văn bản:\n\n${text}\n\nCHÚ Ý: Chỉ xuất ra nội dung bản dịch hoàn chỉnh, không thêm lời chào, phần mở đầu hay giải thích gì thêm.`;
+    } else if (type === 'analyze_word') {
+      prompt = `Bạn là trợ lý từ điển tiếng Trung cao cấp dành cho người Việt học tiếng Trung.
+
+Hãy phân tích chuyên sâu từ: "${text}"
+
+Yêu cầu nội dung phân tích (bằng tiếng Việt):
+1. Nghĩa tiếng Việt chính và các nghĩa phụ (nếu có).
+2. Pinyin chuẩn và từ loại (danh từ, động từ, tính từ, từ lóng...).
+3. Ngữ cảnh sử dụng, sắc thái (hài hước, tự trào, tiêu cực, tích cực...) và mức độ trang trọng (khẩu ngữ, mạng xã hội, văn viết, công sở...).
+4. Hai đến ba câu ví dụ tiếng Trung kèm pinyin và bản dịch tiếng Việt thực tế.
+5. Từ đồng nghĩa, trái nghĩa và sự khác biệt rõ nét trong cách dùng (so sánh sắc thái tinh tế).
+6. Lỗi thường gặp của người học khi dùng từ này (nếu có).
+7. Mẹo ghi nhớ từ vựng (chiết tự, hình ảnh, liên tưởng vui hoặc nguồn gốc từ).
+
+Nếu từ có nhiều nghĩa, hãy phân biệt từng nghĩa rõ ràng. Không tự khẳng định thông tin chưa chắc chắn. Nếu thiếu ngữ cảnh để xác định nghĩa chính xác, hãy nói rõ.
+
+YÊU CẦU BẮT BUỘC: Trả về ĐÚNG VÀ DUY NHẤT một chuỗi JSON hợp lệ theo schema sau (không kèm markdown bên ngoài):
+{
+  "word": "${text}",
+  "pinyin": "phiên âm pinyin",
+  "partOfSpeech": "từ loại",
+  "primaryMeaning": "nghĩa tiếng Việt chính",
+  "secondaryMeanings": ["nghĩa phụ 1"],
+  "nuanceAndUsage": "ngữ cảnh sử dụng và sắc thái",
+  "formality": "mức độ trang trọng (khẩu ngữ / mạng xã hội / trang trọng...)",
+  "examples": [
+    {
+      "zh": "câu tiếng Trung ví dụ 1",
+      "pinyin": "pinyin của câu",
+      "vi": "bản dịch tiếng Việt thực tế"
+    }
+  ],
+  "synonymsAndDifferences": [
+    {
+      "word": "từ gần nghĩa kèm pinyin",
+      "diff": "sự khác biệt về sắc thái và cách dùng"
+    }
+  ],
+  "commonMistakes": "lỗi người học hay mắc phải nếu có",
+  "memoryTip": "mẹo ghi nhớ từ vựng"
+}`;
     } else {
       prompt = `Bạn là một chuyên gia dịch thuật tiếng Trung sang ${langName}. Hãy phân tích câu tiếng Trung sau và tạo ra 3 phiên bản dịch (3 lăng kính) phong phú, chính xác theo đúng ngữ cảnh:
 1. "native": Phong cách thuần thục tự nhiên, văn phong nhuần nhuyễn, gọt giũa từ ngữ Hán Việt thô ráp thành cách diễn đạt đời thường tự nhiên nhất.
@@ -86,6 +127,21 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG một chuỗi JSON hợp lệ với c
 
     if (type === 'full') {
       return res.status(200).json({ result: outputText.trim() });
+    }
+
+    if (type === 'analyze_word') {
+      try {
+        const cleanJson = outputText.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
+        const parsed = JSON.parse(cleanJson);
+        return res.status(200).json({ analysis: parsed });
+      } catch (parseErr) {
+        return res.status(200).json({
+          analysis: {
+            word: text,
+            primaryMeaning: outputText.trim()
+          }
+        });
+      }
     }
 
     try {

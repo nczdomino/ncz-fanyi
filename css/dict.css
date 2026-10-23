@@ -702,3 +702,129 @@
   margin-top: 3px; font-size: 11px; color: var(--text-muted);
 }
 .media-video { width: 100%; max-height: 260px; margin-top: 8px; border-radius: 10px; background: #000; display: block; }
+
+/* ===== AI WORD DEEP ANALYSIS (AI 解析) ===== */
+.ai-word-card {
+  margin-top: 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(232, 52, 78, 0.2);
+  background: var(--bg-card);
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+.ai-word-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 14px;
+  background: linear-gradient(135deg, rgba(232, 52, 78, 0.08) 0%, rgba(245, 158, 11, 0.08) 100%);
+  border-bottom: 1px solid var(--border-color);
+}
+.ai-word-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--accent);
+}
+.ai-word-body {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.ai-word-section-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.ai-word-meaning-box {
+  background: var(--bg-surface);
+  border-left: 3.5px solid #10B981;
+  padding: 10px 14px;
+  border-radius: 0 10px 10px 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-primary);
+}
+.ai-word-nuance-box {
+  background: rgba(245, 158, 11, 0.05);
+  border-left: 3.5px solid #F59E0B;
+  padding: 10px 14px;
+  border-radius: 0 10px 10px 0;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--text-primary);
+}
+.ai-word-examples-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ai-word-example-item {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 10px 12px;
+  transition: all 0.15s ease;
+}
+.ai-word-example-item:hover {
+  border-color: var(--accent);
+}
+.ai-word-ex-zh {
+  font-family: var(--font-hanzi);
+  font-size: 15.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  line-height: 1.4;
+}
+.ai-word-ex-py {
+  font-size: 12.5px;
+  color: var(--accent);
+  margin-top: 3px;
+}
+.ai-word-ex-vi {
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+.ai-word-diff-item {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.ai-word-tip-box {
+  background: rgba(139, 92, 246, 0.05);
+  border-left: 3.5px solid #8B5CF6;
+  padding: 10px 14px;
+  border-radius: 0 10px 10px 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-primary);
+}
+.ai-word-mistake-box {
+  background: rgba(239, 68, 68, 0.05);
+  border-left: 3.5px solid #EF4444;
+  padding: 10px 14px;
+  border-radius: 0 10px 10px 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-primary);
+}
+

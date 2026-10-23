@@ -220,6 +220,9 @@ async function openWordSheet(word) {
   // Extra: synonyms, slang, Wiktionary, media
   try { enrichWordSheet(word); } catch (e) { console.warn(e); }
 
+  // Render AI Deep Word Analysis (AI 解析)
+  try { renderWordSheetAiSection(word); } catch (e) { console.warn(e); }
+
   // Render Compounds (Word Family)
   try { renderWordCompounds(word); } catch (e) { console.warn(e); }
 
@@ -421,4 +424,228 @@ function splitActiveWord() {
     row.innerHTML = charButtonsHtml;
     badgesContainer.appendChild(row);
   }
+}
+
+// ===== Module: AI Deep Word Analysis (AI 解析) =====
+async function renderWordSheetAiSection(word) {
+  const container = document.getElementById('sheet-ai-analysis-container');
+  if (!container) return;
+
+  // 1. Kiểm tra cache RAM
+  if (state.cachedAiAnalysis && state.cachedAiAnalysis[word]) {
+    renderAiAnalysisCard(container, word, state.cachedAiAnalysis[word]);
+    return;
+  }
+
+  // 2. Kiểm tra cache IndexedDB
+  try {
+    const fromDb = await getFromDB('translations', 'ai_analysis:' + word);
+    if (fromDb && fromDb.result) {
+      if (!state.cachedAiAnalysis) state.cachedAiAnalysis = {};
+      state.cachedAiAnalysis[word] = fromDb.result;
+      if (state.activeWord === word) {
+        renderAiAnalysisCard(container, word, fromDb.result);
+      }
+      return;
+    }
+  } catch (e) {}
+
+  // 3. Chưa có cache -> Hiện khung mời gọi phân tích
+  container.innerHTML = `
+    <div class="ai-word-card">
+      <div class="ai-word-header">
+        <div class="ai-word-title">
+          <span>✨</span>
+          <span>AI Phân Tích Chuyên Sâu (AI 解析)</span>
+          <span class="badge" style="background:rgba(232,52,78,0.12); color:var(--accent); font-size:10.5px; font-weight:700;">Gemini 1.5 Flash</span>
+        </div>
+        <button id="btn-trigger-ai-word" class="btn btn-primary btn-sm" onclick="analyzeActiveWordWithAi('${escapeQuotes(word)}')">
+          ✨ Phân tích từ này
+        </button>
+      </div>
+      <div style="padding:10px 14px; font-size:12.5px; color:var(--text-muted); line-height:1.45; background:var(--bg-surface);">
+        Phân tích chuyên sâu sắc thái ngữ cảnh, khẩu ngữ/tiếng lóng mạng, câu ví dụ thực tế và phân biệt từ gần nghĩa cùng AI.
+      </div>
+    </div>
+  `;
+}
+
+async function analyzeActiveWordWithAi(targetWord) {
+  const word = targetWord || state.activeWord;
+  if (!word) return;
+
+  const container = document.getElementById('sheet-ai-analysis-container');
+  if (!container) return;
+
+  container.innerHTML = `
+    <div class="ai-word-card">
+      <div class="ai-word-header">
+        <div class="ai-word-title">
+          <span class="spinner-small" style="display:inline-block; width:15px; height:15px; border:2px solid var(--accent); border-top-color:transparent; border-radius:50%; animation:spin 0.8s linear infinite;"></span>
+          <span>Đang phân tích chuyên sâu "${escapeHtml(word)}"...</span>
+        </div>
+      </div>
+      <div style="padding:16px 14px; text-align:center; font-size:13px; color:var(--text-muted); font-style:italic;">
+        Gemini AI đang bóc tách sắc thái, ngữ cảnh, từ loại, câu ví dụ và mẹo nhớ từ...
+      </div>
+    </div>
+  `;
+
+  try {
+    const res = await fetch('/api/translate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        text: word,
+        targetLang: state.meaningLang,
+        type: 'analyze_word'
+      })
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.analysis) {
+        const analysis = data.analysis;
+        if (!state.cachedAiAnalysis) state.cachedAiAnalysis = {};
+        state.cachedAiAnalysis[word] = analysis;
+        await putToDB('translations', { q: 'ai_analysis:' + word, result: analysis });
+        if (state.activeWord === word) {
+          renderAiAnalysisCard(container, word, analysis);
+        }
+        return;
+      }
+    }
+    throw new Error('API response invalid');
+  } catch (err) {
+    if (state.activeWord === word) {
+      container.innerHTML = `
+        <div class="ai-word-card" style="border-color:var(--border-color);">
+          <div class="ai-word-header">
+            <div class="ai-word-title" style="color:var(--text-muted);">
+              <span>⚠️</span>
+              <span>Chưa thể kết nối AI</span>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="analyzeActiveWordWithAi('${escapeQuotes(word)}')">
+              ↺ Thử lại
+            </button>
+          </div>
+          <div style="padding:12px 14px; font-size:12.5px; color:var(--text-muted); line-height:1.5;">
+            Không thể gọi Gemini AI. Hãy đảm bảo bạn đang mở app trên đường link Cloudflare và đã cấu hình biến môi trường <code>GEMINI_API_KEY</code>.
+          </div>
+        </div>
+      `;
+    }
+  }
+}
+
+function renderAiAnalysisCard(container, word, data) {
+  let examplesHtml = '';
+  if (Array.isArray(data.examples) && data.examples.length > 0) {
+    examplesHtml = `
+      <div>
+        <div class="ai-word-section-title">💡 Ví dụ thực tế</div>
+        <div class="ai-word-examples-list">
+          ${data.examples.map(ex => `
+            <div class="ai-word-example-item">
+              <div class="ai-word-ex-zh">
+                <span>${escapeHtml(ex.zh)}</span>
+                <button type="button" class="icon-btn" style="width:26px; height:26px; font-size:13px;" onclick="speakText('${escapeQuotes(ex.zh)}')" title="Phát âm">
+                  🔊
+                </button>
+              </div>
+              ${ex.pinyin ? `<div class="ai-word-ex-py">${escapeHtml(ex.pinyin)}</div>` : ''}
+              ${ex.vi ? `<div class="ai-word-ex-vi">${escapeHtml(ex.vi)}</div>` : ''}
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  let synonymsHtml = '';
+  if (Array.isArray(data.synonymsAndDifferences) && data.synonymsAndDifferences.length > 0) {
+    synonymsHtml = `
+      <div>
+        <div class="ai-word-section-title">⚖️ Phân biệt từ gần nghĩa & Sắc thái</div>
+        <div>
+          ${data.synonymsAndDifferences.map(syn => `
+            <div class="ai-word-diff-item">
+              <b style="color:var(--accent);">${escapeHtml(syn.word)}:</b>
+              <span style="color:var(--text-secondary); margin-left:4px;">${escapeHtml(syn.diff)}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  container.innerHTML = `
+    <div class="ai-word-card">
+      <div class="ai-word-header">
+        <div class="ai-word-title">
+          <span>✨</span>
+          <span>AI Phân Tích Chuyên Sâu (AI 解析)</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:6px;">
+          ${data.formality ? `<span class="badge" style="background:rgba(59,130,246,0.12); color:#2563EB; font-weight:600;">${escapeHtml(data.formality)}</span>` : ''}
+          <button type="button" class="icon-btn" style="width:26px; height:26px; font-size:11px;" onclick="analyzeActiveWordWithAi('${escapeQuotes(word)}')" title="Làm mới phân tích">
+            ↺
+          </button>
+        </div>
+      </div>
+      <div class="ai-word-body">
+        <!-- Nghĩa tiếng Việt & Từ loại -->
+        <div>
+          <div class="ai-word-section-title">
+            <span>📖 Nghĩa tiếng Việt</span>
+            ${data.partOfSpeech ? `<span style="font-weight:400; text-transform:none; color:var(--text-secondary);">(${escapeHtml(data.partOfSpeech)})</span>` : ''}
+          </div>
+          <div class="ai-word-meaning-box">
+            <b>${escapeHtml(data.primaryMeaning || '')}</b>
+            ${Array.isArray(data.secondaryMeanings) && data.secondaryMeanings.length > 0 ? `
+              <div style="font-size:13px; color:var(--text-secondary); margin-top:4px;">
+                Nghĩa phụ: ${data.secondaryMeanings.map(m => escapeHtml(m)).join(' • ')}
+              </div>
+            ` : ''}
+          </div>
+        </div>
+
+        <!-- Sắc thái & Ngữ cảnh sử dụng -->
+        ${data.nuanceAndUsage ? `
+          <div>
+            <div class="ai-word-section-title">🎭 Sắc thái & Cách dùng</div>
+            <div class="ai-word-nuance-box">
+              ${escapeHtml(data.nuanceAndUsage)}
+            </div>
+          </div>
+        ` : ''}
+
+        <!-- Ví dụ thực tế -->
+        ${examplesHtml}
+
+        <!-- Phân biệt từ gần nghĩa -->
+        ${synonymsHtml}
+
+        <!-- Lỗi thường gặp -->
+        ${data.commonMistakes ? `
+          <div>
+            <div class="ai-word-section-title">⚠️ Lưu ý & Lỗi thường gặp</div>
+            <div class="ai-word-mistake-box">
+              ${escapeHtml(data.commonMistakes)}
+            </div>
+          </div>
+        ` : ''}
+
+        <!-- Mẹo ghi nhớ -->
+        ${data.memoryTip ? `
+          <div>
+            <div class="ai-word-section-title">🧠 Mẹo ghi nhớ từ vựng</div>
+            <div class="ai-word-tip-box">
+              ${escapeHtml(data.memoryTip)}
+            </div>
+          </div>
+        ` : ''}
+      </div>
+    </div>
+  `;
 }

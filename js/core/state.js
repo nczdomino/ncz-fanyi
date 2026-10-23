@@ -56,4 +56,5 @@ const state = {
   selectedRadical: null,
   activeLens: localStorage.getItem('cr_active_lens') || 'native',
   currentSentenceLenses: null,
+  cachedAiAnalysis: {},
 };
