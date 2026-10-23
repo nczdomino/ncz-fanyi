@@ -177,7 +177,7 @@
           <button id="btn-toggle-pinyin" class="toggle-btn active" onclick="togglePinyin()">
             <span data-i18n="pinyin">Phiên âm</span>
           </button>
-          <button id="btn-toggle-select" class="toggle-btn" onclick="togglePhraseSelect()">✂ <span id="lbl-select">Chọn cụm</span></button>
+          <button id="btn-toggle-select" class="toggle-btn" onclick="togglePhraseSelect()">✂ <span id="lbl-select" data-i18n="selectPhrase">Chọn cụm</span></button>
           <button id="btn-toggle-meaning" class="toggle-btn" onclick="toggleMeaning()">
             <span data-i18n="meaning">Nghĩa</span>
           </button>
@@ -210,7 +210,7 @@
             </svg>
           </div>
           <input type="text" id="dict-search-input" class="ai-search-input" data-i18n-ph="searchHint" placeholder="Nhập chữ Hán, pinyin, hoặc nghĩa..." oninput="handleDictSearch(this.value)" autocomplete="off" autocapitalize="off" spellcheck="false">
-          <button id="dict-search-clear" class="ai-search-clear" onclick="clearDictSearch()" style="display:none;" title="Xóa tìm kiếm">✕</button>
+          <button id="dict-search-clear" class="ai-search-clear" onclick="clearDictSearch()" style="display:none;" title="Xóa tìm kiếm" data-i18n-title="btnClear">✕</button>
         </div>
 
         <!-- Gợi ý từ khóa tìm kiếm nhanh -->
@@ -579,7 +579,7 @@
   <div class="modal-card">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
       <div style="font-size:17px; font-weight:700;"><span data-i18n="editMeaning">Sửa nghĩa</span>: <span id="edit-meaning-word" style="color:var(--accent);"></span></div>
-      <button class="icon-btn" onclick="closeEditMeaningModal()">✕</button>
+      <button class="icon-btn" onclick="closeEditMeaningModal()" title="Đóng" data-i18n-title="titleClose">✕</button>
     </div>
     <div style="font-size:13px; color:var(--text-secondary); margin-bottom:10px;" id="edit-meaning-lang-hint"></div>
     <textarea id="edit-meaning-input" class="textarea-box" style="height:100px; margin-bottom:14px; font-size:15px; width:100%; box-sizing:border-box;" data-i18n-ph="editMeaningPlaceholder" placeholder="Nhập nghĩa chuẩn, nghĩa bóng hoặc từ lóng..."></textarea>

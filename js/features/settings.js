@@ -209,7 +209,18 @@ function handleSettingChange(key, val) {
       localStorage.setItem('cr_meaningLang', val);
       showToast(t('meaningLang') + ': ' + getLangName(val));
     }
+    updateThemeAndUI();
     renderCurrentView();
+    const transBox = document.getElementById('sentence-trans-box');
+    if (transBox && transBox.classList.contains('show') && typeof translateCurrentSentence === 'function') {
+      translateCurrentSentence();
+    }
+    if (state.activeWord && typeof openWordSheet === 'function') {
+      const sheet = document.getElementById('word-sheet');
+      if (sheet && sheet.classList.contains('active')) {
+        openWordSheet(state.activeWord);
+      }
+    }
   } else if (key === 'darkMode') {
     state.darkMode = val;
     localStorage.setItem('cr_darkMode', val);

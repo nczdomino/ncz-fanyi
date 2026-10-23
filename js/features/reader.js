@@ -54,6 +54,7 @@ function renderReaderView() {
   const viewModeBtn = document.getElementById('btn-toggle-viewmode');
   if (viewModeBtn) {
     viewModeBtn.textContent = state.viewMode === 'sentence' ? t('viewSingle') : t('viewAll');
+    viewModeBtn.classList.toggle('active', state.viewMode === 'all');
   }
 
   if (state.sentences.length === 0) {
@@ -148,7 +149,7 @@ function renderSentenceMode(container) {
           <button class="icon-btn" onclick="speakText('${escapeQuotes(sentence)}')" title="${t('play') || 'Phát âm'}">
             <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
           </button>
-          <button class="icon-btn" onclick="speakText('${escapeQuotes(sentence)}', this, 0.75)" title="${t('playSlow') || 'Nghe chậm (0.75x)'}" style="font-size:14px; width:32px; height:32px;" aria-label="Nghe chậm">
+          <button class="icon-btn" onclick="speakText('${escapeQuotes(sentence)}', this, 0.75)" title="${t('playSlow') || tx('Nghe chậm (0.75x)', 'Slow audio (0.75x)', 'スロー再生 (0.75x)')}" style="font-size:14px; width:32px; height:32px;" aria-label="${t('playSlow') || tx('Nghe chậm', 'Slow audio', 'スロー再生')}">
             🐢
           </button>
           <button class="btn btn-secondary btn-sm" onclick="translateCurrentSentence()">
@@ -180,7 +181,7 @@ function renderFullTextMode(container) {
   let html = `
     <div class="full-text-toolbar" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px; padding:10px 14px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:12px;">
       <div style="font-size:13px; font-weight:600; color:var(--text-muted);">
-        📄 <span>${state.sentences.length}</span> ${t('sentence') || 'câu'} · <span>${state.currentText ? state.currentText.length : 0}</span> ký tự
+        📄 <span>${state.sentences.length}</span> ${t('sentence') || tx('câu', 'sentences', '文')} · <span>${state.currentText ? state.currentText.length : 0}</span> ${t('chars') || tx('ký tự', 'chars', '文字')}
       </div>
       <button id="btn-full-trans-toggle" class="btn btn-secondary btn-sm" onclick="translateFullText()" style="display:inline-flex; align-items:center; gap:6px;">
         <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>
@@ -312,7 +313,7 @@ async function translateCurrentSentence() {
   box.innerHTML = `
     <div style="display:flex; align-items:center; gap:8px; color:var(--text-muted); padding:6px 0;">
       <span class="spinner-small" style="display:inline-block; width:14px; height:14px; border:2px solid var(--accent); border-top-color:transparent; border-radius:50%; animation:spin 0.8s linear infinite;"></span>
-      <em>${t('translating')} (Đang phân tích 3 lăng kính...)</em>
+      <em>${t('translating')} (${tx('Đang phân tích 3 phong cách dịch...', 'Analyzing 3 styles...', '3つの翻訳スタイルを分析中...')})</em>
     </div>
   `;
 

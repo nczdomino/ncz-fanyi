@@ -745,28 +745,28 @@ Return ONLY valid JSON matching this schema (no markdown wrappers):
         <div class="ai-word-header" style="background:rgba(239, 68, 68, 0.08);">
           <div class="ai-word-title" style="color:#DC2626;">
             <span>⚠️</span>
-            <span>Chưa thể kết nối AI</span>
+            <span>${tx('Chưa thể kết nối AI', 'Cannot connect to AI', 'AIに接続できません')}</span>
           </div>
           <button class="btn btn-secondary btn-sm" onclick="analyzeActiveWordWithAi('${escapeQuotes(word)}')">
-            ↺ Thử lại
+            ↺ ${tx('Thử lại', 'Retry', '再試行')}
           </button>
         </div>
         <div style="padding:12px 14px; font-size:13px; color:var(--text-primary); line-height:1.5;">
           <div style="background:rgba(239, 68, 68, 0.06); padding:8px 10px; border-radius:6px; font-family:monospace; font-size:12px; color:#DC2626; margin-bottom:10px; word-break:break-all;">
-            Chi tiết lỗi: ${escapeHtml(safeError)}
+            ${tx('Chi tiết lỗi:', 'Error details:', 'エラー詳細:')} ${escapeHtml(safeError)}
           </div>
           <div style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">
-            💡 <b>Gợi ý xử lý:</b> Bạn có thể dán trực tiếp mã API Key vào ô dưới để kích hoạt tính năng AI trực tiếp trên trình duyệt:
+            ${tx('💡 <b>Gợi ý xử lý:</b> Bạn có thể dán trực tiếp mã API Key vào ô dưới để kích hoạt tính năng AI trực tiếp trên trình duyệt:', '💡 <b>Tip:</b> You can paste your API Key below to enable AI analysis directly in your browser:', '💡 <b>ヒント:</b> 下の入力欄にAPI Keyを直接貼り付けると、ブラウザ上でAI分析機能を有効化できます:')}
           </div>
           <div style="display:flex; gap:6px;">
-            <input type="password" id="inline-gemini-key" placeholder="Dán mã API Key vào đây" class="textarea-box" style="padding:6px 10px; font-size:12.5px; height:34px; flex:1; border:1px solid var(--border-color); border-radius:6px;" value="${escapeHtml(directKey || '')}">
+            <input type="password" id="inline-gemini-key" placeholder="${tx('Dán mã API Key vào đây', 'Paste API Key here', 'ここにAPI Keyを貼り付け')}" class="textarea-box" style="padding:6px 10px; font-size:12.5px; height:34px; flex:1; border:1px solid var(--border-color); border-radius:6px;" value="${escapeHtml(directKey || '')}">
             <button class="btn btn-primary btn-sm" onclick="saveInlineGeminiKey('${escapeQuotes(word)}')" style="white-space:nowrap;">
-              Lưu & Dịch ngay
+              ${tx('Lưu & Dịch ngay', 'Save & Translate', '保存して翻訳')}
             </button>
           </div>
           <div style="margin-top:10px;">
             <button type="button" class="btn btn-outline btn-sm" onclick="runAiDiagnostic('${escapeQuotes(word)}')" style="font-size:12px; padding:4px 10px;">
-              🔍 Bấm vào đây để Chẩn đoán lỗi tự động
+              🔍 ${tx('Bấm vào đây để Chẩn đoán lỗi tự động', 'Run Auto Diagnostics', '自動診断を実行')}
             </button>
             <div id="ai-debug-output" style="display:none; margin-top:8px; padding:10px; background:#1e1e1e; color:#eee; font-family:monospace; font-size:11.5px; border-radius:6px; max-height:220px; overflow:auto; white-space:pre-wrap; line-height:1.4;"></div>
           </div>

@@ -24,6 +24,9 @@ function setUiLang(lang) {
     btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
   });
 
+  updateThemeAndUI();
+  renderCurrentView();
+
   // If a sentence translation box is currently visible, update it to the new language
   const transBox = document.getElementById('sentence-trans-box');
   if (transBox && transBox.classList.contains('show')) {
@@ -38,8 +41,6 @@ function setUiLang(lang) {
     }
   }
 
-  updateThemeAndUI();
-  renderCurrentView();
   showToast(t('language') + ': ' + getLangName(lang));
 }
 
@@ -99,5 +100,16 @@ function updateThemeAndUI() {
   const viewModeBtn = document.getElementById('btn-toggle-viewmode');
   if (viewModeBtn) {
     viewModeBtn.textContent = state.viewMode === 'sentence' ? t('viewSingle') : t('viewAll');
+    viewModeBtn.classList.toggle('active', state.viewMode === 'all');
+  }
+
+  // Update Phrase select button
+  if (typeof phraseUpdateLabels === 'function') {
+    phraseUpdateLabels();
+  }
+
+  // Update OCR buttons if dialog is rendered
+  if (typeof ocrUpdateButtons === 'function') {
+    ocrUpdateButtons(!!window._ocrRaw);
   }
 }

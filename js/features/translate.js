@@ -399,24 +399,38 @@ function renderSentenceLenses(box) {
     return;
   }
 
+  const curLang = state.meaningLang || state.uiLang || 'vi';
+  const isJa = curLang === 'ja';
+  const isEn = curLang === 'en';
+
+  const lensUi = {
+    header: isJa ? '🔀 3つの翻訳スタイル' : (isEn ? '🔀 3 Translation Lenses' : '🔀 3 Lăng Kính Dịch Thuật'),
+    nativeTab: isJa ? '日常・自然' : (isEn ? 'Natural' : 'Thuần Việt'),
+    genzTab: isJa ? '若者言葉' : (isEn ? 'Gen Z & Slang' : 'Gen Z & Mạng'),
+    businessTab: isJa ? 'ビジネス' : (isEn ? 'Business' : 'Công Sở'),
+    allTab: isJa ? 'すべて表示' : (isEn ? 'View All 3' : 'Xem Cả 3'),
+    copy: isJa ? 'コピー' : (isEn ? 'Copy' : 'Sao chép'),
+    copyTitle: isJa ? '翻訳をコピー' : (isEn ? 'Copy translation' : 'Sao chép bản dịch')
+  };
+
   let html = `
     <div class="trans-lens-container">
       <div class="trans-lens-header">
         <div style="display:flex; align-items:center; gap:6px;">
-          <span style="font-weight:700; font-size:12px; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.5px;">🔀 3 Lăng Kính Dịch Thuật</span>
+          <span style="font-weight:700; font-size:12px; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.5px;">${lensUi.header}</span>
         </div>
         <div class="trans-lens-tabs">
           <button type="button" class="trans-lens-tab ${activeLens === 'native' ? 'active' : ''}" data-lens="native" onclick="switchTranslationLens('native')">
-            <span>🌱</span> Thuần Việt
+            <span>🌱</span> ${lensUi.nativeTab}
           </button>
           <button type="button" class="trans-lens-tab ${activeLens === 'genz' ? 'active' : ''}" data-lens="genz" onclick="switchTranslationLens('genz')">
-            <span>🔥</span> Gen Z & Mạng
+            <span>🔥</span> ${lensUi.genzTab}
           </button>
           <button type="button" class="trans-lens-tab ${activeLens === 'business' ? 'active' : ''}" data-lens="business" onclick="switchTranslationLens('business')">
-            <span>👔</span> Công Sở
+            <span>👔</span> ${lensUi.businessTab}
           </button>
           <button type="button" class="trans-lens-tab ${activeLens === 'all' ? 'active' : ''}" data-lens="all" onclick="switchTranslationLens('all')">
-            <span>📑</span> Xem Cả 3
+            <span>📑</span> ${lensUi.allTab}
           </button>
         </div>
       </div>
@@ -434,9 +448,9 @@ function renderSentenceLenses(box) {
             <b>${escapeHtml(item.badge)}</b>
             <span style="color:var(--text-muted); font-weight:400; font-size:11px; margin-left:4px;">• ${escapeHtml(item.desc)}</span>
           </div>
-          <button type="button" class="trans-lens-copy-btn" onclick="copyLensText('${escapeQuotes(item.text)}', this)" title="Sao chép bản dịch">
+          <button type="button" class="trans-lens-copy-btn" onclick="copyLensText('${escapeQuotes(item.text)}', this)" title="${lensUi.copyTitle}">
             <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-            <span>Sao chép</span>
+            <span>${lensUi.copy}</span>
           </button>
         </div>
         <div class="trans-lens-text">${escapeHtml(item.text)}</div>
@@ -558,11 +572,11 @@ async function translateFullText() {
                 <span style="font-weight:700; font-size:13.5px; color:var(--accent);">✨ Bản Dịch Toàn Bộ Bài Viết (${langName})</span>
               </div>
               <div style="display:flex; gap:6px;">
-                <button type="button" class="trans-lens-copy-btn" onclick="copyFullTextTranslation(this)" title="Sao chép toàn bộ bản dịch">
+                <button type="button" class="trans-lens-copy-btn" onclick="copyFullTextTranslation(this)" title="${tx('Sao chép toàn bộ bản dịch', 'Copy full translation', '全文翻訳をコピー')}">
                   <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                  <span>Sao chép tất cả</span>
+                  <span>${tx('Sao chép tất cả', 'Copy all', 'すべてコピー')}</span>
                 </button>
-                <button type="button" class="trans-lens-copy-btn" onclick="document.getElementById('full-text-trans-box').classList.remove('show'); const b = document.getElementById('btn-full-trans-toggle'); if (b) b.classList.remove('active');" title="Đóng bản dịch">
+                <button type="button" class="trans-lens-copy-btn" onclick="document.getElementById('full-text-trans-box').classList.remove('show'); const b = document.getElementById('btn-full-trans-toggle'); if (b) b.classList.remove('active');" title="${tx('Đóng bản dịch', 'Close translation', '翻訳を閉じる')}">
                   ✕
                 </button>
               </div>
@@ -619,11 +633,11 @@ async function translateFullText() {
                   <span style="font-weight:700; font-size:13.5px; color:var(--accent);">✨ Bản Dịch Toàn Bộ Bài Viết (${langName})</span>
                 </div>
                 <div style="display:flex; gap:6px;">
-                  <button type="button" class="trans-lens-copy-btn" onclick="copyFullTextTranslation(this)" title="Sao chép toàn bộ bản dịch">
+                  <button type="button" class="trans-lens-copy-btn" onclick="copyFullTextTranslation(this)" title="${tx('Sao chép toàn bộ bản dịch', 'Copy full translation', '全文翻訳をコピー')}">
                     <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                    <span>Sao chép tất cả</span>
+                    <span>${tx('Sao chép tất cả', 'Copy all', 'すべてコピー')}</span>
                   </button>
-                  <button type="button" class="trans-lens-copy-btn" onclick="document.getElementById('full-text-trans-box').classList.remove('show'); const b = document.getElementById('btn-full-trans-toggle'); if (b) b.classList.remove('active');" title="Đóng bản dịch">
+                  <button type="button" class="trans-lens-copy-btn" onclick="document.getElementById('full-text-trans-box').classList.remove('show'); const b = document.getElementById('btn-full-trans-toggle'); if (b) b.classList.remove('active');" title="${tx('Đóng bản dịch', 'Close translation', '翻訳を閉じる')}">
                     ✕
                   </button>
                 </div>
@@ -658,11 +672,11 @@ async function translateFullText() {
           <span style="font-weight:700; font-size:13.5px; color:var(--accent);">🌐 Bản Dịch Toàn Bộ Bài Viết (${langName})</span>
         </div>
         <div style="display:flex; gap:6px;">
-          <button type="button" class="trans-lens-copy-btn" onclick="copyFullTextTranslation(this)" title="Sao chép toàn bộ bản dịch">
+          <button type="button" class="trans-lens-copy-btn" onclick="copyFullTextTranslation(this)" title="${tx('Sao chép toàn bộ bản dịch', 'Copy full translation', '全文翻訳をコピー')}">
             <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-            <span>Sao chép tất cả</span>
+            <span>${tx('Sao chép tất cả', 'Copy all', 'すべてコピー')}</span>
           </button>
-          <button type="button" class="trans-lens-copy-btn" onclick="document.getElementById('full-text-trans-box').classList.remove('show'); const b = document.getElementById('btn-full-trans-toggle'); if (b) b.classList.remove('active');" title="Đóng bản dịch">
+          <button type="button" class="trans-lens-copy-btn" onclick="document.getElementById('full-text-trans-box').classList.remove('show'); const b = document.getElementById('btn-full-trans-toggle'); if (b) b.classList.remove('active');" title="${tx('Đóng bản dịch', 'Close translation', '翻訳を閉じる')}">
             ✕
           </button>
         </div>
