@@ -603,27 +603,70 @@
 
 <!-- OCR Modal -->
 <div id="ocr-modal" class="modal-overlay">
-  <div class="modal-card">
-    <div style="font-size:18px; font-weight:700; margin-bottom:12px;" data-i18n="ocrEdit">Chỉnh sửa văn bản nhận diện</div>
+  <div class="modal-card ocr-modal-card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <div style="font-size:18px; font-weight:700;" data-i18n="ocrTitle">Quét ảnh tài liệu tiếng Trung</div>
+      <button class="icon-btn" onclick="closeOcrModal()" title="Đóng" data-i18n-title="titleClose">✕</button>
+    </div>
+
+    <!-- Status & Token Usage Badge -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+      <div id="ocr-status-badge" class="ocr-status-badge free">
+        <span>⚡</span> <span>Cấp 1: Thuật toán nội bộ (0 Token AI)</span>
+      </div>
+      <label style="display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--text-secondary); cursor:pointer;">
+        <input type="checkbox" id="ocr-auto-ai-toggle" style="cursor:pointer;">
+        <span data-i18n="ocrAutoAi">Tự động sửa AI khi có lỗi</span>
+      </label>
+    </div>
+
+    <!-- Image Thumbnail Preview -->
+    <div id="ocr-preview-box" class="ocr-preview-container" style="display:none;">
+      <img id="ocr-preview-img" class="ocr-thumb" src="" alt="OCR Preview">
+      <div style="font-size:12px; color:var(--text-secondary); line-height:1.4;">
+        <div style="font-weight:600; color:var(--text-primary);" data-i18n="ocrPreview">Ảnh tài liệu gốc</div>
+        <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Nhận diện tự động với RapidOCR và thuật toán phục hồi dòng & đoạn.</div>
+      </div>
+    </div>
     
+    <!-- Progress Bar -->
     <div id="ocr-progress-container" style="display:none; margin-bottom:14px;">
       <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;" id="ocr-progress-text" data-i18n="loadingOCR">Đang nhận diện chữ...</div>
       <div style="width:100%; height:8px; background:var(--bg-muted); border-radius:4px; overflow:hidden;">
         <div id="ocr-progress-bar" style="width:0%; height:100%; background:var(--accent); transition:width 0.2s;"></div>
       </div>
     </div>
+
+    <!-- Segmented Tabs: Processed vs Raw -->
+    <div class="ocr-tabs">
+      <button type="button" class="ocr-tab-btn active" id="ocr-tab-processed" onclick="ocrSwitchTab('processed')" data-i18n="ocrProcessed">Văn bản đã xử lý</button>
+      <button type="button" class="ocr-tab-btn" id="ocr-tab-raw" onclick="ocrSwitchTab('raw')" data-i18n="ocrRaw">Văn bản thô OCR</button>
+    </div>
     
-    <textarea id="ocr-edit-textarea" class="textarea-box" style="height:160px; font-size:16px;" lang="zh-CN" data-i18n-ph="ocrEditPlaceholder" placeholder="Văn bản nhận diện sẽ hiển thị ở đây..."></textarea>
+    <textarea id="ocr-edit-textarea" class="textarea-box" style="height:190px; font-size:16px;" lang="zh-CN" data-i18n-ph="ocrEditPlaceholder" placeholder="Văn bản nhận diện sẽ hiển thị ở đây..."></textarea>
     
-    <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:16px; flex-wrap:wrap;">
-      <button class="btn btn-secondary" id="btn-ocr-raw" onclick="ocrRestoreRaw()" style="display:none;"></button>
-      <button class="btn btn-secondary" id="btn-ocr-clean" onclick="ocrCleanNow()"></button>
-      <button class="btn btn-secondary" onclick="closeOcrModal()">
-        <span data-i18n="cancel">Hủy</span>
-      </button>
-      <button class="btn btn-primary" onclick="confirmOcrResult()">
-        <span data-i18n="ocrConfirm">Xác nhận và đọc</span>
-      </button>
+    <!-- Action Bar -->
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-top:14px; flex-wrap:wrap;">
+      <div style="display:flex; gap:6px; flex-wrap:wrap;">
+        <button class="btn btn-secondary btn-sm" id="btn-ocr-clean" onclick="ocrCleanNow()" title="Ghép dòng và sắp xếp lại không dùng AI (0 Token)">
+          <span>🧹</span> <span data-i18n="ocrReorganize">Sắp xếp đoạn (0 Token)</span>
+        </button>
+        <button class="btn btn-outline btn-sm" id="btn-ocr-repair" onclick="ocrRepairWithAi()" title="Chỉ gửi đoạn cần sửa đến Gemini API để tiết kiệm token">
+          <span>✨</span> <span data-i18n="ocrRepairAi">Sửa lỗi bằng AI</span>
+        </button>
+      </div>
+
+      <div style="display:flex; gap:8px; margin-left:auto;">
+        <button class="btn btn-secondary btn-sm" onclick="rescanLastImage()" title="Quét lại ảnh">
+          ↺ <span data-i18n="ocrRescan">Quét lại</span>
+        </button>
+        <button class="btn btn-secondary btn-sm" onclick="closeOcrModal()">
+          <span data-i18n="cancel">Hủy</span>
+        </button>
+        <button class="btn btn-primary btn-sm" onclick="confirmOcrResult()">
+          <span data-i18n="ocrConfirm">Xác nhận và đọc</span>
+        </button>
+      </div>
     </div>
   </div>
 </div>
