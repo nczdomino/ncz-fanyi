@@ -329,16 +329,22 @@ function renderDictView() {
   // Query or Browse mode: Find matches
   let matches = [];
   const seenWords = new Set();
+  const isHanziQuery = /[\u4e00-\u9fff]/.test(query);
 
-  // 1. High-Priority: Check Reverse Dictionary Dataset first (0 token, ultra fast reverse lookup)
-  if (query && typeof findReverseMatches === 'function' && filterHSK === 'all') {
-    const revList = findReverseMatches(query, 20);
+  // 1. High-Priority: Check Reverse Dictionary Dataset first (only for non-Chinese queries)
+  if (query && !isHanziQuery && typeof findReverseMatches === 'function' && filterHSK === 'all') {
+    const revList = findReverseMatches(query, 25);
     for (const r of revList) {
       if (seenWords.has(r.zh)) continue;
       seenWords.add(r.zh);
       const inMini = MINI_DICT[r.zh];
       if (inMini) {
-        matches.push({ word: r.zh, ...inMini, isReverseMatch: true, matchPriority: 1 });
+        matches.push({
+          word: r.zh,
+          ...inMini,
+          isReverseMatch: true,
+          score: r.score || (r.matchType === 'exact' ? 1000 : 650)
+        });
       } else {
         matches.push({
           word: r.zh,
@@ -349,7 +355,7 @@ function renderDictView() {
           hanviet: getWordHanViet(r.zh),
           type: 'reverse',
           isReverseMatch: true,
-          matchPriority: 1
+          score: r.score || (r.matchType === 'exact' ? 1000 : 650)
         });
       }
     }
@@ -367,50 +373,46 @@ function renderDictView() {
         }
       }
     }
-  } else if (filterHSK === 'slang') {
-    const allSlang = (ENRICH.remote || []).concat(SLANG_BUILTIN || []);
-    for (const it of allSlang) {
-      if (!it || !it.w || seenWords.has(it.w)) continue;
-      seenWords.add(it.w);
-      const sItem = {
-        word: it.w,
-        pinyin: it.py || '',
-        vi: it.vi || '',
-        en: it.en ? (Array.isArray(it.en) ? it.en : [it.en]) : [],
-        ja: it.ja || '',
-        hanviet: getWordHanViet(it.w),
-        type: 'slang',
-        isSlang: true
-      };
-      if (!query) {
-        matches.push(sItem);
-        continue;
-      }
-      const matchesHanzi = it.w.toLowerCase().includes(query) || (it.alias && it.alias.some(a => a.toLowerCase().includes(query)));
-      const cleanPinyin = removeToneMarks((it.py || '').toLowerCase()).replace(/\s+/g, '');
-      const matchesPinyin = (it.py || '').toLowerCase().includes(query) || cleanPinyin.includes(cleanQuery);
-      
-      let matchesVi = false;
-      if (it.vi) {
-        const viLow = it.vi.toLowerCase();
-        const viNoT = typeof stripVietnameseTones === 'function' ? stripVietnameseTones(viLow) : viLow;
-        matchesVi = viLow.includes(query) || viNoT.includes(queryNoTone) || viNoT.includes(queryNormViNoTone);
-      }
-      
-      let matchesEn = false;
-      if (it.en) {
-        const enArr = Array.isArray(it.en) ? it.en : [it.en];
-        matchesEn = enArr.some(e => {
-          const el = e.toLowerCase();
-          return el.includes(query) || (typeof stemEnglishWord === 'function' && stemEnglishWord(el).includes(stemmedEn));
+  } else if (!query) {
+    // Browse mode without query
+    if (filterHSK === 'slang') {
+      const allSlang = (ENRICH.remote || []).concat(SLANG_BUILTIN || []);
+      for (const it of allSlang) {
+        if (!it || !it.w || seenWords.has(it.w)) continue;
+        seenWords.add(it.w);
+        matches.push({
+          word: it.w,
+          pinyin: it.py || '',
+          vi: it.vi || '',
+          en: it.en ? (Array.isArray(it.en) ? it.en : [it.en]) : [],
+          ja: it.ja || '',
+          hanviet: getWordHanViet(it.w),
+          type: 'slang',
+          isSlang: true
         });
+        if (matches.length >= 80) break;
       }
-
-      if (matchesHanzi || matchesPinyin || matchesVi || matchesEn) {
-        matches.push(sItem);
+    } else {
+      const allWords = Object.keys(MINI_DICT);
+      for (const w of allWords) {
+        const entry = MINI_DICT[w];
+        if (filterHSK !== 'all') {
+          if (filterHSK === '7-9') {
+            const h = String(entry.hsk);
+            if (h !== '7-9' && h !== '7' && h !== '8' && h !== '9' && !(entry.hsk >= 7 && entry.hsk <= 9)) {
+              continue;
+            }
+          } else if (String(entry.hsk) !== filterHSK) {
+            continue;
+          }
+        }
+        matches.push({ word: w, ...entry });
+        seenWords.add(w);
+        if (matches.length >= 80) break;
       }
     }
   } else {
+    // Search mode with active query: Unified Relevance Scoring Engine
     const allWords = Object.keys(MINI_DICT);
     for (const w of allWords) {
       const entry = MINI_DICT[w];
@@ -424,131 +426,189 @@ function renderDictView() {
           continue;
         }
       }
-      if (!query) {
-        matches.push({ word: w, ...entry });
-        seenWords.add(w);
-        if (matches.length >= 80) break;
-        continue;
-      }
-      if (seenWords.has(w)) continue;
 
-      const matchesHanzi = w.includes(query);
-      const cleanPinyin = removeToneMarks(entry.pinyin.toLowerCase()).replace(/\s+/g, '');
-      const matchesPinyin = entry.pinyin.toLowerCase().includes(query) || cleanPinyin.includes(cleanQuery);
-      
-      // 1. Vietnamese Accent-Agnostic & Fuzzy matching
-      let matchesVi = false;
+      let score = 0;
+
+      // 1. Chinese Hanzi matching
+      if (isHanziQuery) {
+        if (w === query) {
+          score = 2000;
+        } else if (w.startsWith(query)) {
+          score = 1500;
+        } else if (w.includes(query)) {
+          score = 1200;
+        }
+      }
+
+      // 2. Pinyin matching
+      const entryPyClean = removeToneMarks((entry.pinyin || '').toLowerCase()).replace(/\s+/g, '');
+      const entryPyLower = (entry.pinyin || '').toLowerCase();
+      if (entryPyLower === query || entryPyClean === cleanQuery) {
+        score = Math.max(score, 1100);
+      } else if (cleanQuery.length >= 2 && entryPyClean.startsWith(cleanQuery)) {
+        score = Math.max(score, 850);
+      } else if (entryPyLower.includes(query) || (cleanQuery.length >= 3 && entryPyClean.includes(cleanQuery))) {
+        score = Math.max(score, 600);
+      }
+
+      // 3. Vietnamese Definition matching (strictly token-aware & syllable-aligned)
       if (entry.vi) {
         const viLower = entry.vi.toLowerCase();
         const viNoTone = typeof stripVietnameseTones === 'function' ? stripVietnameseTones(viLower) : viLower;
-        matchesVi = viLower.includes(query) ||
-                    viNoTone.includes(queryNoTone) ||
-                    viNoTone.includes(queryNormViNoTone);
 
-        // Fuzzy typo tolerance for queries with length >= 4
-        if (!matchesVi && queryNoTone.length >= 4 && queryNoTone.length <= 12 && typeof levenshteinDistance === 'function') {
-          const viWords = viNoTone.split(/[\s,;]+/);
-          matchesVi = viWords.some(vw => levenshteinDistance(queryNoTone, vw) <= (queryNoTone.length >= 7 ? 2 : 1));
+        if (viLower === query || viNoTone === queryNoTone) {
+          score = Math.max(score, 950);
+        } else if (queryNoTone.includes(' ') && viNoTone.includes(queryNoTone)) {
+          score = Math.max(score, 820);
+        } else {
+          const viTokens = viNoTone.split(/[^a-z0-9]+/);
+          if (viTokens.includes(queryNoTone)) {
+            score = Math.max(score, 800);
+          } else if (queryNoTone.length >= 3 && viTokens.some(t => t.startsWith(queryNoTone))) {
+            score = Math.max(score, 450);
+          }
         }
       }
 
-      // 2. English Stemmed & Lemmatized matching
-      let matchesEn = false;
+      // 4. English Definition matching
       if (entry.en && Array.isArray(entry.en)) {
-        matchesEn = entry.en.some(e => {
+        for (const e of entry.en) {
           const eLower = e.toLowerCase();
-          if (eLower.includes(query)) return true;
-          const eStem = typeof stemEnglishWord === 'function' ? stemEnglishWord(eLower) : eLower;
-          return eStem === stemmedEn || eStem.includes(stemmedEn) || (stemmedEn.length > 3 && stemmedEn.includes(eStem));
-        });
+          if (eLower === query) {
+            score = Math.max(score, 900);
+            break;
+          } else if (query.length >= 3 && eLower.startsWith(query)) {
+            score = Math.max(score, 700);
+            break;
+          } else {
+            const eTokens = eLower.split(/[^a-z0-9]+/);
+            if (eTokens.includes(query)) {
+              score = Math.max(score, 650);
+              break;
+            } else if (stemmedEn && typeof stemEnglishWord === 'function' && stemEnglishWord(eLower) === stemmedEn) {
+              score = Math.max(score, 600);
+              break;
+            }
+          }
+        }
       }
 
-      // 3. Han-Viet matching
-      const matchesHanViet = entry.hanviet && (
-        entry.hanviet.toLowerCase().includes(query) ||
-        (typeof stripVietnameseTones === 'function' && stripVietnameseTones(entry.hanviet.toLowerCase()).includes(queryNoTone))
-      );
-
-      // 4. Japanese Kana, Kanji & Romaji matching
+      // 5. Japanese matching
       const kanjiEntry = KANJI_DATA[w];
-      const matchesJa = (entry.ja && (
-        entry.ja.includes(query) ||
-        (jaNorm.hiragana && entry.ja.includes(jaNorm.hiragana)) ||
-        (jaNorm.kanjiEquivalent && entry.ja.includes(jaNorm.kanjiEquivalent))
-      )) || (kanjiEntry && (
-        (kanjiEntry.on && kanjiEntry.on.toLowerCase().includes(query)) ||
-        (kanjiEntry.kun && kanjiEntry.kun.toLowerCase().includes(query)) ||
-        (kanjiEntry.ja_meaning && kanjiEntry.ja_meaning.toLowerCase().includes(query)) ||
-        (jaNorm.hiragana && kanjiEntry.kun && kanjiEntry.kun.includes(jaNorm.hiragana)) ||
-        (jaNorm.kanjiEquivalent && kanjiEntry.ja_meaning && kanjiEntry.ja_meaning.includes(jaNorm.kanjiEquivalent))
-      )) || (jaNorm.kanjiEquivalent && w === jaNorm.kanjiEquivalent);
+      if (entry.ja) {
+        const jaLower = entry.ja.toLowerCase();
+        if (jaLower === query || (jaNorm.hiragana && jaLower.includes(jaNorm.hiragana)) || (jaNorm.kanjiEquivalent && jaLower.includes(jaNorm.kanjiEquivalent))) {
+          score = Math.max(score, 850);
+        }
+      }
+      if (kanjiEntry) {
+        if ((kanjiEntry.on && kanjiEntry.on.toLowerCase().includes(query)) ||
+            (kanjiEntry.kun && kanjiEntry.kun.toLowerCase().includes(query)) ||
+            (kanjiEntry.ja_meaning && kanjiEntry.ja_meaning.toLowerCase().includes(query)) ||
+            (jaNorm.hiragana && kanjiEntry.kun && kanjiEntry.kun.includes(jaNorm.hiragana))) {
+          score = Math.max(score, 800);
+        }
+      }
+      if (jaNorm.kanjiEquivalent && w === jaNorm.kanjiEquivalent) {
+        score = Math.max(score, 1200);
+      }
 
-      if (matchesHanzi || matchesPinyin || matchesVi || matchesEn || matchesHanViet || matchesJa) {
-        matches.push({ word: w, ...entry });
-        seenWords.add(w);
-        if (matches.length >= 80) break;
+      // 6. Han-Viet matching
+      if (entry.hanviet) {
+        const hvLower = entry.hanviet.toLowerCase();
+        const hvNoTone = typeof stripVietnameseTones === 'function' ? stripVietnameseTones(hvLower) : hvLower;
+        if (hvLower === query || hvNoTone === queryNoTone) {
+          score = Math.max(score, 750);
+        } else if (queryNoTone.length >= 3 && (hvLower.startsWith(query) || hvNoTone.startsWith(queryNoTone))) {
+          score = Math.max(score, 500);
+        }
+      }
+
+      if (score > 0) {
+        if (seenWords.has(w)) {
+          const existing = matches.find(m => m.word === w);
+          if (existing && score > (existing.score || 0)) {
+            existing.score = score;
+          }
+        } else {
+          seenWords.add(w);
+          matches.push({ word: w, ...entry, score });
+        }
       }
     }
 
-    if (query && filterHSK === 'all' && matches.length < 100) {
+    // Also search Slang dictionary if filter allows
+    if (filterHSK === 'all' || filterHSK === 'slang') {
       const allSlang = (ENRICH.remote || []).concat(SLANG_BUILTIN || []);
       for (const it of allSlang) {
-        if (!it || !it.w || seenWords.has(it.w)) continue;
-        const matchesHanzi = it.w.toLowerCase().includes(query) || (it.alias && it.alias.some(a => a.toLowerCase().includes(query)));
-        const cleanPinyin = removeToneMarks((it.py || '').toLowerCase()).replace(/\s+/g, '');
-        const matchesPinyin = (it.py || '').toLowerCase().includes(query) || cleanPinyin.includes(cleanQuery);
-        
-        let matchesVi = false;
+        if (!it || !it.w) continue;
+        let score = 0;
+
+        if (isHanziQuery) {
+          if (it.w === query || (it.alias && it.alias.includes(query))) score = 2000;
+          else if (it.w.startsWith(query)) score = 1500;
+          else if (it.w.includes(query)) score = 1200;
+        }
+
+        const cleanPy = removeToneMarks((it.py || '').toLowerCase()).replace(/\s+/g, '');
+        if ((it.py || '').toLowerCase() === query || cleanPy === cleanQuery) {
+          score = Math.max(score, 1100);
+        } else if (cleanQuery.length >= 2 && cleanPy.startsWith(cleanQuery)) {
+          score = Math.max(score, 850);
+        }
+
         if (it.vi) {
           const viLow = it.vi.toLowerCase();
           const viNoT = typeof stripVietnameseTones === 'function' ? stripVietnameseTones(viLow) : viLow;
-          matchesVi = viLow.includes(query) || viNoT.includes(queryNoTone) || viNoT.includes(queryNormViNoTone);
+          if (viLow === query || viNoT === queryNoTone) {
+            score = Math.max(score, 950);
+          } else if (queryNoTone.includes(' ') && viNoT.includes(queryNoTone)) {
+            score = Math.max(score, 820);
+          } else {
+            const viTokens = viNoT.split(/[^a-z0-9]+/);
+            if (viTokens.includes(queryNoTone)) {
+              score = Math.max(score, 800);
+            }
+          }
         }
 
-        let matchesEn = false;
-        if (it.en) {
-          const enArr = Array.isArray(it.en) ? it.en : [it.en];
-          matchesEn = enArr.some(e => {
-            const el = e.toLowerCase();
-            return el.includes(query) || (typeof stemEnglishWord === 'function' && stemEnglishWord(el).includes(stemmedEn));
-          });
-        }
-
-        if (matchesHanzi || matchesPinyin || matchesVi || matchesEn) {
-          seenWords.add(it.w);
-          matches.push({
-            word: it.w,
-            pinyin: it.py || '',
-            vi: it.vi || '',
-            en: it.en ? (Array.isArray(it.en) ? it.en : [it.en]) : [],
-            ja: it.ja || '',
-            hanviet: getWordHanViet(it.w),
-            type: 'slang',
-            isSlang: true
-          });
-          if (matches.length >= 100) break;
+        if (score > 0) {
+          if (seenWords.has(it.w)) {
+            const existing = matches.find(m => m.word === it.w);
+            if (existing && score > (existing.score || 0)) {
+              existing.score = score;
+            }
+          } else {
+            seenWords.add(it.w);
+            matches.push({
+              word: it.w,
+              pinyin: it.py || '',
+              vi: it.vi || '',
+              en: it.en ? (Array.isArray(it.en) ? it.en : [it.en]) : [],
+              ja: it.ja || '',
+              hanviet: getWordHanViet(it.w),
+              type: 'slang',
+              isSlang: true,
+              score
+            });
+          }
         }
       }
     }
   }
 
-  // Smart Ranking: Exact Hanzi match > Reverse Dict matches > Exact Meaning match > StartsWith > HSK Level
+  // Smart Ranking: Score DESC > Word Length ASC > HSK Level ASC
   matches.sort((a, b) => {
-    if (a.word === query) return -1;
-    if (b.word === query) return 1;
-    if (a.isReverseMatch && !b.isReverseMatch) return -1;
-    if (!a.isReverseMatch && b.isReverseMatch) return 1;
-    
-    // Exact meaning matches
-    const aViNoTone = a.vi ? (typeof stripVietnameseTones === 'function' ? stripVietnameseTones(a.vi.toLowerCase()) : a.vi.toLowerCase()) : '';
-    const bViNoTone = b.vi ? (typeof stripVietnameseTones === 'function' ? stripVietnameseTones(b.vi.toLowerCase()) : b.vi.toLowerCase()) : '';
-    const aExact = aViNoTone === queryNoTone;
-    const bExact = bViNoTone === queryNoTone;
-    if (aExact && !bExact) return -1;
-    if (!aExact && bExact) return 1;
-
+    const scoreA = a.score || 0;
+    const scoreB = b.score || 0;
+    if (scoreB !== scoreA) return scoreB - scoreA;
+    if (a.word.length !== b.word.length) return a.word.length - b.word.length;
     return (a.hsk || 99) - (b.hsk || 99);
   });
+
+  if (query && matches.length > 80) {
+    matches = matches.slice(0, 80);
+  }
 
   // Update HSK count label if browsing
   const countEl = document.getElementById('dict-hsk-count');

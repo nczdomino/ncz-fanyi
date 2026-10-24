@@ -202,10 +202,16 @@ function buildReverseDictIndex() {
   for (const item of REVERSE_DICT_ENTRIES) {
     for (const k of item.keys) {
       const cleanKey = k.trim().toLowerCase();
-      if (!REVERSE_DICT_INDEX.has(cleanKey)) {
-        REVERSE_DICT_INDEX.set(cleanKey, []);
+      const noTone = typeof stripVietnameseTones === 'function' ? stripVietnameseTones(cleanKey) : cleanKey;
+      for (const keyVariant of [cleanKey, noTone]) {
+        if (!REVERSE_DICT_INDEX.has(keyVariant)) {
+          REVERSE_DICT_INDEX.set(keyVariant, []);
+        }
+        const arr = REVERSE_DICT_INDEX.get(keyVariant);
+        if (!arr.some(x => x.zh === item.zh)) {
+          arr.push(item);
+        }
       }
-      REVERSE_DICT_INDEX.get(cleanKey).push(item);
     }
   }
 }
@@ -214,33 +220,56 @@ buildReverseDictIndex();
 // Look up reverse entries matching a query
 function findReverseMatches(query, limit = 25) {
   if (!query) return [];
-  buildReverseDictIndex();
   const qClean = query.trim().toLowerCase();
+  // Chinese Hanzi queries look up directly in Chinese dictionary, skip reverse dict
+  if (/[\u4e00-\u9fff]/.test(qClean)) return [];
+
+  buildReverseDictIndex();
   const qNoTone = typeof stripVietnameseTones === 'function' ? stripVietnameseTones(qClean) : qClean;
 
   const results = [];
   const seenZh = new Set();
 
-  // 1. Direct index match
+  // 1. Direct index match (exact phrase / word match)
   const direct = REVERSE_DICT_INDEX.get(qClean) || REVERSE_DICT_INDEX.get(qNoTone) || [];
   for (const it of direct) {
     if (!seenZh.has(it.zh)) {
       seenZh.add(it.zh);
-      results.push({ ...it, matchType: 'exact' });
+      results.push({ ...it, matchType: 'exact', score: 1000 });
     }
   }
 
-  // 2. Partial key match
-  for (const item of REVERSE_DICT_ENTRIES) {
-    if (seenZh.has(item.zh)) continue;
-    const matched = item.keys.some(k => {
-      const kClean = k.toLowerCase();
-      return kClean.includes(qClean) || kClean.includes(qNoTone) || qClean.includes(kClean) || qNoTone.includes(kClean);
-    });
-    if (matched) {
-      seenZh.add(item.zh);
-      results.push({ ...item, matchType: 'partial' });
-      if (results.length >= limit) break;
+  // 2. Strict Prefix or Multi-word phrase matching (strictly no loose substring matching)
+  if (qNoTone.length >= 3) {
+    for (const item of REVERSE_DICT_ENTRIES) {
+      if (seenZh.has(item.zh)) continue;
+      let matched = false;
+      let score = 0;
+
+      for (const k of item.keys) {
+        const kClean = k.toLowerCase();
+        const kNoTone = typeof stripVietnameseTones === 'function' ? stripVietnameseTones(kClean) : kClean;
+
+        // Prefix match: user is typing e.g. "san b" -> "san bay"
+        if (kClean.startsWith(qClean) || kNoTone.startsWith(qNoTone)) {
+          matched = true;
+          score = Math.max(score, 650);
+          break;
+        }
+
+        // Multi-word phrase contains when query has spaces
+        if (qNoTone.includes(' ') && (kClean.includes(qClean) || kNoTone.includes(qNoTone))) {
+          matched = true;
+          score = Math.max(score, 600);
+          break;
+        }
+      }
+
+      if (matched) {
+        seenZh.add(item.zh);
+        results.push({ ...item, matchType: 'partial', score });
+        if (results.length >= limit) break;
+      }
     }
   }
 
