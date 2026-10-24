@@ -612,7 +612,7 @@
     <!-- Status & Token Usage Badge -->
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
       <div id="ocr-status-badge" class="ocr-status-badge free">
-        <span>⚡</span> <span>Cấp 1: Thuật toán nội bộ (0 Token AI)</span>
+        <span data-i18n="ocrLevel1Free">⚡ Cấp 1: Thuật toán nội bộ (0 Token AI)</span>
       </div>
       <label style="display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--text-secondary); cursor:pointer;">
         <input type="checkbox" id="ocr-auto-ai-toggle" style="cursor:pointer;">
@@ -625,7 +625,7 @@
       <img id="ocr-preview-img" class="ocr-thumb" src="" alt="OCR Preview">
       <div style="font-size:12px; color:var(--text-secondary); line-height:1.4;">
         <div style="font-weight:600; color:var(--text-primary);" data-i18n="ocrPreview">Ảnh tài liệu gốc</div>
-        <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Nhận diện tự động với RapidOCR và thuật toán phục hồi dòng & đoạn.</div>
+        <div style="font-size:11px; color:var(--text-muted); margin-top:2px;" data-i18n="ocrPreviewSub">Nhận diện tự động với RapidOCR và thuật toán phục hồi dòng & đoạn.</div>
       </div>
     </div>
     
@@ -648,16 +648,16 @@
     <!-- Action Bar -->
     <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-top:14px; flex-wrap:wrap;">
       <div style="display:flex; gap:6px; flex-wrap:wrap;">
-        <button class="btn btn-secondary btn-sm" id="btn-ocr-clean" onclick="ocrCleanNow()" title="Ghép dòng và sắp xếp lại không dùng AI (0 Token)">
+        <button class="btn btn-secondary btn-sm" id="btn-ocr-clean" onclick="ocrCleanNow()" title="Ghép dòng và sắp xếp lại không dùng AI (0 Token)" data-i18n-title="ocrCleanTitle">
           <span>🧹</span> <span data-i18n="ocrReorganize">Sắp xếp đoạn (0 Token)</span>
         </button>
-        <button class="btn btn-outline btn-sm" id="btn-ocr-repair" onclick="ocrRepairWithAi()" title="Chỉ gửi đoạn cần sửa đến Gemini API để tiết kiệm token">
+        <button class="btn btn-outline btn-sm" id="btn-ocr-repair" onclick="ocrRepairWithAi()" title="Chỉ gửi đoạn cần sửa đến AI để tiết kiệm token" data-i18n-title="ocrRepairTitle">
           <span>✨</span> <span data-i18n="ocrRepairAi">Sửa lỗi bằng AI</span>
         </button>
       </div>
 
       <div style="display:flex; gap:8px; margin-left:auto;">
-        <button class="btn btn-secondary btn-sm" onclick="rescanLastImage()" title="Quét lại ảnh">
+        <button class="btn btn-secondary btn-sm" onclick="rescanLastImage()" title="Quét lại ảnh" data-i18n-title="ocrRescanTitle">
           ↺ <span data-i18n="ocrRescan">Quét lại</span>
         </button>
         <button class="btn btn-secondary btn-sm" onclick="closeOcrModal()">

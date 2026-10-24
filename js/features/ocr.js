@@ -1,4 +1,4 @@
-// js/features/ocr.js - Advanced Multi-Platform Chinese OCR Pipeline (RapidOCR + Smart Non-AI Heuristic Layout + Gemini Repair)
+// js/features/ocr.js - Advanced Multi-Platform Chinese OCR Pipeline (RapidOCR + Smart Non-AI Heuristic Layout + AI Repair)
 // Dependencies: js/core/utils.js, js/features/input.js, js/data/i18n-data.js
 
 // State variables for OCR pipeline
@@ -10,6 +10,7 @@ window._ocrActiveTab = 'processed';
 window._ocrLastFile = null;
 window._ocrLastBase64 = null;
 window._ocrTokensUsed = null;
+window._ocrLastSummary = null;
 
 /**
  * Normalizes an arbitrary OCR line item into standard bounding box and text structure.
@@ -324,6 +325,10 @@ async function handleImageUpload(file) {
   if (!file) return;
 
   window._ocrLastFile = file;
+  window._ocrAiText = '';
+  window._ocrTokensUsed = null;
+  window._ocrLastSummary = null;
+
   const modal = document.getElementById('ocr-modal');
   const progressContainer = document.getElementById('ocr-progress-container');
   const progressBar = document.getElementById('ocr-progress-bar');
@@ -337,10 +342,10 @@ async function handleImageUpload(file) {
   modal.classList.add('active');
   if (progressContainer) progressContainer.style.display = 'block';
   if (progressBar) progressBar.style.width = '15%';
-  if (progressText) progressText.textContent = t('loadingOCR') || 'Đang tiền xử lý ảnh...';
+  if (progressText) progressText.textContent = tx('Đang tiền xử lý ảnh...', 'Preprocessing image...', '画像を前処理中...');
   if (badgeEl) {
     badgeEl.className = 'ocr-status-badge';
-    badgeEl.textContent = '⏳ Đang nhận diện...';
+    badgeEl.textContent = tx('⏳ Đang nhận diện...', '⏳ Recognizing...', '⏳ 認識中...');
   }
   if (editArea) editArea.value = '';
 
@@ -356,7 +361,7 @@ async function handleImageUpload(file) {
   }
 
   if (progressBar) progressBar.style.width = '35%';
-  if (progressText) progressText.textContent = 'Đang nhận diện chữ Hán (RapidOCR)...';
+  if (progressText) progressText.textContent = tx('Đang nhận diện chữ Hán (RapidOCR)...', 'Recognizing Chinese characters (RapidOCR)...', '漢字を認識中 (RapidOCR)...');
 
   let rawOcrResult = null;
   let ocrEngineUsed = 'RapidOCR';
@@ -379,17 +384,17 @@ async function handleImageUpload(file) {
       } else if (respData.fallback === 'client' || respData.error === 'RAPIDOCR_NOT_CONFIGURED') {
         // Backend indicated RapidOCR is unconfigured -> fallback gracefully to client Tesseract
         console.info('RapidOCR not configured on backend. Falling back to local client OCR.');
-        ocrEngineUsed = 'Tesseract (Cục bộ)';
+        ocrEngineUsed = tx('Tesseract (Cục bộ)', 'Tesseract (Local)', 'Tesseract (ローカル)');
       }
     }
   } catch (netErr) {
     console.warn('Backend /api/ocr not reachable, falling back to client OCR', netErr);
-    ocrEngineUsed = 'Tesseract (Cục bộ)';
+    ocrEngineUsed = tx('Tesseract (Cục bộ)', 'Tesseract (Local)', 'Tesseract (ローカル)');
   }
 
   // 3. Fallback to client-side Tesseract.js if backend RapidOCR was unavailable
   if (!rawOcrResult || !rawOcrResult.length) {
-    if (progressText) progressText.textContent = 'Đang tải bộ nhận diện cục bộ (Tesseract)...';
+    if (progressText) progressText.textContent = tx('Đang tải bộ nhận diện cục bộ (Tesseract)...', 'Loading local recognizer (Tesseract)...', 'ローカルOCRエンジンを読み込み中 (Tesseract)...');
     if (!window.Tesseract || typeof window.Tesseract.recognize !== 'function') {
       try {
         await loadScriptOnce('https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js');
@@ -420,7 +425,7 @@ async function handleImageUpload(file) {
   }
 
   if (progressBar) progressBar.style.width = '95%';
-  if (progressText) progressText.textContent = 'Đang sắp xếp bố cục & ghép đoạn văn bản...';
+  if (progressText) progressText.textContent = tx('Đang sắp xếp bố cục & ghép đoạn văn bản...', 'Re-arranging layout & reconstructing paragraphs...', 'レイアウト整理と段落を復元中...');
 
   // 4. Run Smart Non-AI Document Layout & Paragraph Reconstruction
   if (rawOcrResult && rawOcrResult.length > 0) {
@@ -435,10 +440,13 @@ async function handleImageUpload(file) {
     ocrSwitchTab('processed');
 
     // Update status badge: Level 1 (Free, 0 Token AI)
-    if (badgeEl) {
-      badgeEl.className = 'ocr-status-badge free';
-      badgeEl.innerHTML = `<span>⚡</span> <span>${ocrEngineUsed}: ${reconstructed.paragraphCount} đoạn (${reconstructed.lineCount} dòng) · <b>0 Token AI</b></span>`;
-    }
+    window._ocrLastSummary = {
+      type: 'level1',
+      engine: ocrEngineUsed,
+      paragraphs: reconstructed.paragraphCount,
+      lines: reconstructed.lineCount
+    };
+    ocrRefreshStatusBadge();
 
     // Auto-AI repair: If user enabled auto-repair AND there are questionable low-confidence segments
     const autoAiToggle = document.getElementById('ocr-auto-ai-toggle');
@@ -450,7 +458,7 @@ async function handleImageUpload(file) {
     if (editArea) editArea.value = tx('Không tìm thấy chữ trong ảnh hoặc nhận diện thất bại. Vui lòng thử lại với ảnh rõ nét hơn.', 'No text found in image. Please try again with a clearer photo.', '画像から文字を検出できませんでした。より鮮明な画像でお試しください。');
     if (badgeEl) {
       badgeEl.className = 'ocr-status-badge';
-      badgeEl.textContent = '⚠️ Không có kết quả';
+      badgeEl.textContent = tx('⚠️ Không có kết quả', '⚠️ No text detected', '⚠️ 検出結果なし');
     }
   }
 
@@ -459,7 +467,7 @@ async function handleImageUpload(file) {
 }
 
 /**
- * LEVEL 2: Sửa lỗi OCR bằng Google Gemini API qua Cloudflare Pages Functions
+ * LEVEL 2: Sửa lỗi OCR bằng AI qua Cloudflare Pages Functions
  * Chỉ gửi đoạn văn bản OCR (tối đa 4,000 ký tự) lên /api/ocr/repair, không gửi ảnh,
  * hiển thị chính xác lượng token tiêu thụ.
  */
@@ -477,11 +485,11 @@ async function ocrRepairWithAi() {
 
   if (repairBtn) {
     repairBtn.disabled = true;
-    repairBtn.innerHTML = `<span>⏳</span> <span>${t('ocrRepairing') || 'Đang sửa bằng AI...'}</span>`;
+    repairBtn.innerHTML = `<span>⏳</span> <span>${t('ocrRepairing') || tx('Đang sửa bằng AI...', 'Repairing with AI...', 'AIでテキストを修正中...')}</span>`;
   }
   if (badgeEl) {
     badgeEl.className = 'ocr-status-badge ai';
-    badgeEl.textContent = '✨ Đang kết nối Gemini AI...';
+    badgeEl.textContent = tx('✨ Đang kết nối AI...', '✨ Connecting to AI...', '✨ AIに接続中...');
   }
 
   try {
@@ -495,43 +503,50 @@ async function ocrRepairWithAi() {
 
     if (!resp.ok) {
       const errData = await resp.json().catch(() => ({}));
-      throw new Error(errData.message || `Lỗi HTTP ${resp.status}`);
+      let msg = errData.message;
+      if (errData.error === 'GEMINI_KEY_MISSING' || (msg && msg.includes('GEMINI_API_KEY'))) {
+        msg = tx(
+          'Chưa cấu hình API Key trên máy chủ.',
+          'AI API Key is not configured on server.',
+          'サーバーにAI APIキーが設定されていません。'
+        );
+      }
+      throw new Error(msg || tx(`Lỗi HTTP ${resp.status}`, `HTTP Error ${resp.status}`, `HTTPエラー ${resp.status}`));
     }
 
     const data = await resp.json();
     if (!data.success || !data.repairedText) {
-      throw new Error(data.message || 'Không nhận được kết quả sửa từ AI');
+      throw new Error(data.message || tx('Không nhận được kết quả sửa từ AI', 'No repair result received from AI', 'AIから修正結果を取得できませんでした'));
     }
 
     window._ocrAiText = data.repairedText;
     editArea.value = data.repairedText;
 
     const tokens = data.tokens;
+    window._ocrTokensUsed = tokens?.total;
+    window._ocrLastSummary = {
+      type: 'ai',
+      tokens
+    };
+    ocrRefreshStatusBadge();
+
     if (tokens && typeof tokens.total === 'number') {
-      window._ocrTokensUsed = tokens.total;
-      if (badgeEl) {
-        badgeEl.className = 'ocr-status-badge ai';
-        badgeEl.innerHTML = `<span>✨</span> <span>Đã sửa bằng Gemini AI (Dùng ${tokens.total} tokens: ${tokens.prompt} in / ${tokens.candidates} out)</span>`;
-      }
       showToast(tx(`Đã sửa lỗi OCR bằng AI (Tiêu thụ ${tokens.total} tokens)`, `AI repair completed (${tokens.total} tokens)`, `AI修正完了 (${tokens.total} トークン使用)`));
     } else {
-      if (badgeEl) {
-        badgeEl.className = 'ocr-status-badge ai';
-        badgeEl.innerHTML = `<span>✨</span> <span>Đã sửa bằng Gemini AI (Tiết kiệm tối đa token)</span>`;
-      }
       showToast(tx('Đã sửa lỗi OCR bằng AI thành công', 'AI repair completed successfully', 'AIによる修正が完了しました'));
     }
   } catch (err) {
-    console.error('Gemini OCR repair error', err);
-    showToast(`Lỗi sửa AI: ${err.message}`);
+    console.error('OCR AI repair error', err);
+    const errMsg = err.message || '';
+    showToast(tx(`Lỗi sửa AI: ${errMsg}`, `AI repair error: ${errMsg}`, `AI修正エラー: ${errMsg}`));
     if (badgeEl) {
       badgeEl.className = 'ocr-status-badge';
-      badgeEl.textContent = `⚠️ Lỗi sửa AI: ${err.message}`;
+      badgeEl.textContent = tx(`⚠️ Lỗi sửa AI: ${errMsg}`, `⚠️ AI repair error: ${errMsg}`, `⚠️ AI修正エラー: ${errMsg}`);
     }
   } finally {
     if (repairBtn) {
       repairBtn.disabled = false;
-      repairBtn.innerHTML = `<span>✨</span> <span>${t('ocrRepairAi') || 'Sửa lỗi bằng AI'}</span>`;
+      repairBtn.innerHTML = `<span>✨</span> <span>${t('ocrRepairAi') || tx('Sửa lỗi bằng AI', 'Repair with AI', 'AI誤字修正')}</span>`;
     }
   }
 }
@@ -541,7 +556,6 @@ async function ocrRepairWithAi() {
  */
 function ocrCleanNow() {
   const ta = document.getElementById('ocr-edit-textarea');
-  const badgeEl = document.getElementById('ocr-status-badge');
   if (!ta) return;
 
   if (window._ocrLines && window._ocrLines.length > 0) {
@@ -550,15 +564,66 @@ function ocrCleanNow() {
     window._ocrProcessedText = rec.processedText;
     ta.value = rec.processedText;
     ocrSwitchTab('processed');
-    if (badgeEl) {
-      badgeEl.className = 'ocr-status-badge free';
-      badgeEl.innerHTML = `<span>⚡</span> <span>Đã sắp xếp lại: ${rec.paragraphCount} đoạn · <b>0 Token AI</b></span>`;
-    }
+    window._ocrLastSummary = {
+      type: 'clean',
+      paragraphs: rec.paragraphCount
+    };
+    ocrRefreshStatusBadge();
     showToast(tx('Đã sắp xếp lại bố cục và ghép đoạn (0 Token AI)', 'Paragraphs re-arranged (0 AI Tokens)', '段落を再構成しました (AIトークン0)'));
   } else {
     // If no lines cached, clean current textarea text using regex
     ta.value = cleanRawOcrString(ta.value);
     showToast(tx('Đã làm sạch văn bản', 'Text cleaned', 'テキストを整形しました'));
+  }
+}
+
+/**
+ * Refreshes OCR status badge according to active language and current OCR state
+ */
+function ocrRefreshStatusBadge() {
+  const badgeEl = document.getElementById('ocr-status-badge');
+  if (!badgeEl) return;
+
+  if (window._ocrLastSummary?.type === 'ai') {
+    badgeEl.className = 'ocr-status-badge ai';
+    const tokens = window._ocrLastSummary.tokens;
+    if (tokens && typeof tokens.total === 'number') {
+      const text = tx(
+        `Đã sửa bằng AI (${tokens.total} tokens: ${tokens.prompt} in / ${tokens.candidates} out)`,
+        `AI Repaired (${tokens.total} tokens: ${tokens.prompt} in / ${tokens.candidates} out)`,
+        `AI修正完了 (${tokens.total} トークン: ${tokens.prompt} in / ${tokens.candidates} out)`
+      );
+      badgeEl.innerHTML = `<span>✨</span> <span>${escapeHtml(text)}</span>`;
+    } else {
+      const text = tx(
+        'Đã sửa bằng AI (Tiết kiệm tối đa token)',
+        'AI Repaired (Optimized tokens)',
+        'AI修正完了 (トークン最適化)'
+      );
+      badgeEl.innerHTML = `<span>✨</span> <span>${escapeHtml(text)}</span>`;
+    }
+  } else if (window._ocrLastSummary?.type === 'level1') {
+    badgeEl.className = 'ocr-status-badge free';
+    const s = window._ocrLastSummary;
+    const engineName = s.engine || 'RapidOCR';
+    const text = tx(
+      `${engineName}: ${s.paragraphs} đoạn (${s.lines} dòng) · <b>0 Token AI</b>`,
+      `${engineName}: ${s.paragraphs} paragraphs (${s.lines} lines) · <b>0 AI Tokens</b>`,
+      `${engineName}: ${s.paragraphs} 段落 (${s.lines} 行) · <b>AIトークン0</b>`
+    );
+    badgeEl.innerHTML = `<span>⚡</span> <span>${text}</span>`;
+  } else if (window._ocrLastSummary?.type === 'clean') {
+    badgeEl.className = 'ocr-status-badge free';
+    const s = window._ocrLastSummary;
+    const text = tx(
+      `Đã sắp xếp lại: ${s.paragraphs} đoạn · <b>0 Token AI</b>`,
+      `Re-arranged: ${s.paragraphs} paragraphs · <b>0 AI Tokens</b>`,
+      `再構成済み: ${s.paragraphs} 段落 · <b>AIトークン0</b>`
+    );
+    badgeEl.innerHTML = `<span>⚡</span> <span>${text}</span>`;
+  } else {
+    badgeEl.className = 'ocr-status-badge free';
+    badgeEl.innerHTML = `<span data-i18n="ocrLevel1Free">${t('ocrLevel1Free') || '⚡ Cấp 1: Thuật toán nội bộ (0 Token AI)'}</span>`;
   }
 }
 
@@ -605,17 +670,18 @@ function ocrRestoreRaw() {
 }
 
 /**
- * Updates button labels based on current language
+ * Updates button labels and active status badge based on current language
  */
 function ocrUpdateButtons() {
   const btnClean = document.getElementById('btn-ocr-clean');
   if (btnClean) {
-    btnClean.innerHTML = `<span>🧹</span> <span>${t('ocrReorganize') || 'Sắp xếp đoạn (0 Token)'}</span>`;
+    btnClean.innerHTML = `<span>🧹</span> <span>${t('ocrReorganize') || tx('Sắp xếp đoạn (0 Token)', 'Re-arrange (0 Token)', '段落整形 (0トークン)')}</span>`;
   }
   const btnRepair = document.getElementById('btn-ocr-repair');
   if (btnRepair) {
-    btnRepair.innerHTML = `<span>✨</span> <span>${t('ocrRepairAi') || 'Sửa lỗi bằng AI'}</span>`;
+    btnRepair.innerHTML = `<span>✨</span> <span>${t('ocrRepairAi') || tx('Sửa lỗi bằng AI', 'Repair with AI', 'AI誤字修正')}</span>`;
   }
+  ocrRefreshStatusBadge();
 }
 
 /**
