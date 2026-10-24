@@ -68,6 +68,7 @@
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/reader.css">
   <link rel="stylesheet" href="css/dict.css">
+  <link rel="stylesheet" href="css/handwriting.css">
   <link rel="stylesheet" href="css/responsive.css">
 
   <!-- Dynamic PWA Manifest Blob Injection -->
@@ -133,6 +134,11 @@
           <button class="btn btn-secondary" onclick="document.getElementById('ocr-file-input').click()">
             <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
             <span data-i18n="btnCamera">Chụp / Chọn ảnh</span>
+          </button>
+
+          <button class="btn btn-secondary" onclick="openHandwritingForTextInput()" title="Vẽ chữ viết tay tra từ" data-i18n-title="btnHandwriting">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+            <span data-i18n="btnHandwriting">Vẽ chữ Hán</span>
           </button>
 
           <input type="file" id="pdf-file-input" accept=".pdf,application/pdf" style="display:none;" onchange="handlePdfUpload(this.files[0])">
@@ -210,6 +216,7 @@
             </svg>
           </div>
           <input type="text" id="dict-search-input" class="ai-search-input" data-i18n-ph="searchHint" placeholder="Nhập chữ Hán, pinyin, hoặc nghĩa..." oninput="handleDictSearch(this.value)" autocomplete="off" autocapitalize="off" spellcheck="false">
+          <button id="dict-search-handwriting" class="ai-search-clear" onclick="openHandwritingForDictSearch()" title="Vẽ chữ Hán tra từ" data-i18n-title="btnDrawSearch" style="display:flex; margin-right:4px; font-size:16px;">✍️</button>
           <button id="dict-search-clear" class="ai-search-clear" onclick="clearDictSearch()" style="display:none;" title="Xóa tìm kiếm" data-i18n-title="btnClear">✕</button>
         </div>
 
@@ -528,6 +535,9 @@
         <button class="btn btn-secondary btn-sm" onclick="animateActiveWriters()">
           ▶ <span data-i18n="animateStrokes">Phát nét</span>
         </button>
+        <button class="btn btn-secondary btn-sm" onclick="openHandwritingQuizForCurrentWord()" title="Luyện viết từng nét chữ này" data-i18n-title="hwPracticeQuiz">
+          ✍️ <span data-i18n="hwModeQuiz">Luyện nét (Quiz)</span>
+        </button>
         <button class="btn btn-outline btn-sm" onclick="splitActiveWord()">
           🔤 <span data-i18n="splitWord">Tách thành chữ đơn</span>
         </button>
@@ -671,6 +681,21 @@
   </div>
 </div>
 
+<!-- Handwriting Modal -->
+<div id="handwriting-modal" class="modal-overlay">
+  <div class="modal-card" style="max-width:440px; padding:16px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+      <div style="font-size:16px; font-weight:700; display:flex; align-items:center; gap:6px;">
+        <span>✍️</span> <span data-i18n="handwritingTitle">Nhận diện chữ Hán viết tay & Luyện nét</span>
+      </div>
+      <button class="icon-btn" onclick="closeHandwritingModal()" title="Đóng" data-i18n-title="titleClose">✕</button>
+    </div>
+
+    <!-- Mount Container for HandwritingPad component -->
+    <div id="handwriting-pad-mount"></div>
+  </div>
+</div>
+
 <!-- Onboarding Modal -->
 <div id="onboarding-overlay" class="modal-overlay">
   <div class="modal-card" style="text-align:center;">
@@ -758,6 +783,11 @@
   <script src="js/features/onboarding.js"></script>
   <script src="js/features/share.js"></script>
   <script src="js/features/input-handlers.js"></script>
+
+  <!-- 8.5 Handwriting Recognition & Stroke Quiz -->
+  <script src="js/features/handwriting/engine.js"></script>
+  <script src="js/features/handwriting/pad.js"></script>
+  <script src="js/features/handwriting.js"></script>
 
   <!-- 9. App Lifecycle & Initialization -->
   <script src="js/main.js"></script>

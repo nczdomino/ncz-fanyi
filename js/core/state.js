@@ -57,4 +57,5 @@ const state = {
   activeLens: localStorage.getItem('cr_active_lens') || 'native',
   currentSentenceLenses: null,
   cachedAiAnalysis: {},
+  cloudHandwritingEnabled: localStorage.getItem('cr_cloudHandwriting') === '1', // Tùy chọn, tắt mặc định
 };
