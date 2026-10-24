@@ -252,7 +252,7 @@
           <button id="dict-hsk-toggle-btn" class="dict-hsk-toggle-btn" onclick="toggleHskBrowser()">
             <div style="display:flex; align-items:center; gap:8px;">
               <span>📂</span>
-              <span id="dict-hsk-toggle-text" data-i18n="browseHsk">Khám phá từ vựng HSK 1 - 6 (Chạm để mở)</span>
+              <span id="dict-hsk-toggle-text" data-i18n="browseHsk">Khám phá từ vựng HSK 1 - 9 (Chạm để mở)</span>
             </div>
             <span id="dict-hsk-chevron" class="chevron">▼</span>
           </button>
@@ -266,6 +266,7 @@
               <div class="filter-chip dict-filter-chip" data-hsk="4" onclick="setDictFilter('4')">HSK 4</div>
               <div class="filter-chip dict-filter-chip" data-hsk="5" onclick="setDictFilter('5')">HSK 5</div>
               <div class="filter-chip dict-filter-chip" data-hsk="6" onclick="setDictFilter('6')">HSK 6</div>
+              <div class="filter-chip dict-filter-chip" data-hsk="7-9" onclick="setDictFilter('7-9')" style="background:rgba(139,92,246,0.1); border-color:rgba(139,92,246,0.3); color:#8B5CF6; font-weight:700;">👑 HSK 7-9</div>
               <div class="filter-chip dict-filter-chip" data-hsk="slang" onclick="setDictFilter('slang')" style="background:rgba(232,52,78,0.08); border-color:rgba(232,52,78,0.25); color:var(--accent); font-weight:600;" data-i18n="hskSlang">🔥 Từ lóng Slang</div>
             </div>
             <div id="dict-hsk-count" style="font-size:12px; color:var(--text-muted); margin-bottom:8px;"></div>
@@ -744,6 +745,7 @@
   <!-- 2. Embedded Offline Data Tables -->
   <script src="js/data/i18n-data.js"></script>
   <script src="js/data/mini-dict.js"></script>
+  <script src="js/data/hsk789.js"></script>
   <script src="js/data/reverse-dict.js"></script>
   <script src="js/data/dict-synsets.js"></script>
   <script src="js/data/han-viet.js"></script>

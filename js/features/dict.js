@@ -414,8 +414,15 @@ function renderDictView() {
     const allWords = Object.keys(MINI_DICT);
     for (const w of allWords) {
       const entry = MINI_DICT[w];
-      if (filterHSK !== 'all' && String(entry.hsk) !== filterHSK) {
-        continue;
+      if (filterHSK !== 'all') {
+        if (filterHSK === '7-9') {
+          const h = String(entry.hsk);
+          if (h !== '7-9' && h !== '7' && h !== '8' && h !== '9' && !(entry.hsk >= 7 && entry.hsk <= 9)) {
+            continue;
+          }
+        } else if (String(entry.hsk) !== filterHSK) {
+          continue;
+        }
       }
       if (!query) {
         matches.push({ word: w, ...entry });
@@ -546,7 +553,10 @@ function renderDictView() {
   // Update HSK count label if browsing
   const countEl = document.getElementById('dict-hsk-count');
   if (countEl && isBrowsingHsk && !query) {
-    const levelLabel = filterHSK === 'slang' ? (t('hskSlang') || '🔥 Từ lóng Slang') : (filterHSK === 'all' ? t('hskAll') : 'HSK ' + filterHSK);
+    let levelLabel = 'HSK ' + filterHSK;
+    if (filterHSK === 'slang') levelLabel = t('hskSlang') || '🔥 Từ lóng Slang';
+    else if (filterHSK === '7-9') levelLabel = t('hsk789') || '👑 HSK 7-9 (Cao cấp)';
+    else if (filterHSK === 'all') levelLabel = t('hskAll');
     countEl.textContent = `${t('hskLevel')}: ${levelLabel} (${matches.length} ${t('words') || 'từ'})`;
   }
 
@@ -568,6 +578,7 @@ function renderDictView() {
 
     let noMatchHtml = mindmapHtml;
     noMatchHtml += `
+      <div id="dict-live-results-container"></div>
       <div class="card" style="text-align:center; padding:28px 18px; border-radius:var(--radius-lg); margin-top:10px;">
         <div style="font-size:36px; margin-bottom:8px;">🔍</div>
         <div style="font-size:16px; font-weight:600; color:var(--text-secondary);">${t('noResults')}</div>
@@ -589,6 +600,9 @@ function renderDictView() {
       </div>
     `;
     container.innerHTML = noMatchHtml;
+    if (query && !/[\u4e00-\u9fff]/.test(query)) {
+      triggerLiveDictSearch(query, typeof detectSearchLanguage === 'function' ? detectSearchLanguage(query) : 'latin', seenWords);
+    }
     return;
   }
 
@@ -700,7 +714,7 @@ function renderDictView() {
           <div id="dict-meaning-${escapeHtml(item.word)}" class="dict-meaning">${escapeHtml(meaning || (lang === 'ja' ? '...' : t('noMeaning')))}</div>
         </div>
         <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
-          ${item.hsk ? `<span class="badge badge-hsk">HSK ${item.hsk}</span>` : ''}
+          ${item.hsk ? `<span class="badge ${String(item.hsk).includes('7') || String(item.hsk).includes('8') || String(item.hsk).includes('9') ? 'badge-hsk-pro' : 'badge-hsk'}">HSK ${item.hsk}</span>` : ''}
           ${(item.type === 'slang' || !!getSlangEntry(item.word)) ? `<span class="badge" style="background:rgba(232,52,78,0.12); color:var(--accent); border:1px solid rgba(232,52,78,0.3); font-weight:700;">🔥 Slang</span>` : ''}
           <button class="icon-btn" style="width:34px; height:34px;" onclick="event.stopPropagation(); speakText('${escapeQuotes(item.word)}')" title="${t('play')}" aria-label="${t('play')}">
             <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
@@ -710,6 +724,9 @@ function renderDictView() {
     `;
   });
   html += '</div>';
+
+  // Live Multi-Dictionary Online Extension Container
+  html += '<div id="dict-live-results-container"></div>';
 
   if (query) {
     html += `
@@ -727,6 +744,10 @@ function renderDictView() {
   }
 
   container.innerHTML = html;
+
+  if (query && !/[\u4e00-\u9fff]/.test(query)) {
+    triggerLiveDictSearch(query, typeof detectSearchLanguage === 'function' ? detectSearchLanguage(query) : 'latin', seenWords);
+  }
 }
 
 // --- Semantic Mindmap Renderer ---
@@ -859,6 +880,126 @@ function renderSemanticResults(concept, matches) {
         <span style="font-size:11px; color:var(--text-muted);">${matches.length} ${tx('từ đề xuất', 'suggestions', '件の提案')}</span>
       </div>
       <div>${itemsHtml}</div>
+    </div>
+  `;
+}
+
+// --- Live Extended Multi-Dictionary Search Engine (0 Token, Instant) ---
+let liveDictTimer = null;
+const LIVE_DICT_CACHE = new Map();
+
+function triggerLiveDictSearch(query, lang, seenWords = new Set()) {
+  clearTimeout(liveDictTimer);
+  if (!query || query.length < 2) return;
+  if (/[\u4e00-\u9fff]/.test(query)) return; // Only for reverse search in VI, JA, EN, Romaji
+
+  const cacheKey = lang + ':' + query.trim().toLowerCase();
+  if (LIVE_DICT_CACHE.has(cacheKey)) {
+    renderLiveDictResults(LIVE_DICT_CACHE.get(cacheKey), seenWords);
+    return;
+  }
+
+  liveDictTimer = setTimeout(async () => {
+    try {
+      let sl = 'auto';
+      if (lang === 'vi' || /[àáảãạăắằẳẵặâấầẩẫậèéẻẽẹêếềểễệìíỉĩịòóỏõọôốồổỗộơớờởỡợùúủũụưứừửữựỳýỷỹỵđ]/i.test(query)) {
+        sl = 'vi';
+      } else if (lang === 'ja' || /[\u3040-\u30ff]/.test(query)) {
+        sl = 'ja';
+      } else if (lang === 'en') {
+        sl = 'en';
+      }
+
+      const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=zh-CN&dt=t&dt=bd&dt=rm&q=${encodeURIComponent(query)}`;
+      const res = await fetch(url);
+      if (!res.ok) return;
+      const data = await res.json();
+      if (!data) return;
+
+      const results = [];
+      const localSeen = new Set();
+
+      // 1. Direct translated candidate
+      if (Array.isArray(data[0]) && data[0][0] && data[0][0][0]) {
+        const directZh = data[0][0][0].trim();
+        if (/[\u4e00-\u9fff]/.test(directZh) && directZh.length <= 8) {
+          localSeen.add(directZh);
+          const py = typeof getWordPinyin === 'function' ? getWordPinyin(directZh) : '';
+          results.push({
+            word: directZh,
+            pinyin: py,
+            mean: query,
+            isDirect: true
+          });
+        }
+      }
+
+      // 2. Dictionary grouped alternatives (dt=bd)
+      if (Array.isArray(data[1])) {
+        for (const group of data[1]) {
+          const words = group[1] || [];
+          const defs = group[2] || [];
+          for (let i = 0; i < words.length && i < 8; i++) {
+            const w = words[i];
+            if (!w || localSeen.has(w) || !/[\u4e00-\u9fff]/.test(w) || w.length > 8) continue;
+            localSeen.add(w);
+            const py = typeof getWordPinyin === 'function' ? getWordPinyin(w) : '';
+            const meaningList = defs[i] && Array.isArray(defs[i]) ? defs[i].slice(0, 3).join(', ') : query;
+            results.push({
+              word: w,
+              pinyin: py,
+              mean: meaningList,
+              pos: group[0] || ''
+            });
+            if (results.length >= 12) break;
+          }
+          if (results.length >= 12) break;
+        }
+      }
+
+      if (results.length > 0) {
+        LIVE_DICT_CACHE.set(cacheKey, results);
+        renderLiveDictResults(results, seenWords);
+      }
+    } catch (err) {
+      console.warn('Live dict search error:', err);
+    }
+  }, 220);
+}
+
+function renderLiveDictResults(results, seenWords = new Set()) {
+  const container = document.getElementById('dict-live-results-container');
+  if (!container) return;
+
+  // Filter out words already shown in primary results
+  const filtered = results.filter(r => !seenWords.has(r.word));
+  if (!filtered.length) {
+    container.innerHTML = '';
+    return;
+  }
+
+  let cardsHtml = '';
+  for (const item of filtered) {
+    cardsHtml += `
+      <div class="dict-live-card" onclick="openWordSheet('${escapeQuotes(item.word)}')">
+        <div class="dict-live-top">
+          <span class="dict-live-zh">${escapeHtml(item.word)}</span>
+          <span class="dict-live-py">${escapeHtml(item.pinyin || '')}</span>
+        </div>
+        <div class="dict-live-mean" title="${escapeHtml(item.mean)}">${escapeHtml(item.mean)}</div>
+      </div>
+    `;
+  }
+
+  container.innerHTML = `
+    <div class="dict-live-section">
+      <div class="dict-live-header">
+        <span>${t('liveDictTitle') || '🌐 Gợi ý từ điển mở rộng trực tuyến'}</span>
+        <span class="badge" style="font-size:10.5px; background:rgba(37,99,235,0.12); color:#2563EB; border:1px solid rgba(37,99,235,0.25);">Live Multi-Dict API</span>
+      </div>
+      <div class="dict-live-grid">
+        ${cardsHtml}
+      </div>
     </div>
   `;
 }

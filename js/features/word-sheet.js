@@ -37,7 +37,10 @@ async function openWordSheet(word) {
   const badgesContainer = document.getElementById('sheet-badges');
   badgesContainer.innerHTML = '';
   if (dictEntry && dictEntry.hsk) {
-    badgesContainer.innerHTML += `<span class="badge badge-hsk">HSK ${dictEntry.hsk}</span>`;
+    const isHsk789 = String(dictEntry.hsk).includes('7') || String(dictEntry.hsk).includes('8') || String(dictEntry.hsk).includes('9');
+    badgesContainer.innerHTML += isHsk789
+      ? `<span class="badge badge-hsk-pro">👑 HSK ${dictEntry.hsk} (${tx('Cao cấp', 'Advanced', '上級')})</span>`
+      : `<span class="badge badge-hsk">HSK ${dictEntry.hsk}</span>`;
   }
   const sheetSlang = getSlangEntry(word);
   if (sheetSlang) {
@@ -202,15 +205,22 @@ async function openWordSheet(word) {
     addLangBtn._otherLangs = otherLangs;
   }
 
-  // External Dictionary Links
+  // External Dictionary Links (Line Dict, Pleco, Baidu Baike, MoEDict, Hanzii, MDBG)
   const extContainer = document.getElementById('sheet-external-links');
   if (extContainer) {
+    const lineDictUrl = state.meaningLang === 'ja'
+      ? `https://dict.naver.com/linedict/zhendict/#/cnja/search?query=${encodeURIComponent(word)}`
+      : (state.meaningLang === 'en'
+        ? `https://dict.naver.com/linedict/zhendict/#/cnen/search?query=${encodeURIComponent(word)}`
+        : `https://dict.naver.com/linedict/zhendict/#/cnen/search?query=${encodeURIComponent(word)}`);
+    
     extContainer.innerHTML = `
-      <a class="btn btn-secondary btn-sm" href="https://www.mdbg.net/chinese/dictionary?page=worddict&wdrst=0&wdqb=${encodeURIComponent(word)}" target="_blank" rel="noopener noreferrer">MDBG</a>
-      <a class="btn btn-secondary btn-sm" href="https://translate.google.com/?sl=zh-CN&tl=${state.meaningLang}&text=${encodeURIComponent(word)}" target="_blank" rel="noopener noreferrer">Google</a>
+      <a class="btn btn-secondary btn-sm" href="${lineDictUrl}" target="_blank" rel="noopener noreferrer" title="Line Dict">📖 Line Dict</a>
+      <a class="btn btn-secondary btn-sm" href="plecoapi://x-callback-url/s?q=${encodeURIComponent(word)}" title="Pleco (Mobile App)">📱 Pleco</a>
+      <a class="btn btn-secondary btn-sm" href="https://baike.baidu.com/item/${encodeURIComponent(word)}" target="_blank" rel="noopener noreferrer" title="Baidu Baike">📚 百度百科</a>
+      <a class="btn btn-secondary btn-sm" href="https://www.moedict.tw/${encodeURIComponent(word)}" target="_blank" rel="noopener noreferrer" title="MoEDict 萌典">🏮 萌典</a>
       <a class="btn btn-secondary btn-sm" href="https://hanzii.net/search/word/${encodeURIComponent(word)}" target="_blank" rel="noopener noreferrer">Hanzii</a>
-      <a class="btn btn-secondary btn-sm" href="https://jisho.org/search/${encodeURIComponent(word)}" target="_blank" rel="noopener noreferrer">Jisho</a>
-      <a class="btn btn-secondary btn-sm" href="https://baike.baidu.com/item/${encodeURIComponent(word)}" target="_blank" rel="noopener noreferrer">Baidu</a>
+      <a class="btn btn-secondary btn-sm" href="https://www.mdbg.net/chinese/dictionary?page=worddict&wdrst=0&wdqb=${encodeURIComponent(word)}" target="_blank" rel="noopener noreferrer">MDBG</a>
     `;
   }
 

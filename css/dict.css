@@ -1161,3 +1161,131 @@
   color: var(--text-primary);
   font-style: italic;
 }
+
+
+/* --- HSK 7-9 Premium Styling --- */
+.badge-hsk-pro {
+  background: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%) !important;
+  color: #fff !important;
+  font-weight: 700 !important;
+  box-shadow: 0 1px 4px rgba(124, 58, 237, 0.3);
+  letter-spacing: 0.3px;
+}
+
+/* --- Live Extended Online Dictionary Section --- */
+.dict-live-section {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.04) 0%, rgba(139, 92, 246, 0.04) 100%);
+  border: 1px solid rgba(37, 99, 235, 0.18);
+  border-radius: var(--radius-lg, 14px);
+  padding: 14px 16px;
+  margin-top: 14px;
+  margin-bottom: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.dict-live-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.dict-live-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 8px;
+}
+
+.dict-live-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 8px 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dict-live-card:hover {
+  border-color: #2563EB;
+  background: rgba(37, 99, 235, 0.04);
+  transform: translateY(-1px);
+}
+
+.dict-live-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.dict-live-zh {
+  font-family: var(--font-hanzi);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.dict-live-py {
+  font-size: 11.5px;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.dict-live-mean {
+  font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* --- External Authoritative Dictionaries Bar --- */
+.dict-ext-section {
+  margin-top: 18px;
+  padding: 12px 14px;
+  background: var(--bg-surface-alt, rgba(0,0,0,0.02));
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+}
+
+.dict-ext-label {
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.dict-ext-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.dict-ext-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.dict-ext-chip:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-subtle);
+  transform: translateY(-1px);
+}

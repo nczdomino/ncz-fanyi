@@ -70,6 +70,34 @@ const REVERSE_DICT_ENTRIES = [
   { zh: "直走", py: "zhí zǒu", vi: "đi thẳng", keys: ["di thang", "go straight", "直進"] },
   { zh: "哪里", py: "nǎ lǐ", vi: "ở đâu, chỗ nào", keys: ["o dau", "cho nao", "where", "どこ"] },
 
+  // --- Kinh tế, Tài chính, Thương mại & Đầu tư (Business, Economics & Finance) ---
+  { zh: "谈判", py: "tán pàn", vi: "đàm phán, thương lượng, thương đàm", keys: ["dam phan", "thuong luong", "negotiate", "negotiation", "交渉", "話し合い"] },
+  { zh: "投资", py: "tóu zī", vi: "đầu tư", keys: ["dau tu", "invest", "investment", "投資"] },
+  { zh: "经济", py: "jīng jì", vi: "kinh tế", keys: ["kinh te", "economy", "economics", "経済", "けいざい"] },
+  { zh: "市场", py: "shì chǎng", vi: "thị trường", keys: ["thi truong", "market", "marketplace", "市場"] },
+  { zh: "利润", py: "lì rùn", vi: "lợi nhuận, tiền lãi", keys: ["loi nhuan", "tien lai", "profit", "gain", "利益", "利潤"] },
+  { zh: "风险", py: "fēng xiǎn", vi: "rủi ro, nguy cơ", keys: ["rui ro", "nguy co", "risk", "hazard", "リスク", "危険"] },
+  { zh: "合作", py: "hé zuò", vi: "hợp tác, phối hợp", keys: ["hop tac", "cooperation", "collaborate", "partnership", "協力", "提携"] },
+  { zh: "竞争", py: "jìng zhēng", vi: "cạnh tranh, thi đua", keys: ["canh tranh", "competition", "compete", "競争"] },
+  { zh: "破产", py: "pò chǎn", vi: "phá sản", keys: ["pha san", "bankrupt", "bankruptcy", "倒産", "破産"] },
+  { zh: "股票", py: "gǔ piào", vi: "cổ phiếu, chứng khoán", keys: ["co phieu", "chung khoan", "stock", "shares", "株", "株式"] },
+  { zh: "汇率", py: "huì lǜ", vi: "tỷ giá hối đoái", keys: ["ty gia", "exchange rate", "為替レート"] },
+  { zh: "关税", py: "guān shuì", vi: "thuế quan", keys: ["thue quan", "tariff", "customs duty", "関税"] },
+
+  // --- Công nghệ, AI & Kỹ thuật số (Technology & AI) ---
+  { zh: "人工智能", py: "rén gōng zhì néng", vi: "trí tuệ nhân tạo, AI", keys: ["tri tue nhan tao", "ai", "artificial intelligence", "人工知能"] },
+  { zh: "电脑", py: "diàn nǎo", vi: "máy tính, vi tính", keys: ["may tinh", "computer", "pc", "パソコン", "コンピューター"] },
+  { zh: "手机", py: "shǒu jī", vi: "điện thoại di động", keys: ["dien thoai", "smartphone", "mobile phone", "携帯", "スマホ"] },
+  { zh: "软件", py: "ruǎn jiàn", vi: "phần mềm", keys: ["phan mem", "software", "app", "application", "ソフトウェア", "アプリ"] },
+  { zh: "硬件", py: "yìng jiàn", vi: "phần cứng", keys: ["phan cung", "hardware", "ハードウェア"] },
+  { zh: "数据", py: "shù jù", vi: "dữ liệu", keys: ["du lieu", "data", "database", "データ"] },
+  { zh: "算法", py: "suàn fǎ", vi: "thuật toán", keys: ["thuat toan", "algorithm", "アルゴリズム"] },
+  { zh: "互联网", py: "hù lián wǎng", vi: "mạng internet", keys: ["internet", "mang internet", "インターネット"] },
+  { zh: "社交网络", py: "shè jiāo wǎng luò", vi: "mạng xã hội, MXH", keys: ["mang xa hoi", "mxh", "social network", "sns", "ソーシャルネット"] },
+  { zh: "云计算", py: "yún jì suàn", vi: "điện toán đám mây", keys: ["dam may", "cloud computing", "クラウド"] },
+  { zh: "自动", py: "zì dòng", vi: "tự động", keys: ["tu dong", "automatic", "auto", "自動"] },
+  { zh: "密码", py: "mì mǎ", vi: "mật khẩu, password", keys: ["mat khau", "password", "pin", "パスワード"] },
+
   // --- Công sở, Học tập (Work & Study) ---
   { zh: "工作", py: "gōng zuò", vi: "công việc, làm việc", keys: ["cong viec", "lam viec", "work", "job", "working", "仕事", "働く"] },
   { zh: "上班", py: "shàng bān", vi: "đi làm, vào ca", keys: ["di lam", "vao ca", "go to work", "出勤"] },
@@ -90,6 +118,20 @@ const REVERSE_DICT_ENTRIES = [
   { zh: "考试", py: "kǎo shì", vi: "thi cử, kỳ thi", keys: ["thi", "thi cu", "ky thi", "exam", "test", "examination", "試験", "テスト"] },
   { zh: "作业", py: "zuò yè", vi: "bài tập về nhà", keys: ["bai tap", "homework", "assignment", "宿題"] },
   { zh: "毕业", py: "bì yè", vi: "tốt nghiệp", keys: ["tot nghiep", "graduate", "graduation", "卒業"] },
+
+  // --- Xã hội, Môi trường & Triết lý sống (Society, Nature & Life) ---
+  { zh: "环境", py: "huán jìng", vi: "môi trường, hoàn cảnh", keys: ["moi truong", "environment", "circumstance", "環境", "かんきょう"] },
+  { zh: "坚持", py: "jiān chí", vi: "kiên trì, bền bỉ đến cùng", keys: ["kien tri", "persevere", "persist", "あきらめない", "堅持する"] },
+  { zh: "意外", py: "yì wài", vi: "bất ngờ, ngoài ý muốn, sự cố", keys: ["bat ngo", "ngac nhien", "unexpected", "accident", "意外", "おもいがけない"] },
+  { zh: "发展", py: "fā zhǎn", vi: "phát triển", keys: ["phat trien", "develop", "development", "発展"] },
+  { zh: "成功", py: "chéng gōng", vi: "thành công", keys: ["thanh cong", "success", "succeed", "成功"] },
+  { zh: "失败", py: "shī bài", vi: "thất bại", keys: ["that bai", "fail", "failure", "失敗"] },
+  { zh: "希望", py: "xī wàng", vi: "hy vọng, mong ước", keys: ["hy vong", "hope", "wish", "希望"] },
+  { zh: "未来", py: "wèi lái", vi: "tương lai", keys: ["tuong lai", "future", "未来"] },
+  { zh: "过去", py: "guò qù", vi: "quá khứ, ngày xưa", keys: ["qua khu", "past", "過去"] },
+  { zh: "现在", py: "xiàn zài", vi: "hiện tại, bây giờ", keys: ["bay gio", "hien tai", "now", "present", "現在", "今"] },
+  { zh: "责任", py: "zé rèn", vi: "trách nhiệm", keys: ["trach nhiem", "responsibility", "duty", "責任"] },
+  { zh: "自由", py: "zì yóu", vi: "tự do", keys: ["tu do", "freedom", "liberty", "自由"] },
 
   // --- Gia đình, Mối quan hệ (Family & Relationships) ---
   { zh: "爸爸", py: "bà ba", vi: "bố, ba, cha", keys: ["bo", "ba", "cha", "father", "dad", "お父さん", "父"] },
@@ -145,7 +187,6 @@ const REVERSE_DICT_ENTRIES = [
   { zh: "今天", py: "jīn tiān", vi: "hôm nay", keys: ["hom nay", "today", "今日", "きょう"] },
   { zh: "明天", py: "míng tiān", vi: "ngày mai", keys: ["ngay mai", "tomorrow", "明日", "あした"] },
   { zh: "昨天", py: "zuó tiān", vi: "hôm qua", keys: ["hom qua", "yesterday", "昨日", "きのう"] },
-  { zh: "现在", py: "xiàn zài", vi: "bây giờ, hiện tại", keys: ["bay gio", "hien tai", "now", "at present", "今", "いま"] },
   { zh: "几点", py: "jǐ diǎn", vi: "mấy giờ", keys: ["may gio", "what time", "何時"] },
   { zh: "早上", py: "zǎo shang", vi: "buổi sáng", keys: ["sang", "buoi sang", "morning", "朝"] },
   { zh: "中午", py: "zhōng wǔ", vi: "buổi trưa", keys: ["trua", "buoi trua", "noon", "midday", "昼"] },
@@ -171,7 +212,7 @@ function buildReverseDictIndex() {
 buildReverseDictIndex();
 
 // Look up reverse entries matching a query
-function findReverseMatches(query, limit = 20) {
+function findReverseMatches(query, limit = 25) {
   if (!query) return [];
   buildReverseDictIndex();
   const qClean = query.trim().toLowerCase();
