@@ -903,7 +903,51 @@
   color: var(--text-muted);
 }
 
-/* --- Semantic Mindmap Card --- */
+/* --- Semantic Mindmap Accordion (Non-Intrusive, Scientific Layout) --- */
+.dict-mindmap-accordion {
+  background: linear-gradient(135deg, rgba(232, 52, 78, 0.03) 0%, rgba(139, 92, 246, 0.04) 100%);
+  border: 1px solid rgba(232, 52, 78, 0.2);
+  border-radius: var(--radius-lg, 12px);
+  margin-top: 14px;
+  margin-bottom: 14px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.dict-mindmap-toggle-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-primary);
+  font-family: inherit;
+  transition: background 0.15s ease;
+}
+
+.dict-mindmap-toggle-btn:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.dict-mindmap-content {
+  padding: 0 14px 14px;
+}
+
+.dict-no-match-wrapper {
+  margin-top: 10px;
+}
+
+.dict-no-match-header {
+  text-align: center;
+  padding: 24px 16px 18px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg, 14px);
+}
+
 .dict-mindmap-card {
   background: linear-gradient(135deg, rgba(232, 52, 78, 0.03) 0%, rgba(139, 92, 246, 0.04) 100%);
   border: 1px solid rgba(232, 52, 78, 0.18);

@@ -576,27 +576,47 @@ function renderDictView() {
         ? `No words found matching "${escapeHtml(query)}"`
         : `Không tìm thấy từ nào khớp với "${escapeHtml(query)}"`);
 
-    let noMatchHtml = mindmapHtml;
-    noMatchHtml += `
-      <div id="dict-live-results-container"></div>
-      <div class="card" style="text-align:center; padding:28px 18px; border-radius:var(--radius-lg); margin-top:10px;">
-        <div style="font-size:36px; margin-bottom:8px;">🔍</div>
-        <div style="font-size:16px; font-weight:600; color:var(--text-secondary);">${t('noResults')}</div>
-        <div style="font-size:13.5px; color:var(--text-muted); margin-top:4px;">${noMatchSub}</div>
+    const lineDictUrl = state.uiLang === 'ja'
+      ? `https://dict.naver.com/linedict/zhendict/#/cnja/search?query=${encodeURIComponent(query)}`
+      : `https://dict.naver.com/linedict/zhendict/#/cnen/search?query=${encodeURIComponent(query)}`;
 
-        <!-- AI Semantic Search Trigger -->
-        <div style="margin-top:20px; padding:14px; background:linear-gradient(135deg, rgba(139,92,246,0.06), rgba(232,52,78,0.05)); border:1px solid rgba(139,92,246,0.2); border-radius:12px;">
-          <div style="font-size:13.5px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">
-            ${t('dictSemanticTitle') || '✨ Tra cứu theo ngữ cảnh thông minh AI'}
+    let noMatchHtml = `
+      <div class="dict-no-match-wrapper">
+        <div class="dict-no-match-header">
+          <div style="font-size:36px; margin-bottom:8px;">🔍</div>
+          <div style="font-size:16px; font-weight:700; color:var(--text-primary);">${t('noResults')}</div>
+          <div style="font-size:13px; color:var(--text-muted); margin-top:4px;">${noMatchSub}</div>
+        </div>
+
+        <!-- 1. Live Multi-Dictionary API Auto Gợi ý -->
+        <div id="dict-live-results-container"></div>
+
+        <!-- 2. Bản đồ sắc thái (nếu có) -->
+        ${mindmapHtml}
+
+        <!-- 3. Tra cứu ngữ cảnh AI -->
+        <div class="dict-semantic-action-bar" style="margin-top:14px;">
+          <div>
+            <div class="dict-semantic-action-text">✨ ${t('dictSemanticTitle') || 'Tra cứu theo ngữ cảnh thông minh (AI)'}</div>
+            <div class="dict-semantic-action-sub">${t('dictSemanticDesc') || 'AI tìm từ tiếng Trung phù hợp nhất dựa trên mô tả'}</div>
           </div>
-          <div style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">
-            ${t('dictSemanticDesc') || 'Tìm từ tiếng Trung phù hợp nhất dựa trên mô tả hoặc câu nói tự nhiên'}
-          </div>
-          <button id="dict-semantic-trigger-btn" class="dict-semantic-btn" style="margin:0 auto;" onclick="executeSemanticSearch('${escapeQuotes(query)}')">
+          <button id="dict-semantic-trigger-btn" class="dict-semantic-btn" onclick="executeSemanticSearch('${escapeQuotes(query)}')">
             ${t('dictSemanticBtn') || '✨ Tra ngữ cảnh AI'}: "${escapeHtml(query)}"
           </button>
         </div>
-        <div id="dict-semantic-results-area" style="margin-top:14px;"></div>
+        <div id="dict-semantic-results-area"></div>
+
+        <!-- 4. Tra cứu nhanh trên các đại từ điển chuyên sâu -->
+        <div class="dict-ext-section" style="margin-top:14px;">
+          <div class="dict-ext-label">${t('externalDicts') || 'Tra trên từ điển chuyên sâu'}</div>
+          <div class="dict-ext-chips">
+            <a class="dict-ext-chip" href="${lineDictUrl}" target="_blank" rel="noopener noreferrer">📖 Line Dict</a>
+            <a class="dict-ext-chip" href="plecoapi://x-callback-url/s?q=${encodeURIComponent(query)}">📱 Pleco</a>
+            <a class="dict-ext-chip" href="https://baike.baidu.com/item/${encodeURIComponent(query)}" target="_blank" rel="noopener noreferrer">📚 百度百科</a>
+            <a class="dict-ext-chip" href="https://hanzii.net/search/word/${encodeURIComponent(query)}" target="_blank" rel="noopener noreferrer">Hanzii</a>
+            <a class="dict-ext-chip" href="https://www.mdbg.net/chinese/dictionary?page=worddict&wdrst=0&wdqb=${encodeURIComponent(query)}" target="_blank" rel="noopener noreferrer">MDBG</a>
+          </div>
+        </div>
       </div>
     `;
     container.innerHTML = noMatchHtml;
@@ -606,7 +626,7 @@ function renderDictView() {
     return;
   }
 
-  let html = mindmapHtml;
+  let html = '';
   if (state.selectedRadical && !query) {
     const radItem = (typeof RADICALS_DATA !== 'undefined') ? RADICALS_DATA.find(r => r.r === state.selectedRadical) : null;
     const radName = radItem ? radItem.name : state.selectedRadical;
@@ -622,7 +642,6 @@ function renderDictView() {
     `;
   }
   if (query) {
-    const exactMatch = matches.some(m => m.word === query);
     let countText = `Tìm thấy <b>${matches.length}</b> kết quả cho "<b>${escapeHtml(query)}</b>"`;
     if (state.uiLang === 'ja') {
       countText = `「<b>${escapeHtml(query)}</b>」の検索結果: <b>${matches.length}</b>件`;
@@ -641,27 +660,6 @@ function renderDictView() {
         </button>
       </div>
     `;
-
-    if (!exactMatch) {
-      html += `
-        <div class="dict-online-card" onclick="searchOnline('${escapeQuotes(query)}')">
-          <div style="display:flex; align-items:center; gap:10px; min-width:0;">
-            <div style="font-size:24px; line-height:1; flex-shrink:0;">🌐</div>
-            <div style="min-width:0;">
-              <div style="font-size:13.5px; font-weight:700; color:var(--accent);">
-                ${t('notWhatYouLookedFor')} <span style="text-decoration:underline;">${t('searchOnlineHere')}</span>
-              </div>
-              <div style="font-size:12px; color:var(--text-muted); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                ${t('onlineLookupDesc')} ("${escapeHtml(query)}")
-              </div>
-            </div>
-          </div>
-          <button class="btn btn-primary btn-sm" style="flex-shrink:0; font-size:12px; padding:6px 13px; border-radius:16px;">
-            ${t('btnSearchOnline')}
-          </button>
-        </div>
-      `;
-    }
   }
 
   html += '<div class="dict-results-list">';
@@ -725,21 +723,43 @@ function renderDictView() {
   });
   html += '</div>';
 
-  // Live Multi-Dictionary Online Extension Container
+  // 1. Live Multi-Dictionary Online Extension Container (Khám phá thêm từ vựng liên quan)
   html += '<div id="dict-live-results-container"></div>';
 
+  // 2. Bản đồ sắc thái HSK & Slang (gọn gàng, không che khuất từ chính)
+  if (mindmapHtml) {
+    html += mindmapHtml;
+  }
+
+  // 3. Tra cứu theo ngữ cảnh thông minh AI & Đại từ điển chuyên sâu
   if (query) {
+    const lineDictUrl = state.uiLang === 'ja'
+      ? `https://dict.naver.com/linedict/zhendict/#/cnja/search?query=${encodeURIComponent(query)}`
+      : `https://dict.naver.com/linedict/zhendict/#/cnen/search?query=${encodeURIComponent(query)}`;
+
     html += `
-      <div class="dict-semantic-action-bar" style="margin-top:16px;">
+      <div class="dict-semantic-action-bar" style="margin-top:14px;">
         <div>
-          <div class="dict-semantic-action-text">✨ ${t('dictSemanticTitle') || 'Tìm từ theo ngữ cảnh & cảm xúc'}</div>
-          <div class="dict-semantic-action-sub">${t('dictSemanticDesc') || 'AI đề xuất thêm từ vựng, thành ngữ phù hợp ý định của bạn'}</div>
+          <div class="dict-semantic-action-text">✨ ${t('dictSemanticTitle') || 'Tra cứu theo ngữ cảnh thông minh (AI)'}</div>
+          <div class="dict-semantic-action-sub">${t('dictSemanticDesc') || 'Phân tích ngữ cảnh và tình huống hội thoại'}</div>
         </div>
         <button id="dict-semantic-trigger-btn" class="dict-semantic-btn" onclick="executeSemanticSearch('${escapeQuotes(query)}')">
           ${t('dictSemanticBtn') || '✨ Tra ngữ cảnh AI'}
         </button>
       </div>
       <div id="dict-semantic-results-area"></div>
+
+      <!-- Đại từ điển chuyên sâu -->
+      <div class="dict-ext-section" style="margin-top:14px;">
+        <div class="dict-ext-label">${t('externalDicts') || 'Tra trên từ điển chuyên sâu'}</div>
+        <div class="dict-ext-chips">
+          <a class="dict-ext-chip" href="${lineDictUrl}" target="_blank" rel="noopener noreferrer">📖 Line Dict</a>
+          <a class="dict-ext-chip" href="plecoapi://x-callback-url/s?q=${encodeURIComponent(query)}">📱 Pleco</a>
+          <a class="dict-ext-chip" href="https://baike.baidu.com/item/${encodeURIComponent(query)}" target="_blank" rel="noopener noreferrer">📚 百度百科</a>
+          <a class="dict-ext-chip" href="https://hanzii.net/search/word/${encodeURIComponent(query)}" target="_blank" rel="noopener noreferrer">Hanzii</a>
+          <a class="dict-ext-chip" href="https://www.mdbg.net/chinese/dictionary?page=worddict&wdrst=0&wdqb=${encodeURIComponent(query)}" target="_blank" rel="noopener noreferrer">MDBG</a>
+        </div>
+      </div>
     `;
   }
 
@@ -783,17 +803,39 @@ function renderMindmapCard(synset) {
   }
 
   return `
-    <div class="dict-mindmap-card">
-      <div class="dict-mindmap-header">
-        <div class="dict-mindmap-title">
-          <span>${escapeHtml(synset.icon || '🌳')}</span>
-          <span>${t('dictMindmapTitle') || 'Bản đồ sắc thái'}: <b>${escapeHtml(title)}</b></span>
+    <div class="dict-mindmap-accordion">
+      <button class="dict-mindmap-toggle-btn" onclick="toggleMindmapDetails(this)">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:16px;">${escapeHtml(synset.icon || '🌳')}</span>
+          <span style="font-weight:700; font-size:13px;">${t('dictMindmapTitle') || 'Bản đồ sắc thái HSK & Slang'}: <b style="color:var(--accent);">${escapeHtml(title)}</b></span>
         </div>
-        <span class="dict-mindmap-tag">${escapeHtml(exploreLabel)}</span>
+        <div style="display:flex; align-items:center; gap:6px;">
+          <span class="dict-mindmap-tag">${escapeHtml(exploreLabel)}</span>
+          <span class="chevron" style="transition:transform 0.2s; font-size:11px;">▼</span>
+        </div>
+      </button>
+      <div class="dict-mindmap-content" style="display:none; padding-top:10px;">
+        <div class="dict-mindmap-grid">${tiersHtml}</div>
       </div>
-      <div class="dict-mindmap-grid">${tiersHtml}</div>
     </div>
   `;
+}
+
+function toggleMindmapDetails(btn) {
+  if (!btn) return;
+  const content = btn.nextElementSibling;
+  const chevron = btn.querySelector('.chevron');
+  if (!content) return;
+  const isHidden = content.style.display === 'none' || !content.style.display;
+  if (isHidden) {
+    content.style.display = 'block';
+    if (chevron) chevron.style.transform = 'rotate(180deg)';
+    btn.classList.add('expanded');
+  } else {
+    content.style.display = 'none';
+    if (chevron) chevron.style.transform = 'rotate(0deg)';
+    btn.classList.remove('expanded');
+  }
 }
 
 // --- AI Semantic Context Search Handler ---
