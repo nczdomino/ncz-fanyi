@@ -283,6 +283,7 @@ function renderDictView() {
   }
 
   // Search query vs browsing
+  const badgeBar = document.getElementById('dict-search-badge-bar');
   if (query) {
     if (quickTags) quickTags.style.display = 'none';
     if (hskAccordion) hskAccordion.style.display = 'none';
@@ -290,7 +291,19 @@ function renderDictView() {
     if (radAcc) radAcc.style.display = 'none';
     const recBox = document.getElementById('dict-recent-box');
     if (recBox) recBox.style.display = 'none';
+
+    // Update dynamic language badge
+    if (badgeBar && typeof detectSearchLanguage === 'function' && typeof getLanguageBadgeInfo === 'function') {
+      const detectedLang = detectSearchLanguage(query);
+      const bInfo = getLanguageBadgeInfo(detectedLang, query, state.uiLang || 'vi');
+      badgeBar.style.display = 'flex';
+      badgeBar.innerHTML = `
+        <span class="dict-search-badge ${bInfo.class}">${escapeHtml(bInfo.badge)}</span>
+        <span class="dict-search-badge-desc">${escapeHtml(bInfo.desc)}</span>
+      `;
+    }
   } else {
+    if (badgeBar) badgeBar.style.display = 'none';
     // No search query
     if (quickTags) quickTags.style.display = 'flex';
     if (hskAccordion) hskAccordion.style.display = 'block';
@@ -306,9 +319,41 @@ function renderDictView() {
     }
   }
 
+  // Pre-normalize query for multi-lingual and reverse matching
+  const queryNoTone = typeof stripVietnameseTones === 'function' ? stripVietnameseTones(query).toLowerCase() : query;
+  const queryNormVi = typeof normalizeVietnameseQuery === 'function' ? normalizeVietnameseQuery(query) : query;
+  const queryNormViNoTone = typeof stripVietnameseTones === 'function' ? stripVietnameseTones(queryNormVi) : queryNormVi;
+  const jaNorm = typeof normalizeJapaneseQuery === 'function' ? normalizeJapaneseQuery(query) : { raw: query, hiragana: query, kanjiEquivalent: '' };
+  const stemmedEn = typeof stemEnglishWord === 'function' ? stemEnglishWord(query) : query;
+
   // Query or Browse mode: Find matches
   let matches = [];
   const seenWords = new Set();
+
+  // 1. High-Priority: Check Reverse Dictionary Dataset first (0 token, ultra fast reverse lookup)
+  if (query && typeof findReverseMatches === 'function' && filterHSK === 'all') {
+    const revList = findReverseMatches(query, 20);
+    for (const r of revList) {
+      if (seenWords.has(r.zh)) continue;
+      seenWords.add(r.zh);
+      const inMini = MINI_DICT[r.zh];
+      if (inMini) {
+        matches.push({ word: r.zh, ...inMini, isReverseMatch: true, matchPriority: 1 });
+      } else {
+        matches.push({
+          word: r.zh,
+          pinyin: r.py || '',
+          vi: r.vi || '',
+          en: [],
+          ja: '',
+          hanviet: getWordHanViet(r.zh),
+          type: 'reverse',
+          isReverseMatch: true,
+          matchPriority: 1
+        });
+      }
+    }
+  }
 
   if (state.selectedRadical && !query) {
     const radItem = (typeof RADICALS_DATA !== 'undefined') ? RADICALS_DATA.find(r => r.r === state.selectedRadical) : null;
@@ -344,8 +389,23 @@ function renderDictView() {
       const matchesHanzi = it.w.toLowerCase().includes(query) || (it.alias && it.alias.some(a => a.toLowerCase().includes(query)));
       const cleanPinyin = removeToneMarks((it.py || '').toLowerCase()).replace(/\s+/g, '');
       const matchesPinyin = (it.py || '').toLowerCase().includes(query) || cleanPinyin.includes(cleanQuery);
-      const matchesVi = it.vi && it.vi.toLowerCase().includes(query);
-      const matchesEn = it.en && (Array.isArray(it.en) ? it.en.some(e => e.toLowerCase().includes(query)) : it.en.toLowerCase().includes(query));
+      
+      let matchesVi = false;
+      if (it.vi) {
+        const viLow = it.vi.toLowerCase();
+        const viNoT = typeof stripVietnameseTones === 'function' ? stripVietnameseTones(viLow) : viLow;
+        matchesVi = viLow.includes(query) || viNoT.includes(queryNoTone) || viNoT.includes(queryNormViNoTone);
+      }
+      
+      let matchesEn = false;
+      if (it.en) {
+        const enArr = Array.isArray(it.en) ? it.en : [it.en];
+        matchesEn = enArr.some(e => {
+          const el = e.toLowerCase();
+          return el.includes(query) || (typeof stemEnglishWord === 'function' && stemEnglishWord(el).includes(stemmedEn));
+        });
+      }
+
       if (matchesHanzi || matchesPinyin || matchesVi || matchesEn) {
         matches.push(sItem);
       }
@@ -363,20 +423,58 @@ function renderDictView() {
         if (matches.length >= 80) break;
         continue;
       }
+      if (seenWords.has(w)) continue;
 
       const matchesHanzi = w.includes(query);
       const cleanPinyin = removeToneMarks(entry.pinyin.toLowerCase()).replace(/\s+/g, '');
       const matchesPinyin = entry.pinyin.toLowerCase().includes(query) || cleanPinyin.includes(cleanQuery);
-      const matchesVi = entry.vi && entry.vi.toLowerCase().includes(query);
-      const matchesEn = entry.en && entry.en.some(e => e.toLowerCase().includes(query));
-      const matchesHanViet = entry.hanviet && entry.hanviet.toLowerCase().includes(query);
+      
+      // 1. Vietnamese Accent-Agnostic & Fuzzy matching
+      let matchesVi = false;
+      if (entry.vi) {
+        const viLower = entry.vi.toLowerCase();
+        const viNoTone = typeof stripVietnameseTones === 'function' ? stripVietnameseTones(viLower) : viLower;
+        matchesVi = viLower.includes(query) ||
+                    viNoTone.includes(queryNoTone) ||
+                    viNoTone.includes(queryNormViNoTone);
 
+        // Fuzzy typo tolerance for queries with length >= 4
+        if (!matchesVi && queryNoTone.length >= 4 && queryNoTone.length <= 12 && typeof levenshteinDistance === 'function') {
+          const viWords = viNoTone.split(/[\s,;]+/);
+          matchesVi = viWords.some(vw => levenshteinDistance(queryNoTone, vw) <= (queryNoTone.length >= 7 ? 2 : 1));
+        }
+      }
+
+      // 2. English Stemmed & Lemmatized matching
+      let matchesEn = false;
+      if (entry.en && Array.isArray(entry.en)) {
+        matchesEn = entry.en.some(e => {
+          const eLower = e.toLowerCase();
+          if (eLower.includes(query)) return true;
+          const eStem = typeof stemEnglishWord === 'function' ? stemEnglishWord(eLower) : eLower;
+          return eStem === stemmedEn || eStem.includes(stemmedEn) || (stemmedEn.length > 3 && stemmedEn.includes(eStem));
+        });
+      }
+
+      // 3. Han-Viet matching
+      const matchesHanViet = entry.hanviet && (
+        entry.hanviet.toLowerCase().includes(query) ||
+        (typeof stripVietnameseTones === 'function' && stripVietnameseTones(entry.hanviet.toLowerCase()).includes(queryNoTone))
+      );
+
+      // 4. Japanese Kana, Kanji & Romaji matching
       const kanjiEntry = KANJI_DATA[w];
-      const matchesJa = kanjiEntry && (
+      const matchesJa = (entry.ja && (
+        entry.ja.includes(query) ||
+        (jaNorm.hiragana && entry.ja.includes(jaNorm.hiragana)) ||
+        (jaNorm.kanjiEquivalent && entry.ja.includes(jaNorm.kanjiEquivalent))
+      )) || (kanjiEntry && (
         (kanjiEntry.on && kanjiEntry.on.toLowerCase().includes(query)) ||
         (kanjiEntry.kun && kanjiEntry.kun.toLowerCase().includes(query)) ||
-        (kanjiEntry.ja_meaning && kanjiEntry.ja_meaning.toLowerCase().includes(query))
-      );
+        (kanjiEntry.ja_meaning && kanjiEntry.ja_meaning.toLowerCase().includes(query)) ||
+        (jaNorm.hiragana && kanjiEntry.kun && kanjiEntry.kun.includes(jaNorm.hiragana)) ||
+        (jaNorm.kanjiEquivalent && kanjiEntry.ja_meaning && kanjiEntry.ja_meaning.includes(jaNorm.kanjiEquivalent))
+      )) || (jaNorm.kanjiEquivalent && w === jaNorm.kanjiEquivalent);
 
       if (matchesHanzi || matchesPinyin || matchesVi || matchesEn || matchesHanViet || matchesJa) {
         matches.push({ word: w, ...entry });
@@ -385,15 +483,30 @@ function renderDictView() {
       }
     }
 
-    if (query && filterHSK === 'all') {
+    if (query && filterHSK === 'all' && matches.length < 100) {
       const allSlang = (ENRICH.remote || []).concat(SLANG_BUILTIN || []);
       for (const it of allSlang) {
         if (!it || !it.w || seenWords.has(it.w)) continue;
         const matchesHanzi = it.w.toLowerCase().includes(query) || (it.alias && it.alias.some(a => a.toLowerCase().includes(query)));
         const cleanPinyin = removeToneMarks((it.py || '').toLowerCase()).replace(/\s+/g, '');
         const matchesPinyin = (it.py || '').toLowerCase().includes(query) || cleanPinyin.includes(cleanQuery);
-        const matchesVi = it.vi && it.vi.toLowerCase().includes(query);
-        const matchesEn = it.en && (Array.isArray(it.en) ? it.en.some(e => e.toLowerCase().includes(query)) : it.en.toLowerCase().includes(query));
+        
+        let matchesVi = false;
+        if (it.vi) {
+          const viLow = it.vi.toLowerCase();
+          const viNoT = typeof stripVietnameseTones === 'function' ? stripVietnameseTones(viLow) : viLow;
+          matchesVi = viLow.includes(query) || viNoT.includes(queryNoTone) || viNoT.includes(queryNormViNoTone);
+        }
+
+        let matchesEn = false;
+        if (it.en) {
+          const enArr = Array.isArray(it.en) ? it.en : [it.en];
+          matchesEn = enArr.some(e => {
+            const el = e.toLowerCase();
+            return el.includes(query) || (typeof stemEnglishWord === 'function' && stemEnglishWord(el).includes(stemmedEn));
+          });
+        }
+
         if (matchesHanzi || matchesPinyin || matchesVi || matchesEn) {
           seenWords.add(it.w);
           matches.push({
@@ -412,11 +525,22 @@ function renderDictView() {
     }
   }
 
-  // Sort: exact matches first
+  // Smart Ranking: Exact Hanzi match > Reverse Dict matches > Exact Meaning match > StartsWith > HSK Level
   matches.sort((a, b) => {
     if (a.word === query) return -1;
     if (b.word === query) return 1;
-    return 0;
+    if (a.isReverseMatch && !b.isReverseMatch) return -1;
+    if (!a.isReverseMatch && b.isReverseMatch) return 1;
+    
+    // Exact meaning matches
+    const aViNoTone = a.vi ? (typeof stripVietnameseTones === 'function' ? stripVietnameseTones(a.vi.toLowerCase()) : a.vi.toLowerCase()) : '';
+    const bViNoTone = b.vi ? (typeof stripVietnameseTones === 'function' ? stripVietnameseTones(b.vi.toLowerCase()) : b.vi.toLowerCase()) : '';
+    const aExact = aViNoTone === queryNoTone;
+    const bExact = bViNoTone === queryNoTone;
+    if (aExact && !bExact) return -1;
+    if (!aExact && bExact) return 1;
+
+    return (a.hsk || 99) - (b.hsk || 99);
   });
 
   // Update HSK count label if browsing
@@ -426,26 +550,49 @@ function renderDictView() {
     countEl.textContent = `${t('hskLevel')}: ${levelLabel} (${matches.length} ${t('words') || 'từ'})`;
   }
 
+  // Check Semantic Word Mindmap
+  let mindmapHtml = '';
+  if (query && typeof findMatchingSynset === 'function') {
+    const synset = findMatchingSynset(query);
+    if (synset) {
+      mindmapHtml = renderMindmapCard(synset);
+    }
+  }
+
   if (matches.length === 0) {
     const noMatchSub = state.uiLang === 'ja'
       ? `「${escapeHtml(query)}」に一致する単語が見つかりませんでした`
       : (state.uiLang === 'en'
         ? `No words found matching "${escapeHtml(query)}"`
         : `Không tìm thấy từ nào khớp với "${escapeHtml(query)}"`);
-    container.innerHTML = `
-      <div class="card" style="text-align:center; padding:32px 20px; border-radius:var(--radius-lg); margin-top:10px;">
+
+    let noMatchHtml = mindmapHtml;
+    noMatchHtml += `
+      <div class="card" style="text-align:center; padding:28px 18px; border-radius:var(--radius-lg); margin-top:10px;">
         <div style="font-size:36px; margin-bottom:8px;">🔍</div>
         <div style="font-size:16px; font-weight:600; color:var(--text-secondary);">${t('noResults')}</div>
         <div style="font-size:13.5px; color:var(--text-muted); margin-top:4px;">${noMatchSub}</div>
-        <button class="btn btn-primary" style="margin-top:16px; border-radius:20px; padding:8px 20px;" onclick="searchOnline('${escapeQuotes(query)}')">
-          🌐 ${t('searchOnlineHere')}: "${escapeHtml(query)}"
-        </button>
+
+        <!-- AI Semantic Search Trigger -->
+        <div style="margin-top:20px; padding:14px; background:linear-gradient(135deg, rgba(139,92,246,0.06), rgba(232,52,78,0.05)); border:1px solid rgba(139,92,246,0.2); border-radius:12px;">
+          <div style="font-size:13.5px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">
+            ${t('dictSemanticTitle') || '✨ Tra cứu theo ngữ cảnh thông minh AI'}
+          </div>
+          <div style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">
+            ${t('dictSemanticDesc') || 'Tìm từ tiếng Trung phù hợp nhất dựa trên mô tả hoặc câu nói tự nhiên'}
+          </div>
+          <button id="dict-semantic-trigger-btn" class="dict-semantic-btn" style="margin:0 auto;" onclick="executeSemanticSearch('${escapeQuotes(query)}')">
+            ${t('dictSemanticBtn') || '✨ Tra ngữ cảnh AI'}: "${escapeHtml(query)}"
+          </button>
+        </div>
+        <div id="dict-semantic-results-area" style="margin-top:14px;"></div>
       </div>
     `;
+    container.innerHTML = noMatchHtml;
     return;
   }
 
-  let html = '';
+  let html = mindmapHtml;
   if (state.selectedRadical && !query) {
     const radItem = (typeof RADICALS_DATA !== 'undefined') ? RADICALS_DATA.find(r => r.r === state.selectedRadical) : null;
     const radName = radItem ? radItem.name : state.selectedRadical;
@@ -519,7 +666,6 @@ function renderDictView() {
         else if (state.cachedTranslations['ja:' + item.word]) meaning = state.cachedTranslations['ja:' + item.word];
         else {
           meaning = '';
-          // Tải bản dịch tiếng Nhật bất đồng bộ và cập nhật vào card
           translateTextOnline(item.word, 'ja').then(trans => {
             if (trans && state.meaningLang === 'ja') {
               const el = document.getElementById('dict-meaning-' + item.word);
@@ -567,15 +713,154 @@ function renderDictView() {
 
   if (query) {
     html += `
-      <div style="text-align:center; padding:18px 8px 12px;">
-        <button class="btn btn-secondary btn-sm" style="border-radius:20px; font-size:12.5px; padding:7px 18px; border-color:rgba(232, 52, 78, 0.3); color:var(--accent);" onclick="searchOnline('${escapeQuotes(query)}')">
-          🌐 ${t('searchOnlineHere')}: "<b>${escapeHtml(query)}</b>" →
+      <div class="dict-semantic-action-bar" style="margin-top:16px;">
+        <div>
+          <div class="dict-semantic-action-text">✨ ${t('dictSemanticTitle') || 'Tìm từ theo ngữ cảnh & cảm xúc'}</div>
+          <div class="dict-semantic-action-sub">${t('dictSemanticDesc') || 'AI đề xuất thêm từ vựng, thành ngữ phù hợp ý định của bạn'}</div>
+        </div>
+        <button id="dict-semantic-trigger-btn" class="dict-semantic-btn" onclick="executeSemanticSearch('${escapeQuotes(query)}')">
+          ${t('dictSemanticBtn') || '✨ Tra ngữ cảnh AI'}
         </button>
       </div>
+      <div id="dict-semantic-results-area"></div>
     `;
   }
 
   container.innerHTML = html;
+}
+
+// --- Semantic Mindmap Renderer ---
+function renderMindmapCard(synset) {
+  if (!synset) return '';
+  const lang = state.uiLang || 'vi';
+  const title = (synset.title && synset.title[lang]) || synset.title.vi || '';
+  const exploreLabel = t('dictMindmapExplore') || tx('Khám phá cấp độ', 'Explore Nuance Levels', 'ニュアンスレベルを探索');
+
+  let tiersHtml = '';
+  for (const tier of synset.tiers) {
+    const tierLabel = (tier.label && tier.label[lang]) || tier.label.vi || '';
+    let chipsHtml = '';
+    for (const w of tier.words) {
+      const def = (lang === 'en' ? w.en : (lang === 'ja' ? (w.ja || w.vi) : w.vi)) || '';
+      chipsHtml += `
+        <div class="dict-mindmap-chip" onclick="openWordSheet('${escapeQuotes(w.zh)}')">
+          <span class="dict-mindmap-zh">${escapeHtml(w.zh)}</span>
+          <span class="dict-mindmap-py">${escapeHtml(w.py)}</span>
+          ${def ? `<span class="dict-mindmap-vi">${escapeHtml(def)}</span>` : ''}
+        </div>
+      `;
+    }
+    tiersHtml += `
+      <div class="dict-mindmap-tier">
+        <div class="dict-mindmap-tier-head">
+          <span class="dict-mindmap-tier-name">${escapeHtml(tier.level)}</span>
+          <span class="dict-mindmap-tier-label">${escapeHtml(tierLabel)}</span>
+        </div>
+        <div class="dict-mindmap-words">${chipsHtml}</div>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="dict-mindmap-card">
+      <div class="dict-mindmap-header">
+        <div class="dict-mindmap-title">
+          <span>${escapeHtml(synset.icon || '🌳')}</span>
+          <span>${t('dictMindmapTitle') || 'Bản đồ sắc thái'}: <b>${escapeHtml(title)}</b></span>
+        </div>
+        <span class="dict-mindmap-tag">${escapeHtml(exploreLabel)}</span>
+      </div>
+      <div class="dict-mindmap-grid">${tiersHtml}</div>
+    </div>
+  `;
+}
+
+// --- AI Semantic Context Search Handler ---
+async function executeSemanticSearch(query) {
+  if (!query) return;
+  const area = document.getElementById('dict-semantic-results-area');
+  const btn = document.getElementById('dict-semantic-trigger-btn');
+  if (btn) btn.disabled = true;
+  if (area) {
+    area.innerHTML = `
+      <div class="example-loading-box" style="margin:12px 0;">
+        <div class="spinner-small" style="display:inline-block; margin-right:8px;"></div>
+        <span>${t('dictSemanticSearching') || 'AI đang phân tích ngữ cảnh và tìm từ phù hợp...'}</span>
+      </div>
+    `;
+  }
+
+  try {
+    const resp = await fetch('/api/dict/semantic', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        query: query,
+        targetLang: state.uiLang || 'vi'
+      })
+    });
+    if (!resp.ok) {
+      throw new Error(`API error ${resp.status}`);
+    }
+    const data = await resp.json();
+    if (data.success && Array.isArray(data.matches) && data.matches.length) {
+      renderSemanticResults(data.concept, data.matches);
+    } else {
+      if (area) {
+        area.innerHTML = `
+          <div style="font-size:13px; color:var(--text-muted); padding:10px 0; text-align:center;">
+            Không tìm thấy gợi ý ngữ cảnh phù hợp cho "${escapeHtml(query)}"
+          </div>
+        `;
+      }
+    }
+  } catch (err) {
+    console.error('Semantic search error:', err);
+    if (area) {
+      area.innerHTML = `
+        <div style="font-size:12.5px; color:var(--accent); padding:10px 0; text-align:center;">
+          ⚠️ ${escapeHtml(err.message || 'Không thể kết nối AI')}
+        </div>
+      `;
+    }
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+function renderSemanticResults(concept, matches) {
+  const area = document.getElementById('dict-semantic-results-area');
+  if (!area) return;
+  let itemsHtml = '';
+  for (const m of matches) {
+    itemsHtml += `
+      <div class="dict-semantic-item" onclick="openWordSheet('${escapeQuotes(m.word)}')">
+        <div class="dict-semantic-item-top">
+          <div>
+            <span class="dict-semantic-zh">${escapeHtml(m.word)}</span>
+            <span class="dict-semantic-py">${escapeHtml(m.pinyin || '')}</span>
+          </div>
+          ${m.hsk ? `<span class="dict-semantic-hsk-badge">${escapeHtml(m.hsk)}</span>` : ''}
+        </div>
+        <div class="dict-semantic-meaning">${escapeHtml(m.meaning || '')}</div>
+        ${m.nuance ? `<div class="dict-semantic-nuance">💡 ${escapeHtml(m.nuance)}</div>` : ''}
+        ${m.example ? `<div class="dict-semantic-example">💬 ${escapeHtml(m.example)}</div>` : ''}
+      </div>
+    `;
+  }
+
+  area.innerHTML = `
+    <div class="dict-semantic-results-box">
+      <div class="dict-semantic-results-head">
+        <div class="dict-semantic-concept-title">
+          <span>✨</span>
+          <span>${t('dictSemanticMatches') || 'Gợi ý từ ngữ cảnh'}: <b>${escapeHtml(concept)}</b></span>
+        </div>
+        <span style="font-size:11px; color:var(--text-muted);">${matches.length} ${tx('từ đề xuất', 'suggestions', '件の提案')}</span>
+      </div>
+      <div>${itemsHtml}</div>
+    </div>
+  `;
 }
 
 let dictSearchTimer = null;
@@ -596,5 +881,12 @@ function setDictFilter(hskVal) {
 }
 
 function searchOnline(query) {
-  openWordSheet(query);
+  if (!query) return;
+  const hasHanzi = /[\u4e00-\u9fff]/.test(query);
+  if (hasHanzi) {
+    openWordSheet(query);
+  } else {
+    // Non-Hanzi queries (Vietnamese/Japanese/English) trigger AI Semantic search
+    executeSemanticSearch(query);
+  }
 }

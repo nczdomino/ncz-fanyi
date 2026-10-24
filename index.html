@@ -220,6 +220,9 @@
           <button id="dict-search-clear" class="ai-search-clear" onclick="clearDictSearch()" style="display:none;" title="Xóa tìm kiếm" data-i18n-title="btnClear">✕</button>
         </div>
 
+        <!-- Thanh chỉ báo ngôn ngữ tìm kiếm tự động -->
+        <div id="dict-search-badge-bar" class="dict-search-badge-bar" style="display:none;"></div>
+
         <!-- Gợi ý từ khóa tìm kiếm nhanh -->
         <div id="dict-quick-tags" class="dict-quick-tags">
           <span class="dict-quick-label" data-i18n="quickSuggestions">Gợi ý:</span>
@@ -741,6 +744,8 @@
   <!-- 2. Embedded Offline Data Tables -->
   <script src="js/data/i18n-data.js"></script>
   <script src="js/data/mini-dict.js"></script>
+  <script src="js/data/reverse-dict.js"></script>
+  <script src="js/data/dict-synsets.js"></script>
   <script src="js/data/han-viet.js"></script>
   <script src="js/data/kanji-data.js"></script>
   <script src="js/data/ja-common.js"></script>
@@ -770,6 +775,7 @@
   <script src="js/features/documents.js"></script>
 
   <!-- 7. Dictionary, Word Detail Sheet, Smart Enrichment & Examples -->
+  <script src="js/features/dict-search-engine.js"></script>
   <script src="js/features/dict.js"></script>
   <script src="js/features/word-sheet.js"></script>
   <script src="js/features/enrich.js"></script>

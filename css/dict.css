@@ -842,3 +842,322 @@
   color: var(--text-primary);
 }
 
+
+
+/* --- Intelligent Multi-Lingual & Reverse Search Styles --- */
+.dict-search-badge-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  margin-top: 8px;
+  width: 100%;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.dict-search-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+.dict-search-badge.vi {
+  background: rgba(232, 52, 78, 0.08);
+  color: var(--accent);
+  border: 1px solid rgba(232, 52, 78, 0.25);
+}
+
+.dict-search-badge.ja {
+  background: rgba(59, 130, 246, 0.08);
+  color: #2563EB;
+  border: 1px solid rgba(59, 130, 246, 0.25);
+}
+
+.dict-search-badge.zh {
+  background: rgba(16, 185, 129, 0.08);
+  color: #059669;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.dict-search-badge.pinyin {
+  background: rgba(245, 158, 11, 0.08);
+  color: #D97706;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+.dict-search-badge.multi {
+  background: rgba(139, 92, 246, 0.08);
+  color: #7C3AED;
+  border: 1px solid rgba(139, 92, 246, 0.25);
+}
+
+.dict-search-badge-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* --- Semantic Mindmap Card --- */
+.dict-mindmap-card {
+  background: linear-gradient(135deg, rgba(232, 52, 78, 0.03) 0%, rgba(139, 92, 246, 0.04) 100%);
+  border: 1px solid rgba(232, 52, 78, 0.18);
+  border-radius: var(--radius-lg, 14px);
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.dict-mindmap-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.dict-mindmap-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.dict-mindmap-tag {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+
+.dict-mindmap-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.dict-mindmap-tier {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dict-mindmap-tier-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px dashed var(--border-color);
+  padding-bottom: 5px;
+  margin-bottom: 2px;
+}
+
+.dict-mindmap-tier-name {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.dict-mindmap-tier-label {
+  font-size: 10.5px;
+  color: var(--text-muted);
+}
+
+.dict-mindmap-words {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.dict-mindmap-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  padding: 4px 8px;
+  background: var(--bg-surface-alt, rgba(0,0,0,0.02));
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.dict-mindmap-chip:hover {
+  border-color: var(--accent);
+  background: var(--accent-subtle);
+  transform: translateY(-1px);
+}
+
+.dict-mindmap-zh {
+  font-family: var(--font-hanzi);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.dict-mindmap-py {
+  font-size: 11px;
+  color: var(--accent);
+}
+
+.dict-mindmap-vi {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* --- AI Semantic Search Card & Results --- */
+.dict-semantic-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(232, 52, 78, 0.06) 100%);
+  border: 1px solid rgba(139, 92, 246, 0.22);
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  gap: 12px;
+}
+
+.dict-semantic-action-text {
+  font-size: 13px;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.dict-semantic-action-sub {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.dict-semantic-btn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #8B5CF6 0%, var(--accent) 100%);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 7px 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(139, 92, 246, 0.25);
+  transition: all 0.2s ease;
+}
+
+.dict-semantic-btn:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
+}
+
+.dict-semantic-results-box {
+  background: var(--bg-surface);
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+}
+
+.dict-semantic-results-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+}
+
+.dict-semantic-concept-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #7C3AED;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dict-semantic-item {
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  background: var(--bg-surface-alt, rgba(0,0,0,0.015));
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.dict-semantic-item:hover {
+  border-color: #8B5CF6;
+  background: rgba(139, 92, 246, 0.03);
+}
+
+.dict-semantic-item:last-child {
+  margin-bottom: 0;
+}
+
+.dict-semantic-item-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.dict-semantic-zh {
+  font-family: var(--font-hanzi);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.dict-semantic-py {
+  font-size: 13px;
+  color: var(--accent);
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+.dict-semantic-hsk-badge {
+  font-size: 10.5px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(139, 92, 246, 0.12);
+  color: #7C3AED;
+  font-weight: 600;
+}
+
+.dict-semantic-meaning {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 3px;
+}
+
+.dict-semantic-nuance {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.dict-semantic-example {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--border-color);
+  font-size: 12px;
+  color: var(--text-primary);
+  font-style: italic;
+}
