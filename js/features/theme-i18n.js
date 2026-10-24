@@ -112,4 +112,9 @@ function updateThemeAndUI() {
   if (typeof ocrUpdateButtons === 'function') {
     ocrUpdateButtons(!!window._ocrRaw);
   }
+
+  // Update Handwriting pad buttons if rendered
+  if (typeof refreshHandwritingPadI18n === 'function') {
+    refreshHandwritingPadI18n();
+  }
 }

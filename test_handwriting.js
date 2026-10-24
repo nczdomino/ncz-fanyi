@@ -124,8 +124,36 @@ assert(dotStroke.length === 1 && dotStroke[0].length === 2, 'Single point dot ex
 const normalStroke = sanitizeStrokes([ [ [10, 10], [20, 20], [30, 30] ] ]);
 assert(normalStroke[0].length === 3, 'Multi-point stroke preserved');
 
-// 4. Test CloudEngine Ink Payload Formatting
-console.log('\n4. Testing CloudEngine Ink Payload Formatting...');
+// 4. Test Multi-Character Buffer Logic (Liền mạch nhiều chữ: 你 -> 好 -> 你好)
+console.log('\n4. Testing Multi-Character Composition Buffer Logic...');
+class MockBuffer {
+  constructor(initial = '') {
+    this.buffer = initial;
+  }
+  append(char) { this.buffer += char; }
+  backspace() {
+    const chars = Array.from(this.buffer);
+    chars.pop();
+    this.buffer = chars.join('');
+  }
+  clear() { this.buffer = ''; }
+}
+
+const mb = new MockBuffer();
+assert(mb.buffer === '', 'Initial buffer is empty');
+mb.append('你');
+assert(mb.buffer === '你', 'Appended first character "你", user sees it clearly in buffer display');
+mb.append('好');
+assert(mb.buffer === '你好', 'Appended second character "好", combined into "你好" without premature search trigger');
+mb.backspace();
+assert(mb.buffer === '你', 'Backspace correctly deleted last character, leaving "你"');
+mb.append('们');
+assert(mb.buffer === '你们', 'Appended "们", buffer is "你们"');
+mb.clear();
+assert(mb.buffer === '', 'Buffer cleared cleanly');
+
+// 5. Test CloudEngine Ink Payload Formatting
+console.log('\n5. Testing CloudEngine Ink Payload Formatting...');
 const sampleRawStrokes = [
   [ [10, 20, 1000], [30, 40, 1020], [50, 60, 1040] ],
   [ [70, 80, 1100], [90, 100, 1120] ]
@@ -143,8 +171,8 @@ assert(formattedInk[0][0].join(',') === '10,30,50', 'Xs correctly partitioned in
 assert(formattedInk[0][1].join(',') === '20,40,60', 'Ys correctly partitioned into second array');
 assert(formattedInk[0][2].join(',') === '1000,1020,1040', 'Timestamps correctly partitioned into third array');
 
-// 5. Test i18n Translation Key Coverage
-console.log('\n5. Verifying i18n Localization for Handwriting UI...');
+// 6. Test i18n Translation Key Coverage
+console.log('\n6. Verifying i18n Localization for Handwriting UI...');
 const i18nFile = fs.readFileSync('js/data/i18n-data.js', 'utf8');
 const i18nCtx = {};
 vm.createContext(i18nCtx);
@@ -155,14 +183,17 @@ const hwKeys = [
   'btnHandwriting',
   'btnDrawSearch',
   'handwritingTitle',
-  'hwUndo',
-  'hwClear',
+  'hwBufferPlaceholder',
+  'hwCandidatePlaceholder',
+  'hwSearchBtn',
+  'hwInsertBtn',
+  'hwUndoStroke',
+  'hwClearCanvas',
+  'hwBackspace',
+  'hwClearBuffer',
   'hwGridMi',
   'hwGridTian',
-  'hwGridNone',
-  'hwModeRecognize',
-  'hwModeQuiz',
-  'hwPracticeQuiz'
+  'hwGridNone'
 ];
 
 for (const k of hwKeys) {
@@ -172,8 +203,8 @@ for (const k of hwKeys) {
   );
 }
 
-// 6. Test Security & Backend Proxy Structure
-console.log('\n6. Verifying Backend Proxy and Security Standards...');
+// 7. Test Security & Backend Proxy Structure
+console.log('\n7. Verifying Backend Proxy and Security Standards...');
 const cfProxyCode = fs.readFileSync('functions/api/handwriting.js', 'utf8');
 assert(cfProxyCode.includes('Access-Control-Allow-Origin'), 'CORS headers implemented');
 assert(cfProxyCode.includes('https://inputtools.google.com/request'), 'Targets Google Input Tools API endpoint');

@@ -1,17 +1,16 @@
-// js/features/handwriting/pad.js - Interactive Handwriting Canvas & Quiz Component (<HandwritingPad />)
-// Dependencies: js/features/handwriting/engine.js, js/core/utils.js, js/data/i18n-data.js, optional: window.HanziWriter
+// js/features/handwriting/pad.js - Interactive Multi-Character Handwriting Recognition Component (<HandwritingPad />)
+// Dependencies: js/features/handwriting/engine.js, js/core/utils.js, js/data/i18n-data.js
 
 class HandwritingPad {
   /**
    * @param {Object} props
    * @param {HTMLElement|string} props.container - Container DOM element or selector
    * @param {HandwritingEngine} [props.engine] - Recognition engine (defaults to FallbackEngine)
-   * @param {'recognize'|'quiz'} [props.mode='recognize'] - Operating mode
-   * @param {string} [props.targetChar] - Target character for quiz mode
+   * @param {string} [props.initialText=''] - Initial text to populate in buffer
+   * @param {'search'|'insert'} [props.confirmType='search'] - Type of confirmation action
    * @param {boolean} [props.isTraditional=false] - Recognize Traditional Chinese (zh_TW)
-   * @param {(char: string) => void} [props.onSelect] - Candidate selection callback
-   * @param {(summary: Object) => void} [props.onQuizComplete] - Quiz completion callback
-   * @param {(mode: string) => void} [props.onModeChange] - Mode switch callback
+   * @param {(text: string) => void} [props.onConfirm] - Confirm/Search callback with full composed string
+   * @param {(buffer: string) => void} [props.onBufferChange] - Triggered whenever buffer changes
    */
   constructor(props = {}) {
     this.props = props;
@@ -20,12 +19,11 @@ class HandwritingPad {
       : props.container;
 
     this.engine = props.engine || (window.FallbackEngine ? new window.FallbackEngine() : null);
-    this.mode = props.mode || 'recognize'; // 'recognize' | 'quiz'
-    this.targetChar = props.targetChar || '';
+    this.confirmType = props.confirmType || 'search'; // 'search' | 'insert'
+    this.buffer = props.initialText || '';
     this.isTraditional = props.isTraditional || false;
-    this.onSelect = props.onSelect || (() => {});
-    this.onQuizComplete = props.onQuizComplete || (() => {});
-    this.onModeChange = props.onModeChange || (() => {});
+    this.onConfirm = props.onConfirm || (() => {});
+    this.onBufferChange = props.onBufferChange || (() => {});
 
     // Drawing state
     this.strokes = []; // Array of strokes: [ [ [x, y, t], ... ], ... ]
@@ -38,11 +36,6 @@ class HandwritingPad {
     // Concurrency & Debounce
     this.debounceTimer = null;
     this.currentRequestId = 0;
-
-    // Quiz state (HanziWriter)
-    this.writer = null;
-    this.quizMistakes = 0;
-    this.quizTotalStrokes = 0;
 
     // Bound listeners for clean cleanup
     this._onPointerDown = this._handlePointerDown.bind(this);
@@ -65,64 +58,66 @@ class HandwritingPad {
     if (this.engine && typeof this.engine.init === 'function') {
       this.engine.init().catch(e => console.warn('[HandwritingPad] Engine init note:', e));
     }
-
-    if (this.mode === 'quiz' && this.targetChar) {
-      this.initQuiz(this.targetChar);
-    }
   }
 
   render() {
     if (!this.container) return;
 
     this.container.innerHTML = `
-      <div class="hw-pad-wrapper" data-mode="${this.mode}">
-        <!-- Top Toolbar & Candidate Bar -->
+      <div class="hw-pad-wrapper">
+        <!-- 1. Composed Text Buffer Display (Liền mạch nhiều chữ) -->
+        <div class="hw-buffer-box">
+          <div class="hw-buffer-display" id="hw-buffer-display">
+            <span class="hw-buffer-content" id="hw-buffer-content">${escapeHtml(this.buffer)}</span>
+            <span class="hw-buffer-placeholder" id="hw-buffer-placeholder" style="display:${this.buffer ? 'none' : 'inline'};">
+              ${t('hwBufferPlaceholder') || tx('Các chữ đã vẽ sẽ xuất hiện ở đây...', 'Composed characters will appear here...', '入力した漢字がここに表示されます...')}
+            </span>
+            <span class="hw-buffer-cursor"></span>
+          </div>
+
+          <div class="hw-buffer-actions">
+            <button type="button" class="btn btn-secondary btn-sm hw-buffer-btn" id="btn-hw-backspace" title="${t('hwBackspace') || 'Xóa 1 chữ (⌫)'}" aria-label="Xóa 1 chữ">
+              ⌫
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm hw-buffer-btn" id="btn-hw-clear-buffer" title="${t('hwClearBuffer') || 'Xóa toàn bộ'}" aria-label="Xóa toàn bộ">
+              ✕
+            </button>
+            <button type="button" class="btn btn-primary btn-sm hw-buffer-confirm-btn" id="btn-hw-confirm" title="Xác nhận">
+              <span id="hw-confirm-icon">${this.confirmType === 'search' ? '🔍' : '✓'}</span>
+              <span id="hw-confirm-label">${this.confirmType === 'search' ? (t('hwSearchBtn') || 'Tra từ') : (t('hwInsertBtn') || 'Chèn chữ')}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. Candidate Bar (Thanh ứng viên thời gian thực) -->
         <div class="hw-candidate-bar" id="hw-candidate-bar" role="toolbar" aria-label="Gợi ý chữ ứng viên">
           <div class="hw-candidate-loading" id="hw-loading-indicator" style="display:none;" title="Đang nhận diện...">
             <span class="hw-spinner"></span>
           </div>
           <div class="hw-candidates-list" id="hw-candidates-list">
-            <span class="hw-placeholder-text">${tx('Viết chữ Hán lên khung dưới để nhận diện...', 'Draw a Chinese character below to recognize...', '下の枠に漢字を書いて認識...')}</span>
+            <span class="hw-placeholder-text" id="hw-candidate-placeholder">${t('hwCandidatePlaceholder') || tx('Vẽ chữ Hán lên khung dưới để nhận diện...', 'Draw a Chinese character below to recognize...', '下の枠に漢字を書いて認識...')}</span>
           </div>
         </div>
 
-        <!-- Canvas Drawing & Quiz Container -->
+        <!-- 3. Canvas Drawing Area -->
         <div class="hw-canvas-container" id="hw-canvas-container">
           <canvas class="hw-canvas" id="hw-canvas" touch-action="none"></canvas>
-          <div class="hw-quiz-target-layer" id="hw-quiz-layer" style="display:none;"></div>
         </div>
 
-        <!-- Quiz Stats Bar (Only visible in quiz mode) -->
-        <div class="hw-quiz-bar" id="hw-quiz-bar" style="display:${this.mode === 'quiz' ? 'flex' : 'none'};">
-          <div class="hw-quiz-target-badge">
-            <span>Mục tiêu:</span> <b id="hw-quiz-char">${escapeHtml(this.targetChar || '—')}</b>
-          </div>
-          <div class="hw-quiz-stats">
-            <span class="hw-stat-item">Lỗi: <b id="hw-quiz-mistakes">0</b></span>
-            <span class="hw-stat-item">Điểm: <b id="hw-quiz-score">100%</b></span>
-          </div>
-          <button type="button" class="btn btn-secondary btn-sm" id="btn-hw-quiz-reset" title="Thử lại chữ này">↺ Làm lại</button>
-        </div>
-
-        <!-- Bottom Action Bar -->
+        <!-- 4. Canvas Action Bar (Hoàn tác, Xóa nét, Đổi lưới) -->
         <div class="hw-action-bar">
           <div class="hw-action-left">
-            <button type="button" class="btn btn-secondary btn-sm hw-btn" id="btn-hw-undo" title="Hoàn tác nét cuối (Undo)" aria-label="Hoàn tác nét cuối">
-              <span>↩</span> <span class="hw-btn-label">${tx('Hoàn tác', 'Undo', '元に戻す')}</span>
+            <button type="button" class="btn btn-secondary btn-sm hw-btn" id="btn-hw-undo" title="${t('hwUndoStroke') || 'Hoàn tác nét vẽ cuối'}" aria-label="Hoàn tác nét">
+              <span>↩</span> <span class="hw-btn-label" id="hw-undo-label">${t('hwUndo') || tx('Hoàn tác nét', 'Undo', '一画戻す')}</span>
             </button>
-            <button type="button" class="btn btn-secondary btn-sm hw-btn" id="btn-hw-clear" title="Xóa toàn bộ khung vẽ" aria-label="Xóa nét vẽ">
-              <span>🗑</span> <span class="hw-btn-label">${tx('Xóa hết', 'Clear', '消去')}</span>
-            </button>
-            <button type="button" class="btn btn-secondary btn-sm hw-btn" id="btn-hw-grid" title="Đổi kiểu lưới viết (Mễ / Điền / Trống)" aria-label="Đổi kiểu lưới">
-              <span>🔲</span> <span class="hw-btn-label" id="hw-grid-label">Lưới Mễ</span>
+            <button type="button" class="btn btn-secondary btn-sm hw-btn" id="btn-hw-clear" title="${t('hwClearCanvas') || 'Xóa khung vẽ'}" aria-label="Xóa nét vẽ">
+              <span>🗑</span> <span class="hw-btn-label" id="hw-clear-label">${t('hwClear') || tx('Xóa nét', 'Clear', '消去')}</span>
             </button>
           </div>
 
           <div class="hw-action-right">
-            <!-- Mode Switcher -->
-            <button type="button" class="btn btn-outline btn-sm hw-btn" id="btn-hw-mode" title="Chuyển chế độ Luyện viết nét / Nhận diện tự do">
-              <span>${this.mode === 'quiz' ? '✍️' : '🎯'}</span>
-              <span id="hw-mode-label">${this.mode === 'quiz' ? tx('Nhận diện', 'Recognize', '認識モード') : tx('Luyện nét (Quiz)', 'Quiz Mode', 'クイズ練習')}</span>
+            <button type="button" class="btn btn-secondary btn-sm hw-btn" id="btn-hw-grid" title="Đổi kiểu lưới viết (Mễ / Điền / Trống)" aria-label="Đổi kiểu lưới">
+              <span>🔲</span> <span class="hw-btn-label" id="hw-grid-label">${this.getGridLabel()}</span>
             </button>
           </div>
         </div>
@@ -131,10 +126,10 @@ class HandwritingPad {
 
     this.canvas = this.container.querySelector('#hw-canvas');
     this.ctx = this.canvas.getContext('2d');
+    this.bufferContentEl = this.container.querySelector('#hw-buffer-content');
+    this.bufferPlaceholderEl = this.container.querySelector('#hw-buffer-placeholder');
     this.candidatesListEl = this.container.querySelector('#hw-candidates-list');
     this.loadingIndicator = this.container.querySelector('#hw-loading-indicator');
-    this.quizLayer = this.container.querySelector('#hw-quiz-layer');
-    this.quizBar = this.container.querySelector('#hw-quiz-bar');
   }
 
   setupCanvas() {
@@ -143,8 +138,7 @@ class HandwritingPad {
     const rect = container.getBoundingClientRect();
     const dpr = window.devicePixelRatio || 1;
 
-    // Set square size based on container width
-    const size = Math.max(240, Math.min(rect.width || 320, 380));
+    const size = Math.max(220, Math.min(rect.width || 300, 360));
     this.canvasWidth = size;
     this.canvasHeight = size;
 
@@ -170,21 +164,25 @@ class HandwritingPad {
     window.addEventListener('keydown', this._onKeyDown);
     window.addEventListener('resize', this._onResize);
 
-    // Button actions
+    // Buffer actions
+    const btnBackspace = this.container.querySelector('#btn-hw-backspace');
+    if (btnBackspace) btnBackspace.addEventListener('click', () => this.backspace());
+
+    const btnClearBuffer = this.container.querySelector('#btn-hw-clear-buffer');
+    if (btnClearBuffer) btnClearBuffer.addEventListener('click', () => this.clearBuffer());
+
+    const btnConfirm = this.container.querySelector('#btn-hw-confirm');
+    if (btnConfirm) btnConfirm.addEventListener('click', () => this.confirm());
+
+    // Canvas actions
     const btnUndo = this.container.querySelector('#btn-hw-undo');
-    if (btnUndo) btnUndo.addEventListener('click', () => this.undo());
+    if (btnUndo) btnUndo.addEventListener('click', () => this.undoStroke());
 
     const btnClear = this.container.querySelector('#btn-hw-clear');
-    if (btnClear) btnClear.addEventListener('click', () => this.clear());
+    if (btnClear) btnClear.addEventListener('click', () => this.clearCanvas());
 
     const btnGrid = this.container.querySelector('#btn-hw-grid');
     if (btnGrid) btnGrid.addEventListener('click', () => this.toggleGrid());
-
-    const btnMode = this.container.querySelector('#btn-hw-mode');
-    if (btnMode) btnMode.addEventListener('click', () => this.toggleMode());
-
-    const btnQuizReset = this.container.querySelector('#btn-hw-quiz-reset');
-    if (btnQuizReset) btnQuizReset.addEventListener('click', () => this.resetQuiz());
   }
 
   _getCanvasPoint(e) {
@@ -196,7 +194,6 @@ class HandwritingPad {
   }
 
   _handlePointerDown(e) {
-    if (this.mode === 'quiz') return; // In quiz mode, HanziWriter handles interaction
     e.preventDefault();
     this.canvas.setPointerCapture(e.pointerId);
     this.isDrawing = true;
@@ -209,13 +206,13 @@ class HandwritingPad {
   }
 
   _handlePointerMove(e) {
-    if (!this.isDrawing || !this.currentStroke || this.mode === 'quiz') return;
+    if (!this.isDrawing || !this.currentStroke) return;
     e.preventDefault();
 
     const pt = this._getCanvasPoint(e);
     const lastPt = this.currentStroke[this.currentStroke.length - 1];
 
-    // Stroke thinning / simplification: Ignore tiny movements < 2px to avoid bloat
+    // Stroke thinning / simplification: Ignore tiny movements < 2.0px to avoid lag
     if (lastPt) {
       const dx = pt[0] - lastPt[0];
       const dy = pt[1] - lastPt[1];
@@ -233,17 +230,36 @@ class HandwritingPad {
       this.canvas.releasePointerCapture(e.pointerId);
     } catch (ignore) {}
 
-    // Trigger real-time recognition after each stroke with 80ms debounce
+    // Trigger real-time recognition after each stroke with 75ms debounce
     this.triggerRealtimeRecognition();
   }
 
   _handleKeyDown(e) {
-    // Keyboard support: Number keys 1-9 select candidates
-    if (this.mode === 'recognize' && this.candidates.length > 0) {
+    // Number keys 1-9: Select candidate
+    if (this.candidates.length > 0) {
       const num = parseInt(e.key, 10);
       if (!isNaN(num) && num >= 1 && num <= this.candidates.length) {
         e.preventDefault();
         this.selectCandidate(this.candidates[num - 1].char);
+        return;
+      }
+    }
+
+    // Enter key: Confirm/Search
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      this.confirm();
+      return;
+    }
+
+    // Backspace key: If canvas has strokes -> undo stroke; else delete last character from buffer
+    if (e.key === 'Backspace') {
+      if (this.strokes.length > 0) {
+        e.preventDefault();
+        this.undoStroke();
+      } else if (this.buffer.length > 0) {
+        e.preventDefault();
+        this.backspace();
       }
     }
   }
@@ -273,7 +289,6 @@ class HandwritingPad {
       if (!stroke || stroke.length === 0) continue;
       this.ctx.beginPath();
       if (stroke.length === 1) {
-        // Single point dot
         this.ctx.arc(stroke[0][0], stroke[0][1], this.ctx.lineWidth / 2, 0, Math.PI * 2);
         this.ctx.fillStyle = this.ctx.strokeStyle;
         this.ctx.fill();
@@ -321,30 +336,31 @@ class HandwritingPad {
     this.ctx.restore();
   }
 
+  getGridLabel() {
+    if (this.gridType === 'mi') return t('hwGridMi') || tx('Lưới Mễ (米)', 'Mi Grid (米)', '米字格子');
+    if (this.gridType === 'tian') return t('hwGridTian') || tx('Lưới Điền (田)', 'Tian Grid (田)', '田字格子');
+    return t('hwGridNone') || tx('Không lưới', 'No Grid', 'グリッドなし');
+  }
+
   toggleGrid() {
     const types = ['mi', 'tian', 'none'];
-    const labels = {
-      mi: 'Lưới Mễ (米)',
-      tian: 'Lưới Điền (田)',
-      none: 'Không lưới',
-    };
     const nextIdx = (types.indexOf(this.gridType) + 1) % types.length;
     this.gridType = types[nextIdx];
 
     const labelEl = this.container.querySelector('#hw-grid-label');
-    if (labelEl) labelEl.textContent = labels[this.gridType];
+    if (labelEl) labelEl.textContent = this.getGridLabel();
 
     this.redrawCanvas();
   }
 
-  undo() {
+  undoStroke() {
     if (this.strokes.length === 0) return;
     this.strokes.pop();
     this.redrawCanvas();
     this.triggerRealtimeRecognition();
   }
 
-  clear() {
+  clearCanvas() {
     this.strokes = [];
     this.currentStroke = null;
     this.candidates = [];
@@ -352,6 +368,52 @@ class HandwritingPad {
     this.renderCandidateBar([]);
   }
 
+  // --- Buffer Management (Quản lý chuỗi nhiều chữ Hán liền mạch) ---
+  setBuffer(text) {
+    this.buffer = String(text || '');
+    this.updateBufferDisplay();
+  }
+
+  appendChar(char) {
+    if (!char) return;
+    this.buffer += char;
+    this.updateBufferDisplay();
+  }
+
+  backspace() {
+    if (!this.buffer) return;
+    // Handle surrogate pairs properly (Unicode characters)
+    const chars = Array.from(this.buffer);
+    chars.pop();
+    this.buffer = chars.join('');
+    this.updateBufferDisplay();
+  }
+
+  clearBuffer() {
+    this.buffer = '';
+    this.updateBufferDisplay();
+  }
+
+  updateBufferDisplay() {
+    if (this.bufferContentEl) {
+      this.bufferContentEl.textContent = this.buffer;
+    }
+    if (this.bufferPlaceholderEl) {
+      this.bufferPlaceholderEl.style.display = this.buffer ? 'none' : 'inline';
+    }
+    this.onBufferChange(this.buffer);
+  }
+
+  confirm() {
+    const textToConfirm = this.buffer.trim();
+    if (textToConfirm) {
+      this.onConfirm(textToConfirm);
+    }
+    // Also clear canvas
+    this.clearCanvas();
+  }
+
+  // --- Candidate Recognition & Selection ---
   triggerRealtimeRecognition() {
     if (this.debounceTimer) clearTimeout(this.debounceTimer);
     if (this.strokes.length === 0) {
@@ -359,7 +421,6 @@ class HandwritingPad {
       return;
     }
 
-    // Debounce 75ms to bundle rapid stroke events
     this.debounceTimer = setTimeout(() => {
       this.recognize();
     }, 75);
@@ -379,7 +440,7 @@ class HandwritingPad {
         height: this.canvasHeight,
       });
 
-      // Ignore stale response if a newer stroke was drawn in the meantime (Race-condition protection)
+      // Race-condition guard: ignore stale results if another stroke has been drawn
       if (reqId !== this.currentRequestId) return;
 
       this.candidates = candidates || [];
@@ -406,7 +467,10 @@ class HandwritingPad {
     if (!this.candidatesListEl) return;
 
     if (!candidates || candidates.length === 0) {
-      this.candidatesListEl.innerHTML = `<span class="hw-placeholder-text">${tx('Viết chữ Hán lên khung dưới để nhận diện...', 'Draw a Chinese character below to recognize...', '下の枠に漢字を書いて認識...')}</span>`;
+      const hint = this.buffer
+        ? tx('Vẽ chữ tiếp theo hoặc bấm Tra từ...', 'Draw next character or tap Search...', '次の漢字を書くか検索を押してください...')
+        : (t('hwCandidatePlaceholder') || tx('Vẽ chữ Hán lên khung dưới để nhận diện...', 'Draw a Chinese character below to recognize...', '下の枠に漢字を書いて認識...'));
+      this.candidatesListEl.innerHTML = `<span class="hw-placeholder-text">${escapeHtml(hint)}</span>`;
       return;
     }
 
@@ -433,135 +497,52 @@ class HandwritingPad {
     });
   }
 
+  /**
+   * User clicks a candidate:
+   * Appends to buffer, clears canvas, ready for user to draw next character!
+   */
   selectCandidate(char) {
     if (!char) return;
-    this.onSelect(char);
-    // Clear canvas and prepare for next character
-    this.clear();
+    this.appendChar(char);
+    // Clear canvas so user is immediately ready to write next character
+    this.clearCanvas();
   }
 
-  // --- Quiz Mode (HanziWriter Integration) ---
-  toggleMode() {
-    const nextMode = this.mode === 'recognize' ? 'quiz' : 'recognize';
-    this.setMode(nextMode);
-  }
+  /**
+   * Updates all button labels, tooltips, and placeholders according to current language
+   */
+  updateI18nLabels() {
+    if (!this.container) return;
 
-  setMode(mode, targetChar = null) {
-    this.mode = mode;
-    if (targetChar) this.targetChar = targetChar;
-
-    const wrapper = this.container.querySelector('.hw-pad-wrapper');
-    if (wrapper) wrapper.setAttribute('data-mode', mode);
-
-    const modeLabel = this.container.querySelector('#hw-mode-label');
-    if (modeLabel) {
-      modeLabel.textContent = mode === 'quiz' ? tx('Nhận diện', 'Recognize', '認識モード') : tx('Luyện nét (Quiz)', 'Quiz Mode', 'クイズ練習');
+    const placeholder = this.container.querySelector('#hw-buffer-placeholder');
+    if (placeholder) {
+      placeholder.textContent = t('hwBufferPlaceholder') || tx('Các chữ đã vẽ sẽ xuất hiện ở đây...', 'Composed characters will appear here...', '入力した漢字がここに表示されます...');
     }
 
-    if (this.quizBar) {
-      this.quizBar.style.display = mode === 'quiz' ? 'flex' : 'none';
+    const candPlaceholder = this.container.querySelector('#hw-candidate-placeholder');
+    if (candPlaceholder && this.strokes.length === 0) {
+      candPlaceholder.textContent = t('hwCandidatePlaceholder') || tx('Vẽ chữ Hán lên khung dưới để nhận diện...', 'Draw a Chinese character below to recognize...', '下の枠に漢字を書いて認識...');
     }
 
-    if (mode === 'quiz') {
-      const charToQuiz = this.targetChar || '好';
-      this.initQuiz(charToQuiz);
-    } else {
-      if (this.quizLayer) this.quizLayer.style.display = 'none';
-      if (this.canvas) this.canvas.style.display = 'block';
-      this.clear();
+    const btnBackspace = this.container.querySelector('#btn-hw-backspace');
+    if (btnBackspace) btnBackspace.title = t('hwBackspace') || 'Xóa 1 chữ (⌫)';
+
+    const btnClearBuffer = this.container.querySelector('#btn-hw-clear-buffer');
+    if (btnClearBuffer) btnClearBuffer.title = t('hwClearBuffer') || 'Xóa toàn bộ';
+
+    const confirmLabel = this.container.querySelector('#hw-confirm-label');
+    if (confirmLabel) {
+      confirmLabel.textContent = this.confirmType === 'search' ? (t('hwSearchBtn') || 'Tra từ') : (t('hwInsertBtn') || 'Chèn chữ');
     }
 
-    this.onModeChange(mode);
-  }
+    const undoLabel = this.container.querySelector('#hw-undo-label');
+    if (undoLabel) undoLabel.textContent = t('hwUndo') || tx('Hoàn tác nét', 'Undo', '一画戻す');
 
-  initQuiz(char) {
-    this.targetChar = char;
-    this.quizMistakes = 0;
-    this.quizTotalStrokes = 0;
+    const clearLabel = this.container.querySelector('#hw-clear-label');
+    if (clearLabel) clearLabel.textContent = t('hwClear') || tx('Xóa nét', 'Clear', '消去');
 
-    const charBadge = this.container.querySelector('#hw-quiz-char');
-    if (charBadge) charBadge.textContent = char;
-    this.updateQuizStats();
-
-    if (!window.HanziWriter) {
-      showToast(tx('Đang tải bộ kiểm tra nét chữ...', 'Loading stroke evaluator...', '筆順評価エンジンを読み込み中...'));
-      loadScriptOnce('https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js')
-        .then(() => this.initQuiz(char))
-        .catch(err => console.error('HanziWriter load error', err));
-      return;
-    }
-
-    if (this.canvas) this.canvas.style.display = 'none';
-    if (this.quizLayer) {
-      this.quizLayer.style.display = 'flex';
-      this.quizLayer.innerHTML = '';
-    }
-
-    const size = Math.max(240, Math.min(this.canvasWidth || 300, 360));
-    const quizDiv = document.createElement('div');
-    quizDiv.id = 'hw-quiz-hanzi-target';
-    quizDiv.style.width = size + 'px';
-    quizDiv.style.height = size + 'px';
-    this.quizLayer.appendChild(quizDiv);
-
-    try {
-      this.writer = window.HanziWriter.create(quizDiv.id, char, {
-        width: size,
-        height: size,
-        padding: 15,
-        showOutline: true,
-        showCharacter: false,
-        showHintAfterMisses: 2,
-        highlightOnComplete: true,
-        strokeColor: '#E8344E',
-        outlineColor: 'rgba(232, 52, 78, 0.18)',
-        drawingColor: '#1F2937',
-        drawingWidth: 16,
-      });
-
-      this.writer.quiz({
-        onMistake: (strokeData) => {
-          this.quizMistakes++;
-          this.updateQuizStats();
-        },
-        onCorrectStroke: (strokeData) => {
-          this.quizTotalStrokes = strokeData.totalStrokes || (this.quizTotalStrokes + 1);
-          this.updateQuizStats();
-        },
-        onComplete: (summary) => {
-          const totalMistakes = summary.totalMistakes || 0;
-          const strokeNum = summary.strokeNum || this.quizTotalStrokes || 1;
-          const score = Math.max(0, Math.round(100 - (totalMistakes / strokeNum) * 35));
-
-          showToast(tx(`🎉 Hoàn thành xuất sắc chữ '${char}'! Điểm: ${score}%`, `🎉 Great job! Completed '${char}' with ${score}%`, `🎉 完了！'${char}' スコア: ${score}%`));
-
-          this.onQuizComplete({
-            char,
-            mistakes: totalMistakes,
-            totalStrokes: strokeNum,
-            score,
-          });
-        },
-      });
-    } catch (hwErr) {
-      console.warn('[HandwritingPad] HanziWriter quiz error:', hwErr);
-    }
-  }
-
-  resetQuiz() {
-    if (this.writer && this.targetChar) {
-      this.initQuiz(this.targetChar);
-    }
-  }
-
-  updateQuizStats() {
-    const mistakesEl = this.container.querySelector('#hw-quiz-mistakes');
-    const scoreEl = this.container.querySelector('#hw-quiz-score');
-    if (mistakesEl) mistakesEl.textContent = this.quizMistakes;
-    if (scoreEl) {
-      const score = Math.max(0, Math.round(100 - this.quizMistakes * 10));
-      scoreEl.textContent = score + '%';
-    }
+    const gridLabel = this.container.querySelector('#hw-grid-label');
+    if (gridLabel) gridLabel.textContent = this.getGridLabel();
   }
 
   destroy() {
@@ -589,4 +570,3 @@ class HandwritingPad {
 if (typeof window !== 'undefined') {
   window.HandwritingPad = HandwritingPad;
 }
-
