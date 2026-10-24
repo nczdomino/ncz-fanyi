@@ -114,3 +114,4 @@ assert.ok(i18nContent.includes('HSK 1 - 9'), 'Expected i18n-data.js to have HSK 
 console.log('✅ i18n keys for HSK 7-9 and Live Dict verified across VI, EN, and JA');
 
 console.log('\n🎉 ALL HSK 7-9 & EXTENDED MULTI-LINGUAL TESTS PASSED WITH 100% SUCCESS!');
+
