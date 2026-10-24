@@ -406,10 +406,12 @@
   bottom: 0;
   left: 0;
   right: 0;
-  max-width: 860px;
+  max-width: 100%;
   margin: 0 auto;
-  height: calc(var(--bottom-bar-height) + env(safe-area-inset-bottom, 0));
-  padding-bottom: env(safe-area-inset-bottom, 0);
+  height: calc(var(--bottom-bar-height) + env(safe-area-inset-bottom, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
   background-color: var(--bg-surface);
   border-top: 1px solid var(--border-color);
   display: flex;
@@ -417,6 +419,7 @@
   justify-content: space-around;
   z-index: 100;
   backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .nav-tab {
@@ -493,6 +496,10 @@
 
 .bottom-sheet.active {
   transform: translateY(0);
+}
+
+.sheet-grid-body {
+  display: contents;
 }
 
 .sheet-handle {

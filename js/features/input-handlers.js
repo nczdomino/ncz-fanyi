@@ -111,7 +111,7 @@ function initTouchAndPasteHandlers() {
     let sheetCurrentY = 0;
     let isDragging = false;
     sheet.addEventListener('touchstart', (e) => {
-      if (sheet.scrollTop <= 0) {
+      if (window.innerWidth < 1024 && sheet.scrollTop <= 0) {
         sheetStartY = e.touches[0].clientY;
         sheetCurrentY = sheetStartY;
         isDragging = true;

@@ -517,61 +517,67 @@
     </div>
   </div>
 
-  <div id="sheet-badges" style="display:flex; gap:6px; margin-bottom:12px;"></div>
+  <div class="sheet-grid-body">
+    <div class="sheet-col-primary">
+      <div id="sheet-badges" style="display:flex; gap:6px; margin-bottom:12px;"></div>
 
-  <!-- Hanzi Writer stroke order canvas container -->
-  <div id="hanzi-writer-box" class="hanzi-writer-container"></div>
-  
-  <div class="writer-controls">
-    <button class="btn btn-secondary btn-sm" onclick="animateActiveWriters()">
-      ▶ <span data-i18n="animateStrokes">Phát nét</span>
-    </button>
-    <button class="btn btn-outline btn-sm" onclick="splitActiveWord()">
-      🔤 <span data-i18n="splitWord">Tách thành chữ đơn</span>
-    </button>
+      <!-- Hanzi Writer stroke order canvas container -->
+      <div id="hanzi-writer-box" class="hanzi-writer-container"></div>
+      
+      <div class="writer-controls">
+        <button class="btn btn-secondary btn-sm" onclick="animateActiveWriters()">
+          ▶ <span data-i18n="animateStrokes">Phát nét</span>
+        </button>
+        <button class="btn btn-outline btn-sm" onclick="splitActiveWord()">
+          🔤 <span data-i18n="splitWord">Tách thành chữ đơn</span>
+        </button>
+      </div>
+
+      <div class="sheet-definitions">
+        <!-- Nghĩa chính: theo meaningLang đang chọn -->
+        <div class="def-section" id="sheet-def-primary-section">
+          <div class="def-label" id="sheet-def-primary-label"></div>
+          <div id="sheet-def-primary" class="def-text"></div>
+        </div>
+
+        <!-- Nghĩa phụ: chỉ hiện khi bật song song hoặc có kanji JP -->
+        <div class="def-section" id="sheet-def-secondary-section" style="display:none;">
+          <div class="def-label" id="sheet-def-secondary-label"></div>
+          <div id="sheet-def-secondary" class="def-text"></div>
+        </div>
+
+        <!-- Nút thêm ngôn ngữ xem song song -->
+        <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn btn-outline btn-sm" id="sheet-btn-add-lang" onclick="toggleParallelLang()" style="font-size:12px; padding:4px 10px;"></button>
+          <button class="btn btn-outline btn-sm" onclick="openEditMeaning()" style="font-size:12px; padding:4px 10px;">
+            ✏️ <span data-i18n="editMeaning">Sửa nghĩa</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="def-label" style="margin-top:16px;" data-i18n="openExternal">Mở từ điển ngoài</div>
+      <div id="sheet-external-links" class="external-links"></div>
+    </div>
+
+    <div class="sheet-col-secondary">
+      <!-- Khung phân tích chuyên sâu AI (AI 解析) -->
+      <div id="sheet-ai-analysis-container"></div>
+
+      <div id="sheet-enrich"></div>
+
+      <!-- Cây từ ghép liên quan & Họ từ vựng -->
+      <div id="sheet-compounds-section" style="margin-top:16px;"></div>
+
+      <!-- Ví dụ câu chứa từ vựng -->
+      <div id="sheet-examples-section" style="margin-top:16px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <div class="def-label" style="margin-bottom:0;" data-i18n="examples">Ví dụ câu</div>
+          <span id="sheet-examples-count" style="font-size:11px; color:var(--text-muted);"></span>
+        </div>
+        <div id="sheet-examples-list" class="examples-list"></div>
+      </div>
+    </div>
   </div>
-
-  <div class="sheet-definitions">
-    <!-- Nghĩa chính: theo meaningLang đang chọn -->
-    <div class="def-section" id="sheet-def-primary-section">
-      <div class="def-label" id="sheet-def-primary-label"></div>
-      <div id="sheet-def-primary" class="def-text"></div>
-    </div>
-
-    <!-- Nghĩa phụ: chỉ hiện khi bật song song hoặc có kanji JP -->
-    <div class="def-section" id="sheet-def-secondary-section" style="display:none;">
-      <div class="def-label" id="sheet-def-secondary-label"></div>
-      <div id="sheet-def-secondary" class="def-text"></div>
-    </div>
-
-    <!-- Nút thêm ngôn ngữ xem song song -->
-    <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
-      <button class="btn btn-outline btn-sm" id="sheet-btn-add-lang" onclick="toggleParallelLang()" style="font-size:12px; padding:4px 10px;"></button>
-      <button class="btn btn-outline btn-sm" onclick="openEditMeaning()" style="font-size:12px; padding:4px 10px;">
-        ✏️ <span data-i18n="editMeaning">Sửa nghĩa</span>
-      </button>
-    </div>
-  </div>
-
-  <!-- Khung phân tích chuyên sâu AI (AI 解析) -->
-  <div id="sheet-ai-analysis-container"></div>
-
-  <div id="sheet-enrich"></div>
-
-  <!-- Cây từ ghép liên quan & Họ từ vựng -->
-  <div id="sheet-compounds-section" style="margin-top:16px;"></div>
-
-  <!-- Ví dụ câu chứa từ vựng -->
-  <div id="sheet-examples-section" style="margin-top:16px;">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-      <div class="def-label" style="margin-bottom:0;" data-i18n="examples">Ví dụ câu</div>
-      <span id="sheet-examples-count" style="font-size:11px; color:var(--text-muted);"></span>
-    </div>
-    <div id="sheet-examples-list" class="examples-list"></div>
-  </div>
-
-  <div class="def-label" style="margin-top:16px;" data-i18n="openExternal">Mở từ điển ngoài</div>
-  <div id="sheet-external-links" class="external-links"></div>
 </div>
 
 <!-- Edit Meaning Modal -->

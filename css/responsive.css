@@ -1,95 +1,569 @@
 /* css/responsive.css - Media queries, touch interactions, notch & safe areas */
-/* Desktop Responsiveness */
-@media (min-width: 768px) {
-  #app-shell {
-    margin-top: 12px;
-    margin-bottom: 12px;
-    height: calc(100dvh - 24px);
-    border-radius: var(--radius-lg);
-    box-shadow: 0 8px 40px rgba(0,0,0,0.08);
-    overflow: hidden;
-  }
-  
-  #bottom-nav {
-    position: static;
-    border-top: none;
-    border-bottom: 1px solid var(--border-color);
-    order: -1;
-    height: 48px;
-    padding-bottom: 0;
-  }
-  
-  .nav-tab {
-    flex-direction: row;
-    gap: 8px;
-  }
-  
-  .nav-tab span {
-    font-size: 13px;
-  }
-  
-  #main-content {
-    padding-bottom: 24px;
-  }
-}
-
 
 /* ===================================================================
-   v1.1 — Responsive / safe-area hardening + concept media styles
+   1. Global Safe Areas, PWA Standalone & Viewport Hardening
    =================================================================== */
 
-/* Notch / landscape safe areas */
-#app-shell { padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); }
-#bottom-nav { padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); }
+/* Notch & edge-to-edge landscape safe areas */
+#app-shell {
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
 #top-bar {
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
 }
 
-/* Use the *visible* viewport on mobile browsers (address bar aware) */
-.bottom-sheet { max-height: 86vh; max-height: 86dvh; overscroll-behavior: contain; }
-.modal-card { max-height: 90vh; max-height: 90dvh; overscroll-behavior: contain; }
-#toast-container { top: calc(env(safe-area-inset-top, 0px) + 64px); max-width: calc(100vw - 24px); }
-.toast { text-align: center; }
+#bottom-nav {
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
 
-/* Touch devices: no sticky hover states */
+/* Modal and bottom-sheet visible viewport bounds */
+.bottom-sheet {
+  max-height: 86vh;
+  max-height: 86dvh;
+  overscroll-behavior: contain;
+}
+
+.modal-card {
+  max-height: 90vh;
+  max-height: 90dvh;
+  overscroll-behavior: contain;
+}
+
+#toast-container {
+  top: calc(env(safe-area-inset-top, 0px) + 64px);
+  max-width: calc(100vw - 24px);
+}
+
+.toast {
+  text-align: center;
+}
+
+/* Touch devices: eliminate sticky hovers */
 @media (hover: none) {
-  .word-token:hover:not(.sel-token):not(.karaoke-active) { background-color: transparent; transform: none; }
-  .dict-item-card:hover { transform: none; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02); border-color: var(--border-color); }
-  .recent-item:hover { border-color: var(--border-color); }
+  .word-token:hover:not(.sel-token):not(.karaoke-active) {
+    background-color: transparent;
+    transform: none;
+  }
+  .dict-item-card:hover {
+    transform: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    border-color: var(--border-color);
+  }
+  .recent-item:hover {
+    border-color: var(--border-color);
+  }
+  .dict-quick-tag:hover {
+    transform: none;
+  }
 }
 
-/* Tablet portrait & phones: bottom navigation, so floating bar must sit above it */
+/* iOS Standalone PWA Mode (Add to Home Screen) */
+@media all and (display-mode: standalone) {
+  #top-bar {
+    padding-top: max(env(safe-area-inset-top, 0px), 16px);
+    height: calc(var(--top-bar-height) + max(env(safe-area-inset-top, 0px), 16px));
+  }
+  #bottom-nav {
+    padding-bottom: max(env(safe-area-inset-bottom, 0px), 16px);
+    height: calc(var(--bottom-bar-height) + max(env(safe-area-inset-bottom, 0px), 16px));
+  }
+}
+
+
+/* ===================================================================
+   2. Mobile Phones (max-width: 767px)
+   =================================================================== */
+
 @media (max-width: 767px) {
-  #phrase-bar { bottom: calc(var(--bottom-bar-height) + env(safe-area-inset-bottom, 0px) + 12px); }
+  #app-shell {
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    height: 100dvh;
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
+    margin: 0;
+  }
+
+  #main-content {
+    padding-bottom: calc(var(--bottom-bar-height) + env(safe-area-inset-bottom, 0px) + 12px);
+  }
+
+  /* Keep floating phrase selection bar safely above bottom nav */
+  #phrase-bar {
+    bottom: calc(var(--bottom-bar-height) + env(safe-area-inset-bottom, 0px) + 12px);
+  }
+
+  /* Prevent awkward double bottom gaps in mobile dictionary */
+  .dict-view-container {
+    padding: 18px 12px 24px 12px;
+  }
 }
 
-/* Phones */
+/* Small to Medium Phones (max-width: 480px) */
 @media (max-width: 480px) {
-  .view { padding: 12px; }
-  .card { padding: 14px; }
-  .action-row { gap: 8px; }
-  .action-row .btn { flex: 1 1 calc(50% - 4px); padding: 10px 8px; font-size: 13px; line-height: 1.25; text-align: center; }
-  .action-row #btn-analyze { flex: 1 1 100%; }
-  .reader-toolbar { padding: 8px 10px; gap: 6px; }
-  .toolbar-group { flex-wrap: wrap; gap: 6px; }
-  .sentence-card { padding: 16px 12px; min-height: 0; }
-  .full-text-container { padding: 14px 10px; }
-  .word-token { margin: 0 1px; padding: 2px; }
-  .bottom-sheet { padding: 16px 16px calc(20px + env(safe-area-inset-bottom, 0px)); }
-  .sheet-hanzi-title { font-size: 34px; }
-  .def-text { font-size: 17px; }
-  .dict-view-container { padding: 20px 10px 40px; }
-  .settings-row { flex-wrap: wrap; }
-  .settings-control { margin-left: auto; }
-  .nav-tab span { font-size: 10.5px; }
-  .modal-card { padding: 18px; }
-  .trans-lens-header { flex-direction: column; align-items: flex-start; gap: 8px; }
-  .trans-lens-tabs { width: 100%; overflow-x: auto; padding-bottom: 4px; }
-  .ai-word-header { flex-direction: column; align-items: flex-start; gap: 8px; }
-  .ai-word-header button { width: 100%; justify-content: center; }
-  .punctuation-token { font-size: 0.85em; padding-bottom: 2px; }
+  .view {
+    padding: 12px;
+  }
+  .card {
+    padding: 14px;
+  }
+  .action-row {
+    gap: 8px;
+  }
+  .action-row .btn {
+    flex: 1 1 calc(50% - 4px);
+    padding: 10px 8px;
+    font-size: 13px;
+    line-height: 1.25;
+    text-align: center;
+    min-height: 42px;
+  }
+  .action-row #btn-analyze {
+    flex: 1 1 100%;
+    min-height: 44px;
+  }
+  .reader-toolbar {
+    padding: 8px 10px;
+    gap: 6px;
+  }
+  .toolbar-group {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .sentence-card {
+    padding: 16px 12px;
+    min-height: 0;
+  }
+  .full-text-container {
+    padding: 14px 10px;
+  }
+  .word-token {
+    margin: 0 1px;
+    padding: 2px;
+  }
+  .bottom-sheet {
+    padding: 16px 16px calc(20px + env(safe-area-inset-bottom, 0px));
+  }
+  .sheet-hanzi-title {
+    font-size: 34px;
+  }
+  .def-text {
+    font-size: 17px;
+  }
+  .settings-row {
+    flex-wrap: wrap;
+  }
+  .settings-control {
+    margin-left: auto;
+  }
+  .nav-tab span {
+    font-size: 10.5px;
+  }
+  .modal-card {
+    padding: 18px;
+  }
+  .trans-lens-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .trans-lens-tabs {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .ai-word-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .ai-word-header button {
+    width: 100%;
+    justify-content: center;
+  }
+  .punctuation-token {
+    font-size: 0.85em;
+    padding-bottom: 2px;
+  }
 }
+
+/* Extra-small screens (e.g. 320px - 350px) */
 @media (max-width: 350px) {
-  .brand-title { display: none; }
+  .brand-title {
+    display: none;
+  }
+  .nav-tab span {
+    font-size: 9.5px;
+  }
+}
+
+
+/* ===================================================================
+   3. Tablet & Desktop Shared Upgrades (min-width: 768px)
+   =================================================================== */
+
+@media (min-width: 768px) {
+  /* Reorganize header & navigation hierarchy:
+     1. #top-bar (Logo, Languages, Theme) sits at the top (order: -2)
+     2. #bottom-nav becomes a clean desktop tab bar (order: -1)
+     3. #main-content displays views below */
+  
+  #top-bar {
+    order: -2;
+    height: 60px;
+    padding: 0 24px;
+  }
+
+  #bottom-nav {
+    position: static;
+    order: -1;
+    height: 48px;
+    padding: 0 20px;
+    border-top: none;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-surface);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
+    max-width: 100%;
+  }
+
+  .nav-tab {
+    flex: 0 0 auto;
+    flex-direction: row;
+    height: 36px;
+    padding: 6px 16px;
+    border-radius: var(--radius-md);
+    gap: 8px;
+    color: var(--text-secondary);
+    transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .nav-tab:hover {
+    background: var(--bg-muted);
+    color: var(--text-primary);
+  }
+
+  .nav-tab.active {
+    background: var(--accent-subtle);
+    color: var(--accent);
+  }
+
+  .nav-tab.active svg {
+    transform: none;
+  }
+
+  .nav-tab span {
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  #main-content {
+    padding-bottom: 32px;
+  }
+
+  /* Multi-column dictionary search results */
+  .dict-results-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  /* Expanded Radicals Browser */
+  .dict-radical-grid {
+    grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+    max-height: 280px;
+    gap: 8px;
+  }
+
+  /* Reader Sentence Card on tablet */
+  .sentence-card {
+    max-width: 860px;
+    margin: 0 auto 18px auto;
+    padding: 28px 24px;
+  }
+
+  .reader-toolbar {
+    max-width: 860px;
+    margin: 0 auto 14px auto;
+  }
+
+  .full-text-container {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  /* Slightly expand bottom-sheet on tablet portrait */
+  .bottom-sheet {
+    max-width: 720px;
+    border-top-left-radius: 28px;
+    border-top-right-radius: 28px;
+    padding: 24px 28px;
+  }
+}
+
+
+/* ===================================================================
+   4. Tablet Landscape & Laptop Studio Layout (min-width: 1024px)
+   =================================================================== */
+
+@media (min-width: 1024px) {
+  #app-shell {
+    max-width: 1240px;
+    height: 100dvh;
+    margin: 0 auto;
+    border-left: 1px solid var(--border-color);
+    border-right: 1px solid var(--border-color);
+    background-color: var(--bg-base);
+  }
+
+  #top-bar {
+    height: 62px;
+    padding: 0 28px;
+  }
+
+  #bottom-nav {
+    height: 50px;
+    padding: 0 28px;
+    gap: 10px;
+  }
+
+  .nav-tab {
+    height: 38px;
+    padding: 7px 20px;
+    font-size: 13.5px;
+  }
+
+  /* --- VIEW: Input (2-Column Desktop Workbench) --- */
+  #view-input.active {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 24px;
+    align-items: start;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 24px;
+  }
+
+  #view-input .card {
+    margin-bottom: 0;
+  }
+
+  #view-input .textarea-box {
+    height: 220px;
+    font-size: 19px;
+  }
+
+  #view-input .samples-container {
+    margin-top: 0;
+    position: sticky;
+    top: 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 18px;
+    box-shadow: var(--card-shadow);
+  }
+
+  #view-input .recent-list {
+    max-height: 440px;
+    overflow-y: auto;
+  }
+
+  /* --- VIEW: Dictionary (Hero & Multi-Column Results) --- */
+  .dict-view-container {
+    max-width: 1180px;
+    padding: 32px 24px;
+  }
+
+  .dict-hero-title {
+    font-size: 28px;
+  }
+
+  .dict-results-list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  /* --- VIEW: Reader (Balanced Typography & Side-by-Side Lenses) --- */
+  .sentence-card {
+    max-width: 1060px;
+    margin: 0 auto 20px auto;
+    padding: 32px 36px;
+  }
+
+  .reader-toolbar {
+    max-width: 1060px;
+    margin: 0 auto 16px auto;
+  }
+
+  .full-text-container {
+    max-width: 1060px;
+    margin: 0 auto;
+    padding: 32px 36px;
+  }
+
+  /* 3 Translation Lenses side-by-side when "View All 3" is selected */
+  .trans-lens-stacked {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+
+  .trans-lens-stacked .trans-lens-card {
+    margin-bottom: 0 !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  /* --- VIEW: Settings (Comfortable Reading Width) --- */
+  #view-settings {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 24px;
+  }
+
+  /* --- WORD INSPECTOR & AI ANALYSIS MODAL STUDIO --- */
+  /* Transforms bottom sheet into a centered luxury dialog on desktop */
+  .bottom-sheet {
+    position: fixed;
+    top: 50% !important;
+    left: 50% !important;
+    right: auto !important;
+    bottom: auto !important;
+    width: 92vw;
+    max-width: 960px;
+    max-height: 85vh;
+    max-height: 85dvh;
+    border-radius: 24px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.28), 0 4px 16px rgba(0, 0, 0, 0.1);
+    transform: translate(-50%, -46%) scale(0.97) !important;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease, visibility 0s linear 0.25s;
+    padding: 24px 28px;
+    overflow-y: auto;
+  }
+
+  .bottom-sheet.active {
+    transform: translate(-50%, -50%) scale(1) !important;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease, visibility 0s;
+  }
+
+  .sheet-handle {
+    display: none;
+  }
+
+  .sheet-header {
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  /* 2-Column Inspector: Visual Hanzi on Left, AI Deep Analysis on Right */
+  .sheet-grid-body {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    column-gap: 28px;
+    align-items: start;
+  }
+
+  .sheet-col-primary {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .sheet-col-secondary {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    gap: 12px;
+  }
+
+  .sheet-col-secondary > div {
+    margin-top: 0 !important;
+  }
+
+  /* Modals on desktop */
+  .modal-card {
+    max-width: min(600px, 92vw);
+    padding: 28px;
+  }
+}
+
+
+/* ===================================================================
+   5. Large Desktop & High-Resolution Displays (min-width: 1280px)
+   =================================================================== */
+
+@media (min-width: 1280px) {
+  #app-shell {
+    max-width: 1440px;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.04);
+  }
+
+  /* Input Studio: expanded editor + full history */
+  #view-input.active {
+    grid-template-columns: 1fr 400px;
+    max-width: 1360px;
+    gap: 28px;
+  }
+
+  #view-input .textarea-box {
+    height: 240px;
+    font-size: 20px;
+  }
+
+  /* Dictionary: 3-column responsive card grid */
+  .dict-view-container {
+    max-width: 1360px;
+    padding: 36px 32px;
+  }
+
+  .dict-results-list {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  /* Reader: wide reading canvas with comfortable max-width */
+  .sentence-card {
+    max-width: 1200px;
+    padding: 36px 42px;
+  }
+
+  .reader-toolbar {
+    max-width: 1200px;
+  }
+
+  .full-text-container {
+    max-width: 1200px;
+    padding: 36px 42px;
+  }
+
+  /* Expanded Word Inspector modal on large screens */
+  .bottom-sheet {
+    max-width: 1020px;
+    padding: 28px 32px;
+  }
+
+  .sheet-grid-body {
+    grid-template-columns: 400px 1fr;
+    column-gap: 32px;
+  }
 }
