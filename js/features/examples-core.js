@@ -125,17 +125,24 @@
     else score -= 20;
     if (len < 8) score -= 5;
 
-    // Complete translations mean no machine translation is needed.
-    if (item.vi) score += 8;
-    if (item.ja) score += 6;
-    if (item.en) score += 4;
+    // Translations matter: a sentence already translated into the user's language avoids
+    // a machine-translation round trip. Tatoeba has almost no Vietnamese pairs, so this
+    // keeps the hand-curated trilingual corpus in front for Vietnamese users.
+    if (item.vi) score += 5;
+    if (item.ja) score += 4;
+    if (item.en) score += 3;
+    if (item.vi && item.ja && item.en) score += 8;
+    var lang = o.lang || 'vi';
+    if (item[lang]) score += 10;
+
+    // Slightly prefer human-written corpora over scraped / machine memories.
+    score += sourceRank(item) / 20;
 
     // Easier sentences first; anything above HSK 2 loses ground quickly.
     var level = estimateDifficulty(zh, o.lookupHsk, o.segment);
     if (level > 2) score -= (level - 2) * 12;
 
     // Prefer the example that illustrates the sense currently on screen.
-    var lang = o.lang || 'vi';
     if (o.senseText) {
       score += Math.round(senseOverlap(item[lang], o.senseText) * 30);
     }

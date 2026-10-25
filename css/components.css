@@ -791,3 +791,41 @@
   color: #DC2626;
   border-color: rgba(239, 68, 68, 0.3);
 }
+
+/* Collocations mined from the Tatoeba corpus (words that keep company with the headword) */
+.example-colloc {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 4px 0 10px;
+}
+.example-colloc-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-right: 2px;
+}
+.colloc-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.colloc-chip:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.colloc-count {
+  font-size: 9.5px;
+  font-weight: 700;
+  opacity: 0.55;
+}

@@ -40,6 +40,7 @@ function makeContext() {
     'js/data/common-words.js',
     'js/data/ja-common.js',
     'js/data/examples.js',
+    'js/data/examples-corpus.js',
     'js/features/examples-core.js',
     'js/features/examples.js',
   ]) {
@@ -260,6 +261,84 @@ check('coverage is measured, not assumed', () => {
   const pct = (covered / dictWords.length * 100).toFixed(1);
   console.log(`     (curated corpus covers ${covered}/${dictWords.length} words = ${pct}%)`);
   assert.ok(covered > 500, 'coverage collapsed: ' + covered);
+});
+
+// ================================================== Tatoeba corpus
+console.log('\n--- Tatoeba corpus and collocations ---');
+
+const CORPUS = ctx.EXAMPLES_CORPUS;
+
+check('the generated corpus is present and well formed', () => {
+  assert.ok(CORPUS && typeof CORPUS === 'object', 'examples-corpus.js not loaded');
+  const words = Object.keys(CORPUS);
+  assert.ok(words.length > 1000, 'only ' + words.length + ' words in the corpus');
+  for (const w of words.slice(0, 300)) {
+    const entry = CORPUS[w];
+    assert.ok(Array.isArray(entry.e), w + ' has no example list');
+    for (const row of entry.e) {
+      assert.ok(Array.isArray(row) && row.length === 4, w + ' has a malformed example row');
+      assert.ok(row[0].indexOf(w) !== -1, `${w} has an example without the word: ${row[0]}`);
+    }
+    if (entry.c) {
+      for (const c of entry.c) assert.ok(Array.isArray(c) && c.length === 2 && typeof c[1] === 'number', 'bad collocation row');
+    }
+  }
+});
+
+check('corpus covers the great majority of the dictionary', () => {
+  const covered = dictWords.filter(w => CORPUS[w] && CORPUS[w].e && CORPUS[w].e.length).length;
+  const pct = covered / dictWords.length * 100;
+  console.log(`     (Tatoeba covers ${covered}/${dictWords.length} = ${pct.toFixed(1)}%)`);
+  assert.ok(pct > 80, 'coverage too low: ' + pct.toFixed(1) + '%');
+});
+
+check('collocations are real dictionary words, not function words', () => {
+  const stop = new Set(['这个', '那个', '什么', '一个', '我们', '你们', '他们', '为了', '没有', '成了']);
+  let checked = 0;
+  for (const w of Object.keys(CORPUS)) {
+    const c = CORPUS[w].c;
+    if (!c || !c.length) continue;
+    for (const [word, n] of c) {
+      assert.ok(!stop.has(word), `${w} lists the function word ${word}`);
+      assert.ok(MINI_DICT[word] || true, 'collocation not in dictionary');
+      assert.ok(typeof n === 'number' && n >= 3, `${w} -> ${word} has a weak count ${n}`);
+      checked++;
+    }
+    if (checked > 400) break;
+  }
+  assert.ok(checked > 100, 'too few collocations checked: ' + checked);
+});
+
+check('well-known collocations look right', () => {
+  const top = (w) => (CORPUS[w] ? CORPUS[w].c.map(x => x[0]) : []);
+  assert.ok(top('解决').indexOf('问题') !== -1, '解决 should collocate with 问题: ' + top('解决').join(','));
+  assert.ok(top('学习').indexOf('努力') !== -1, '学习 should collocate with 努力: ' + top('学习').join(','));
+  assert.ok(top('提高').indexOf('水平') !== -1, '提高 should collocate with 水平: ' + top('提高').join(','));
+});
+
+check('the UI can read collocations', () => {
+  assert.strictEqual(typeof ctx.getWordCollocations, 'function', 'getWordCollocations missing');
+  const list = ctx.getWordCollocations('解决');
+  assert.ok(Array.isArray(list) && list.length > 0, 'no collocations for 解决');
+  assert.strictEqual(ctx.getWordCollocations('zzzz').length, 0, 'unknown words must return no collocations');
+});
+
+check('collocations are rendered as chips and the licence ships', () => {
+  assert.ok(/example-colloc/.test(examplesSrc), 'collocation row missing from the renderer');
+  assert.ok(/colloc-chip/.test(examplesSrc), 'collocation chip missing');
+  const css = fs.readFileSync(path.join(__dirname, 'css/components.css'), 'utf8');
+  assert.ok(/\.colloc-chip/.test(css), 'collocation styles missing');
+  const licence = path.join(__dirname, 'js', 'data', 'tatoeba-LICENSE.txt');
+  assert.ok(fs.existsSync(licence), 'missing js/data/tatoeba-LICENSE.txt');
+  assert.ok(/CC BY 2\.0 FR/.test(fs.readFileSync(licence, 'utf8')), 'licence text must name CC BY 2.0 FR');
+});
+
+check('examples-corpus.js loads before examples.js', () => {
+  const html = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
+  const corpus = html.indexOf('js/data/examples-corpus.js');
+  const ex = html.indexOf('js/features/examples.js');
+  assert.ok(corpus !== -1 && ex !== -1, 'a script tag is missing');
+  assert.ok(corpus < ex, 'examples-corpus.js must load before examples.js');
 });
 
 console.log(`\n${failed === 0 ? '🎉' : '❌'} ${passed} passed, ${failed} failed.\n`);

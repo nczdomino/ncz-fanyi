@@ -1,0 +1,24 @@
+js/data/examples-corpus.js is generated from Tatoeba.
+
+  Tatoeba
+  https://tatoeba.org/
+  A community collection of sentences and translations.
+
+  Licence: Creative Commons Attribution 2.0 France (CC BY 2.0 FR)
+  https://creativecommons.org/licenses/by/2.0/fr/
+
+  Downloads used by tools/build-examples-corpus.js:
+  https://downloads.tatoeba.org/exports/per_language/cmn/cmn_sentences.tsv.bz2
+  https://downloads.tatoeba.org/exports/per_language/{vie,jpn,eng}/{lang}_sentences.tsv.bz2
+  https://downloads.tatoeba.org/exports/per_language/cmn/cmn-{vie,jpn,eng}_links.tsv.bz2
+
+Modifications made by this project:
+  - only Mandarin sentences of 4-40 characters that contain a headword from the bundled
+    dictionary, and that have at least one translation, are kept
+  - at most three examples per headword, ranked by position/length/difficulty/translation
+  - collocations are derived counts (which dictionary words appear within 4 characters of
+    the headword), not text from Tatoeba
+  - stored as {"word": {"e": [[zh, vi, ja, en], ...], "c": [[collocation, count], ...]}}
+
+Because the file is distributed here, any redistribution must keep this attribution and
+the CC BY 2.0 FR licence, as Tatoeba requires.

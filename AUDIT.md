@@ -471,6 +471,62 @@ Save-Data, wiring nút).
 
 ---
 
+## 6e. Ví dụ câu: sửa lỗi, xếp hạng, corpus thật, collocation
+
+### Lỗi đo được trước khi sửa
+
+| Đo | Kết quả |
+|---|---|
+| Phủ từ điển (400 câu thủ công) | **599/1.615 từ (37,1%)** |
+| Từ ≥2 chữ không có ví dụ thật | **916** |
+| **Từ có ví dụ KHÔNG chứa từ** | **107 (6,6%)**, trong đó **106 là ví dụ đầu tiên** |
+| `state.translations` | **không tồn tại** — chỉ được đọc, chưa bao giờ được ghi |
+
+Nguyên nhân: lớp "2B" trong `examples.js` chấp nhận câu mà **mọi ký tự của từ xuất hiện ở đâu đó**
+trong câu, và nó chạy **trước** lớp khớp chuỗi con. Hệ quả điển hình:
+
+```
+您好 → "登机前请准备好您的有效护照…"      (您 … 好 rời nhau)
+多少 → "…减少高油高糖…多吃…"             (少 trong 减少, 多 trong 多吃)
+好吃 → "早餐一定要吃好…"                 (吃好 ≠ 好吃 — ĐẢO NGHĨA)
+```
+
+### Đã sửa / đã thêm
+
+| Việc | Chi tiết |
+|---|---|
+| **Bắt buộc chứa từ** | `examples-core.js`: `containsWord()` là điều kiện cứng cho mọi ví dụ hiển thị; lớp 2B bị xoá. Test quét **toàn bộ 1.615 từ** và khẳng định không từ nào nhận ví dụ thiếu từ (code cũ fail 107 ca) |
+| **Xếp hạng** | `scoreExample()`: từ nằm giữa câu (+15), câu 8–20 chữ (+20), câu >26 chữ (−20), độ khó HSK (mỗi bậc trên HSK 2 là −12), có bản dịch đúng ngôn ngữ người dùng (+10), đủ 3 ngôn ngữ (+8), nguồn người thật > bộ nhớ dịch máy |
+| **Đa dạng** | `pickDiverse()`: một ví dụ cho mỗi tổ hợp (độ dài × vị trí của từ), và **xoay vòng** mỗi lần mở từ thay vì luôn 2 câu đầu file |
+| **Nhãn độ khó** | `estimateDifficulty()` → Cơ bản / Trung cấp / Nâng cao, hiện cạnh mỗi ví dụ |
+| **Lọc nguồn online** | `isUsableOnlineExample()`: loại câu không chứa từ, câu chỉ là từ, câu <4 hoặc >60 chữ, câu lẫn tiếng Latin. Chỉ gọi mạng khi corpus địa phương **< 3** câu (trước đây mỗi từ có thể gọi tới 4 nguồn) |
+| **Ví dụ theo nghĩa** | `senseOverlap()` so bản dịch của câu với nghĩa đang hiển thị (+30 × overlap) — ví dụ khớp nghĩa đang xem được ưu tiên |
+| **"Trong bài đọc"** | `state.translations` được tạo và `reader.js` ghi bản dịch đã tính vào đó, nên thẻ "ví dụ trong bài của bạn" mới thật sự có bản dịch |
+| **Index không cần Segmenter** | Nếu thiếu `Intl.Segmenter`, index dựng bằng cửa sổ ký tự (trước đây index rỗng hoàn toàn) |
+| **Cache** | Lựa chọn ví dụ được cache theo (từ, ngôn ngữ, nghĩa) — mở lại không nhảy câu, không gọi mạng lần nữa |
+| **Lặp/shadowing** | Nút 🔁 trên mỗi ví dụ, dùng `repeatSpeak()` của đợt âm thanh |
+
+### Corpus Tatoeba + collocation (mới)
+
+| Việc | Chi tiết |
+|---|---|
+| **Corpus thật** | `tools/build-examples-corpus.js` tải Tatoeba (cmn 1,2 MB + vie 0,4 MB + jpn 3,3 MB + eng 23,8 MB + links), ghép bản dịch người thật, sinh `js/data/examples-corpus.js` (**0,57 MB**): **1.379 từ có ví dụ**, 3.817 câu |
+| **Phủ** | **37,1% → 87,2%** (1.408/1.615 từ có ít nhất 1 ví dụ) |
+| **Collocation (搭配)** | Trích từ chính corpus: cửa sổ 2–3 chữ quanh từ, **chỉ giữ tổ hợp là từ có thật** trong từ điển (MINI_DICT + CC-CEDICT) và loại hư từ. Kết quả: 解决→问题(34), 学习→努力(22), 提高→水平(4)… hiển thị thành chip bấm được |
+| **Giấy phép** | `js/data/tatoeba-LICENSE.txt` (CC BY 2.0 FR) + ghi công trong header file dữ liệu |
+| **Giới hạn đã biết** | Tatoeba chỉ có **798 liên kết cmn↔vie** (so với 78.208 cmn↔eng), nên phần lớn ví dụ mới có ja/en; tiếng Việt thường phải dịch máy. Vì vậy thang điểm cộng ưu tiên câu **đã có bản dịch đúng ngôn ngữ người dùng**, để corpus thủ công 3 ngôn ngữ vẫn đứng trước với người dùng Việt |
+
+### Test
+
+`test_examples_logic.js` **28 assertion**, gồm:
+- quét **toàn bộ 1.615 từ** khẳng định không ví dụ nào thiếu từ (hồi quy chính);
+- xếp hạng (vị trí/độ dài/độ khó/nghĩa), đa dạng, xoay vòng;
+- bộ lọc nguồn online, thứ hạng nguồn;
+- định dạng + độ phủ corpus (yêu cầu > 80%), collocation là từ thật và không phải hư từ;
+- wiring: thứ tự nạp script, badge, nút lặp, giấy phép, `state.translations`.
+
+---
+
 ## 7. Điều đáng làm tiếp (chưa nằm trong lần sửa này)
 
 1. ~~Độ phủ từ điển~~ — **đã giải quyết một phần**: 1.615 mục tuyển chọn + 119.120 mục CC-CEDICT
