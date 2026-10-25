@@ -239,11 +239,36 @@ phổ biến: **thiếu 42**. Đã thêm:
 * Không có `eval` / `new Function` trên dữ liệu người dùng.
 * `functions/api/ocr-repair.js` chỉ re-export, không nhân bản logic.
 
-### 3.3. Khuyến nghị còn lại (chưa làm, cần hạ tầng)
+### 3.3. Kiểm chứng trên production (ncz-fanyi.pages.dev, Cloudflare Pages)
 
-1. **Rate limit toàn cục**: bộ đếm hiện tại nằm trong bộ nhớ mỗi instance (serverless
-   không chia sẻ RAM). Muốn chặn cứng thì dùng Cloudflare Rate Limiting Rules / Vercel WAF,
-   hoặc Upstash Redis.
+Đo trực tiếp trên bản đang chạy, không phải suy đoán:
+
+| Kiểm tra | Kết quả |
+|---|---|
+| Code mới đã deploy | ✅ `sw.js` (2.186 B nén), `js/features/ext-dict.js`, `js/features/dict-scoring.js`, `js/data/cedict.json` (2.950.949 B nén) đều 200 |
+| `index.html` nạp `ext-dict.js` | ✅ có |
+| `GET /api/ocr` | ✅ `{"status":"ok","service":"RapidOCR Proxy"}` — bản đã vá, không còn cờ `configured` |
+| `POST /api/translate` với `type` lạ | ✅ `400 {"error":"INVALID_TYPE"}` — allow-list hoạt động |
+| `POST /api/translate` với `Origin: https://evil.example` | ✅ `403 {"error":"ORIGIN_NOT_ALLOWED"}` |
+| `POST` với `Origin: https://ncz-fanyi.pages.dev` | ✅ được phép (đi tiếp tới validate) |
+| `OPTIONS` preflight từ origin lạ | ✅ `204`, **không** có `Access-Control-Allow-Origin` |
+| `GEMINI_API_KEY` trên Cloudflare | ✅ đã cấu hình (nếu thiếu, mọi request sẽ trả 503 trước khi validate) |
+| **Rate limit** | ❌ **34 request liên tiếp, tất cả 400, không có 429** |
+
+**Vì sao rate limit không chặn:** Cloudflare Pages Functions chạy trên **nhiều isolate**;
+bộ đếm nằm trong RAM từng isolate nên một chuỗi request bị chia sang nhiều isolate và
+không isolate nào chạm ngưỡng 30. Trên Cloudflare, biện pháp này hiện chỉ là "tốc độ chậm",
+**không phải giới hạn thật**. (Trên Vercel cũng per-instance, nhưng ít instance và sống lâu hơn.)
+
+### 3.4. Khuyến nghị còn lại (chưa làm, cần hạ tầng)
+
+1. **Rate limit toàn cục — ưu tiên cao nhất trong các việc còn lại**, vì đo trên production cho
+   thấy lớp bảo vệ hiện tại không có tác dụng thật. Ba hướng:
+   - **Cloudflare Rate Limiting Rules** (dashboard → Security → WAF): đúng tầng, chặn toàn cục,
+     không cần code. Số rule khả dụng tuỳ gói — kiểm tra trong dashboard.
+   - **Durable Object / KV binding**: bộ đếm dùng chung giữa các isolate. Cần thêm binding vào
+     project Pages và một `wrangler.toml`, sau đó `enforceRate()` đổi sang gọi binding.
+   - **Upstash Redis** qua HTTP: không cần cấu hình Cloudflare, nhưng thêm phụ thuộc ngoài.
 2. **Xác thực người dùng** cho các endpoint AI nếu app mở công khai.
 3. **CSP** trong `index.html` (hiện chưa có) — giảm thiệt hại nếu có XSS tương lai.
 
