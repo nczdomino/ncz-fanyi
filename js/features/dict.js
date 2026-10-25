@@ -342,6 +342,7 @@ function renderDictItemCard(item) {
       </div>
       <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
         ${item.hsk ? `<span class="badge ${String(item.hsk).includes('7') || String(item.hsk).includes('8') || String(item.hsk).includes('9') ? 'badge-hsk-pro' : 'badge-hsk'}">HSK ${item.hsk}</span>` : ''}
+        ${item.ext ? `<span class="badge badge-ext" title="CC-CEDICT">CC-CEDICT</span>` : ''}
         ${(item.type === 'slang' || !!getSlangEntry(word)) ? `<span class="badge" style="background:rgba(232,52,78,0.12); color:var(--accent); border:1px solid rgba(232,52,78,0.3); font-weight:700;">🔥 Slang</span>` : ''}
         <button class="icon-btn" style="width:34px; height:34px;" onclick="event.stopPropagation(); speakText('${escapeQuotes(word)}')" title="${t('play')}" aria-label="${t('play')}">
           <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
@@ -555,7 +556,21 @@ function renderDictView() {
       ? `https://dict.naver.com/linedict/zhendict/#/cnja/search?query=${encodeURIComponent(query)}`
       : `https://dict.naver.com/linedict/zhendict/#/cnen/search?query=${encodeURIComponent(query)}`;
 
+    // Nothing in the curated dictionary: pull in the extended one and retry once.
+    // This is the only place the ~7 MB dataset is ever requested.
+    let extLoading = false;
+    if (query && typeof ensureExtDict === 'function' && !EXT_DICT.loaded && !EXT_DICT.loading && !state._extDictRequested) {
+      state._extDictRequested = true;
+      extLoading = true;
+      ensureExtDict().then(ok => {
+        if (ok) renderDictView();
+      });
+    } else if (query && typeof EXT_DICT !== 'undefined' && EXT_DICT.loading) {
+      extLoading = true;
+    }
+
     let noMatchHtml = `
+      ${extLoading ? `<div class="dict-ext-loading">⏳ ${tx('Đang tải từ điển mở rộng (119.000 mục)…', 'Loading the extended dictionary (119k entries)…', '拡張辞書を読み込み中…')}</div>` : ''}
       <div class="dict-no-match-wrapper">
         <div class="dict-no-match-header">
           <div style="font-size:36px; margin-bottom:8px;">🔍</div>
@@ -678,6 +693,15 @@ function renderDictView() {
         ${suggestionItems.map(renderDictItemCard).join('')}
       </div>
     `;
+  }
+
+  // Attribution is required by CC-CEDICT's CC BY-SA 4.0 licence.
+  if (matches.some(m => m.ext)) {
+    html += `<div class="dict-ext-credit">${tx(
+      'Kết quả mở rộng từ CC-CEDICT (CC BY-SA 4.0)',
+      'Extended results from CC-CEDICT (CC BY-SA 4.0)',
+      '拡張結果: CC-CEDICT (CC BY-SA 4.0)'
+    )}</div>`;
   }
 
   // 1. Live Multi-Dictionary Online Extension Container (Khám phá thêm từ vựng liên quan)

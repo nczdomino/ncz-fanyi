@@ -25,6 +25,12 @@ jobs:
       - name: API hardening (CORS, rate limits, payload caps)
         run: node test_api_security.mjs
 
+      - name: Offline layer (service worker)
+        run: node test_sw.js
+
+      - name: Extended dictionary (CC-CEDICT build + ranking)
+        run: node test_ext_dict.js
+
       - name: Legacy suites
         run: |
           node test_dict_search.js

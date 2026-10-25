@@ -19,10 +19,14 @@
 | Tra `phở` / `xe máy` / `áo dài` | **không có**, hoặc trả 普通 / 推广 (trùng Hán-Việt) | 河粉, 摩托车, 奥黛 |
 | Tra `tôi yêu bạn` / `bạn khỏe không` | **không có kết quả** | 我爱你, 你好吗 |
 | Tra `to eat` / `very big` / `chi fan` | 干饭人 / không có / không có | 吃, 大, 吃饭 |
-| Số mục từ điển | 1.535 | **1.615** (+80) · reverse dict 166 → **226** |
+| Số mục từ điển | 1.535 | **1.615** (+80) · reverse dict 166 → **226** · **+119.120 mục CC-CEDICT tải theo yêu cầu** |
+| Offline | không có service worker (chỉ là lời nói) | **Service Worker thật**, precache 47 asset, runtime cache |
+| Gõ romaji | 40 từ gõ tay | **bộ chuyển Hepburn/Kunrei đầy đủ** (`densha`, `byakko`…) |
+| Gõ pinyin số | không hỗ trợ | `ni3 hao3` → 你好, `wo3 ai4 ni3` → 我爱你 |
+| Gõ sai | trả kết quả như thật | nhóm **"Có phải bạn muốn tìm…"** riêng + highlight phần khớp |
 | Tốc độ tra (~1.6k mục) | ~55 ms / lần gõ | **0.7–3.4 ms / lần gõ** |
 | CORS + rate limit API | `*` cho mọi origin, không giới hạn | allow-list + rate limit + size cap |
-| Test | 64 assertion | **+111 test hồi quy mới**, tổng 100% pass |
+| Test | 64 assertion | **+232 test hồi quy mới** (86 + 21 + 27 + 13 + 85 cũ), CI chạy mỗi push |
 
 ---
 
@@ -272,7 +276,10 @@ npm test
 
 | Bộ test | Nội dung | Kết quả |
 |---|---|---|
-| `test_dict_scoring.js` | **mới** — 76 test hồi quy cho engine (vi/en/ja/zh, kana, gõ sai, câu, dữ liệu, hiệu năng, kiểm tra tĩnh) | 76/76 |
+| `test_dict_scoring.js` | **mới** — 86 test hồi quy cho engine (vi/en/ja/zh, kana, romaji, pinyin số, câu, dữ liệu, hiệu năng, kiểm tra tĩnh) | 86/86 |
+| `test_api_security.mjs` | **mới** — 27 test hành vi cho API (CORS/rate limit/413/405/rò rỉ) | 27/27 |
+| `test_sw.js` | **mới** — 13 test service worker (precache, chính sách cache, đăng ký) | 13/13 |
+| `test_ext_dict.js` | **mới** — 21 test CC-CEDICT (build, xếp hạng, giấy phép, lazy load) | 21/21 |
 | `test_dict_render.js` | **mới** — smoke test DOM thật: load đúng thứ tự `index.html`, gọi `renderDictView()`, kiểm tra HTML sinh ra + XSS | pass |
 | `test_dict_search.js` | bộ cũ (7 nhóm) | 7/7 |
 | `test_hsk789_and_live_dict.js` | HSK 7-9 + live dict + i18n | pass |
@@ -315,9 +322,18 @@ top('to eat')[0] === '吃'                  // cũ: 干饭人
 ?? api/_lib/http.js              helper bảo mật dùng chung (Vercel)
 ?? functions/_lib/http.js        helper bảo mật dùng chung (Cloudflare)
 ?? js/features/dict-scoring.js   ENGINE MỚI
+?? js/features/ext-dict.js        loader từ điển mở rộng (lazy)
 ?? js/data/common-words.js       +80 mục từ thông dụng còn thiếu
-?? test_dict_scoring.js          76 test hồi quy
+?? js/data/cedict.json           +119.120 mục CC-CEDICT (tải theo yêu cầu)
+?? js/data/cedict-LICENSE.txt    CC BY-SA 4.0 attribution
+?? sw.js                         service worker (offline thật)
+?? tools/build-cedict.js         script tái lập dữ liệu CC-CEDICT
+?? .github/workflows/test.yml    CI chạy toàn bộ test
+?? test_dict_scoring.js          86 test hồi quy
 ?? test_dict_render.js           smoke test DOM
+?? test_api_security.mjs         27 test bảo mật API
+?? test_sw.js                    13 test service worker
+?? test_ext_dict.js              21 test từ điển mở rộng
 ?? package.json                  npm test
 ```
 
@@ -340,13 +356,54 @@ phần sửa logic/bảo mật ở trên.
 
 ---
 
+## 6c. Ba đợt nâng cấp sau audit (đã làm, có test)
+
+### Đợt 1 — trải nghiệm & an toàn hồi quy
+
+| Việc | Chi tiết |
+|---|---|
+| **Nhóm "Có phải bạn muốn tìm…"** | Engine có tier `suggestion` riêng cho kết quả fuzzy; chỉ xuất hiện khi **không** có kết quả chắc chắn, nên không bao giờ tranh chỗ với đáp án thật |
+| **Highlight phần khớp** | `highlightHit()` bọc đúng đoạn khớp trong nghĩa (`<mark class="dict-hit">`) — người dùng thấy *vì sao* kết quả đứng đầu |
+| **Điền `ja` cho 1.469 mục** | Suy từ `JA_COMMON_DICT` ngay trong `push()`, áp cho cả nhánh Hán tự, reverse dict và slang; không thêm file dữ liệu nào |
+| **Test bảo mật API** | `test_api_security.mjs` — 27 assertion: CORS, rate limit, 413/405, allow-list `type`, không rò body upstream, clamp nét vẽ, parity bản Cloudflare |
+| **CI** | `.github/workflows/test.yml` chạy toàn bộ suite mỗi push/PR |
+
+> **Test mới lập tức tìm ra 2 lỗi tôi đã tạo ở lượt trước:** `api/ocr.js` mất khai báo
+> `ocrServiceUrl`/`ocrAuthToken` và cả nhánh GET (endpoint ném lỗi mọi lần gọi), và 3 handler
+> mất guard `405`. Đã khôi phục. Đây đúng là lý do cần test hành vi cho API.
+
+### Đợt 2 — offline thật & nhập liệu
+
+| Việc | Chi tiết |
+|---|---|
+| **Service Worker** | `sw.js`: precache danh sách asset **suy ra từ `index.html`** lúc install (47 file), nên thêm `<script>` không phải sửa SW. Điều hướng network-first (deploy lên là thấy ngay), JS/CSS stale-while-revalidate, `/api/*` **không bao giờ** cache, xoá cache phiên bản cũ khi activate |
+| **Romaji → kana đầy đủ** | `romajiToHiragana()`: digraph, sokuon, syllabic n → `densha`→でんしゃ, `gakkou`→がっこう, `byouin`→びょういん. Tiếng Anh **không** bị nhận nhầm sang tiếng Nhật (`kangaroo` vẫn `latin`) |
+| **Pinyin số** | `pinyinNumberToTone()`: `ni3 hao3`→nǐ hǎo, đặt dấu đúng cho `iu/ui/ü` (`liu2`→liú, `gui4`→guì, `nv3`→nǚ). Nhận diện ngôn ngữ kiểm tra dấu **riêng của pinyin** (ǒ ǐ ǔ ǎ ē…) trước dấu tiếng Việt, vì `wǒ ài nǐ` từng bị xếp là tiếng Việt do chữ `à` |
+
+### Đợt 3 — từ điển mở rộng CC-CEDICT
+
+| Việc | Chi tiết |
+|---|---|
+| **Dữ liệu** | `tools/build-cedict.js` tải và chuyển CC-CEDICT → `js/data/cedict.json`: **119.120 mục**, 6.84 MB (2.83 MB gzip khi host nén). Chỉ giữ headword giản thể, tối đa 2 gloss (mỗi gloss ≤ 60 ký tự), pinyin đã chuyển sang dấu, bỏ stub "variant of"/tên riêng trùng |
+| **Giấy phép** | CC BY-SA 4.0 — `js/data/cedict-LICENSE.txt` + dòng ghi công hiện trong UI khi có kết quả mở rộng |
+| **Tải theo yêu cầu** | Chỉ fetch khi từ điển chính **không** tìm thấy gì (`dict.js` no-match branch), có guard chống gọi lặp; Service Worker cache lại cho lần sau |
+| **Xếp hạng** | Chỉ số `gloss đầu tiên → headword` dựng một lần (250 ms), nhờ đó `mahjong`→麻将, `travel`→旅行, `sofa`→沙发 thay vì để từ dài/ngắn hơn thắng; ưu tiên headword 2 chữ; blob-scan dự phòng cho khớp một phần |
+| **Không phá tốc độ** | Từ điển mở rộng **tách khỏi** chỉ mục chính; `ăn` vẫn 0.7 ms và `stats.extUsed = 0` khi từ điển chính đã có đáp án (có test) |
+
+**Đo được:** `JSON.parse` 7 MB ≈ 78 ms, đăng ký ≈ 12 ms, tra Hán tự qua ext 3–9 ms, tra tiếng Anh 5–14 ms sau lần dựng chỉ mục đầu.
+
+---
+
 ## 7. Điều đáng làm tiếp (chưa nằm trong lần sửa này)
 
-1. **Độ phủ từ điển** vẫn là giới hạn thật sự còn lại: nay **1.615 mục** (đã +80), nhưng một
-   từ điển dùng thật cần 20k–120k mục. Import **CC-CEDICT** (~120k mục, CC BY-SA 4.0) là bước
-   nâng cấp lớn nhất còn lại. Với 1.6k mục engine chạy 0.7–3.4 ms; 120k mục nên chuyển sang
-   **Web Worker + IndexedDB** (dựng chỉ mục một lần, lưu lại), nếu không mỗi lần mở app sẽ mất
-   vài trăm ms.
+1. ~~Độ phủ từ điển~~ — **đã giải quyết một phần**: 1.615 mục tuyển chọn + 119.120 mục CC-CEDICT
+   tải theo yêu cầu. Việc còn lại: CC-CEDICT chỉ có gloss **tiếng Anh**, chưa có nghĩa Việt/Nhật
+   cho 119k mục đó. Nếu muốn, bước tiếp theo là sinh gloss Việt/Nhật bằng AI theo lô và lưu thành
+   file tĩnh (không gọi AI lúc chạy).
+2. **Chuyển CC-CEDICT vào Web Worker + IndexedDB**: hiện parse 7 MB trên main thread (~80 ms, chỉ
+   một lần) và giữ trong RAM (~40 MB). Trên máy yếu nên đẩy sang worker và cache bản đã xử lý.
+3. **`api/` và `functions/` vẫn trùng ~60%** — nên gộp thành một lõi dùng chung (đợt này chỉ giữ
+   đồng bộ bằng test parity).
 2. **Chuẩn hóa giản/phồn thể** (汉/漢) — hiện chỉ khớp đúng mặt chữ.
 3. **Tách file** `dict.js` (1.100 dòng) thành `dict-view.js` + `dict-compounds.js`.
 4. **i18n cho thông báo lỗi API** — hiện message tiếng Việt hard-code.

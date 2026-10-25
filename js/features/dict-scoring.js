@@ -48,6 +48,13 @@
     PINYIN_PREFIX: 420,
     PINYIN_CONTAINS: 300,
 
+    // Extended (CC-CEDICT) results always rank below curated entries.
+    EXT_HANZI_EXACT: 960,
+    EXT_HANZI_PREFIX: 870,
+    EXT_HANZI_CONTAINS: 800,
+    EXT_EN_EXACT: 870,
+    EXT_EN_CONTAINS: 780,
+
     HANVIET_EXACT: 640,
     HANVIET_TOKEN: 520,
     HANVIET_PREFIX: 460,
@@ -685,6 +692,227 @@
     return out;
   }
 
+  // --------------------------------------------------- extended dictionary
+  // CC-CEDICT (~119k headwords) is loaded on demand by js/features/ext-dict.js.
+  // It is kept out of the main index so the hot path stays at ~1 ms: it is only
+  // consulted when the curated dictionary found (almost) nothing.
+  var _ext = null;
+  var _extKeys = null;
+  var _extBlob = null;
+  var _extOffsets = null;
+  var _extGlossMap = null;
+
+  /**
+   * Register the extended dictionary.
+   * @param {Object<string,string>} map  { simplified: "pinyin|definition" }
+   * @returns {number} entry count
+   */
+  function setExtendedDictionary(map) {
+    _ext = null;
+    _extKeys = null;
+    _extBlob = null;
+    _extOffsets = null;
+    _extGlossMap = null;
+    if (!map || typeof map !== 'object') return 0;
+    _ext = map;
+    _extKeys = Object.keys(map);
+    return _extKeys.length;
+  }
+
+  // One lower-cased blob of all definitions, so English lookups cost a single indexOf
+  // instead of 119k toLowerCase() allocations.
+  function buildExtBlob() {
+    if (_extBlob !== null || !_extKeys) return;
+    var n = _extKeys.length;
+    var offsets = new Array(n);
+    var parts = new Array(n);
+    var pos = 0;
+    for (var i = 0; i < n; i++) {
+      var v = _ext[_extKeys[i]] || '';
+      var bar = v.indexOf('|');
+      var def = bar === -1 ? v : v.slice(bar + 1);
+      var lower = def.toLowerCase();
+      offsets[i] = pos;
+      parts[i] = lower;
+      pos += lower.length + 1;
+    }
+    _extBlob = parts.join('\u0001');
+    _extOffsets = offsets;
+  }
+
+  function extIndexAt(offset) {
+    var lo = 0;
+    var hi = _extOffsets.length - 1;
+    var ans = 0;
+    while (lo <= hi) {
+      var mid = (lo + hi) >> 1;
+      if (_extOffsets[mid] <= offset) { ans = mid; lo = mid + 1; } else { hi = mid - 1; }
+    }
+    return ans;
+  }
+
+  // Index of first-gloss -> headwords. CC-CEDICT orders glosses by importance, so an
+  // entry whose FIRST gloss is exactly the query ("mahjong") is a much better answer than
+  // one that merely mentions it ("mahjong table"). Built once, on first English lookup,
+  // and only for single-word glosses to keep it small.
+  var GLOSS_LEAD_IN = /^(?:to\s+|\([a-z][^)]{0,20}\)\s*|the\s+|a\s+|an\s+)/;
+
+  function normalizeGloss(text) {
+    return String(text || '')
+      .toLowerCase()
+      .replace(GLOSS_LEAD_IN, '')
+      .replace(/[^a-z'-]/g, '')
+      .trim();
+  }
+
+  function buildExtGlossMap() {
+    if (_extGlossMap || !_extKeys) return;
+    var map = Object.create(null);
+    var n = _extKeys.length;
+    for (var i = 0; i < n; i++) {
+      var word = _extKeys[i];
+      var v = _ext[word] || '';
+      var bar = v.indexOf('|');
+      if (bar === -1) continue;
+      var def = v.slice(bar + 1);
+      var semi = def.indexOf(';');
+      var key = normalizeGloss(semi === -1 ? def : def.slice(0, semi));
+      if (!key || key.length < 3 || key.indexOf(' ') !== -1) continue;
+      var list = map[key];
+      if (!list) { map[key] = [word]; continue; }
+      if (list.length < 8) list.push(word);
+    }
+    _extGlossMap = map;
+  }
+
+  function isExtBoundary(ch) {
+    return ch === '' || ch === '\u0001' || ch === ' ' || ch === ';' || ch === ',' ||
+      ch === '.' || ch === '(' || ch === ')' || ch === '[' || ch === ']' || ch === '/';
+  }
+
+  function extEntryFor(word, scored) {
+    var raw = _ext[word] || '';
+    var bar = raw.indexOf('|');
+    var pinyin = bar === -1 ? raw : raw.slice(0, bar);
+    var def = bar === -1 ? '' : raw.slice(bar + 1);
+    return {
+      entry: {
+        pinyin: pinyin,
+        vi: '',
+        en: def ? [def] : [],
+        ja: '',
+        hanviet: '',
+        type: 'word'
+      },
+      scored: scored
+    };
+  }
+
+  function scanExtended(ctx, isHanzi, q) {
+    if (!_ext || !_extKeys) return [];
+    var out = [];
+    var MAX = 20;
+
+    if (isHanzi) {
+      var exact = [];
+      var prefix = [];
+      var contains = [];
+      for (var i = 0; i < _extKeys.length; i++) {
+        var w = _extKeys[i];
+        if (w === q) { exact.push(w); continue; }
+        if (w.length > 6) continue;
+        if (w.indexOf(q) === 0) { prefix.push(w); continue; }
+        if (contains.length < MAX * 2 && w.indexOf(q) !== -1) contains.push(w);
+      }
+      var byLen = function (a, b) { return a.length - b.length; };
+      prefix.sort(byLen);
+      contains.sort(byLen);
+      var take = function (list, score) {
+        for (var k = 0; k < list.length && out.length < MAX; k++) {
+          var item = extEntryFor(list[k], { score: score, field: 'cedict', exact: score === SC.EXT_HANZI_EXACT });
+          out.push({ word: list[k], entry: item.entry, scored: item.scored });
+        }
+      };
+      take(exact, SC.EXT_HANZI_EXACT);
+      take(prefix, SC.EXT_HANZI_PREFIX);
+      take(contains, SC.EXT_HANZI_CONTAINS);
+      return out;
+    }
+
+    // English / pinyin lookup.
+    //  1. exact first-gloss match (fast and precise: "mahjong" -> 麻将, "travel" -> 旅行)
+    //  2. blob scan fallback for partial matches ("noodle" inside "instant noodles")
+    if (!q || q.length < 3) return [];
+    buildExtGlossMap();
+
+    var probes = [q];
+    if (ctx.qLemma && ctx.qLemma !== q && ctx.qLemma.length >= 3) probes.push(ctx.qLemma);
+
+    var picked = Object.create(null);
+    var order = [];
+    function addPick(word, exact) {
+      if (!word || picked[word]) return;
+      picked[word] = exact ? 2 : 1;
+      order.push(word);
+    }
+
+    if (_extGlossMap) {
+      for (var pi = 0; pi < probes.length; pi++) {
+        var hitList = _extGlossMap[probes[pi]];
+        if (!hitList) continue;
+        for (var hi = 0; hi < hitList.length; hi++) addPick(hitList[hi], true);
+      }
+    }
+
+    if (order.length < 5) {
+      buildExtBlob();
+      if (_extBlob) {
+        for (var pf = 0; pf < probes.length; pf++) {
+          var probe = probes[pf];
+          var from = 0;
+          var scanned = 0;
+          while (order.length < 40 && scanned < 800) {
+            var idx = _extBlob.indexOf(probe, from);
+            if (idx === -1) break;
+            from = idx + 1;
+            scanned++;
+            if (!isExtBoundary(idx === 0 ? '' : _extBlob.charAt(idx - 1))) continue;
+            if (!isExtBoundary(_extBlob.charAt(idx + probe.length))) continue;
+            addPick(_extKeys[extIndexAt(idx)], false);
+          }
+          if (order.length >= 5) break;
+        }
+      }
+    }
+
+    // 2-character headwords first: learners search 麻将, not 牌桌 or 麻将牌.
+    var lenRank = function (n) {
+      if (n === 2) return 0;
+      if (n === 3) return 1;
+      if (n === 1) return 2;
+      return 3 + Math.max(0, n - 4);
+    };
+    order.sort(function (a, b) {
+      if (picked[a] !== picked[b]) return picked[b] - picked[a];
+      var la = lenRank(a.length);
+      var lb = lenRank(b.length);
+      if (la !== lb) return la - lb;
+      return a < b ? -1 : (a > b ? 1 : 0);
+    });
+
+    for (var oi = 0; oi < order.length && out.length < MAX; oi++) {
+      var w2 = order[oi];
+      var exactHit = picked[w2] === 2;
+      var item = extEntryFor(w2, {
+        score: exactHit ? SC.EXT_EN_EXACT : SC.EXT_EN_CONTAINS,
+        field: 'cedict',
+        exact: exactHit
+      });
+      out.push({ word: w2, entry: item.entry, scored: item.scored });
+    }
+    return out;
+  }
+
   // ------------------------------------------------------------ public search
   /**
    * @param {string} rawQuery
@@ -960,6 +1188,17 @@
       }
     }
 
+    // ---- 4c. Extended dictionary (only when the curated one is empty) -----
+    var extUsed = 0;
+    if (_ext && matches.length < 3 && (isHanzi || lang === 'latin' || lang === 'pinyin')) {
+      var extHits = scanExtended(ctx, isHanzi, isHanzi ? workingQuery : qNorm);
+      for (var eh = 0; eh < extHits.length; eh++) {
+        var hitE = extHits[eh];
+        if (byWord[hitE.word]) continue;
+        push(hitE.word, hitE.entry, hitE.scored, 'cedict', { ext: true });
+        extUsed++;
+      }
+    }
     // ---- 5. Pinyin demotion ---------------------------------------------
     // Root cause of "ăn" -> 安静/安全/按照: a coincidental pinyin hit must never compete
     // with a real meaning match.
@@ -1069,6 +1308,7 @@
       related: relatedCount,
       suggestions: suggestionCount,
       fuzzy: fuzzyCount,
+      extUsed: extUsed,
       strongestDefinition: Math.round(strongestDefinition),
       pinyinDemoted: pinyinDemoted,
       ms: t0 ? Math.round((performance.now() - t0) * 100) / 100 : 0
@@ -1158,6 +1398,7 @@
     searchDictionary: searchDictionary,
     browseDictionary: browseDictionary,
     invalidateIndex: invalidateIndex,
+    setExtendedDictionary: setExtendedDictionary,
     SC: SC,
     _internals: {
       norm: norm,
@@ -1173,6 +1414,7 @@
     window.searchDictionary = api.searchDictionary;
     window.browseDictionary = api.browseDictionary;
     window.dictSearchInvalidate = api.invalidateIndex;
+    window.dictSetExtendedDictionary = api.setExtendedDictionary;
     window.DICT_SCORING = api;
   }
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

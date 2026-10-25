@@ -153,7 +153,8 @@ const PINYIN_TONE_MAP = {
 
 function pinyinNumberToTone(str) {
   if (!str) return '';
-  const input = String(str).trim();
+  // CC-CEDICT and many keyboards write ü as "u:" or "v" ("lu:3", "nv3").
+  const input = String(str).trim().replace(/u:/gi, 'ü').replace(/v/gi, 'ü');
   if (!/[1-5]/.test(input)) return input;
 
   // Accept "ni3 hao3", "ni3hao3" and "nv3" (v is a common ASCII stand-in for ü).

@@ -78,6 +78,7 @@ const ORDER = [
   'js/features/nlp.js',
   'js/features/dict-search-engine.js',
   'js/features/dict-scoring.js',
+  'js/features/ext-dict.js',
   'js/features/dict.js',
 ];
 

@@ -1,0 +1,21 @@
+js/data/cedict.json is generated from CC-CEDICT.
+
+  CC-CEDICT
+  https://cc-cedict.org/
+  Community maintained Chinese-English dictionary.
+
+  Licence: Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
+  https://creativecommons.org/licenses/by-sa/4.0/
+
+  Download source used by tools/build-cedict.js:
+  https://www.mdbg.net/chinese/export/cedict/cedict_1_0_ts_utf-8_mdbg.txt.gz
+
+Modifications made by this project:
+  - simplified headwords only (traditional forms are dropped)
+  - at most two glosses per entry, each truncated to 60 characters
+  - numeric pinyin converted to tone marks
+  - cross-reference / variant stubs and proper-noun duplicates removed
+  - stored as {"简体": "pinyin|definition"}
+
+Because the file is distributed here, any redistribution of js/data/cedict.json
+must keep this attribution and the CC BY-SA 4.0 licence.
