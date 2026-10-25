@@ -600,21 +600,24 @@
 
 .example-header {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 8px;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
 }
 
 .example-zh-row {
-  flex: 1;
+  width: 100%;
 }
 
 .example-zh {
-  font-family: 'Noto Sans SC', sans-serif;
-  font-size: 15.5px;
+  font-family: var(--font-hanzi, 'Noto Sans SC', sans-serif);
+  font-size: 16px;
   font-weight: 500;
   color: var(--text-primary);
-  line-height: 1.5;
+  line-height: 1.6;
+  letter-spacing: 0.3px;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .example-highlight {
@@ -626,26 +629,57 @@
 }
 
 .example-pinyin {
-  font-size: 12.5px;
+  font-size: 13px;
   color: var(--accent);
   margin-top: 3px;
   font-family: system-ui, -apple-system, sans-serif;
   letter-spacing: 0.2px;
+  line-height: 1.45;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.example-actions-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  width: 100%;
+  margin-top: 2px;
+}
+
+.example-badges {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.example-audio-btns {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
 }
 
 .example-trans {
   font-size: 13.5px;
   color: var(--text-secondary);
   margin-top: 6px;
-  line-height: 1.4;
+  line-height: 1.5;
   border-top: 1px dashed var(--border-color);
-  padding-top: 5px;
+  padding-top: 6px;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .example-trans-parallel {
   font-size: 12.5px;
   color: var(--text-muted);
   margin-top: 3px;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .example-badge {
@@ -660,27 +694,61 @@
 }
 
 .example-audio-btn {
-  background: none;
-  border: none;
-  font-size: 16px;
+  background: var(--bg-surface, #fff);
+  border: 1px solid var(--border-color);
+  font-size: 14px;
   cursor: pointer;
-  padding: 4px 6px;
+  padding: 4px 7px;
+  min-width: 32px;
+  height: 30px;
   border-radius: 6px;
   color: var(--text-secondary);
-  transition: color 0.15s, transform 0.1s, background 0.15s;
+  transition: all 0.15s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .example-audio-btn:hover {
   background: var(--bg-base);
   color: var(--accent);
-  transform: scale(1.12);
+  border-color: var(--accent);
+  transform: translateY(-1px);
 }
 
 .example-audio-btn:active {
   transform: scale(0.95);
+  background: rgba(232, 52, 78, 0.08);
+}
+
+@media (max-width: 480px) {
+  .example-item {
+    padding: 10px 11px;
+    border-radius: 10px;
+  }
+  .example-zh {
+    font-size: 15px;
+    line-height: 1.55;
+  }
+  .example-pinyin {
+    font-size: 12.5px;
+    line-height: 1.4;
+  }
+  .example-trans {
+    font-size: 13px;
+    line-height: 1.45;
+  }
+  .example-actions-bar {
+    gap: 6px;
+  }
+  .example-audio-btn {
+    min-width: 30px;
+    height: 28px;
+    padding: 3px 6px;
+    font-size: 13px;
+  }
 }
 
 /* ---- Concept illustration (word sheet) ---- */
