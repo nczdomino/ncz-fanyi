@@ -1,8 +1,8 @@
-// test_ocr.js - Comprehensive Verification Test Suite for NCZ Hanzi OCR Pipeline
+// test_ocr.js - Comprehensive Verification Test Suite for Halou Hanzi OCR Pipeline
 const fs = require('fs');
 const assert = require('assert');
 
-console.log('🧪 Starting NCZ Hanzi OCR Pipeline Test Suite...\n');
+console.log('🧪 Starting Halou Hanzi OCR Pipeline Test Suite...\n');
 
 // 1. Verify Cloudflare Pages Functions & Frontend code syntax
 console.log('1. Verifying JavaScript files syntax...');

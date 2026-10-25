@@ -1,4 +1,4 @@
-# NCZ Fanyi — Audit kỹ thuật & nhật ký sửa lỗi
+# Halou (哈喽中文) — Audit kỹ thuật & nhật ký sửa lỗi
 
 > Phạm vi: toàn bộ repo (frontend `index.html` + `js/`, Vercel `api/`, Cloudflare `functions/`, `ocr_service/`).
 > Mục tiêu: tìm bug – lỗ hổng bảo mật – lỗi logic, và sửa tận gốc vấn đề "tra từ điển trả kết quả tào lao".
@@ -437,7 +437,7 @@ Sửa:
 - **`js/features/audio-core.js`** (mới, thuần, test được): `chunkText()` chia theo dấu câu, giữ nguyên dấu, cắt câu quá dài theo dấu mềm rồi hard-split, **không mất chữ** (có test so sánh chuỗi ghép với bản gốc); `buildEnginePlan()` (offline không thử engine mạng, Save-Data ưu tiên giọng máy, luôn có giọng offline dự phòng cuối); `buildAudioUrl()`.
 - **`tts.js` viết lại**: phát từng chunk, huỷ sạch khi có yêu cầu mới (run id), nhớ engine nào đã chạy được cho loại text đó, ghi lại engine thực dùng vào `state.ttsLastEngine`, toast khi không phát được gì, tôn trọng `navigator.onLine` và `saveData`.
 - **`karaoke.js`**: thêm `karaokeChunk(start,len)` để highlight vẫn đúng khi câu được đọc thành nhiều chunk.
-- **`sw.js`**: cache riêng cho audio (200 clip, khớp theo URL để Range không làm hỏng cache), phiên bản cache lên `ncz-v3`.
+- **`sw.js`**: cache riêng cho audio (200 clip, khớp theo URL để Range không làm hỏng cache), phiên bản cache lên `hl-v1.1.5`.
 
 ### Đợt 2 — đọc liên tục, lặp, preload
 

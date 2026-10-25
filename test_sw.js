@@ -106,7 +106,7 @@ check('the version string is bumped whenever the strategy changes', () => {
   const src = fs.readFileSync(path.join(__dirname, 'sw.js'), 'utf8');
   const m = /const VERSION = '([^']+)'/.exec(src);
   assert.ok(m, 'VERSION constant missing');
-  assert.ok(/^(?:ncz|hl)-v[\w.-]+$/.test(m[1]), 'unexpected version format: ' + m[1]);
+  assert.ok(/^hl-v[\w.-]+$/.test(m[1]), 'unexpected version format: ' + m[1]);
 });
 
 // ------------------------------------------------------------------ registration

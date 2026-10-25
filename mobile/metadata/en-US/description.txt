@@ -19,3 +19,4 @@ CORE FEATURES:
 - OCR camera scanner: snapshot printed text, textbooks, and menus into readable Chinese.
 
 Crafted by 聂诚忠 (NIE THANH TRUNG) for the global Chinese learning community.
+

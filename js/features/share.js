@@ -2,8 +2,8 @@
 
 // --- Module: Share & App Promotion ---
 function shareApp() {
-  const promoTitle = 'NCZ 翻译 · ' + t('promoTitle');
-  const promoText = '🌟 NCZ 翻译 · ' + t('promoTitle') + '\n' +
+  const promoTitle = 'Halou (哈喽中文) · ' + t('promoTitle');
+  const promoText = '🌟 Halou (哈喽中文) · ' + t('promoTitle') + '\n' +
     '📖 ' + t('promoDesc') + '\n' +
     '👉 ' + window.location.href;
 
@@ -23,7 +23,7 @@ function shareApp() {
 }
 
 function copyShareLink() {
-  const promoText = `🌟 NCZ 翻译 · ${t('promoTitle')}\n📖 ${t('promoDesc')}\n👉 ${window.location.href}`;
+  const promoText = `🌟 Halou (哈喽中文) · ${t('promoTitle')}\n📖 ${t('promoDesc')}\n👉 ${window.location.href}`;
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(promoText).then(() => {
       showToast(t('shareCopied') || 'Đã sao chép link và lời giới thiệu app!');
@@ -46,7 +46,7 @@ function fallbackCopy(text) {
     document.execCommand('copy');
     showToast(t('shareCopied') || 'Đã sao chép link chia sẻ app!');
   } catch (e) {
-    prompt(tx('Link chia sẻ NCZ 翻译:', 'NCZ 翻译 share link:', 'NCZ 翻译 共有リンク:'), window.location.href);
+    prompt(tx('Link chia sẻ Halou (哈喽中文):', 'Halou share link:', 'Halou 共有リンク:'), window.location.href);
   }
   if (ta.parentNode) ta.parentNode.removeChild(ta);
 }

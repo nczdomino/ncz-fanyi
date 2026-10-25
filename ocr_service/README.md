@@ -1,6 +1,6 @@
-# RapidOCR Microservice cho NCZ 翻译
+# RapidOCR Microservice cho Halou (哈喽中文)
 
-Dịch vụ backend Python chuyên dụng nhận diện ảnh tài liệu tiếng Trung mã nguồn mở (RapidOCR + ONNX Runtime), tương thích hoàn hảo với Cloudflare Pages Functions của NCZ 翻译.
+Dịch vụ backend Python chuyên dụng nhận diện ảnh tài liệu tiếng Trung mã nguồn mở (RapidOCR + ONNX Runtime), tương thích hoàn hảo với Cloudflare Pages Functions của Halou (哈喽中文).
 
 ---
 
@@ -14,10 +14,10 @@ Dịch vụ backend Python chuyên dụng nhận diện ảnh tài liệu tiến
    - `requirements.txt`
    - `app.py`
 4. Hugging Face sẽ tự động build và chạy container.
-5. Sau khi build xong, copy URL Space của bạn (Ví dụ: `https://your-username-ncz-ocr.hf.space`).
+5. Sau khi build xong, copy URL Space của bạn (Ví dụ: `https://your-username-halou-ocr.hf.space`).
 6. Vào **Cloudflare Pages** ➜ **Settings** ➜ **Environment variables** ➜ Thêm:
    - Variable name: `RAPIDOCR_API_URL`
-   - Value: `https://your-username-ncz-ocr.hf.space`
+   - Value: `https://your-username-halou-ocr.hf.space`
 
 ---
 
@@ -28,7 +28,7 @@ Dịch vụ backend Python chuyên dụng nhận diện ảnh tài liệu tiến
 4. **Environment**: `Python 3`
 5. **Build Command**: `pip install -r requirements.txt`
 6. **Start Command**: `uvicorn app:app --host 0.0.0.0 --port $PORT`
-7. Copy URL dịch vụ (Ví dụ: `https://ncz-ocr.onrender.com`) và cấu hình vào Cloudflare Pages (`RAPIDOCR_API_URL`).
+7. Copy URL dịch vụ (Ví dụ: `https://halou-ocr.onrender.com`) và cấu hình vào Cloudflare Pages (`RAPIDOCR_API_URL`).
 
 ---
 
@@ -38,8 +38,8 @@ cd ocr_service
 pip install -r requirements.txt
 python app.py
 # Hoặc chạy Docker:
-docker build -t ncz-rapidocr .
-docker run -p 8000:8000 ncz-rapidocr
+docker build -t halou-rapidocr .
+docker run -p 8000:8000 halou-rapidocr
 ```
 
 ---

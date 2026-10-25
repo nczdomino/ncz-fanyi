@@ -9,3 +9,4 @@
 "NSPhotoLibraryUsageDescription" = "Halou needs photo library access to recognize Chinese characters from saved images and screenshots.";
 "NSSpeechRecognitionUsageDescription" = "Halou uses speech recognition to assist with Chinese pronunciation and speaking practice.";
 "NSMicrophoneUsageDescription" = "Halou requires microphone access for Chinese speech and pronunciation exercises.";
+

@@ -50,3 +50,4 @@ Trong thư mục `mobile/metadata/`:
 - `subtitle.txt`: Phụ đề ngắn (30 ký tự trên App Store, 80 ký tự short description trên Google Play).
 - `description.txt`: Toàn bộ mô tả ứng dụng, định vị sản phẩm và danh sách tính năng.
 - `keywords.txt`: Từ khóa tìm kiếm tối ưu hóa ASO (App Store Optimization).
+

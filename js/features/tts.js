@@ -465,7 +465,7 @@ function testSpeechVoices() {
     }).join('\n');
     const msg = `${t('foundVoices')}: ${zhVoices.length}\n${names}\n\nĐang phát âm thử nghiệm bằng giọng tốt nhất...`;
     alert(msg);
-    speakText('你好，欢迎使用NCZ翻译！这是一段高保真语音测试。');
+    speakText('你好，欢迎使用Halou哈喽中文！这是一段高保真语音测试。');
   } else {
     alert(t('noVoice'));
   }

@@ -28,8 +28,8 @@ except ImportError:
         RapidOCR = None
 
 app = FastAPI(
-    title="NCZ RapidOCR Microservice",
-    description="Dedicated Chinese Document OCR Engine for NCZ Hanzi Dictionary",
+    title="Halou RapidOCR Microservice",
+    description="Dedicated Chinese Document OCR Engine for Halou Hanzi Dictionary",
     version="1.0.0"
 )
 

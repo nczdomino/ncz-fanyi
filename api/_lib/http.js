@@ -8,7 +8,7 @@
 //   * request shapes were forwarded upstream without any size or item-count cap.
 //
 // Configure the allowed origins with the ALLOWED_ORIGINS environment variable
-// (comma separated, e.g. "https://ncz-fanyi.pages.dev,https://fanyi.example.com").
+// (comma separated, e.g. "https://halouzhongwen.com,https://ncz-fanyi.pages.dev").
 // Same-origin requests are always allowed, so a default deployment keeps working.
 
 const DEFAULT_BODY_LIMIT = 96 * 1024; // 96 KB

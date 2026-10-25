@@ -19,3 +19,4 @@ TÍNH NĂNG VƯỢT TRỘI:
 - Quét ảnh tài liệu OCR thông minh, biến sách báo giấy thành văn bản số.
 
 Ứng dụng được phát triển bởi 聂诚忠 (NIE THANH TRUNG) phục vụ miễn phí cho cộng đồng học tiếng Trung toàn cầu.
+

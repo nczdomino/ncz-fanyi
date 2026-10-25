@@ -68,7 +68,7 @@ export default async function handler(req, res) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
-          'User-Agent': 'Mozilla/5.0 (NCZ-Hanzi-Handwriting-Proxy)',
+          'User-Agent': 'Mozilla/5.0 (Halou-Hanzi-Handwriting-Proxy)',
         },
         body: JSON.stringify(googlePayload),
       }

@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
 
-console.log('🧪 Starting NCZ Hanzi Handwriting Recognition Test Suite...\n');
+console.log('🧪 Starting Halou Hanzi Handwriting Recognition Test Suite...\n');
 
 let passCount = 0;
 let failCount = 0;

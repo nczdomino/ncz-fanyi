@@ -41,7 +41,7 @@ function download(url) {
   return new Promise((resolve, reject) => {
     const follow = (target, redirects = 0) => {
       if (redirects > 5) return reject(new Error('too many redirects'));
-      https.get(target, { headers: { 'User-Agent': 'ncz-fanyi-cedict-builder' } }, (res) => {
+      https.get(target, { headers: { 'User-Agent': 'halou-cedict-builder' } }, (res) => {
         if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
           res.resume();
           return follow(new URL(res.headers.location, target).href, redirects + 1);
