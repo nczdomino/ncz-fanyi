@@ -1,26 +1,88 @@
-// js/features/examples.js - Example sentences index and candidate matching - Dependencies: js/core/state.js, js/core/utils.js, js/data/examples.js, js/features/nlp.js, js/features/enrich.js, js/features/tts.js
+// js/features/examples.js - Example sentences: selection, ranking and rendering
+// Dependencies: js/core/state.js, js/core/utils.js, js/data/examples.js, js/features/nlp.js,
+//               js/features/enrich.js, js/features/examples-core.js, js/features/tts.js
+//
+// What changed and why
+//   The old selector had a "layer 2B" that accepted a sentence when all of the word's
+//   characters appeared anywhere in it. For 107 of the 1,615 dictionary words that
+//   produced an example that did not contain the word at all — 好吃 shown with "吃好",
+//   多少 with "减少…多…" — and in 106 cases it was the *first* example the learner saw.
+//   It also returned the first two sentences in file order, so every word always showed
+//   the same examples, regardless of how good or how hard they were.
+//
+// Now: every candidate must contain the word; candidates are ranked (position, length,
+// difficulty, translation completeness, sense match); the shown set is diversified and
+// rotates between openings; online sources are quality-filtered and only fetched when the
+// local corpus cannot fill the list.
 
 // --- Module: Example Sentences ---
 let WORD_EXAMPLES_INDEX = null;
+
+// word + language + sense -> the examples chosen last time (avoids re-ranking and
+// re-fetching while the word sheet stays open, and keeps the list stable on re-render).
+const EXAMPLE_SELECTION_CACHE = new Map();
+const EXAMPLE_ROTATION = Object.create(null);
+const EXAMPLE_CACHE_LIMIT = 200;
+
+function examplesCore() {
+  return (typeof EXAMPLES_CORE !== 'undefined' && EXAMPLES_CORE) ? EXAMPLES_CORE : null;
+}
+
+function hskOf(token) {
+  if (typeof MINI_DICT === 'undefined' || !MINI_DICT) return undefined;
+  const entry = MINI_DICT[token];
+  if (!entry) return undefined;
+  const h = entry.hsk;
+  if (typeof h === 'number') return h;
+  if (typeof h === 'string' && /^\d+$/.test(h)) return parseInt(h, 10);
+  return undefined;
+}
+
+function exampleSegmenter() {
+  if (typeof Intl === 'undefined' || !('Segmenter' in Intl)) return null;
+  if (!exampleSegmenter._cache) {
+    try {
+      const seg = new Intl.Segmenter('zh', { granularity: 'word' });
+      exampleSegmenter._cache = (text) => [...seg.segment(text)].map(s => s.segment);
+    } catch (e) {
+      exampleSegmenter._cache = null;
+    }
+  }
+  return exampleSegmenter._cache;
+}
 
 function initWordExamplesIndex() {
   if (WORD_EXAMPLES_INDEX) return;
   WORD_EXAMPLES_INDEX = {};
   if (typeof WORD_EXAMPLES_LIST === 'undefined' || !Array.isArray(WORD_EXAMPLES_LIST)) return;
 
-  const hasSegmenter = typeof Intl !== 'undefined' && 'Segmenter' in Intl;
-  const segmenter = hasSegmenter ? new Intl.Segmenter('zh', { granularity: 'word' }) : null;
-
+  const segment = exampleSegmenter();
   for (let i = 0; i < WORD_EXAMPLES_LIST.length; i++) {
     const item = WORD_EXAMPLES_LIST[i];
     if (!item || !item.zh) continue;
 
-    if (segmenter) {
-      const segs = [...segmenter.segment(item.zh)].map(s => s.segment).filter(w => /[\u4e00-\u9fff]/.test(w));
-      for (const w of segs) {
-        if (!WORD_EXAMPLES_INDEX[w]) WORD_EXAMPLES_INDEX[w] = [];
-        if (!WORD_EXAMPLES_INDEX[w].includes(item)) WORD_EXAMPLES_INDEX[w].push(item);
+    // Index by every Chinese token in the sentence. Without Intl.Segmenter we fall back
+    // to character windows — coarser, but the index is still built (previously the whole
+    // index stayed empty on such browsers, so only substring matching worked).
+    let tokens = null;
+    if (segment) {
+      try {
+        tokens = segment(item.zh).filter(w => /[\u4e00-\u9fff]/.test(w));
+      } catch (e) {
+        tokens = null;
       }
+    }
+    if (!tokens || !tokens.length) {
+      tokens = [];
+      const chars = String(item.zh).match(/[\u4e00-\u9fff]/g) || [];
+      for (let a = 0; a < chars.length; a++) {
+        tokens.push(chars[a]);
+        if (a + 1 < chars.length) tokens.push(chars[a] + chars[a + 1]);
+      }
+    }
+    for (const w of tokens) {
+      if (!WORD_EXAMPLES_INDEX[w]) WORD_EXAMPLES_INDEX[w] = [];
+      if (!WORD_EXAMPLES_INDEX[w].includes(item)) WORD_EXAMPLES_INDEX[w].push(item);
     }
   }
 }
@@ -43,74 +105,116 @@ function getSentencePinyin(sentence) {
   return getWordPinyin(sentence);
 }
 
-function getWordCandidateExamples(word) {
-  if (!word) return [];
+/** The meaning currently on screen for `word`, used to prefer matching examples. */
+function currentSenseText(word) {
+  const lang = state.meaningLang || 'vi';
+  try {
+    const userDict = (typeof getUserDict === 'function') ? getUserDict() : {};
+    const custom = userDict[lang + ':' + word];
+    if (custom) return custom;
+  } catch (e) {}
+  const entry = (typeof MINI_DICT !== 'undefined' && MINI_DICT) ? MINI_DICT[word] : null;
+  if (!entry) return '';
+  if (lang === 'en') return entry.en ? (Array.isArray(entry.en) ? entry.en.join(', ') : entry.en) : '';
+  if (lang === 'ja') {
+    return entry.ja ||
+      (typeof JA_COMMON_DICT !== 'undefined' && JA_COMMON_DICT ? (JA_COMMON_DICT[word] || '') : '');
+  }
+  return entry.vi || '';
+}
+
+function translationOfSentence(sentence) {
+  // Filled by the reader when the user translates a sentence (state.translations), with
+  // state.cachedTranslations as a fallback for earlier translations.
+  const lang = state.meaningLang || 'vi';
+  if (state.translations && typeof state.translations[sentence] === 'string' && state.translations[sentence]) {
+    return state.translations[sentence];
+  }
+  const cached = state.cachedTranslations && state.cachedTranslations[lang + ':' + sentence];
+  return cached || null;
+}
+
+/**
+ * Ranked candidate examples for a word.
+ * @param {string} word
+ * @param {{limit?:number, rotate?:boolean}} [opts]
+ */
+function getWordCandidateExamples(word, opts) {
+  const options = opts || {};
+  const core = examplesCore();
+  if (!word || !core) return [];
+  const limit = options.limit || 5;
   initWordExamplesIndex();
 
-  const candidates = [];
+  const lang = state.meaningLang || 'vi';
+  const sense = currentSenseText(word);
+  const cacheKey = word + '|' + lang + '|' + sense.slice(0, 40) + '|' + (EXAMPLE_ROTATION[word] || 0);
+
+  const raw = [];
   const seenZh = new Set();
 
-  // 1. Live Contextual Sentence from current article in Reader (Layer 1)
-  if (Array.isArray(state.sentences) && state.sentences.length > 0) {
+  // 1. A sentence from the article the user is reading right now.
+  if (Array.isArray(state.sentences) && state.sentences.length) {
     for (let i = 0; i < state.sentences.length; i++) {
       const s = (state.sentences[i] || '').trim();
-      if (s.includes(word) && s !== word && s.length >= 4) {
-        const trans = (state.translations && state.translations[s]) || null;
-        candidates.push({
-          zh: s,
-          pinyin: getSentencePinyin(s),
-          vi: (state.meaningLang === 'vi' && trans) ? trans : null,
-          en: (state.meaningLang === 'en' && trans) ? trans : null,
-          ja: (state.meaningLang === 'ja' && trans) ? trans : null,
-          source: 'context',
-          isContext: true
-        });
-        seenZh.add(s);
-        break; // 1 live context sentence is optimal
-      }
+      if (!s || s === word || s.length < 4) continue;
+      if (!core.containsWord(s, word)) continue;
+      const trans = translationOfSentence(s);
+      raw.push({
+        zh: s,
+        pinyin: getSentencePinyin(s),
+        vi: lang === 'vi' ? trans : null,
+        en: lang === 'en' ? trans : null,
+        ja: lang === 'ja' ? trans : null,
+        source: 'context',
+        isContext: true,
+      });
+      seenZh.add(s);
+      break; // one live-context sentence is enough
     }
   }
 
-  // 2. Curated Word Examples Index (Layer 2)
-  if (WORD_EXAMPLES_INDEX && WORD_EXAMPLES_INDEX[word]) {
-    for (const ex of WORD_EXAMPLES_INDEX[word]) {
-      if (!seenZh.has(ex.zh)) {
-        candidates.push({ ...ex, isContext: false });
-        seenZh.add(ex.zh);
-        if (candidates.length >= 2) return candidates;
-      }
-    }
+  // 2. The curated corpus (and the Tatoeba corpus once it is wired in).
+  const corpus = (WORD_EXAMPLES_INDEX && WORD_EXAMPLES_INDEX[word]) || [];
+  for (const ex of corpus) {
+    if (seenZh.has(ex.zh)) continue;
+    seenZh.add(ex.zh);
+    raw.push(ex);
   }
 
-  // 2B. If multi-char word not found, search for individual characters in examples
-  // Only for words >= 2 chars where no match found yet
-  if (candidates.length === 0 && word.length >= 2) {
-    for (let i = 0; i < WORD_EXAMPLES_LIST.length; i++) {
-      const ex = WORD_EXAMPLES_LIST[i];
-      if (!ex || !ex.zh) continue;
-      // Check if ALL characters of the word appear in the sentence
-      const allCharsPresent = [...word].every(ch => ex.zh.includes(ch));
-      if (allCharsPresent && ex.zh.includes(word.charAt(0)) && !seenZh.has(ex.zh)) {
-        candidates.push({ ...ex, isContext: false });
-        seenZh.add(ex.zh);
-        if (candidates.length >= 2) break;
-      }
-    }
+  const rankOpts = {
+    lookupHsk: hskOf,
+    segment: exampleSegmenter(),
+    senseText: sense,
+    lang: lang,
+  };
+
+  const ranked = core.rankExamples(raw, word, rankOpts);
+  if (!ranked.length) return [];
+
+  if (!options.rotate && EXAMPLE_SELECTION_CACHE.has(cacheKey)) {
+    return EXAMPLE_SELECTION_CACHE.get(cacheKey);
   }
 
-  // 3. Search in all curated sentences for substring match (Layer 3A)
-  if (typeof WORD_EXAMPLES_LIST !== 'undefined') {
-    for (let i = 0; i < WORD_EXAMPLES_LIST.length; i++) {
-      const ex = WORD_EXAMPLES_LIST[i];
-      if (ex && ex.zh && ex.zh.includes(word) && !seenZh.has(ex.zh)) {
-        candidates.push({ ...ex, isContext: false });
-        seenZh.add(ex.zh);
-        if (candidates.length >= 2) return candidates;
-      }
-    }
-  }
+  const chosen = core.pickDiverse(ranked, limit, word, EXAMPLE_ROTATION[word] || 0);
+  if (EXAMPLE_SELECTION_CACHE.size > EXAMPLE_CACHE_LIMIT) EXAMPLE_SELECTION_CACHE.clear();
+  EXAMPLE_SELECTION_CACHE.set(cacheKey, chosen);
 
-  return candidates;
+  // Rotate the window so reopening the same word shows different (still good) examples.
+  EXAMPLE_ROTATION[word] = ((EXAMPLE_ROTATION[word] || 0) + 1) % Math.max(1, ranked.length);
+
+  return chosen;
+}
+
+function difficultyBadge(item) {
+  const core = examplesCore();
+  if (!core || item._level === undefined) return '';
+  const bucket = core.difficultyBucket(item._level);
+  if (bucket === 'unknown') return '';
+  const label = bucket === 'beginner'
+    ? tx('Cơ bản', 'Beginner', '初級')
+    : (bucket === 'intermediate' ? tx('Trung cấp', 'Intermediate', '中級') : tx('Nâng cao', 'Advanced', '上級'));
+  return `<span class="example-level example-level-${bucket}">${escapeHtml(label)}</span>`;
 }
 
 function renderExampleListItems(container, countBadge, word, list) {
@@ -127,14 +231,12 @@ function renderExampleListItems(container, countBadge, word, list) {
     const item = list[i];
     const highlightedZh = highlightWordInSentence(item.zh, word);
     const pinyin = item.pinyin || getSentencePinyin(item.zh);
-    
-    // Choose appropriate badge text based on sentence source
+
     let badgeText = item.source || t('examples') || 'Ví dụ';
     if (item.isContext) {
       badgeText = t('currentTextExample') || 'Trong bài đọc';
     }
 
-    // Primary meaning
     let primaryTrans = item[lang] || null;
     const transId = `ex-trans-${i}-${Date.now()}`;
     const trans2Id = `ex-trans2-${i}-${Date.now()}`;
@@ -158,10 +260,9 @@ function renderExampleListItems(container, countBadge, word, list) {
       });
     }
 
-    // Secondary parallel meaning
     let trans2Html = '';
     if (isParallel) {
-      let secondaryTrans = item[lang2] || null;
+      const secondaryTrans = item[lang2] || null;
       if (secondaryTrans) {
         trans2Html = `<div class="example-trans-parallel"><span class="badge" style="font-size:9.5px; padding:1px 4px; margin-right:4px;">${getLangName(lang2)}</span>${escapeHtml(secondaryTrans)}</div>`;
       } else {
@@ -188,12 +289,16 @@ function renderExampleListItems(container, countBadge, word, list) {
             <div class="example-pinyin">${escapeHtml(pinyin)}</div>
           </div>
           <div style="display:flex; align-items:center; gap:4px; flex-shrink:0;">
+            ${difficultyBadge(item)}
             <span class="example-badge">${escapeHtml(badgeText)}</span>
             <button class="example-audio-btn" onclick="speakText('${escapeQuotes(item.zh)}')" title="${t('play') || 'Phát âm'}" aria-label="${t('play')}">
               <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
             </button>
             <button class="example-audio-btn" onclick="speakText('${escapeQuotes(item.zh)}', this, 0.75)" title="${t('playSlow') || 'Nghe chậm (0.75x)'}" aria-label="Nghe chậm" style="font-size:13px;">
               🐢
+            </button>
+            <button class="example-audio-btn" onclick="repeatSpeak('${escapeQuotes(item.zh)}', 3, 1200)" title="${tx('Nghe lặp 3 lần', 'Repeat 3×', '3回リピート')}" aria-label="Repeat" style="font-size:12px;">
+              🔁
             </button>
           </div>
         </div>
@@ -237,6 +342,25 @@ function renderExamplesEmptyState(container, countBadge, word) {
   `;
 }
 
+/** Map an online result onto the fields the ranker understands. */
+function normalizeOnlineExample(item) {
+  const sourceMap = { 'Tatoeba': 'tatoeba', 'MyMemory': 'mymemory', 'Jukuu': 'jukuu', 'Wiktionary': 'wiktionary' };
+  let source = 'online';
+  const raw = String(item.source || '');
+  for (const key in sourceMap) {
+    if (raw.indexOf(key) !== -1) { source = sourceMap[key]; break; }
+  }
+  return {
+    zh: item.zh,
+    pinyin: item.pinyin,
+    vi: item.vi,
+    ja: item.ja,
+    en: item.en,
+    source: source,
+    isContext: false,
+  };
+}
+
 async function renderWordExamples(word) {
   const container = document.getElementById('sheet-examples-list');
   const countBadge = document.getElementById('sheet-examples-count');
@@ -248,31 +372,41 @@ async function renderWordExamples(word) {
     return;
   }
 
-  // 1. Check local examples first (instant 0ms)
-  const localExamples = getWordCandidateExamples(word);
+  const core = examplesCore();
+  const lang = state.meaningLang || 'vi';
+  const sense = currentSenseText(word);
 
+  // 1. Local corpus first (instant).
+  const localExamples = getWordCandidateExamples(word, { limit: 4 });
   if (localExamples.length > 0) {
     renderExampleListItems(container, countBadge, word, localExamples);
   } else {
-    // Show sleek loading state while fetching online
     renderExamplesLoadingState(container, countBadge, word);
   }
 
-  // 2. Fetch online examples if local examples are fewer than 4
-  if (localExamples.length < 4 && word.length <= 15) {
-    fetchOnlineExamples(word).then(extra => {
-      if (state.activeWord !== word) return;
-      const validExtra = (extra || []).filter(e => e && e.zh && !localExamples.some(x => x.zh === e.zh));
-      const combined = localExamples.concat(validExtra).slice(0, 5);
-      if (combined.length > 0) {
-        renderExampleListItems(container, countBadge, word, combined);
-      } else if (localExamples.length === 0) {
-        renderExamplesEmptyState(container, countBadge, word);
-      }
-    }).catch(() => {
-      if (state.activeWord === word && localExamples.length === 0) {
-        renderExamplesEmptyState(container, countBadge, word);
-      }
-    });
+  // 2. Only reach for the network when the local corpus cannot fill the list.
+  if (localExamples.length >= 3 || word.length > 15) return;
+
+  let extra = [];
+  try {
+    extra = await fetchOnlineExamples(word);
+  } catch (e) {
+    extra = [];
+  }
+  if (!state || state.activeWord !== word) return;
+
+  const usable = (extra || [])
+    .filter(e => core && core.isUsableOnlineExample(e, word))
+    .map(e => normalizeOnlineExample(e));
+
+  const rankOpts = { lookupHsk: hskOf, segment: exampleSegmenter(), senseText: sense, lang: lang };
+  let combined = localExamples.concat(usable.filter(u => !localExamples.some(l => l.zh === u.zh)));
+  combined = core ? core.rankExamples(combined, word, rankOpts) : combined;
+  const chosen = core ? core.pickDiverse(combined, 4, word, 0) : combined.slice(0, 4);
+
+  if (chosen.length > 0) {
+    renderExampleListItems(container, countBadge, word, chosen);
+  } else if (localExamples.length === 0) {
+    renderExamplesEmptyState(container, countBadge, word);
   }
 }

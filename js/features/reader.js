@@ -330,6 +330,13 @@ async function translateCurrentSentence() {
 
   const lenses = await getSentenceLensesWithAi(sentence, state.meaningLang);
   const trans1 = lenses?.native?.text || '';
+  // Remember it so the word sheet can reuse this translation for its "example from your
+  // article" card instead of paying for machine translation again.
+  if (trans1) {
+    if (!state.translations) state.translations = {};
+    state.translations[sentence] = trans1;
+    if (trans2) state.translations[sentence + '\u0000' + state.meaningLang2] = trans2;
+  }
   state.currentSentenceLenses = {
     sentence,
     trans1,

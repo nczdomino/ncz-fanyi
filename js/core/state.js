@@ -55,6 +55,10 @@ const state = {
   viewMode: 'sentence', // 'sentence' | 'all'
   recentTexts: (function(){ const v = safeJSON('cr_recentTexts', []); return Array.isArray(v) ? v : []; })(),
   cachedTranslations: {},
+  // sentence -> translation in the current meaning language. The examples module reads
+  // this to show a real translation for a sentence taken from the user's own article;
+  // it used to read a property that was never created.
+  translations: {},
   activeWord: null,
   activeWriters: [],
   hskFilter: 'all',
