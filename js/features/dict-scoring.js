@@ -131,6 +131,15 @@
     return prev[n];
   }
 
+  // Learners type numeric pinyin ("ni3 hao3") at least as often as tone marks.
+  function normalizePinyinDigits(q) {
+    if (typeof pinyinNumberToTone !== 'function') return q;
+    if (!/[1-5]/.test(q)) return q;
+    if (!/^[a-zA-Z\u00fc\u00dc1-5\s'.:]+$/.test(q)) return q;
+    var conv = pinyinNumberToTone(q);
+    return conv || q;
+  }
+
   function detectLang(q) {
     if (typeof detectSearchLanguage === 'function') return detectSearchLanguage(q);
     if (/[\u4e00-\u9fff]/.test(q)) return 'zh';
@@ -561,6 +570,7 @@
         var q = targets[t];
         if (!q) continue;
         if (s === q) { sc = Math.max(sc, SC.JA_EXACT); exact = true; }
+        else if (ctx.jaGuessed) continue; // romaji guess: exact only
         else if (q.length >= 3 && s.indexOf(q) !== -1) {
           // Long substrings are meaningful inside a Japanese phrase (でんしゃ in でんしゃ).
           sc = Math.max(sc, SC.JA_PHRASE);
@@ -588,9 +598,15 @@
       if (!f || f === '-') continue;
       var nf = kataToHira(norm(f));
       if (!nf) continue;
-      if (kana && (nf === kana || hasToken(nf, kana))) return { score: SC.JA_READING, field: 'ja', exact: false };
+      if (kana && (nf === kana || (!ctx.jaGuessed && hasToken(nf, kana)))) {
+        return { score: SC.JA_READING, field: 'ja', exact: nf === kana };
+      }
       // Exact reading only, or a 3+ kana prefix. A 2-kana prefix would make やま match
       // 病 through its kun reading やまい.
+      if (ctx.jaGuessed) {
+        if (q && nf === q) return { score: SC.JA_READING, field: 'ja', exact: true };
+        continue;
+      }
       if (q && (nf === q || (q.length >= 3 && nf.indexOf(q) === 0) || (q.length >= 3 && hasToken(nf, q)))) {
         return { score: SC.JA_READING, field: 'ja', exact: nf === q };
       }
@@ -684,15 +700,21 @@
 
     var t0 = (typeof performance !== 'undefined' && performance.now) ? performance.now() : 0;
 
-    var qNorm = norm(query);
-    var qN = normNoTone(query);
+    // Numeric pinyin is rewritten to tone marks before anything else looks at the string.
+    var workingQuery = normalizePinyinDigits(query);
+
+    var qNorm = norm(workingQuery);
+    var qN = normNoTone(workingQuery);
     if (!qNorm && !qN) return result;
 
-    var lang = detectLang(query);
+    var lang = detectLang(workingQuery);
+    // A query that started as "ni3 hao3" is unambiguously pinyin, whatever the tone marks
+    // happen to look like.
+    if (workingQuery !== query) lang = 'pinyin';
     result.detected = lang;
 
-    var isHanzi = /[\u4e00-\u9fff]/.test(query);
-    var jaInfo = normalizeJa(query);
+    var isHanzi = /[\u4e00-\u9fff]/.test(workingQuery);
+    var jaInfo = normalizeJa(workingQuery);
     var jaHira = (jaInfo && jaInfo.hiragana && norm(jaInfo.hiragana) !== qNorm) ? jaInfo.hiragana : '';
 
     var ctx = {
@@ -703,8 +725,12 @@
       qLemma: lemma(qNorm),
       qLemmaPlural: null,
       hasSpace: qN.indexOf(' ') !== -1,
-      viToned: /[àáảãạăắằẳẵặâấầẩẫậèéẻẽẹêếềểễệìíỉĩịòóỏõọôốồổỗộơớờởỡợùúủũụưứừửữựỳýỷỹỵđ]/i.test(query),
+      viToned: /[àáảãạăắằẳẵặâấầẩẫậèéẻẽẹêếềểễệìíỉĩịòóỏõọôốồổỗộơớờởỡợùúủũụưứừửữựỳýỷỹỵđ]/i.test(workingQuery),
       jaHira: jaHira,
+      // True when jaHira came from a romaji conversion rather than a real kana query.
+      // In that case only exact Japanese hits are accepted, so English words whose
+      // mechanical conversion looks kana-ish cannot pollute the results.
+      jaGuessed: !!jaHira && lang !== 'ja',
       isHanzi: isHanzi
     };
 
@@ -778,9 +804,9 @@
         var it0 = items[i];
         var w = it0.word;
         var sc0;
-        if (w === query) sc0 = SC.HANZI_EXACT;
-        else if (w.indexOf(query) === 0) sc0 = SC.HANZI_PREFIX;
-        else if (w.indexOf(query) !== -1) sc0 = SC.HANZI_CONTAINS;
+        if (w === workingQuery) sc0 = SC.HANZI_EXACT;
+        else if (w.indexOf(workingQuery) === 0) sc0 = SC.HANZI_PREFIX;
+        else if (w.indexOf(workingQuery) !== -1) sc0 = SC.HANZI_CONTAINS;
         else continue;
         push(w, it0.entry, { score: sc0, field: 'hanzi', exact: w === query }, 'dict');
       }
@@ -881,9 +907,9 @@
         var sw = sItem.word;
 
         if (isHanzi) {
-          if (sw === query) sBest = { score: SC.HANZI_EXACT, field: 'hanzi', exact: true };
-          else if (sw.indexOf(query) === 0) sBest = { score: SC.HANZI_PREFIX, field: 'hanzi', exact: false };
-          else if (sw.indexOf(query) !== -1) sBest = { score: SC.HANZI_CONTAINS, field: 'hanzi', exact: false };
+          if (sw === workingQuery) sBest = { score: SC.HANZI_EXACT, field: 'hanzi', exact: true };
+          else if (sw.indexOf(workingQuery) === 0) sBest = { score: SC.HANZI_PREFIX, field: 'hanzi', exact: false };
+          else if (sw.indexOf(workingQuery) !== -1) sBest = { score: SC.HANZI_CONTAINS, field: 'hanzi', exact: false };
           if (!sBest && sItem.alias) {
             for (var a = 0; a < sItem.alias.length; a++) {
               if (norm(sItem.alias[a]) === qNorm) { sBest = { score: SC.HANZI_EXACT, field: 'hanzi', exact: true }; break; }

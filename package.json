@@ -4,10 +4,11 @@
   "private": true,
   "description": "Offline-first Chinese dictionary & translation PWA for Vietnamese, Japanese and English learners",
   "scripts": {
-    "test": "node test_dict_scoring.js && node test_dict_render.js && node test_api_security.mjs && node test_dict_search.js && node test_hsk789_and_live_dict.js && node test_ocr.js && node test_handwriting.js",
+    "test": "node test_dict_scoring.js && node test_dict_render.js && node test_api_security.mjs && node test_sw.js && node test_dict_search.js && node test_hsk789_and_live_dict.js && node test_ocr.js && node test_handwriting.js",
     "test:dict": "node test_dict_scoring.js && node test_dict_render.js",
     "test:search": "node test_dict_search.js",
-    "test:api": "node test_api_security.mjs"
+    "test:api": "node test_api_security.mjs",
+    "test:sw": "node test_sw.js"
   },
   "license": "MIT"
 }

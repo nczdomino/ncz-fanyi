@@ -71,6 +71,136 @@ const ROMAJI_TO_HIRAGANA = {
   'kitte': 'きって', 'tegami': 'てがみ', 'denwa': 'でんわ',
 };
 
+// --- 2b. Full Hepburn/Kunrei romaji -> hiragana ---
+// The old lookup table only knew ~40 hand-typed readings, so a Japanese learner typing
+// "densha", "gakkou" or "byouin" got nothing. This converts arbitrary romaji instead.
+const ROMAJI_SYLLABLES = {
+  a: 'あ', i: 'い', u: 'う', e: 'え', o: 'お',
+  ka: 'か', ki: 'き', ku: 'く', ke: 'け', ko: 'こ',
+  kya: 'きゃ', kyu: 'きゅ', kyo: 'きょ',
+  ga: 'が', gi: 'ぎ', gu: 'ぐ', ge: 'げ', go: 'ご',
+  gya: 'ぎゃ', gyu: 'ぎゅ', gyo: 'ぎょ',
+  sa: 'さ', si: 'し', shi: 'し', su: 'す', se: 'せ', so: 'そ',
+  sya: 'しゃ', sha: 'しゃ', syu: 'しゅ', shu: 'しゅ', syo: 'しょ', sho: 'しょ',
+  za: 'ざ', zi: 'じ', ji: 'じ', zu: 'ず', ze: 'ぜ', zo: 'ぞ',
+  zya: 'じゃ', ja: 'じゃ', jya: 'じゃ', zyu: 'じゅ', ju: 'じゅ', jyu: 'じゅ',
+  zyo: 'じょ', jo: 'じょ', jyo: 'じょ',
+  ta: 'た', ti: 'ち', chi: 'ち', tu: 'つ', tsu: 'つ', te: 'て', to: 'と',
+  tya: 'ちゃ', cha: 'ちゃ', tyu: 'ちゅ', chu: 'ちゅ', tyo: 'ちょ', cho: 'ちょ',
+  da: 'だ', di: 'ぢ', du: 'づ', de: 'で', do: 'ど',
+  na: 'な', ni: 'に', nu: 'ぬ', ne: 'ね', no: 'の',
+  nya: 'にゃ', nyu: 'にゅ', nyo: 'にょ',
+  ha: 'は', hi: 'ひ', hu: 'ふ', fu: 'ふ', he: 'へ', ho: 'ほ',
+  hya: 'ひゃ', hyu: 'ひゅ', hyo: 'ひょ',
+  ba: 'ば', bi: 'び', bu: 'ぶ', be: 'べ', bo: 'ぼ',
+  bya: 'びゃ', byu: 'びゅ', byo: 'びょ',
+  pa: 'ぱ', pi: 'ぴ', pu: 'ぷ', pe: 'ぺ', po: 'ぽ',
+  pya: 'ぴゃ', pyu: 'ぴゅ', pyo: 'ぴょ',
+  ma: 'ま', mi: 'み', mu: 'む', me: 'め', mo: 'も',
+  mya: 'みゃ', myu: 'みゅ', myo: 'みょ',
+  ya: 'や', yu: 'ゆ', yo: 'よ',
+  ra: 'ら', ri: 'り', ru: 'る', re: 'れ', ro: 'ろ',
+  rya: 'りゃ', ryu: 'りゅ', ryo: 'りょ',
+  wa: 'わ', wo: 'を', wi: 'うぃ', we: 'うぇ',
+  n: 'ん',
+};
+
+function romajiToHiragana(str) {
+  if (!str) return '';
+  const s = String(str).toLowerCase().normalize('NFC').replace(/[-'\u2019\s]/g, '');
+  if (!/^[a-z]+$/.test(s)) return '';
+  let out = '';
+  let i = 0;
+  while (i < s.length) {
+    const ch = s[i];
+    // Sokuon: a doubled consonant (k/s/t/p) becomes っ, e.g. "gakkou" -> がっこう.
+    if (ch !== 'n' && /[kstp]/.test(ch) && s[i + 1] === ch) {
+      out += 'っ';
+      i += 1;
+      continue;
+    }
+    // Syllabic n before a consonant, e.g. "densha" -> でんしゃ.
+    if (ch === 'n' && i + 1 < s.length && !/[aiueoy]/.test(s[i + 1])) {
+      out += 'ん';
+      i += 1;
+      continue;
+    }
+    let matched = false;
+    for (let len = 3; len >= 1; len--) {
+      const part = s.slice(i, i + len);
+      if (ROMAJI_SYLLABLES[part]) {
+        out += ROMAJI_SYLLABLES[part];
+        i += len;
+        matched = true;
+        break;
+      }
+    }
+    if (!matched) {
+      // Leave the character in place so the caller can reject a failed conversion.
+      out += ch;
+      i += 1;
+    }
+  }
+  return out;
+}
+
+// --- 2c. Numeric pinyin -> tone marks ---
+// Learners type "ni3 hao3" at least as often as "nǐ hǎo".
+const PINYIN_TONE_MAP = {
+  a: ['ā', 'á', 'ǎ', 'à'], e: ['ē', 'é', 'ě', 'è'], i: ['ī', 'í', 'ǐ', 'ì'],
+  o: ['ō', 'ó', 'ǒ', 'ò'], u: ['ū', 'ú', 'ǔ', 'ù'], 'ü': ['ǖ', 'ǘ', 'ǚ', 'ǜ'],
+};
+
+function pinyinNumberToTone(str) {
+  if (!str) return '';
+  const input = String(str).trim();
+  if (!/[1-5]/.test(input)) return input;
+
+  // Accept "ni3 hao3", "ni3hao3" and "nv3" (v is a common ASCII stand-in for ü).
+  const syllables = [];
+  const re = /([a-zA-ZüÜ]+)([1-5]?)/g;
+  let m;
+  let consumed = 0;
+  while ((m = re.exec(input)) !== null) {
+    if (m.index !== consumed) {
+      syllables.push({ raw: input.slice(consumed, m.index), tone: 0 });
+    }
+    consumed = m.index + m[0].length;
+    syllables.push({ raw: m[1], tone: m[2] ? parseInt(m[2], 10) : 0 });
+  }
+  if (consumed < input.length) syllables.push({ raw: input.slice(consumed), tone: 0 });
+
+  return syllables.map(({ raw, tone }) => {
+    let syl = raw.replace(/u:/g, 'ü').replace(/v/g, 'ü').replace(/V/g, 'Ü');
+    if (!tone || tone === 5) return syl;
+    const lower = syl.toLowerCase();
+    // Tone placement: a > e > o > (iu -> u, ui -> i) > u > i.
+    let target = -1;
+    const prio = ['a', 'e', 'o'];
+    for (const v of prio) {
+      const idx = lower.indexOf(v);
+      if (idx !== -1) { target = idx; break; }
+    }
+    if (target === -1) {
+      const iu = lower.indexOf('iu');
+      const ui = lower.indexOf('ui');
+      if (iu !== -1) target = iu + 1;
+      else if (ui !== -1) target = ui + 1;
+      else {
+        for (const v of ['u', 'i', 'ü']) {
+          const idx = lower.indexOf(v);
+          if (idx !== -1) { target = idx; break; }
+        }
+      }
+    }
+    if (target === -1) return syl;
+    const base = lower[target];
+    const toned = PINYIN_TONE_MAP[base] ? PINYIN_TONE_MAP[base][tone - 1] : null;
+    if (!toned) return syl;
+    return syl.slice(0, target) + toned + syl.slice(target + 1);
+  }).join('');
+}
+
 // Maps common Hiragana verbs/adjectives to their dictionary Kanji
 const HIRAGANA_TO_KANJI_MAP = {
   'たべる': '食べる', 'のむ': '飲む', 'みる': '見る', 'きく': '聞く',
@@ -99,7 +229,15 @@ function normalizeJapaneseQuery(str) {
   if (!str) return { raw: '', hiragana: '', kanjiEquivalent: '' };
   let q = str.trim().toLowerCase();
   if (ROMAJI_TO_HIRAGANA[q]) {
+    // Hand-checked readings win: they cover the orthographic exceptions such as
+    // こんにちは (written は, not わ) that no mechanical converter can infer.
     q = ROMAJI_TO_HIRAGANA[q];
+  } else if (/^[a-z]{3,}$/.test(q)) {
+    const converted = romajiToHiragana(q);
+    // Accept only a fully-consumed conversion that really produced kana.
+    if (converted && !/[a-z]/.test(converted) && /[\u3040-\u30ff]/.test(converted)) {
+      q = converted;
+    }
   }
   const hira = katakanaToHiragana(q);
   return {
@@ -171,20 +309,31 @@ function detectSearchLanguage(query) {
     return 'ja';
   }
 
-  // Contains specific Vietnamese diacritics
-  if (/[àáảãạăắằẳẵặâấầẩẫậèéẻẽẹêếềểễệìíỉĩịòóỏõọôốồổỗộơớờởỡợùúủũụưứừửữựỳýỷỹỵđ]/i.test(q)) {
-    return 'vi';
-  }
-
-  // Pinyin with tone marks: ā á ǎ à ē é ě è ī í ǐ ì ō ó ǒ ò ū ú ǔ ù ǖ ǘ ǚ ǜ
-  if (/[āáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]/i.test(q)) {
+  // Pinyin-only diacritics first: ǒ/ǐ/ǔ/ǎ/ě and the macron forms never occur in
+  // Vietnamese, so "wǒ ài nǐ" must not be classified as Vietnamese because of "à".
+  if (/[āēīōūǖǘǚǜǎěǐǒǔ]/i.test(q)) {
     return 'pinyin';
   }
 
-  // Check if it's recognizable Romaji
-  if (ROMAJI_TO_HIRAGANA[q.toLowerCase()]) {
+  // Contains specific Vietnamese diacritics
+  if (/[ảãạăắằẳẵặâấầẩẫậđêếềểễệôốồổỗộơớờởỡợưứừửữự]/i.test(q)) {
+    return 'vi';
+  }
+
+  // Remaining tone marks are ambiguous (á à é è í ì ó ò ú ù): Vietnamese is far more
+  // likely for this app's audience, and numeric pinyin is forced to 'pinyin' upstream.
+  if (/[àáảãạèéẻẽẹìíỉĩịòóỏõọùúủũụ]/i.test(q)) {
+    return 'vi';
+  }
+
+  // Check if it's recognizable Romaji (table entry or a clean mechanical conversion)
+  const lower = q.toLowerCase();
+  if (ROMAJI_TO_HIRAGANA[lower]) {
     return 'ja';
   }
+  // Arbitrary romaji is NOT reclassified here: "kangaroo" would otherwise become Japanese.
+  // dict-scoring.js still probes the Japanese index with a romaji conversion, but only
+  // accepts an exact hit, so English queries keep working.
 
   // If Latin without accents, could be Vietnamese unaccented, English, Pinyin, or Romaji
   return 'latin';
@@ -235,6 +384,8 @@ if (typeof window !== 'undefined') {
   window.stripVietnameseTones = stripVietnameseTones;
   window.normalizeVietnameseQuery = normalizeVietnameseQuery;
   window.katakanaToHiragana = katakanaToHiragana;
+  window.romajiToHiragana = romajiToHiragana;
+  window.pinyinNumberToTone = pinyinNumberToTone;
   window.normalizeJapaneseQuery = normalizeJapaneseQuery;
   window.stemEnglishWord = stemEnglishWord;
   window.levenshteinDistance = levenshteinDistance;
@@ -248,6 +399,8 @@ if (typeof module !== 'undefined' && module.exports) {
     normalizeVietnameseQuery,
     normalizeJapaneseQuery,
     katakanaToHiragana,
+    romajiToHiragana,
+    pinyinNumberToTone,
     stemEnglishWord,
     levenshteinDistance,
     detectSearchLanguage,

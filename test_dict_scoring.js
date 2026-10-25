@@ -250,7 +250,9 @@ check('a 1.5k-entry lookup stays under 25 ms', () => {
 
 // -------------------------------------------------- Japanese script integrity
 console.log('\n--- Japanese: kana handling (NFD / katakana folding) ---');
-const { stripVietnameseTones, katakanaToHiragana } = require('./js/features/dict-search-engine.js');
+const {
+  stripVietnameseTones, katakanaToHiragana, romajiToHiragana, pinyinNumberToTone,
+} = require('./js/features/dict-search-engine.js');
 check('stripVietnameseTones does not decompose kana with dakuten', () => {
   // NFD splits ず into す + U+3099; without re-composing, every kana query was corrupted.
   assert.strictEqual(stripVietnameseTones('みず'), 'みず');
@@ -281,6 +283,64 @@ check('2-kana query does not match a longer kun reading', () => {
   assert.strictEqual(t[0], '山', 'got ' + t.join(', '));
   assert.ok(t.indexOf('病') === -1, 'やま must not match 病 (やまい)');
   assert.ok(t.indexOf('叹为观止') === -1, 'やま must not match 感嘆してやまない');
+});
+
+// ------------------------------------------------------- romaji -> hiragana
+console.log('\n--- Romaji conversion (previously a 40-entry table) ---');
+check('arbitrary Hepburn romaji converts', () => {
+  const cases = {
+    densha: 'でんしゃ', gakkou: 'がっこう', byouin: 'びょういん',
+    tomodachi: 'ともだち', shigoto: 'しごと', kanashii: 'かなしい',
+    ureshii: 'うれしい', nemui: 'ねむい', mizu: 'みず', eki: 'えき',
+    kaisha: 'かいしゃ', hon: 'ほん', yama: 'やま', gohan: 'ごはん',
+    chikatetsu: 'ちかてつ', ryokou: 'りょこう',
+  };
+  for (const [inp, want] of Object.entries(cases)) {
+    assert.strictEqual(romajiToHiragana(inp), want, `${inp} -> ${romajiToHiragana(inp)}`);
+  }
+});
+check('sokuon and syllabic n are handled', () => {
+  assert.strictEqual(romajiToHiragana('kitte'), 'きって');
+  assert.strictEqual(romajiToHiragana('shinbun'), 'しんぶん');
+  assert.strictEqual(romajiToHiragana('konnichiha'), 'こんにちは');
+});
+check('English is not force-converted into kana', () => {
+  // "l" has no mapping, so the conversion is rejected rather than producing junk.
+  assert.strictEqual(romajiToHiragana('hotel'), 'ほてl');
+  assert.strictEqual(search('kangaroo', { limit: 1 }).detected, 'latin');
+  assert.strictEqual(search('hotel', { limit: 1 }).detected, 'latin');
+});
+check('romaji lookups reach the Chinese entry', () => {
+  assert.strictEqual(top('densha')[0], '电车');
+  assert.strictEqual(top('gakkou')[0], '学校');
+  assert.strictEqual(top('byouin')[0], '医院');
+  assert.strictEqual(top('tomodachi')[0], '朋友');
+  assert.strictEqual(top('nemui')[0], '困');
+});
+
+// --------------------------------------------------------- numeric pinyin
+console.log('\n--- Numeric pinyin (ni3 hao3) ---');
+check('tone marks are placed on the correct vowel', () => {
+  assert.strictEqual(pinyinNumberToTone('ni3 hao3'), 'nǐ hǎo');
+  assert.strictEqual(pinyinNumberToTone('wo3 ai4 ni3'), 'wǒ ài nǐ');
+  assert.strictEqual(pinyinNumberToTone('liu2'), 'liú');   // iu -> mark on u
+  assert.strictEqual(pinyinNumberToTone('gui4'), 'guì');   // ui -> mark on i
+  assert.strictEqual(pinyinNumberToTone('nv3'), 'nǚ');     // v stands for ü
+  assert.strictEqual(pinyinNumberToTone('xie4 xie5'), 'xiè xie'); // 5 = neutral
+  assert.strictEqual(pinyinNumberToTone('gakkou'), 'gakkou'); // no digits: untouched
+});
+check('numeric pinyin queries resolve', () => {
+  assert.strictEqual(top('ni3 hao3')[0], '你好');
+  assert.strictEqual(top('wo3 ai4 ni3')[0], '我爱你');
+  assert.strictEqual(top('xie4 xie5')[0], '谢谢');
+  assert.strictEqual(top('chi1 fan4')[0], '吃饭');
+  assert.strictEqual(top('gong1 zuo4')[0], '工作');
+  assert.strictEqual(search('ni3 hao3', { limit: 1 }).detected, 'pinyin');
+});
+check('tone marks never get the query misread as Vietnamese', () => {
+  // "wǒ ài nǐ" contains "à", which used to make the whole query Vietnamese.
+  assert.strictEqual(search('wǒ ài nǐ', { limit: 1 }).detected, 'pinyin');
+  assert.strictEqual(search('cảm ơn', { limit: 1 }).detected, 'vi');
 });
 
 // ------------------------------------------------- English phrase heads
