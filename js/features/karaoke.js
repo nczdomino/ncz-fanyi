@@ -1,7 +1,7 @@
 // js/features/karaoke.js - Karaoke word highlighting synced with audio playback - Dependencies: js/core/utils.js
 
 // ===== Module: Karaoke highlight synced with TTS =====
-var KARA = window.KARA || { active: false, run: 0, toks: [], text: '', idx: -1, raf: 0, box: null };
+var KARA = window.KARA || { active: false, run: 0, toks: [], text: '', idx: -1, raf: 0, box: null, base: 0, chunkLen: 0 };
 window.KARA = KARA;
 
 function karaokeClear() {
@@ -13,7 +13,14 @@ function karaokeClear() {
 function karaokeStop() {
   KARA.run++;
   karaokeClear();
-  KARA.active = false; KARA.toks = []; KARA.box = null;
+  KARA.active = false; KARA.toks = []; KARA.box = null; KARA.base = 0; KARA.chunkLen = 0;
+}
+
+// The speech pipeline speaks one chunk at a time, so the highlight needs to know which
+// part of the full sentence that chunk covers.
+function karaokeChunk(start, length) {
+  KARA.base = Math.max(0, Number(start) || 0);
+  KARA.chunkLen = Math.max(0, Number(length) || 0);
 }
 
 function karaokeBegin(clean) {
@@ -25,6 +32,7 @@ function karaokeBegin(clean) {
   if (!toks.length) return;
   KARA.active = true; KARA.box = box; KARA.toks = toks; KARA.text = clean;
   KARA.len = Math.max(1, Number(box.dataset.ktext.length));
+  KARA.base = 0; KARA.chunkLen = KARA.len;
 }
 
 function karaokeSetIdx(i) {
@@ -48,7 +56,9 @@ function karaokeSetChar(pos) {
 }
 
 function karaokeSetFrac(f) {
-  karaokeSetChar(Math.floor(Math.min(0.999, Math.max(0, f)) * KARA.len));
+  const span = KARA.chunkLen > 0 ? KARA.chunkLen : KARA.len;
+  const pos = KARA.base + Math.min(0.999, Math.max(0, f)) * span;
+  karaokeSetChar(Math.floor(pos));
 }
 
 function karaokeFinish() {
@@ -65,7 +75,8 @@ function karaokeAttachAudio(a) {
   const step = () => {
     if (KARA.run !== id || currentAudio !== a) return;
     const d = a.duration;
-    const frac = (isFinite(d) && d > 0) ? a.currentTime / d : Math.min(1, a.currentTime / (KARA.len * 0.28));
+    const span = KARA.chunkLen > 0 ? KARA.chunkLen : KARA.len;
+    const frac = (isFinite(d) && d > 0) ? a.currentTime / d : Math.min(1, a.currentTime / (span * 0.28));
     karaokeSetFrac(frac);
     KARA.raf = requestAnimationFrame(step);
   };
@@ -84,7 +95,8 @@ function karaokeAttachSpeech(u) {
   };
   u.onstart = () => {
     const t0 = performance.now();
-    const est = KARA.len * 270 / (u.rate || 1) * 0.88 * 1.0;
+    const span = KARA.chunkLen > 0 ? KARA.chunkLen : KARA.len;
+    const est = span * 270 / (u.rate || 1) * 0.88 * 1.0;
     setTimeout(() => {
       const step = () => {
         if (KARA.run !== id || gotBoundary || activeUtterance !== u) return;

@@ -16,10 +16,15 @@
 // Guarded so the file can also be required from Node in test_sw.js.
 const IS_SW = typeof self !== 'undefined' && typeof self.addEventListener === 'function';
 
-const VERSION = 'ncz-v2';
+const VERSION = 'ncz-v3'; // bumped: audio cache strategy added
 const SHELL_CACHE = VERSION + '-shell';
 const RUNTIME_CACHE = VERSION + '-runtime';
+const AUDIO_CACHE = VERSION + '-audio';
 const MAX_RUNTIME_ENTRIES = 120;
+// TTS clips are ~10 KB each and are the one thing users replay constantly, so they get
+// their own cache with a much higher ceiling.
+const MAX_AUDIO_ENTRIES = 200;
+const AUDIO_HOSTS = ['dict.youdao.com', 'fanyi.baidu.com', 'translate.google.com'];
 
 const SHELL_URLS = ['./', './index.html'];
 
@@ -49,7 +54,9 @@ if (IS_SW) self.addEventListener('install', (event) => {
 if (IS_SW) self.addEventListener('activate', (event) => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
-    await Promise.all(keys.filter((k) => k !== SHELL_CACHE && k !== RUNTIME_CACHE).map((k) => caches.delete(k)));
+    await Promise.all(keys
+      .filter((k) => k !== SHELL_CACHE && k !== RUNTIME_CACHE && k !== AUDIO_CACHE)
+      .map((k) => caches.delete(k)));
     await self.clients.claim();
   })());
 });
@@ -81,6 +88,12 @@ if (IS_SW) self.addEventListener('fetch', (event) => {
 
   if (url.origin === self.location.origin) {
     event.respondWith(staleWhileRevalidate(req));
+    return;
+  }
+
+  // TTS audio: dedicated cache so replay works offline and never evicts app assets.
+  if (url.protocol === 'https:' && AUDIO_HOSTS.indexOf(url.hostname) !== -1) {
+    event.respondWith(audioCacheFirst(req, url));
     return;
   }
 
@@ -159,6 +172,24 @@ async function cacheFirst(request) {
   }
 }
 
+// Media elements may send Range headers (which produce 206 responses that cannot be
+// replayed as a full clip), so clips are stored and matched by plain URL instead.
+async function audioCacheFirst(request, url) {
+  const cache = await caches.open(AUDIO_CACHE);
+  const cached = await cache.match(url.href);
+  if (cached) return cached;
+  try {
+    const res = await fetch(request);
+    if (res && (res.ok || res.type === 'opaque')) {
+      await cache.put(url.href, res.clone());
+      await trimCache(AUDIO_CACHE, MAX_AUDIO_ENTRIES);
+    }
+    return res;
+  } catch (e) {
+    return new Response('', { status: 504, statusText: 'Offline' });
+  }
+}
+
 async function trimCache(name, max) {
   const cache = await caches.open(name);
   const keys = await cache.keys();
@@ -168,5 +199,5 @@ async function trimCache(name, max) {
 
 // Exposed for the Node test in test_sw.js (service worker globals are absent there).
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { extractAssets };
+  module.exports = { extractAssets, AUDIO_HOSTS, AUDIO_CACHE, MAX_AUDIO_ENTRIES };
 }

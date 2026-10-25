@@ -31,6 +31,9 @@ jobs:
       - name: Extended dictionary (CC-CEDICT build + ranking)
         run: node test_ext_dict.js
 
+      - name: Speech pipeline (chunking, engine choice, audio cache)
+        run: node test_audio_core.js
+
       - name: Legacy suites
         run: |
           node test_dict_search.js

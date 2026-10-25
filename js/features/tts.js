@@ -1,6 +1,21 @@
-// js/features/tts.js - Multi-engine text-to-speech module - Dependencies: js/core/state.js, js/core/utils.js, js/features/karaoke.js
+// js/features/tts.js - Multi-engine text-to-speech module
+// Dependencies: js/core/state.js, js/core/utils.js, js/features/karaoke.js,
+//               js/features/audio-core.js (chunking + engine selection)
 
-// --- Module: Audio TTS (Ultra-Reliable Multi-Engine & Native Neural) ---
+// --- Module: Audio TTS (chunked, multi-engine, offline-aware) ---
+//
+// This replaced the previous single-shot implementation, which:
+//   * silently truncated anything longer than 300 characters (`clean.slice(0, 300)`),
+//     so a whole paragraph played only its first 300 characters;
+//   * sent long sentences to speechSynthesis in one utterance, where Chrome drops them
+//     after ~15 s;
+//   * fell back between engines silently, with no way to tell which voice you heard;
+//   * never used the `ttsAudioCache` it declared.
+//
+// The pipeline now splits text into sentence-aware chunks, picks an engine per chunk,
+// remembers which engine worked, drops to the offline system voice when the network is
+// gone, and reports the engine actually used via state.ttsLastEngine.
+
 let currentAudio = null;
 let activeUtterance = null;
 let cachedVoices = [];
@@ -9,8 +24,14 @@ let lastSpeakText = '';
 let lastSpeakTime = 0;
 let lastSpeakSpeed = 1.0;
 
-// High-speed in-memory audio cache for 0ms re-play
-const ttsAudioCache = new Map();
+// Bumped by every new request and by stopSpeech(): any in-flight loop that notices a
+// changed id stops immediately. This makes "click another word while the first one is
+// still loading" behave correctly.
+let speechRunId = 0;
+
+// Remembers which engine produced audio for a given (length, prefix) bucket, so repeat
+// playback skips engines that already failed for that kind of text.
+const engineMemo = new Map();
 
 // 1. Mobile & iOS Safari Audio Unlock on first touch/click
 function unlockAudioMobile() {
@@ -23,7 +44,7 @@ function unlockAudioMobile() {
     const silent = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA');
     silent.volume = 0.01;
     silent.play().then(() => {
-      try { silent.pause(); } catch(e) {}
+      try { silent.pause(); } catch (e) {}
     }).catch(() => {});
   } catch (e) {}
 }
@@ -74,145 +95,215 @@ function scoreZhVoice(v) {
   return score;
 }
 
-// Find the absolute highest quality Chinese voice available
 function getBestZhVoice() {
   if (!cachedVoices || cachedVoices.length === 0) initVoices();
+  if (!cachedVoices || cachedVoices.length === 0) return null;
   const zhVoices = cachedVoices.filter(v => v.lang && (v.lang.startsWith('zh') || v.lang.includes('cmn')));
   if (zhVoices.length === 0) return null;
-
   zhVoices.sort((a, b) => scoreZhVoice(b) - scoreZhVoice(a));
   return zhVoices[0];
 }
 
-// Check if Chinese Web Speech voice exists
 function hasZhSpeechVoice() {
   if (typeof window === 'undefined' || !('speechSynthesis' in window)) return false;
   return !!getBestZhVoice();
 }
 
-// 4. Web Speech API (Offline, Neural-Prioritized, Rock-solid)
-function speakViaWebSpeech(text, speed = 1.0) {
-  if (!text || typeof window === 'undefined' || !('speechSynthesis' in window)) return false;
-  try {
-    if (window.speechSynthesis.paused) {
-      window.speechSynthesis.resume();
+function hasNeuralZhVoice() {
+  const best = getBestZhVoice();
+  return !!best && scoreZhVoice(best) >= 50;
+}
+
+// ---------------------------------------------------------------- helpers
+function audioCore() {
+  return (typeof AUDIO_CORE !== 'undefined' && AUDIO_CORE) ? AUDIO_CORE : null;
+}
+
+function clampSpeed(speed) {
+  const s = typeof speed === 'number' && isFinite(speed) ? speed : 1.0;
+  return Math.min(2.0, Math.max(0.5, s));
+}
+
+function ttsIsOnline() {
+  if (typeof navigator === 'undefined') return true;
+  if (typeof navigator.onLine === 'boolean') return navigator.onLine;
+  return true;
+}
+
+function ttsSaveDataOn() {
+  if (typeof navigator === 'undefined' || !navigator.connection) return false;
+  return !!navigator.connection.saveData;
+}
+
+function ttsVolume() {
+  if (state && state.ttsMuted) return 0;
+  const v = state && typeof state.ttsVolume === 'number' ? state.ttsVolume : 1;
+  return Math.min(1, Math.max(0, v));
+}
+
+function isMuted() {
+  return !!(state && state.ttsMuted);
+}
+
+/** Cancel every in-flight chunk, audio element and utterance. */
+function stopSpeech() {
+  speechRunId++;
+  if (currentAudio) {
+    try { currentAudio.pause(); currentAudio.currentTime = 0; currentAudio.src = ''; } catch (e) {}
+    currentAudio = null;
+  }
+  if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+    try { window.speechSynthesis.cancel(); } catch (e) {}
+  }
+  activeUtterance = null;
+  if (typeof karaokeStop === 'function') {
+    try { karaokeStop(); } catch (e) {}
+  }
+}
+
+// 3. System speech, as a promise that settles when the utterance really ends
+function speechSpeak(text, speed) {
+  return new Promise((resolve, reject) => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+      return reject(new Error('speechSynthesis unavailable'));
     }
-    if (window.speechSynthesis.speaking) {
-      window.speechSynthesis.cancel();
-    }
+    try {
+      if (window.speechSynthesis.paused) window.speechSynthesis.resume();
+      if (window.speechSynthesis.speaking) window.speechSynthesis.cancel();
+    } catch (e) {}
 
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'zh-CN';
-    
-    // Adjust rate according to requested speed
-    const baseRate = 0.90;
-    utterance.rate = Math.min(1.8, Math.max(0.5, baseRate * speed));
+    utterance.rate = Math.min(1.8, Math.max(0.5, 0.90 * clampSpeed(speed)));
+    utterance.volume = ttsVolume();
 
     const bestVoice = getBestZhVoice();
-    if (bestVoice) {
-      utterance.voice = bestVoice;
+    if (bestVoice) utterance.voice = bestVoice;
+
+    let settled = false;
+    // Some engines never fire onend (or fire it minutes later). Bound the wait so a dead
+    // utterance cannot block the rest of the text.
+    const guard = setTimeout(() => finish(), Math.max(4000, text.length * 500 / clampSpeed(speed)));
+
+    function finish(err) {
+      if (settled) return;
+      settled = true;
+      clearTimeout(guard);
+      if (activeUtterance === utterance) activeUtterance = null;
+      if (err) reject(err); else resolve();
     }
 
-    // Critical fix: prevent GC from cutting audio
-    activeUtterance = utterance;
+    activeUtterance = utterance; // keep a reference: GC cancels the audio otherwise
     if (typeof karaokeAttachSpeech === 'function') {
       try { karaokeAttachSpeech(utterance); } catch (e) {}
     }
-    utterance.onend = () => {
-      if (activeUtterance === utterance) {
-        activeUtterance = null;
-        if (typeof karaokeFinish === 'function') {
-          try { karaokeFinish(); } catch (e) {}
-        }
-      }
-    };
-    utterance.onerror = (e) => {
-      console.warn('Web Speech error:', e);
-      if (activeUtterance === utterance) {
-        activeUtterance = null;
-        if (typeof karaokeStop === 'function') {
-          try { karaokeStop(); } catch (e) {}
-        }
-      }
-    };
+    utterance.onend = () => finish();
+    utterance.onerror = (e) => finish(e || new Error('speech error'));
 
-    // Speak synchronously to preserve user gesture activation on mobile Safari/iOS
     try {
       window.speechSynthesis.speak(utterance);
     } catch (err) {
       setTimeout(() => {
-        try { window.speechSynthesis.speak(utterance); } catch (e) {}
+        try { window.speechSynthesis.speak(utterance); } catch (e) { finish(e); }
       }, 20);
     }
-    return true;
-  } catch (err) {
-    console.warn('Web Speech error:', err);
-    return false;
-  }
-}
-
-// 5. Play online audio stream with timeout & speed control
-function playAudioUrl(url, timeoutMs = 2800, speed = 1.0) {
-  return new Promise((resolve, reject) => {
-    let resolved = false;
-    const audio = new Audio();
-    audio.referrerPolicy = 'no-referrer';
-    audio.preload = 'auto';
-
-    // Apply native playbackRate (HTML5 maintains pitch while adjusting speed)
-    if (speed && speed !== 1.0) {
-      try {
-        audio.playbackRate = Math.min(2.0, Math.max(0.5, speed));
-      } catch (e) {}
-    }
-
-    const timer = setTimeout(() => {
-      if (!resolved) {
-        resolved = true;
-        try { audio.pause(); audio.src = ''; } catch(e) {}
-        reject(new Error('Audio timeout'));
-      }
-    }, timeoutMs);
-
-    const onStart = () => {
-      if (!resolved) {
-        resolved = true;
-        clearTimeout(timer);
-        try { if (typeof karaokeAttachAudio === 'function') karaokeAttachAudio(audio); } catch (e) {}
-        resolve(audio);
-      }
-    };
-
-    audio.onplaying = onStart;
-    audio.onplay = onStart;
-
-    audio.onerror = (err) => {
-      if (!resolved) {
-        resolved = true;
-        clearTimeout(timer);
-        reject(err || new Error('Audio error'));
-      }
-    };
-
-    currentAudio = audio;
-    audio.src = url;
-    audio.play().then(onStart).catch(err => {
-      if (!resolved) {
-        resolved = true;
-        clearTimeout(timer);
-        reject(err);
-      }
-    });
   });
 }
 
-// 6. Main entry function for speaking (Smart Auto Multi-Engine with Native Broadcaster Voices)
+// 4. Network audio, resolved when the clip finishes playing
+function audioPlayToEnd(url, speed) {
+  return new Promise((resolve, reject) => {
+    let started = false;
+    let settled = false;
+    const audio = new Audio();
+    audio.referrerPolicy = 'no-referrer';
+    audio.preload = 'auto';
+    try { audio.playbackRate = clampSpeed(speed); } catch (e) {}
+    audio.volume = ttsVolume();
+
+    // Timeout only covers *starting* playback; once playing we wait for 'ended'.
+    const startTimer = setTimeout(() => finish(new Error('audio start timeout')), 4500);
+
+    function finish(err) {
+      if (settled) return;
+      settled = true;
+      clearTimeout(startTimer);
+      if (!started) {
+        try { audio.pause(); audio.src = ''; } catch (e) {}
+      }
+      if (currentAudio === audio) currentAudio = null;
+      if (err) reject(err); else resolve();
+    }
+
+    function markStarted() {
+      if (started) return;
+      started = true;
+      clearTimeout(startTimer);
+      if (typeof karaokeAttachAudio === 'function') {
+        try { karaokeAttachAudio(audio); } catch (e) {}
+      }
+    }
+
+    audio.onplaying = markStarted;
+    audio.onended = () => finish();
+    audio.onerror = () => finish(new Error('audio error'));
+
+    currentAudio = audio; // karaoke.js compares against this global
+    audio.src = url;
+    const p = audio.play();
+    if (p && typeof p.then === 'function') {
+      p.then(markStarted).catch((err) => finish(err || new Error('play rejected')));
+    }
+  });
+}
+
+// 5. Play one chunk, walking its engine plan
+async function playChunk(chunk, plan, speed, runId) {
+  const core = audioCore();
+  if (!core) return false;
+
+  const memoKey = core.engineMemoKey(chunk);
+  const remembered = engineMemo.get(memoKey);
+  const ordered = remembered && plan.indexOf(remembered) !== -1
+    ? [remembered].concat(plan.filter(e => e !== remembered))
+    : plan;
+
+  for (let i = 0; i < ordered.length; i++) {
+    if (runId !== speechRunId) return false;
+    const engine = ordered[i];
+    try {
+      if (engine === 'system') {
+        await speechSpeak(chunk, speed);
+      } else {
+        const url = core.buildAudioUrl(engine, chunk, speed);
+        if (!url) continue;
+        await audioPlayToEnd(url, speed);
+      }
+      if (runId !== speechRunId) return false;
+      engineMemo.set(memoKey, engine);
+      if (state) {
+        state.ttsLastEngine = engine;
+        state.ttsChunkCount = (state.ttsChunkCount || 0) + 1;
+      }
+      return true;
+    } catch (e) {
+      if (state) state.ttsLastError = (e && e.message) || 'error';
+    }
+  }
+  return false;
+}
+
+// 6. Main entry function: speak any length of text, chunk by chunk
 async function speakText(text, btnEl, customSpeed) {
-  if (!text) return;
-  const clean = String(text).replace(/[\r\n\t]+/g, ' ').replace(/\s+/g, ' ').trim();
+  const core = audioCore();
+  if (!core) {
+    console.warn('audio-core.js is not loaded; speech disabled');
+    return;
+  }
+  const clean = core.normalizeSpeechText(text);
   if (!clean) return;
 
-  const speed = typeof customSpeed === 'number' ? customSpeed : (state.ttsSpeed || 1.0);
+  const speed = clampSpeed(typeof customSpeed === 'number' ? customSpeed : (state.ttsSpeed || 1.0));
 
   // Visual feedback: animate the speaker or turtle button
   const triggerBtn = btnEl || (typeof window !== 'undefined' && window.event && window.event.currentTarget);
@@ -220,11 +311,11 @@ async function speakText(text, btnEl, customSpeed) {
     triggerBtn.classList.add('is-speaking');
     const animDuration = Math.min(Math.max((clean.length * 320) / speed, 1500), 9000);
     setTimeout(() => {
-      try { triggerBtn.classList.remove('is-speaking'); } catch(e) {}
+      try { triggerBtn.classList.remove('is-speaking'); } catch (e) {}
     }, animDuration);
   }
 
-  // Prevent rapid spam-click self-cancel bug (clicks within 300ms on same text and same speed)
+  // Spam-click guard: same text + same speed within 300 ms is a toggle, not a restart.
   const now = Date.now();
   if (clean === lastSpeakText && speed === lastSpeakSpeed && (now - lastSpeakTime) < 300) {
     return;
@@ -233,132 +324,73 @@ async function speakText(text, btnEl, customSpeed) {
   lastSpeakText = clean;
   lastSpeakSpeed = speed;
 
-  // Karaoke: reset and bind to the matching sentence container (if any)
+  if (isMuted()) {
+    if (typeof showToast === 'function') {
+      showToast(tx('Đang tắt tiếng — bật lại trong Cài đặt',
+        'Sound is muted — turn it back on in Settings',
+        'ミュート中 — 設定で解除してください'));
+    }
+    return;
+  }
+
+  // Stop whatever was playing, then take ownership of this run.
+  stopSpeech();
+  const runId = speechRunId;
+
+  const chunks = core.chunkText(clean, core.CHUNK_MAX);
+  if (!chunks.length) return;
+
+  const plan = core.buildEnginePlan({
+    engine: (state && state.ttsEngine) || 'auto',
+    online: ttsIsOnline(),
+    hasNeuralVoice: hasNeuralZhVoice(),
+    saveData: ttsSaveDataOn(),
+    textLength: clean.length,
+  });
+
+  if (state) {
+    state.ttsLastEngine = '';
+    state.ttsChunkCount = 0;
+    state.ttsLastError = '';
+  }
+
   if (typeof karaokeBegin === 'function') {
     try { karaokeBegin(clean); } catch (e) {}
   }
 
-  // Stop previous playback
-  if (currentAudio) {
-    try {
-      currentAudio.pause();
-      currentAudio.currentTime = 0;
-      currentAudio.src = '';
-    } catch (e) {}
-    currentAudio = null;
-  }
-  if ('speechSynthesis' in window) {
-    try {
-      window.speechSynthesis.cancel();
-    } catch (e) {}
-  }
+  let offset = 0;
+  let played = 0;
 
-  const engine = state.ttsEngine || 'auto';
-
-  // 1. Explicit system (offline/neural) selected
-  if (engine === 'system') {
-    speakViaWebSpeech(clean, speed);
-    return;
+  for (let i = 0; i < chunks.length; i++) {
+    if (runId !== speechRunId) return;
+    const chunk = chunks[i];
+    if (typeof karaokeChunk === 'function') {
+      try { karaokeChunk(offset, chunk.length); } catch (e) {}
+    }
+    const ok = await playChunk(chunk, plan, speed, runId);
+    if (runId !== speechRunId) return;
+    if (!ok) break;
+    played++;
+    offset += chunk.length;
   }
 
-  const encoded = encodeURIComponent(clean.slice(0, 300));
-  const isSlow = speed < 0.9;
-  const baiduSpd = isSlow ? 4 : (speed > 1.1 ? 6 : 5);
+  if (runId !== speechRunId) return;
 
-  // Engine URLs definition
-  const youdaoUrl = 'https://dict.youdao.com/dictvoice?audio=' + encoded + '&le=zh';
-  const baiduUrl = 'https://fanyi.baidu.com/gettts?lan=zh&text=' + encoded + '&spd=' + baiduSpd + '&source=web';
-  const googleUrl = 'https://translate.google.com/translate_tts?ie=UTF-8&tl=zh-CN&client=tw-ob&q=' + encoded + (isSlow ? '&ttsspeed=0.24' : '');
-
-  // 2. Explicit Baidu mode (CCTV Broadcaster standard)
-  if (engine === 'baidu') {
-    try {
-      await playAudioUrl(baiduUrl, 3200, speed);
-      return;
-    } catch (e) {}
-    try {
-      await playAudioUrl(youdaoUrl, 2500, speed);
-      return;
-    } catch (e) {}
-    speakViaWebSpeech(clean, speed);
-    return;
+  if (typeof karaokeFinish === 'function') {
+    try { karaokeFinish(); } catch (e) {}
   }
 
-  // 3. Explicit Youdao mode (Native Beijing voice)
-  if (engine === 'youdao') {
-    try {
-      await playAudioUrl(youdaoUrl, 2800, speed);
-      return;
-    } catch (e) {}
-    try {
-      await playAudioUrl(baiduUrl, 3000, speed);
-      return;
-    } catch (e) {}
-    speakViaWebSpeech(clean, speed);
-    return;
+  if (!played) {
+    // Everything failed: say so instead of making the button look dead.
+    const msg = !ttsIsOnline()
+      ? tx('Không có mạng và máy chưa cài giọng tiếng Trung',
+        'Offline and no Chinese voice installed',
+        'オフラインで中国語音声が未インストール')
+      : tx('Không phát được âm thanh — thử đổi giọng trong Cài đặt',
+        "Couldn't play audio — try another voice in Settings",
+        '音声を再生できません — 設定で声を変更してください');
+    if (typeof showToast === 'function') showToast(msg);
   }
-
-  // 4. Explicit Google mode
-  if (engine === 'google') {
-    try {
-      await playAudioUrl(googleUrl, 3500, speed);
-      return;
-    } catch (e) {}
-    try {
-      await playAudioUrl(baiduUrl, 3000, speed);
-      return;
-    } catch (e) {}
-    speakViaWebSpeech(clean, speed);
-    return;
-  }
-
-  // 5. Smart Auto Mode (Recommended)
-  // A. Short words / phrases (<= 6 characters): Youdao Native & Baidu CCTV are unbeatable
-  if (clean.length <= 6) {
-    // 1st priority: Youdao native dictionary pronunciation
-    try {
-      await playAudioUrl(youdaoUrl, 2500, speed);
-      return;
-    } catch (e) {}
-    // 2nd priority: Baidu CCTV Broadcaster AI
-    try {
-      await playAudioUrl(baiduUrl, 2800, speed);
-      return;
-    } catch (e) {}
-    // 3rd priority: Google Translate TTS
-    try {
-      await playAudioUrl(googleUrl, 2800, speed);
-      return;
-    } catch (e) {}
-    // Fallback: Web Speech API
-    speakViaWebSpeech(clean, speed);
-    return;
-  }
-
-  // B. Full sentences or paragraphs (> 6 characters)
-  const bestVoice = getBestZhVoice();
-  const isNeuralVoice = bestVoice && scoreZhVoice(bestVoice) >= 50;
-
-  // If client system has high-end Neural voice (e.g. Edge Xiaoxiao, Apple Enhanced Ting-Ting), use it for 0ms delay & sync
-  if (isNeuralVoice) {
-    const ok = speakViaWebSpeech(clean, speed);
-    if (ok) return;
-  }
-
-  // Otherwise, use Baidu AI broadcaster (exceptionally natural flow & tone sandhi for sentences)
-  try {
-    await playAudioUrl(baiduUrl, 3500, speed);
-    return;
-  } catch (e) {}
-
-  // Google Translate fallback
-  try {
-    await playAudioUrl(googleUrl, 3500, speed);
-    return;
-  } catch (e) {}
-
-  // Ultimate fallback: Web Speech API
-  speakViaWebSpeech(clean, speed);
 }
 
 function testSpeechVoices() {
@@ -376,7 +408,7 @@ function testSpeechVoices() {
     }).join('\n');
     const msg = `${t('foundVoices')}: ${zhVoices.length}\n${names}\n\nĐang phát âm thử nghiệm bằng giọng tốt nhất...`;
     alert(msg);
-    speakText("你好，欢迎使用NCZ翻译！这是一段高保真语音测试。");
+    speakText('你好，欢迎使用NCZ翻译！这是一段高保真语音测试。');
   } else {
     alert(t('noVoice'));
   }

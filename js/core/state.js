@@ -36,6 +36,14 @@ const state = {
     if (saved === 'auto' || saved === 'system' || saved === 'google' || saved === 'youdao' || saved === 'baidu') return saved;
     return 'auto';
   })(),
+  ttsVolume: (() => {
+    const saved = parseFloat(localStorage.getItem('cr_ttsVolume'));
+    return (saved >= 0 && saved <= 1) ? saved : 1.0;
+  })(),
+  ttsMuted: localStorage.getItem('cr_ttsMuted') === '1',
+  ttsLastEngine: '',
+  ttsChunkCount: 0,
+  ttsLastError: '',
   ttsSpeed: (() => {
     const saved = parseFloat(localStorage.getItem('cr_ttsSpeed'));
     return (saved >= 0.5 && saved <= 1.5) ? saved : 1.0;
