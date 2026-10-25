@@ -1,0 +1,21 @@
+Halou là ứng dụng tra cứu từ điển tiếng Trung thông minh, dịch thuật chuẩn ngữ cảnh và tự động gắn Pinyin chính xác cho mọi văn bản.
+
+Slogan: Tra từ chuẩn xác, dịch mượt ngữ cảnh, gắn Pinyin tức thì.
+
+TÍNH NĂNG VƯỢT TRỘI:
+1. TRA TỪ ĐIỂN THÔNG MINH
+- Tra cứu tức thì HSK 1-6 và từ điển mở rộng hơn 110.000 mục từ.
+- Chi tiết bộ thủ, thứ tự nét viết động (Hanzi Writer) và ví dụ thực tế phong phú.
+- Hỗ trợ viết tay nhận diện chữ Hán offline ngay trên màn hình.
+
+2. DỊCH THUẬT HIỂU NGỮ CẢNH
+- Dịch câu và đoạn văn tự nhiên, mượt mà như người bản xứ.
+- Đa lăng kính dịch: Nghĩa đen, Ngữ cảnh đời sống, và Phong cách lịch sự/văn học.
+- Giải thích thành ngữ, từ lóng và cụm từ chuyên ngành.
+
+3. TỰ ĐỘNG GẮN PINYIN CHÍNH XÁC
+- Dán bất kỳ văn bản, bài báo, tài liệu tiếng Trung nào để tự động gắn Pinyin và thanh điệu chuẩn xác.
+- Hỗ trợ đọc báo song ngữ, xuất âm thanh chuẩn bản xứ AI.
+- Quét ảnh tài liệu OCR thông minh, biến sách báo giấy thành văn bản số.
+
+Ứng dụng được phát triển bởi 聂诚忠 (NIE THANH TRUNG) phục vụ miễn phí cho cộng đồng học tiếng Trung toàn cầu.

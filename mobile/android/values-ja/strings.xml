@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Halou - Android Strings (Japanese / 日本語) -->
+<resources>
+    <!-- Application Brand & Identity -->
+    <string name="app_name">Halou</string>
+    <string name="store_title">Halou: 中国語辞書＆ピンイン翻訳</string>
+    <string name="store_subtitle">文脈翻訳とルビ（ピンイン）自動付与</string>
+    <string name="slogan">ピンインが付くから、読める・伝わる・すぐ引ける。</string>
+
+    <!-- Web & Store Descriptions -->
+    <string name="web_title">Halou – ピンイン付きスマート中国語辞書＆AI翻訳</string>
+    <string name="web_description">漢字の読み方（ピンイン）自動付与と、ニュアンスまで汲み取る文脈AI翻訳を搭載した新しい中国語辞書アプリ。</string>
+
+    <!-- Core Feature Highlights -->
+    <string name="feature_dict_title">スマート辞書</string>
+    <string name="feature_dict_desc">単語の詳細、部首、用例を即座に表示。</string>
+    <string name="feature_translation_title">文脈AI翻訳</string>
+    <string name="feature_translation_desc">文脈やスラング、成語を自然に訳すAI翻訳。</string>
+    <string name="feature_pinyin_title">ピンイン自動ルビ振り</string>
+    <string name="feature_pinyin_desc">テキストを貼り付けるだけでピンインと声調を自動ルビ振り。</string>
+
+    <!-- Author & Attribution -->
+    <string name="author_credit">開発者: 聂诚忠 (NIE THANH TRUNG)</string>
+    <string name="copyright_notice">著作権表示 © 2026 聂诚忠 (NIE THANH TRUNG). All rights reserved.</string>
+</resources>

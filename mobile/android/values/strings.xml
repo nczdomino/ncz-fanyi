@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Halou - Android Strings (Default / English) -->
+<resources>
+    <!-- Application Brand & Identity -->
+    <string name="app_name">Halou</string>
+    <string name="store_title">Halou: Chinese Dictionary &amp; AI</string>
+    <string name="store_subtitle">Smart Translation with Pinyin</string>
+    <string name="slogan">Smart Dictionary, Contextual Translation &amp; Instant Pinyin.</string>
+
+    <!-- Web & Store Descriptions -->
+    <string name="web_title">Halou – Chinese Dictionary &amp; Smart Translator with Pinyin</string>
+    <string name="web_description">The ultimate Chinese smart dictionary and context-aware translator with instant Pinyin annotation for learners and readers.</string>
+
+    <!-- Core Feature Highlights -->
+    <string name="feature_dict_title">Smart Dictionary</string>
+    <string name="feature_dict_desc">Deep lookup with radicals, stroke orders, and real examples.</string>
+    <string name="feature_translation_title">Contextual AI Translation</string>
+    <string name="feature_translation_desc">Context-aware AI translation with slang &amp; idioms.</string>
+    <string name="feature_pinyin_title">Instant Pinyin</string>
+    <string name="feature_pinyin_desc">Paste any text to generate accurate Pinyin with tones instantly.</string>
+
+    <!-- Author & Attribution -->
+    <string name="author_credit">Developed by 聂诚忠 (NIE THANH TRUNG)</string>
+    <string name="copyright_notice">Copyright © 2026 NIE THANH TRUNG. All rights reserved.</string>
+</resources>

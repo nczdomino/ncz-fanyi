@@ -8,9 +8,9 @@
     const startUrl = origin ? (origin + pathname) : '.';
 
     const manifest = {
-      name: "哈喽 中文 (HALOU ZHONGWEN) · Trợ Thủ Đọc & Học Tiếng Trung AI",
-      short_name: "哈喽 中文",
-      description: "Ứng dụng tra cứu từ điển HSK 1-6 tức thì, phát âm giọng chuẩn bản xứ AI, nhận diện tài liệu ảnh OCR và dịch tiếng Trung của tác giả 聂诚忠 (Nie Thanh Trung)",
+      name: "Halou – Chinese Dictionary & Smart Translator with Pinyin",
+      short_name: "Halou",
+      description: "The ultimate Chinese smart dictionary and context-aware translator with instant Pinyin annotation for learners and readers.",
       author: "聂诚忠 (Nie Thanh Trung)",
       start_url: startUrl,
       scope: origin ? (origin + pathname) : './',

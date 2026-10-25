@@ -64,7 +64,7 @@ function calculateNewVersion(current, type) {
 }
 
 const newVersion = calculateNewVersion(currentVersion, bumpType);
-console.log(`\n🚀 [HALOU ZHONGWEN / 哈喽 中文] Bumping version: ${currentVersion} -> ${newVersion}`);
+console.log(`\n🚀 [Halou] Bumping version: ${currentVersion} -> ${newVersion}`);
 
 // 3. Update package.json
 pkg.version = newVersion;

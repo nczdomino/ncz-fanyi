@@ -1,0 +1,11 @@
+/* 
+  InfoPlist.strings (Japanese)
+  Halou: 中国語辞書＆ピンイン翻訳
+*/
+
+"CFBundleDisplayName" = "Halou";
+"CFBundleName" = "Halou";
+"NSCameraUsageDescription" = "Halouは中国語の書籍、看板、書類の漢字をOCR認識するためにカメラへのアクセスが必要です。";
+"NSPhotoLibraryUsageDescription" = "Halouは保存された写真やスクリーンショットから中国語の漢字を認識するために写真ライブラリへのアクセスが必要です。";
+"NSSpeechRecognitionUsageDescription" = "Halouは中国語の発音練習と音声入力のために音声認識機能を使用します。";
+"NSMicrophoneUsageDescription" = "Halouは中国語の発音評価およびスピーキング練習のためにマイクへのアクセスが必要です。";

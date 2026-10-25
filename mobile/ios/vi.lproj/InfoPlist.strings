@@ -1,0 +1,11 @@
+/* 
+  InfoPlist.strings (Vietnamese)
+  Halou - Từ Điển & Dịch Tiếng Trung
+*/
+
+"CFBundleDisplayName" = "Halou";
+"CFBundleName" = "Halou";
+"NSCameraUsageDescription" = "Halou cần quyền truy cập Camera để quét tài liệu, sách báo và nhận diện chữ Hán tức thì (OCR).";
+"NSPhotoLibraryUsageDescription" = "Halou cần quyền truy cập Thư viện ảnh để nhận diện chữ Hán từ hình ảnh hoặc ảnh chụp màn hình.";
+"NSSpeechRecognitionUsageDescription" = "Halou sử dụng nhận diện giọng nói để hỗ trợ luyện phát âm tiếng Trung.";
+"NSMicrophoneUsageDescription" = "Halou cần micro để ghi âm giọng nói khi luyện phát âm tiếng Trung chuẩn bản xứ.";

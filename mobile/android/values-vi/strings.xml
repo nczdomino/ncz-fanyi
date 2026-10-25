@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Halou - Android Strings (Tiếng Việt) -->
+<resources>
+    <!-- Application Brand & Identity -->
+    <string name="app_name">Halou</string>
+    <string name="store_title">Halou: Từ Điển &amp; Dịch Tiếng Trung</string>
+    <string name="store_subtitle">Tra từ, gắn Pinyin &amp; dịch ngữ cảnh</string>
+    <string name="slogan">Tra từ chuẩn xác, dịch mượt ngữ cảnh, gắn Pinyin tức thì.</string>
+
+    <!-- Web & Store Descriptions -->
+    <string name="web_title">Halou – Từ điển &amp; Dịch thuật tiếng Trung có Pinyin</string>
+    <string name="web_description">Ứng dụng tra cứu từ điển tiếng Trung thông minh, dịch thuật chuẩn ngữ cảnh và tự động gắn Pinyin chính xác cho mọi văn bản.</string>
+
+    <!-- Core Feature Highlights -->
+    <string name="feature_dict_title">Từ điển thông minh</string>
+    <string name="feature_dict_desc">Tra cứu thông minh, chi tiết bộ thủ và ví dụ thực tế.</string>
+    <string name="feature_translation_title">Dịch thuật ngữ cảnh</string>
+    <string name="feature_translation_desc">Dịch hiểu ngữ cảnh, tự nhiên như người bản xứ.</string>
+    <string name="feature_pinyin_title">Gắn Pinyin tức thì</string>
+    <string name="feature_pinyin_desc">Dán văn bản để gắn Pinyin và thanh điệu tức thì.</string>
+
+    <!-- Author & Attribution -->
+    <string name="author_credit">Phát triển bởi 聂诚忠 (NIE THANH TRUNG)</string>
+    <string name="copyright_notice">Bản quyền thuộc về tác giả © 2026 聂诚忠 (NIE THANH TRUNG). All rights reserved.</string>
+</resources>

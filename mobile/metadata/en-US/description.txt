@@ -1,0 +1,21 @@
+The ultimate Chinese smart dictionary and context-aware translator with instant Pinyin annotation for learners and readers.
+
+Slogan: Smart Dictionary, Contextual Translation & Instant Pinyin.
+
+CORE FEATURES:
+1. DEEP DICTIONARY LOOKUP
+- Instant HSK 1-6 levels and over 110,000+ extended vocabulary entries.
+- Radical breakdowns, stroke-by-stroke animated Hanzi order, and realistic example sentences.
+- Offline handwriting recognition directly on the canvas.
+
+2. CONTEXT-AWARE AI TRANSLATION
+- Understands nuanced meaning, slang, idioms, and colloquial phrasing.
+- Multi-perspective translation: Literal, Conversational, and Formal/Literary.
+- Deep explanations for grammar patterns and cultural expressions.
+
+3. INSTANT PINYIN ANNOTATION
+- Paste any Chinese article, paragraph, or transcript to generate tone-marked Pinyin above every character instantly.
+- Triple-tier native TTS voice generation.
+- OCR camera scanner: snapshot printed text, textbooks, and menus into readable Chinese.
+
+Crafted by 聂诚忠 (NIE THANH TRUNG) for the global Chinese learning community.
