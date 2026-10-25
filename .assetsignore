@@ -1,0 +1,25 @@
+# Cloudflare Workers / Wrangler static assets ignore list
+# Prevents uploading large node_modules binaries and backend files to the static edge CDN
+
+node_modules/
+.git/
+.github/
+.cache/
+api/
+functions/
+ocr_service/
+tools/
+*.log
+test_*.js
+test_*.mjs
+test_*.py
+package.json
+package-lock.json
+pnpm-lock.yaml
+tsconfig.json
+vitest.config.ts
+eslint.config.mjs
+AUDIT.md
+README.md
+Dockerfile
+docker-compose.yml
