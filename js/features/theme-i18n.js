@@ -48,7 +48,29 @@ function setUiLang(lang) {
     }
   }
 
+  // Synchronize browser URL bar for multilingual SEO & direct sharing
+  if (typeof history !== 'undefined' && history.pushState && typeof location !== 'undefined') {
+    const p = (location.pathname || '').replace(/\/+$/, '') + '/';
+    const target = '/' + lang + '/';
+    if (p !== target && (p === '/' || p === '/vi/' || p === '/en/' || p === '/ja/')) {
+      history.pushState({ lang: lang }, '', target);
+    }
+  }
+
   showToast(t('language') + ': ' + getLangName(lang));
+}
+
+if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
+  window.addEventListener('popstate', () => {
+    const p = ((typeof location !== 'undefined' && location.pathname) || '').toLowerCase();
+    let lang = 'en';
+    if (p.startsWith('/vi')) lang = 'vi';
+    else if (p.startsWith('/ja')) lang = 'ja';
+    else if (p.startsWith('/en')) lang = 'en';
+    if (typeof state !== 'undefined' && state.uiLang !== lang && typeof setUiLang === 'function') {
+      setUiLang(lang);
+    }
+  });
 }
 
 function cycleUiLang() {

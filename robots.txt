@@ -4,23 +4,5 @@ User-agent: *
 Allow: /
 Disallow: /api/
 
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: Baiduspider
-Allow: /
-User-agent: Baiduspider-image
-Allow: /
-
-User-agent: YandexBot
-Allow: /
-
-User-agent: Applebot
-Allow: /
-
 # Sitemaps
 Sitemap: https://halouzhongwen.com/sitemap.xml
-

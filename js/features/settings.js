@@ -57,7 +57,7 @@ function restoreDataFromFile(file) {
       const rawRecentTexts = data.cr_recentTexts || data.recentTexts;
 
       const VALID_LANGS = ['vi', 'en', 'ja'];
-      const VALID_TTS = ['auto', 'system', 'google', 'youdao', 'baidu'];
+      const VALID_TTS = ['auto', 'azure', 'system', 'google', 'youdao', 'baidu'];
       const VALID_THEMES = ['system', 'light', 'dark'];
 
       if (rawUiLang !== undefined && !VALID_LANGS.includes(rawUiLang)) throw new Error('Invalid uiLang');

@@ -104,6 +104,16 @@ if (fs.existsSync(swJsPath)) {
   }
 }
 
+// 5.1. Re-generate static multilingual routes (/vi/, /en/, /ja/)
+try {
+  const i18nScript = path.join(__dirname, 'build-i18n-routes.js');
+  if (fs.existsSync(i18nScript)) {
+    execSync(`node "${i18nScript}"`, { cwd: rootDir, stdio: 'inherit' });
+  }
+} catch (e) {
+  console.warn('  ⚠️ Warning: Failed to re-generate i18n routes:', e.message);
+}
+
 // 6. Optional Git Commit & Push
 if (shouldCommit) {
   try {

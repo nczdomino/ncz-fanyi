@@ -161,6 +161,291 @@ function stopSpeech() {
   }
 }
 
+// --- 2.5 Unified Audio Manager, Quota Guard & Circuit Breaker ---
+const AUDIO_MANAGER = (function () {
+  const MAX_CACHE_ENTRIES = 100;
+  const SOFT_CAP_CHARS = 450000;
+  const HARD_CAP_CHARS = 480000;
+
+  const circuit = {
+    state: 'CLOSED', // 'CLOSED' | 'OPEN' | 'HALF_OPEN'
+    cooldownUntil: 0,
+    consecutiveFailures: 0,
+    lastError: '',
+    lastStatus: 0,
+  };
+
+  const cache = new Map();
+  let customFetch = null;
+
+  function getCurrentMonthKey() {
+    try {
+      return new Date().toISOString().slice(0, 7);
+    } catch (e) {
+      return 'default';
+    }
+  }
+
+  function getStoredUsage() {
+    if (typeof localStorage === 'undefined') return null;
+    try {
+      const raw = localStorage.getItem('cr_tts_usage');
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function saveUsage(data) {
+    if (typeof localStorage === 'undefined') return;
+    try {
+      localStorage.setItem('cr_tts_usage', JSON.stringify(data));
+    } catch (e) {}
+  }
+
+  function getUsage() {
+    const currentMonth = getCurrentMonthKey();
+    let data = getStoredUsage();
+    if (!data || typeof data !== 'object' || data.month !== currentMonth) {
+      data = {
+        month: currentMonth,
+        azureChars: 0,
+        azureRequests: 0,
+        azureSuccess: 0,
+        azureFailures: 0,
+        fallbackRequests: 0,
+        cacheHits: 0,
+      };
+    }
+    return data;
+  }
+
+  function recordSuccess(chars) {
+    circuit.state = 'CLOSED';
+    circuit.consecutiveFailures = 0;
+    circuit.cooldownUntil = 0;
+    circuit.lastError = '';
+    circuit.lastStatus = 200;
+
+    const usage = getUsage();
+    usage.azureRequests = (usage.azureRequests || 0) + 1;
+    usage.azureSuccess = (usage.azureSuccess || 0) + 1;
+    usage.azureChars = (usage.azureChars || 0) + (typeof chars === 'number' ? chars : 0);
+    saveUsage(usage);
+  }
+
+  function recordFailure(status, errMsg) {
+    circuit.consecutiveFailures = (circuit.consecutiveFailures || 0) + 1;
+    circuit.lastError = errMsg || 'Unknown error';
+    circuit.lastStatus = status || 500;
+    circuit.state = 'OPEN';
+
+    let cooldownMs = 2 * 60 * 1000;
+    if (status === 401) {
+      cooldownMs = 10 * 60 * 1000; // 10 minutes
+    } else if (status === 403 || status === 429) {
+      cooldownMs = 30 * 60 * 1000; // 30 minutes
+    } else if (status === 503) {
+      cooldownMs = 5 * 60 * 1000;  // 5 minutes
+    } else if (circuit.consecutiveFailures >= 3) {
+      cooldownMs = 2 * 60 * 1000;  // 2 minutes
+    } else {
+      cooldownMs = 15 * 1000;       // 15 seconds transient
+    }
+
+    circuit.cooldownUntil = Date.now() + cooldownMs;
+
+    const usage = getUsage();
+    usage.azureRequests = (usage.azureRequests || 0) + 1;
+    usage.azureFailures = (usage.azureFailures || 0) + 1;
+    saveUsage(usage);
+  }
+
+  function recordCacheHit() {
+    const usage = getUsage();
+    usage.cacheHits = (usage.cacheHits || 0) + 1;
+    saveUsage(usage);
+  }
+
+  function recordFallback() {
+    const usage = getUsage();
+    usage.fallbackRequests = (usage.fallbackRequests || 0) + 1;
+    saveUsage(usage);
+  }
+
+  function isAzureAvailable() {
+    if (!ttsIsOnline()) return false;
+    const usage = getUsage();
+    if (usage.azureChars >= HARD_CAP_CHARS) return false;
+    if (circuit.state === 'OPEN') {
+      if (Date.now() < circuit.cooldownUntil) return false;
+      circuit.state = 'HALF_OPEN';
+    }
+    return true;
+  }
+
+  function getCacheKey(engine, text, speed) {
+    return engine + ':' + (Math.round((speed || 1.0) * 100) / 100) + ':' + text;
+  }
+
+  function createAudioUrl(blob) {
+    if (typeof URL !== 'undefined' && typeof URL.createObjectURL === 'function') {
+      try {
+        return URL.createObjectURL(blob);
+      } catch (e) {}
+    }
+    return 'blob:mock-url-' + Math.random().toString(36).slice(2);
+  }
+
+  function revokeAudioUrl(url) {
+    if (url && typeof url === 'string' && url.indexOf('blob:') === 0) {
+      if (typeof URL !== 'undefined' && typeof URL.revokeObjectURL === 'function') {
+        try {
+          URL.revokeObjectURL(url);
+        } catch (e) {}
+      }
+    }
+  }
+
+  function getCachedAudio(key) {
+    if (!cache.has(key)) return null;
+    const entry = cache.get(key);
+    cache.delete(key);
+    cache.set(key, entry);
+    return entry.url;
+  }
+
+  function putCachedAudio(key, url, blob) {
+    if (cache.has(key)) {
+      const existing = cache.get(key);
+      if (existing && existing.url && existing.url !== url) {
+        revokeAudioUrl(existing.url);
+      }
+      cache.delete(key);
+    } else if (cache.size >= MAX_CACHE_ENTRIES) {
+      const oldestKey = cache.keys().next().value;
+      if (oldestKey !== undefined) {
+        const oldest = cache.get(oldestKey);
+        if (oldest && oldest.url) {
+          revokeAudioUrl(oldest.url);
+        }
+        cache.delete(oldestKey);
+      }
+    }
+    cache.set(key, { url: url, blob: blob, timestamp: Date.now() });
+  }
+
+  function clearCache() {
+    cache.forEach((entry) => {
+      if (entry && entry.url) revokeAudioUrl(entry.url);
+    });
+    cache.clear();
+  }
+
+  async function fetchAzureAudio(text, speed, voice) {
+    const key = getCacheKey('azure', text, speed);
+    const cachedUrl = getCachedAudio(key);
+    if (cachedUrl) {
+      recordCacheHit();
+      return cachedUrl;
+    }
+
+    if (!isAzureAvailable()) {
+      throw new Error('Azure TTS unavailable (circuit breaker or quota limit)');
+    }
+
+    const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    const timeoutId = controller ? setTimeout(() => controller.abort(), 6500) : null;
+    const fetcher = customFetch || (typeof fetch !== 'undefined' ? fetch : null);
+
+    if (!fetcher) {
+      throw new Error('Fetch API unavailable');
+    }
+
+    try {
+      const payload = {
+        text: text,
+        speed: speed || 1.0,
+        voice: voice || 'zh-CN-Xiaoxiao2:DragonHDFlashLatestNeural'
+      };
+
+      const res = await fetcher('/api/tts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        signal: controller ? controller.signal : undefined
+      });
+
+      if (!res.ok) {
+        recordFailure(res.status, 'HTTP ' + res.status);
+        throw new Error('Azure TTS returned HTTP ' + res.status);
+      }
+
+      const blob = await res.blob();
+      const objectUrl = createAudioUrl(blob);
+      putCachedAudio(key, objectUrl, blob);
+      recordSuccess(text.length);
+      return objectUrl;
+    } catch (err) {
+      const isTimeout = err && (err.name === 'AbortError' || (err.message && err.message.includes('abort')));
+      if (isTimeout) {
+        recordFailure(504, 'Azure TTS timeout');
+      } else if (circuit.state !== 'OPEN') {
+        recordFailure(500, (err && err.message) || 'Network error');
+      }
+      throw err;
+    } finally {
+      if (timeoutId) clearTimeout(timeoutId);
+    }
+  }
+
+  return {
+    MAX_CACHE_ENTRIES,
+    SOFT_CAP_CHARS,
+    HARD_CAP_CHARS,
+    circuit,
+    cache,
+    getUsage,
+    saveUsage,
+    recordSuccess,
+    recordFailure,
+    recordCacheHit,
+    recordFallback,
+    isAzureAvailable,
+    getCacheKey,
+    getCachedAudio,
+    putCachedAudio,
+    clearCache,
+    fetchAzureAudio,
+    setFetchHandler: function (fn) { customFetch = fn; },
+    getStatus: function () {
+      const u = getUsage();
+      return {
+        circuit: circuit.state,
+        cooldownRemaining: Math.max(0, Math.round((circuit.cooldownUntil - Date.now()) / 1000)),
+        lastStatus: circuit.lastStatus,
+        lastError: circuit.lastError,
+        azureChars: u.azureChars,
+        azureRequests: u.azureRequests,
+        azureSuccess: u.azureSuccess,
+        azureFailures: u.azureFailures,
+        fallbackRequests: u.fallbackRequests,
+        cacheHits: u.cacheHits,
+        softCapReached: u.azureChars >= SOFT_CAP_CHARS,
+        hardCapReached: u.azureChars >= HARD_CAP_CHARS,
+        cacheSize: cache.size
+      };
+    },
+    resetCircuitBreaker: function () {
+      circuit.state = 'CLOSED';
+      circuit.cooldownUntil = 0;
+      circuit.consecutiveFailures = 0;
+      circuit.lastError = '';
+      circuit.lastStatus = 0;
+    }
+  };
+})();
+
 // 3. System speech, as a promise that settles when the utterance really ends
 function speechSpeak(text, speed) {
   return new Promise((resolve, reject) => {
@@ -274,6 +559,10 @@ async function playChunk(chunk, plan, speed, runId) {
     try {
       if (engine === 'system') {
         await speechSpeak(chunk, speed);
+      } else if (engine === 'azure') {
+        const url = await AUDIO_MANAGER.fetchAzureAudio(chunk, speed);
+        if (!url || runId !== speechRunId) return false;
+        await audioPlayToEnd(url, speed);
       } else {
         const url = core.buildAudioUrl(engine, chunk, speed);
         if (!url) continue;
@@ -287,6 +576,9 @@ async function playChunk(chunk, plan, speed, runId) {
       }
       return true;
     } catch (e) {
+      if (engine === 'azure') {
+        AUDIO_MANAGER.recordFallback();
+      }
       if (state) state.ttsLastError = (e && e.message) || 'error';
     }
   }
@@ -345,6 +637,7 @@ async function speakText(text, btnEl, customSpeed) {
     online: ttsIsOnline(),
     hasNeuralVoice: hasNeuralZhVoice(),
     saveData: ttsSaveDataOn(),
+    azureAvailable: AUDIO_MANAGER.isAzureAvailable(),
     textLength: clean.length,
   });
 
@@ -469,4 +762,25 @@ function testSpeechVoices() {
   } else {
     alert(t('noVoice'));
   }
+}
+
+if (typeof window !== 'undefined') {
+  window.AUDIO_MANAGER = AUDIO_MANAGER;
+  window.speakText = speakText;
+  window.stopSpeech = stopSpeech;
+  window.speakInLanguage = speakInLanguage;
+  window.testSpeechVoices = testSpeechVoices;
+}
+if (typeof globalThis !== 'undefined') {
+  globalThis.AUDIO_MANAGER = AUDIO_MANAGER;
+}
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    AUDIO_MANAGER,
+    speakText,
+    stopSpeech,
+    speakInLanguage,
+    testSpeechVoices,
+    playChunk,
+  };
 }

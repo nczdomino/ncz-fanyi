@@ -10,6 +10,7 @@ import semanticHandler from './api/dict/semantic.js';
 import repairHandler from './api/ocr/repair.js';
 import handwritingHandler from './api/handwriting.js';
 import ocrHandler from './api/ocr.js';
+import ttsHandler from './api/tts.js';
 import {
   optionsResponse, jsonCorsHeaders, enforceRate, readJson, resolveOrigin,
 } from './functions/_lib/http.js';
@@ -419,6 +420,69 @@ check('CF enforceRate returns null under the limit and a 429 above it', () => {
   const limited = enforceRate(mk(ip), {}, 'unit', 2, 60000);
   assert.ok(limited, 'expected a Response when over budget');
   assert.strictEqual(limited.status, 429);
+});
+
+// ------------------------------------------------------------------ Azure TTS API
+console.log('\n--- Azure AI Speech TTS API ---');
+
+await checkAsync('TTS returns 503 when AZURE_SPEECH_KEY is missing', async () => {
+  const prev = process.env.AZURE_SPEECH_KEY;
+  delete process.env.AZURE_SPEECH_KEY;
+  try {
+    const req = makeReq({ ip: nextIp(), body: { text: '你好' } });
+    const res = makeRes();
+    await ttsHandler(req, res);
+    assert.strictEqual(res.statusCode, 503);
+    assert.strictEqual(res.body.error, 'AZURE_SPEECH_KEY_NOT_CONFIGURED');
+  } finally {
+    if (prev) process.env.AZURE_SPEECH_KEY = prev;
+  }
+});
+
+await checkAsync('TTS returns 400 for empty or whitespace text', async () => {
+  const prev = process.env.AZURE_SPEECH_KEY;
+  process.env.AZURE_SPEECH_KEY = 'fake-test-key';
+  try {
+    const req = makeReq({ ip: nextIp(), body: { text: '   ' } });
+    const res = makeRes();
+    await ttsHandler(req, res);
+    assert.strictEqual(res.statusCode, 400);
+    assert.strictEqual(res.body.error, 'INVALID_TEXT');
+  } finally {
+    if (prev === undefined) delete process.env.AZURE_SPEECH_KEY; else process.env.AZURE_SPEECH_KEY = prev;
+  }
+});
+
+await checkAsync('TTS returns 400 for text exceeding 1000 characters', async () => {
+  const prev = process.env.AZURE_SPEECH_KEY;
+  process.env.AZURE_SPEECH_KEY = 'fake-test-key';
+  try {
+    const req = makeReq({ ip: nextIp(), body: { text: '字'.repeat(1001) } });
+    const res = makeRes();
+    await ttsHandler(req, res);
+    assert.strictEqual(res.statusCode, 400);
+    assert.strictEqual(res.body.error, 'TEXT_TOO_LONG');
+  } finally {
+    if (prev === undefined) delete process.env.AZURE_SPEECH_KEY; else process.env.AZURE_SPEECH_KEY = prev;
+  }
+});
+
+await checkAsync('TTS rejects forbidden origins with 403', async () => {
+  const prevEnv = process.env.ALLOWED_ORIGINS;
+  process.env.ALLOWED_ORIGINS = 'https://halouzhongwen.com';
+  try {
+    const req = makeReq({
+      origin: 'https://malicious-site.example',
+      ip: nextIp(),
+      body: { text: '你好' }
+    });
+    const res = makeRes();
+    await ttsHandler(req, res);
+    assert.strictEqual(res.statusCode, 403);
+    assert.strictEqual(res.body.error, 'ORIGIN_NOT_ALLOWED');
+  } finally {
+    if (prevEnv === undefined) delete process.env.ALLOWED_ORIGINS; else process.env.ALLOWED_ORIGINS = prevEnv;
+  }
 });
 
 // ------------------------------------------------------------------ helper glue

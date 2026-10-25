@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="light">
+<head>
+  <base href="/">
+  <script>
+    (function() {
+      try {
+        localStorage.setItem("cr_uiLang", "ja");
+        document.documentElement.lang = "ja";
+        const dark = localStorage.getItem("cr_darkMode") || "system";
+        const isDark = dark === "dark" || (dark === "system" && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+        document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
+      } catch(e) {}
+    })();
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  
+  <!-- Primary Meta Tags -->
+  <title>Halou – ピンイン付きスマート中国語辞書＆AI翻訳</title>
+  <meta name="title" content="Halou – ピンイン付きスマート中国語辞書＆AI翻訳">
+  <meta name="description" content="漢字の読み方（ピンイン）自動付与と、ニュアンスまで汲み取る文脈AI翻訳を搭載した新しい中国語辞書アプリ。">
+  <meta name="keywords" content="Halou, 中国語辞書, ピンイン翻訳, 中国語ルビ振り, 中日辞書, HSK辞書, 中国語学習, 文脈翻訳">
+  <meta name="author" content="聂诚忠 (Nie Thanh Trung)">
+  <meta name="creator" content="聂诚忠 (Nie Thanh Trung)">
+  <meta name="publisher" content="聂诚忠 (Nie Thanh Trung)">
+  <meta name="copyright" content="Bản quyền thuộc về tác giả: 聂诚忠 (Nie Thanh Trung)">
+  <meta name="theme-color" content="#E8344E">
+
+  <!-- SEO Canonical, Robots & Multilingual Alternate Hreflang -->
+  <base href="/">
+  <link rel="canonical" href="https://halouzhongwen.com/ja/">
+  <link rel="alternate" hreflang="x-default" href="https://halouzhongwen.com/">
+  <link rel="alternate" hreflang="vi" href="https://halouzhongwen.com/vi/">
+  <link rel="alternate" hreflang="en" href="https://halouzhongwen.com/en/">
+  <link rel="alternate" hreflang="ja" href="https://halouzhongwen.com/ja/">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+
+  <!-- Search Engine Verification (Bing / Microsoft) -->
+  <meta name="msvalidate.01" content="BACD7B058D2C305801C895EE897F25D3">
+
+  <!-- Mobile & PWA Meta Tags -->
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Halou">
+  <meta name="application-name" content="Halou">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="msapplication-TileColor" content="#E8344E">
+
+  <!-- Open Graph / Facebook / Zalo / Messenger Preview -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://halouzhongwen.com/ja/">
+  <meta property="og:site_name" content="Halou">
+  <meta property="og:title" content="Halou – ピンイン付きスマート中国語辞書＆AI翻訳">
+  <meta property="og:description" content="漢字の読み方（ピンイン）自動付与と、ニュアンスまで汲み取る文脈AI翻訳を搭載した新しい中国語辞書アプリ。">
+  <meta property="og:image" content="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%201200%20630%22%20width%3D%221200%22%20height%3D%22630%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22ogBg%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23161B22%22%2F%3E%3Cstop%20offset%3D%2250%25%22%20stop-color%3D%22%230D1117%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231C0D12%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22crimsonGrad%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23FF385C%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23C01632%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22goldText%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23FFE07A%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23F5A623%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%221200%22%20height%3D%22630%22%20fill%3D%22url(%23ogBg)%22%2F%3E%3Ccircle%20cx%3D%221050%22%20cy%3D%22150%22%20r%3D%22300%22%20fill%3D%22%23E8344E%22%20opacity%3D%220.15%22%2F%3E%3Ccircle%20cx%3D%22150%22%20cy%3D%22500%22%20r%3D%22250%22%20fill%3D%22%23E8344E%22%20opacity%3D%220.1%22%2F%3E%3Cg%20transform%3D%22translate(100%2C%20140)%22%3E%3Crect%20width%3D%22350%22%20height%3D%22350%22%20rx%3D%2280%22%20fill%3D%22url(%23crimsonGrad)%22%2F%3E%3Crect%20x%3D%226%22%20y%3D%226%22%20width%3D%22338%22%20height%3D%22338%22%20rx%3D%2274%22%20fill%3D%22none%22%20stroke%3D%22rgba(255%2C255%2C255%2C0.25)%22%20stroke-width%3D%223%22%2F%3E%3Ctext%20x%3D%22175%22%20y%3D%22235%22%20font-family%3D%22sans-serif%22%20font-weight%3D%22900%22%20font-size%3D%22170%22%20text-anchor%3D%22middle%22%20fill%3D%22%23FFFFFF%22%3E%E8%AF%BB%3C%2Ftext%3E%3Crect%20x%3D%2295%22%20y%3D%2238%22%20width%3D%22160%22%20height%3D%2242%22%20rx%3D%2221%22%20fill%3D%22rgba(0%2C0%2C0%2C0.3)%22%2F%3E%3Ctext%20x%3D%22175%22%20y%3D%2268%22%20font-family%3D%22sans-serif%22%20font-weight%3D%22900%22%20font-size%3D%2220%22%20fill%3D%22url(%23goldText)%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%223%22%3EHALOU%20%E5%93%88%E5%95%BD%3C%2Ftext%3E%3Ctext%20x%3D%22175%22%20y%3D%22315%22%20font-family%3D%22sans-serif%22%20font-weight%3D%22800%22%20font-size%3D%2218%22%20fill%3D%22rgba(255%2C255%2C255%2C0.9)%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%223%22%3EAI%20CHINESE%20READER%3C%2Ftext%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate(510%2C%20160)%22%3E%3Crect%20width%3D%22210%22%20height%3D%2238%22%20rx%3D%2219%22%20fill%3D%22rgba(232%2C52%2C78%2C0.2)%22%2F%3E%3Ctext%20x%3D%22105%22%20y%3D%2225%22%20font-family%3D%22sans-serif%22%20font-weight%3D%22800%22%20font-size%3D%2215%22%20fill%3D%22%23FF526D%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%222%22%3EAI%20POWERED%202026%3C%2Ftext%3E%3Ctext%20x%3D%220%22%20y%3D%2295%22%20font-family%3D%22sans-serif%22%20font-weight%3D%22900%22%20font-size%3D%2252%22%20fill%3D%22%23FFFFFF%22%3EHalou%20%E5%93%88%E5%95%BD%E4%B8%AD%E6%96%87%3C%2Ftext%3E%3Ctext%20x%3D%22245%22%20y%3D%2295%22%20font-family%3D%22sans-serif%22%20font-weight%3D%22700%22%20font-size%3D%2236%22%20fill%3D%22url(%23goldText)%22%3E%C2%B7%20Tr%E1%BB%A3%20Th%E1%BB%A7%20Ti%E1%BA%BFng%20Trung%3C%2Ftext%3E%3Ctext%20x%3D%220%22%20y%3D%22145%22%20font-family%3D%22sans-serif%22%20font-weight%3D%22500%22%20font-size%3D%2222%22%20fill%3D%22%238B949E%22%3E%C4%90%E1%BB%8Dc%20b%C3%A1o%20%C2%B7%20Tra%20t%E1%BB%AB%20HSK%201-6%20%C2%B7%20Ph%C3%A1t%20%C3%A2m%20chu%E1%BA%A9n%20AI%20%C2%B7%20OCR%20%E1%BA%A2nh%3C%2Ftext%3E%3Cg%20transform%3D%22translate(0%2C%20190)%22%3E%3Crect%20width%3D%22180%22%20height%3D%2242%22%20rx%3D%2212%22%20fill%3D%22%2321262D%22%2F%3E%3Ctext%20x%3D%2290%22%20y%3D%2227%22%20font-family%3D%22sans-serif%22%20font-weight%3D%22600%22%20font-size%3D%2215%22%20fill%3D%22%23E6EDF3%22%20text-anchor%3D%22middle%22%3E1%2C480%2B%20T%E1%BB%AB%20HSK%3C%2Ftext%3E%3Crect%20x%3D%22195%22%20width%3D%22180%22%20height%3D%2242%22%20rx%3D%2212%22%20fill%3D%22%2321262D%22%2F%3E%3Ctext%20x%3D%22285%22%20y%3D%2227%22%20font-family%3D%22sans-serif%22%20font-weight%3D%22600%22%20font-size%3D%2215%22%20fill%3D%22%23E6EDF3%22%20text-anchor%3D%22middle%22%3EGi%E1%BB%8Dng%20%C4%91%E1%BB%8Dc%20b%E1%BA%A3n%20x%E1%BB%A9%3C%2Ftext%3E%3Crect%20x%3D%22390%22%20width%3D%22180%22%20height%3D%2242%22%20rx%3D%2212%22%20fill%3D%22%2321262D%22%2F%3E%3Ctext%20x%3D%22480%22%20y%3D%2227%22%20font-family%3D%22sans-serif%22%20font-weight%3D%22600%22%20font-size%3D%2215%22%20fill%3D%22%23E6EDF3%22%20text-anchor%3D%22middle%22%3EQu%C3%A9t%20OCR%20t%C3%A0i%20li%E1%BB%87u%3C%2Ftext%3E%3C%2Fg%3E%3Ctext%20x%3D%220%22%20y%3D%22300%22%20font-family%3D%22sans-serif%22%20font-weight%3D%22600%22%20font-size%3D%2217%22%20fill%3D%22%23E8344E%22%3ET%C3%A1c%20gi%E1%BA%A3%3A%20%E8%81%82%E8%AF%9A%E5%BF%A0%20(Nie%20Thanh%20Trung)%20%C2%B7%20Ho%C3%A0n%20to%C3%A0n%20mi%E1%BB%85n%20ph%C3%AD%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fsvg%3E">
+
+  <!-- Twitter / X Card Preview -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://halouzhongwen.com/ja/">
+  <meta name="twitter:title" content="Halou – ピンイン付きスマート中国語辞書＆AI翻訳">
+  <meta name="twitter:description" content="漢字の読み方（ピンイン）自動付与と、ニュアンスまで汲み取る文脈AI翻訳を搭載した新しい中国語辞書アプリ。">
+
+  <!-- JSON-LD Structured Data for Enhanced SEO -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Halou",
+    "url": "https://halouzhongwen.com/ja/",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "All",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "description": "漢字の読み方（ピンイン）自動付与と、ニュアンスまで汲み取る文脈AI翻訳を搭載した新しい中国語辞書アプリ。",
+    "author": {
+      "@type": "Person",
+      "name": "聂诚忠 (NIE THANH TRUNG)"
+    }
+  }
+  </script>
+  <meta name="twitter:image" content="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%201200%20630%22%20width%3D%221200%22%20height%3D%22630%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22ogBg%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23161B22%22%2F%3E%3Cstop%20offset%3D%2250%25%22%20stop-color%3D%22%230D1117%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231C0D12%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22crimsonGrad%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23FF385C%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23C01632%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22goldText%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23FFE07A%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23F5A623%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%221200%22%20height%3D%22630%22%20fill%3D%22url(%23ogBg)%22%2F%3E%3Ccircle%20cx%3D%221050%22%20cy%3D%22150%22%20r%3D%22300%22%20fill%3D%22%23E8344E%22%20opacity%3D%220.15%22%2F%3E%3Ccircle%20cx%3D%22150%22%20cy%3D%22500%22%20r%3D%22250%22%20fill%3D%22%23E8344E%22%20opacity%3D%220.1%22%2F%3E%3Cg%20transform%3D%22translate(100%2C%20140)%22%3E%3Crect%20width%3D%22350%22%20height%3D%22350%22%20rx%3D%2280%22%20fill%3D%22url(%23crimsonGrad)%22%2F%3E%3Crect%20x%3D%226%22%20y%3D%226%22%20width%3D%22338%22%20height%3D%22338%22%20rx%3D%2274%22%20fill%3D%22none%22%20stroke%3D%22rgba(255%2C255%2C255%2C0.25)%22%20stroke-width%3D%223%22%2F%3E%3Ctext%20x%3D%22175%22%20y%3D%22235%22%20font-family%3D%22sans-serif%22%20font-weight%3D%22900%22%20font-size%3D%22170%22%20text-anchor%3D%22middle%22%20fill%3D%22%23FFFFFF%22%3E%E8%AF%BB%3C%2Ftext%3E%3Crect%20x%3D%2295%22%20y%3D%2238%22%20width%3D%22160%22%20height%3D%2242%22%20rx%3D%2221%22%20fill%3D%22rgba(0%2C0%2C0%2C0.3)%22%2F%3E%3Ctext%20x%3D%22175%22%20y%3D%2268%22%20font-family%3D%22sans-serif%22%20font-weight%3D%22900%22%20font-size%3D%2220%22%20fill%3D%22url(%23goldText)%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%223%22%3EHALOU%20%E5%93%88%E5%95%BD%3C%2Ftext%3E%3Ctext%20x%3D%22175%22%20y%3D%22315%22%20font-family%3D%22sans-serif%22%20font-weight%3D%22800%22%20font-size%3D%2218%22%20fill%3D%22rgba(255%2C255%2C255%2C0.9)%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%223%22%3EAI%20CHINESE%20READER%3C%2Ftext%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate(510%2C%20160)%22%3E%3Crect%20width%3D%22210%22%20height%3D%2238%22%20rx%3D%2219%22%20fill%3D%22rgba(232%2C52%2C78%2C0.2)%22%2F%3E%3Ctext%20x%3D%22105%22%20y%3D%2225%22%20font-family%3D%22sans-serif%22%20font-weight%3D%22800%22%20font-size%3D%2215%22%20fill%3D%22%23FF526D%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%222%22%3EAI%20POWERED%202026%3C%2Ftext%3E%3Ctext%20x%3D%220%22%20y%3D%2295%22%20font-family%3D%22sans-serif%22%20font-weight%3D%22900%22%20font-size%3D%2252%22%20fill%3D%22%23FFFFFF%22%3EHalou%20%E5%93%88%E5%95%BD%E4%B8%AD%E6%96%87%3C%2Ftext%3E%3Ctext%20x%3D%22245%22%20y%3D%2295%22%20font-family%3D%22sans-serif%22%20font-weight%3D%22700%22%20font-size%3D%2236%22%20fill%3D%22url(%23goldText)%22%3E%C2%B7%20Tr%E1%BB%A3%20Th%E1%BB%A7%20Ti%E1%BA%BFng%20Trung%3C%2Ftext%3E%3Ctext%20x%3D%220%22%20y%3D%22145%22%20font-family%3D%22sans-serif%22%20font-weight%3D%22500%22%20font-size%3D%2222%22%20fill%3D%22%238B949E%22%3E%C4%90%E1%BB%8Dc%20b%C3%A1o%20%C2%B7%20Tra%20t%E1%BB%AB%20HSK%201-6%20%C2%B7%20Ph%C3%A1t%20%C3%A2m%20chu%E1%BA%A9n%20AI%20%C2%B7%20OCR%20%E1%BA%A2nh%3C%2Ftext%3E%3Cg%20transform%3D%22translate(0%2C%20190)%22%3E%3Crect%20width%3D%22180%22%20height%3D%2242%22%20rx%3D%2212%22%20fill%3D%22%2321262D%22%2F%3E%3Ctext%20x%3D%2290%22%20y%3D%2227%22%20font-family%3D%22sans-serif%22%20font-weight%3D%22600%22%20font-size%3D%2215%22%20fill%3D%22%23E6EDF3%22%20text-anchor%3D%22middle%22%3E1%2C480%2B%20T%E1%BB%AB%20HSK%3C%2Ftext%3E%3Crect%20x%3D%22195%22%20width%3D%22180%22%20height%3D%2242%22%20rx%3D%2212%22%20fill%3D%22%2321262D%22%2F%3E%3Ctext%20x%3D%22285%22%20y%3D%2227%22%20font-family%3D%22sans-serif%22%20font-weight%3D%22600%22%20font-size%3D%2215%22%20fill%3D%22%23E6EDF3%22%20text-anchor%3D%22middle%22%3EGi%E1%BB%8Dng%20%C4%91%E1%BB%8Dc%20b%E1%BA%A3n%20x%E1%BB%A9%3C%2Ftext%3E%3Crect%20x%3D%22390%22%20width%3D%22180%22%20height%3D%2242%22%20rx%3D%2212%22%20fill%3D%22%2321262D%22%2F%3E%3Ctext%20x%3D%22480%22%20y%3D%2227%22%20font-family%3D%22sans-serif%22%20font-weight%3D%22600%22%20font-size%3D%2215%22%20fill%3D%22%23E6EDF3%22%20text-anchor%3D%22middle%22%3EQu%C3%A9t%20OCR%20t%C3%A0i%20li%E1%BB%87u%3C%2Ftext%3E%3C%2Fg%3E%3Ctext%20x%3D%220%22%20y%3D%22300%22%20font-family%3D%22sans-serif%22%20font-weight%3D%22600%22%20font-size%3D%2217%22%20fill%3D%22%23E8344E%22%3ET%C3%A1c%20gi%E1%BA%A3%3A%20%E8%81%82%E8%AF%9A%E5%BF%A0%20(Nie%20Thanh%20Trung)%20%C2%B7%20Ho%C3%A0n%20to%C3%A0n%20mi%E1%BB%85n%20ph%C3%AD%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fsvg%3E">
+
+  <!-- Modern Luxury SVG Favicons & Touch Icons -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20512%20512%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22bgGrad%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23FF385C%22%2F%3E%3Cstop%20offset%3D%2250%25%22%20stop-color%3D%22%23E8344E%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23C01632%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22goldGrad%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23FFE885%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23F5A623%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22512%22%20height%3D%22512%22%20rx%3D%22118%22%20fill%3D%22url(%23bgGrad)%22%2F%3E%3Crect%20x%3D%2210%22%20y%3D%2210%22%20width%3D%22492%22%20height%3D%22492%22%20rx%3D%22108%22%20fill%3D%22none%22%20stroke%3D%22rgba(255%2C255%2C255%2C0.25)%22%20stroke-width%3D%225%22%2F%3E%3Ctext%20x%3D%22256%22%20y%3D%22335%22%20font-family%3D%22'Noto%20Sans%20SC'%2C%20system-ui%2C%20sans-serif%22%20font-weight%3D%22900%22%20font-size%3D%22240%22%20text-anchor%3D%22middle%22%20fill%3D%22%23FFFFFF%22%3E%E8%AF%BB%3C%2Ftext%3E%3Crect%20x%3D%22156%22%20y%3D%2252%22%20width%3D%22200%22%20height%3D%2256%22%20rx%3D%2228%22%20fill%3D%22rgba(0%2C0%2C0%2C0.28)%22%2F%3E%3Crect%20x%3D%22158%22%20y%3D%2254%22%20width%3D%22196%22%20height%3D%2252%22%20rx%3D%2226%22%20fill%3D%22none%22%20stroke%3D%22url(%23goldGrad)%22%20stroke-width%3D%222.5%22%2F%3E%3Ctext%20x%3D%22256%22%20y%3D%2291%22%20font-family%3D%22system-ui%2C%20sans-serif%22%20font-weight%3D%22900%22%20font-size%3D%2226%22%20fill%3D%22url(%23goldGrad)%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%223%22%3EHALOU%3C%2Ftext%3E%3Ctext%20x%3D%22256%22%20y%3D%22448%22%20font-family%3D%22system-ui%2C%20sans-serif%22%20font-weight%3D%22800%22%20font-size%3D%2226%22%20fill%3D%22rgba(255%2C255%2C255%2C0.92)%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%223%22%3EAI%20CHINESE%20READER%3C%2Ftext%3E%3C%2Fsvg%3E">
+  <link rel="apple-touch-icon" sizes="180x180" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20512%20512%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22bgGrad%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23FF385C%22%2F%3E%3Cstop%20offset%3D%2250%25%22%20stop-color%3D%22%23E8344E%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23C01632%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22goldGrad%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23FFE885%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23F5A623%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22512%22%20height%3D%22512%22%20rx%3D%22118%22%20fill%3D%22url(%23bgGrad)%22%2F%3E%3Crect%20x%3D%2210%22%20y%3D%2210%22%20width%3D%22492%22%20height%3D%22492%22%20rx%3D%22108%22%20fill%3D%22none%22%20stroke%3D%22rgba(255%2C255%2C255%2C0.25)%22%20stroke-width%3D%225%22%2F%3E%3Ctext%20x%3D%22256%22%20y%3D%22335%22%20font-family%3D%22'Noto%20Sans%20SC'%2C%20system-ui%2C%20sans-serif%22%20font-weight%3D%22900%22%20font-size%3D%22240%22%20text-anchor%3D%22middle%22%20fill%3D%22%23FFFFFF%22%3E%E8%AF%BB%3C%2Ftext%3E%3Crect%20x%3D%22156%22%20y%3D%2252%22%20width%3D%22200%22%20height%3D%2256%22%20rx%3D%2228%22%20fill%3D%22rgba(0%2C0%2C0%2C0.28)%22%2F%3E%3Crect%20x%3D%22158%22%20y%3D%2254%22%20width%3D%22196%22%20height%3D%2252%22%20rx%3D%2226%22%20fill%3D%22none%22%20stroke%3D%22url(%23goldGrad)%22%20stroke-width%3D%222.5%22%2F%3E%3Ctext%20x%3D%22256%22%20y%3D%2291%22%20font-family%3D%22system-ui%2C%20sans-serif%22%20font-weight%3D%22900%22%20font-size%3D%2226%22%20fill%3D%22url(%23goldGrad)%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%223%22%3EHALOU%3C%2Ftext%3E%3Ctext%20x%3D%22256%22%20y%3D%22448%22%20font-family%3D%22system-ui%2C%20sans-serif%22%20font-weight%3D%22800%22%20font-size%3D%2226%22%20fill%3D%22rgba(255%2C255%2C255%2C0.92)%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%223%22%3EAI%20CHINESE%20READER%3C%2Ftext%3E%3C%2Fsvg%3E">
+
+  <!-- Google Fonts: Noto Sans SC (Simplified Chinese) & Noto Sans JP (Japanese Kanji) & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700;800&display=swap" rel="stylesheet">
+
+    <!-- CDN Libraries (Core instant dependencies with defer) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/pinyin-pro@3.24.2/dist/index.js"></script>
+
+  <!-- Modular Stylesheets -->
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/reader.css">
+  <link rel="stylesheet" href="css/dict.css">
+  <link rel="stylesheet" href="css/handwriting.css">
+  <link rel="stylesheet" href="css/responsive.css">
+
+  <!-- Dynamic PWA Manifest Blob Injection -->
+  <script src="pwa.js"></script>
+</head>
+<body>
+
+<div id="app-shell">
+  <!-- Top Bar -->
+  <header id="top-bar">
+    <div class="brand-badge" onclick="switchView('input')" title="Halou" data-i18n-title="appName">
+      <div class="brand-icon">H</div>
+      <div class="brand-title" data-i18n="appName">Halou</div>
+    </div>
+    <div class="top-actions">
+      <div class="top-lang-group" role="group" aria-label="Ngôn ngữ giao diện" data-i18n-aria-label="titleUiLanguage">
+        <button type="button" class="top-lang-btn" data-lang="vi" onclick="setUiLang('vi')" title="Tiếng Việt">VI</button>
+        <button type="button" class="top-lang-btn" data-lang="ja" onclick="setUiLang('ja')" title="日本語">JA</button>
+        <button type="button" class="top-lang-btn" data-lang="en" onclick="setUiLang('en')" title="English">EN</button>
+      </div>
+      <button class="icon-btn" id="btn-toggle-theme" onclick="toggleTheme()" title="Đổi giao diện" data-i18n-title="titleToggleTheme" aria-label="Toggle theme">
+        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Views Container -->
+  <main id="main-content">
+    
+    <!-- VIEW: Input -->
+    <section id="view-input" class="view active">
+      <div class="card">
+        <div class="input-header">
+          <div class="input-title" data-i18n="inputTitle">Nhập văn bản</div>
+          <div class="input-subtitle" data-i18n="onboarding2Desc">Dán văn bản tiếng Trung hoặc chụp ảnh chứa chữ Hán. App sẽ nhận diện và phân tích cho bạn.</div>
+        </div>
+        
+        <div class="textarea-wrapper">
+          <textarea id="input-textarea" class="textarea-box" lang="zh-CN" data-i18n-ph="pasteText" placeholder="Dán văn bản tiếng Trung vào đây..." oninput="updateInputClearBtn()"></textarea>
+          <button type="button" id="textarea-clear-btn" class="textarea-clear-btn" onclick="clearInputText()" title="Xóa nội dung" data-i18n-title="btnClearInput" style="display:none;">
+            ✕ <span data-i18n="clear">Xóa</span>
+          </button>
+        </div>
+        
+        <input type="file" id="ocr-file-input" accept="image/*" style="display:none;" onchange="handleImageUpload(this.files[0])">
+        
+        <div class="action-row">
+          <button class="btn btn-primary" id="btn-analyze" onclick="analyzeText()">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+            <span data-i18n="btnAnalyze">Phân tích văn bản</span>
+          </button>
+          
+          <button class="btn btn-secondary" onclick="pasteFromClipboard()">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+            <span data-i18n="btnPaste">Dán từ clipboard</span>
+          </button>
+          
+          <button class="btn btn-secondary" id="btn-clear-input" onclick="clearInputText()" title="Xóa nội dung văn bản" data-i18n-title="btnClearInput">
+            <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            <span data-i18n="btnClearInput">Xóa nội dung</span>
+          </button>
+          
+          <button class="btn btn-secondary" onclick="document.getElementById('ocr-file-input').click()">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            <span data-i18n="btnCamera">Chụp / Chọn ảnh</span>
+          </button>
+
+          <button class="btn btn-secondary" onclick="openHandwritingForTextInput()" title="Vẽ chữ viết tay tra từ" data-i18n-title="btnHandwriting">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+            <span data-i18n="btnHandwriting">Vẽ chữ Hán</span>
+          </button>
+
+          <input type="file" id="pdf-file-input" accept=".pdf,application/pdf" style="display:none;" onchange="handlePdfUpload(this.files[0])">
+          <button class="btn btn-secondary" onclick="document.getElementById('pdf-file-input').click()">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            <span data-i18n="btnPdf">Tải tệp PDF</span>
+          </button>
+
+          <input type="file" id="word-file-input" accept=".docx,.doc,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword" style="display:none;" onchange="handleWordUpload(this.files[0])">
+          <button class="btn btn-secondary" onclick="document.getElementById('word-file-input').click()">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2zM9 9h1m-1 4h6m-6 4h6"/></svg>
+            <span data-i18n="btnWord">Tệp Word</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Recent Texts -->
+      <div class="samples-container">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+          <div class="section-title" style="margin-bottom:0;" data-i18n="recentTexts">Văn bản gần đây</div>
+          <button class="btn btn-secondary btn-sm" id="btn-clear-history" onclick="clearRecentTexts()" style="font-size:12px; padding:4px 10px; opacity:0.7;">
+            🗑️ <span data-i18n="clearHistory">Xóa lịch sử</span>
+          </button>
+        </div>
+        <div id="recent-texts-list" class="recent-list"></div>
+      </div>
+    </section>
+
+    <!-- VIEW: Reader -->
+    <section id="view-reader" class="view">
+      <div class="reader-toolbar">
+        <div class="toolbar-group">
+          <button class="btn btn-secondary btn-sm" onclick="switchView('input')">
+            ← <span data-i18n="back">Quay lại</span>
+          </button>
+          <button id="btn-toggle-viewmode" class="toggle-btn" onclick="toggleViewMode()" data-i18n="viewSingle">
+            Từng câu
+          </button>
+        </div>
+        
+        <div class="toolbar-group">
+          <button id="btn-toggle-pinyin" class="toggle-btn active" onclick="togglePinyin()">
+            <span data-i18n="pinyin">Phiên âm</span>
+          </button>
+          <button id="btn-toggle-select" class="toggle-btn" onclick="togglePhraseSelect()">✂ <span id="lbl-select" data-i18n="selectPhrase">Chọn cụm</span></button>
+          <button id="btn-toggle-meaning" class="toggle-btn" onclick="toggleMeaning()">
+            <span data-i18n="meaning">Nghĩa</span>
+          </button>
+          <button class="icon-btn" onclick="changeFontSize(-2)" title="Giảm cỡ chữ" data-i18n-title="titleDecreaseFont">A-</button>
+          <button class="icon-btn" onclick="changeFontSize(2)" title="Tăng cỡ chữ" data-i18n-title="titleIncreaseFont">A+</button>
+        </div>
+      </div>
+
+      <div id="reader-content-area"></div>
+    </section>
+
+    <!-- VIEW: Dictionary -->
+    <section id="view-dict" class="view">
+      <div id="dict-view-container" class="dict-view-container">
+        
+        <!-- Hero Header ở trung tâm -->
+        <div id="dict-hero-header" class="dict-hero-header">
+          <div class="dict-hero-badge">
+            <span>✨</span> <span data-i18n="dictHeroBadge">Halou 词典 · AI Dictionary</span>
+          </div>
+          <div class="dict-hero-title" data-i18n="dictHeroTitle">Tra cứu từ điển tiếng Trung</div>
+          <div class="dict-hero-subtitle" data-i18n="dictHeroSubtitle">Nhập chữ Hán, phiên âm pinyin hoặc nghĩa để tra cứu tức thì</div>
+        </div>
+
+        <!-- AI-Style Search Box ở giữa màn hình -->
+        <div class="ai-search-card">
+          <div class="ai-search-icon">
+            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M21 21l-5.2-5.2m1.7-4.3a7.5 7.5 0 11-15 0 7.5 7.5 0 0115 0z"/>
+            </svg>
+          </div>
+          <input type="text" id="dict-search-input" class="ai-search-input" data-i18n-ph="searchHint" placeholder="Nhập chữ Hán, pinyin, hoặc nghĩa..." oninput="handleDictSearch(this.value)" autocomplete="off" autocapitalize="off" spellcheck="false">
+          <button id="dict-search-handwriting" class="ai-search-clear" onclick="openHandwritingForDictSearch()" title="Vẽ chữ Hán tra từ" data-i18n-title="btnDrawSearch" style="display:flex; margin-right:4px; font-size:16px;">✍️</button>
+          <button id="dict-search-clear" class="ai-search-clear" onclick="clearDictSearch()" style="display:none;" title="Xóa tìm kiếm" data-i18n-title="btnClear">✕</button>
+        </div>
+
+        <!-- Thanh chỉ báo ngôn ngữ tìm kiếm tự động -->
+        <div id="dict-search-badge-bar" class="dict-search-badge-bar" style="display:none;"></div>
+
+        <!-- Gợi ý từ khóa tìm kiếm nhanh -->
+        <div id="dict-quick-tags" class="dict-quick-tags">
+          <span class="dict-quick-label" data-i18n="quickSuggestions">Gợi ý:</span>
+          <span class="dict-quick-tag" onclick="quickSearchDict('你好')">你好</span>
+          <span class="dict-quick-tag" onclick="quickSearchDict('yyds')">yyds</span>
+          <span class="dict-quick-tag" onclick="quickSearchDict('内卷')">内卷</span>
+          <span class="dict-quick-tag" onclick="quickSearchDict('躺平')">躺平</span>
+          <span class="dict-quick-tag" onclick="quickSearchDict('显眼包')">显眼包</span>
+          <span class="dict-quick-tag" onclick="quickSearchDict('学习')">学习</span>
+          <span class="dict-quick-tag" onclick="quickSearchDict('工作')">工作</span>
+          <span class="dict-quick-tag" onclick="quickSearchDict('谢谢')">谢谢</span>
+        </div>
+
+        <!-- Lịch sử tra cứu gần đây -->
+        <div id="dict-recent-box" style="margin-top:14px; width:100%; display:none;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span style="font-size:12px; font-weight:600; color:var(--text-muted); display:flex; align-items:center; gap:5px;">
+              <span>🕒</span> <span data-i18n="recentSearches">Lịch sử tra gần đây</span>
+            </span>
+            <button class="btn btn-secondary btn-sm" onclick="clearRecentSearches()" style="font-size:11px; padding:2px 8px; border-radius:12px;" data-i18n="clearHistory">Xóa tất cả</button>
+          </div>
+          <div id="dict-recent-chips" class="dict-recent-chips"></div>
+        </div>
+
+        <!-- Accordion Khám phá từ vựng theo HSK (mặc định ẩn) -->
+        <div id="dict-hsk-accordion" class="dict-hsk-accordion">
+          <button id="dict-hsk-toggle-btn" class="dict-hsk-toggle-btn" onclick="toggleHskBrowser()">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span>📂</span>
+              <span id="dict-hsk-toggle-text" data-i18n="browseHsk">Khám phá từ vựng HSK 1 - 9 (Chạm để mở)</span>
+            </div>
+            <span id="dict-hsk-chevron" class="chevron">▼</span>
+          </button>
+          
+          <div id="dict-hsk-content" class="dict-hsk-content" style="display:none;">
+            <div class="filter-chips" style="margin-bottom:8px;">
+              <div class="filter-chip dict-filter-chip active" data-hsk="all" onclick="setDictFilter('all')" data-i18n="hskAll">Tất cả HSK</div>
+              <div class="filter-chip dict-filter-chip" data-hsk="1" onclick="setDictFilter('1')">HSK 1</div>
+              <div class="filter-chip dict-filter-chip" data-hsk="2" onclick="setDictFilter('2')">HSK 2</div>
+              <div class="filter-chip dict-filter-chip" data-hsk="3" onclick="setDictFilter('3')">HSK 3</div>
+              <div class="filter-chip dict-filter-chip" data-hsk="4" onclick="setDictFilter('4')">HSK 4</div>
+              <div class="filter-chip dict-filter-chip" data-hsk="5" onclick="setDictFilter('5')">HSK 5</div>
+              <div class="filter-chip dict-filter-chip" data-hsk="6" onclick="setDictFilter('6')">HSK 6</div>
+              <div class="filter-chip dict-filter-chip" data-hsk="7-9" onclick="setDictFilter('7-9')" style="background:rgba(139,92,246,0.1); border-color:rgba(139,92,246,0.3); color:#8B5CF6; font-weight:700;">👑 HSK 7-9</div>
+              <div class="filter-chip dict-filter-chip" data-hsk="slang" onclick="setDictFilter('slang')" style="background:rgba(232,52,78,0.08); border-color:rgba(232,52,78,0.25); color:var(--accent); font-weight:600;" data-i18n="hskSlang">🔥 Từ lóng Slang</div>
+            </div>
+            <div id="dict-hsk-count" style="font-size:12px; color:var(--text-muted); margin-bottom:8px;"></div>
+          </div>
+        </div>
+
+        <!-- Accordion Tra cứu theo 28 Bộ Thủ (mặc định ẩn) -->
+        <div id="dict-radical-accordion" class="dict-hsk-accordion" style="margin-top:10px;">
+          <button id="dict-radical-toggle-btn" class="dict-hsk-toggle-btn" onclick="toggleRadicalBrowser()">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span>🏮</span>
+              <span id="dict-radical-toggle-text" data-i18n="browseRadicals">Tra cứu theo 28 Bộ Thủ thông dụng (Chạm để mở)</span>
+            </div>
+            <span id="dict-radical-chevron" class="chevron">▼</span>
+          </button>
+          
+          <div id="dict-radical-content" class="dict-hsk-content" style="display:none; padding-top:10px;">
+            <div id="dict-radical-grid" class="dict-radical-grid"></div>
+          </div>
+        </div>
+
+        <!-- Vùng hiển thị kết quả tìm kiếm hoặc danh sách từ khi mở HSK -->
+        <div id="dict-results-container" style="width:100%; margin-top:20px;"></div>
+
+      </div>
+    </section>
+
+    <!-- VIEW: Settings -->
+    <section id="view-settings" class="view">
+      <div class="settings-section">
+        <div class="settings-row">
+          <div>
+            <div class="settings-label" data-i18n="language">Ngôn ngữ giao diện</div>
+            <div class="settings-sublabel" data-i18n="sublabelUiLang">Chọn ngôn ngữ hiển thị hệ thống</div>
+          </div>
+          <div class="settings-control">
+            <select id="setting-ui-lang" onchange="handleSettingChange('uiLang', this.value)">
+              <option value="vi" data-i18n="lang_vi">Tiếng Việt</option>
+              <option value="en" data-i18n="lang_en">English</option>
+              <option value="ja" data-i18n="lang_ja">日本語</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="settings-row">
+          <div>
+            <div class="settings-label" data-i18n="meaningLang">Ngôn ngữ nghĩa</div>
+            <div class="settings-sublabel" data-i18n="sublabelMeaningLang">Hiển thị giải nghĩa từ và dịch câu</div>
+          </div>
+          <div class="settings-control">
+            <select id="setting-meaning-lang" onchange="handleSettingChange('meaningLang', this.value)">
+              <option value="auto" data-i18n="meaningLangAuto">Cùng với giao diện</option>
+              <option value="vi" data-i18n="lang_vi">Tiếng Việt</option>
+              <option value="en" data-i18n="lang_en">English</option>
+              <option value="ja" data-i18n="lang_ja">日本語</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="settings-row">
+          <div>
+            <div class="settings-label" data-i18n="darkMode">Chế độ tối</div>
+            <div class="settings-sublabel" data-i18n="sublabelDarkMode">Tự động theo hệ thống hoặc cố định</div>
+          </div>
+          <div class="settings-control">
+            <select id="setting-dark-mode" onchange="handleSettingChange('darkMode', this.value)">
+              <option value="system" data-i18n="themeSystem">Hệ thống</option>
+              <option value="light" data-i18n="themeLight">Sáng</option>
+              <option value="dark" data-i18n="themeDark">Tối</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="settings-row">
+          <div>
+            <div class="settings-label" data-i18n="fontSize">Cỡ chữ văn bản</div>
+            <div class="settings-sublabel" data-i18n="sublabelFontSize">Điều chỉnh kích thước hiển thị chữ Hán</div>
+          </div>
+          <div class="settings-control" style="display:flex; align-items:center; gap:8px;">
+            <input type="range" id="setting-font-size" min="18" max="44" step="2" value="28" oninput="handleSettingChange('fontSize', this.value)" style="width:100px; accent-color:var(--accent);">
+            <span id="setting-font-val" style="font-size:13px; font-weight:700; color:var(--accent); min-width:36px; text-align:right;">28px</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-row">
+          <div>
+            <div class="settings-label" data-i18n="dictOffline">Từ điển offline</div>
+            <div class="settings-sublabel" data-i18n="sublabelDictOffline">Bộ từ điển tích hợp sẵn 1470+ từ HSK 1-6 & 690+ âm Hán Việt</div>
+          </div>
+          <div class="settings-control">
+            <span class="badge" style="background:#2EA043; color:white;" data-i18n="badgeReady">Sẵn sàng</span>
+          </div>
+        </div>
+
+        <div class="settings-row">
+          <div>
+            <div class="settings-label" data-i18n="ttsEngine">Công cụ phát âm (TTS)</div>
+            <div class="settings-sublabel" data-i18n="sublabelTtsEngine">Chọn nguồn phát âm giọng đọc tiếng Trung</div>
+          </div>
+          <div class="settings-control">
+            <select id="tts-engine-select" onchange="state.ttsEngine=this.value; saveSettings()">
+              <option value="auto" data-i18n="ttsAuto">Tự động thông minh (Khuyên dùng)</option>
+              <option value="azure" data-i18n="ttsAzure">Azure AI Speech (Xiaoxiao2 Dragon HD Flash)</option>
+              <option value="baidu" data-i18n="ttsBaidu">Baidu AI (Chuẩn CCTV phát thanh viên)</option>
+              <option value="youdao" data-i18n="ttsYoudao">Youdao TTS (Chuẩn bản xứ Bắc Kinh)</option>
+              <option value="google" data-i18n="ttsGoogle">Google TTS (Trực tuyến)</option>
+              <option value="system" data-i18n="ttsSystem">Web Speech API (Hệ thống / Neural)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="settings-row">
+          <div>
+            <div class="settings-label" data-i18n="ttsSpeed">Tốc độ phát âm</div>
+            <div class="settings-sublabel" data-i18n="sublabelTtsSpeed">Tốc độ đọc mặc định (chọn chậm để luyện 4 thanh điệu)</div>
+          </div>
+          <div class="settings-control">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <input type="range" id="tts-speed-range" min="0.5" max="1.5" step="0.05" value="1"
+                     oninput="setTtsSpeed(this.value)" aria-label="Speech rate" style="width:110px;">
+              <span id="tts-speed-label" style="font-size:12px; font-weight:700; min-width:48px; text-align:right;">1.00x</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-row">
+          <div>
+            <div class="settings-label" data-i18n="ttsVolume">Âm lượng giọng đọc</div>
+            <div class="settings-sublabel" data-i18n="sublabelTtsVolume">Điều chỉnh âm lượng hoặc tắt tiếng hoàn toàn</div>
+          </div>
+          <div class="settings-control">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <input type="range" id="tts-volume-range" min="0" max="1" step="0.05" value="1"
+                     oninput="setTtsVolume(this.value)" aria-label="Volume" style="width:95px;">
+              <span id="tts-volume-label" style="font-size:12px; font-weight:700; min-width:42px; text-align:right;">100%</span>
+              <button class="btn btn-secondary btn-sm" id="tts-mute-btn" onclick="toggleTtsMute()"
+                      data-i18n-title="ttsMute" title="Tắt tiếng" style="min-width:38px;">🔊</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-row">
+          <div>
+            <div class="settings-label" data-i18n="testVoice">Kiểm tra giọng phát âm</div>
+            <div class="settings-sublabel" data-i18n="sublabelTestVoice">Kiểm tra bộ giọng đọc tiếng Trung (Web Speech API)</div>
+          </div>
+          <div class="settings-control">
+            <button class="btn btn-secondary btn-sm" onclick="testSpeechVoices()">
+              🔊 <span data-i18n="testVoiceBtn">Kiểm tra</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="settings-row">
+          <div>
+            <div class="settings-label" data-i18n="backup">Sao lưu & Khôi phục</div>
+            <div class="settings-sublabel" data-i18n="sublabelBackup">Xuất hoặc nhập toàn bộ dữ liệu và cài đặt</div>
+          </div>
+          <div class="settings-control" style="display:flex; gap:8px;">
+            <button class="btn btn-secondary btn-sm" onclick="backupAllData()">
+              <span data-i18n="backup">Sao lưu</span>
+            </button>
+            <input type="file" id="restore-file-input" accept=".json" style="display:none;" onchange="restoreDataFromFile(this.files[0])">
+            <button class="btn btn-secondary btn-sm" onclick="document.getElementById('restore-file-input').click()">
+              <span data-i18n="restore">Khôi phục</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="settings-row">
+          <div>
+            <div class="settings-label" style="color:var(--accent);" data-i18n="clearAllData">Xóa toàn bộ dữ liệu</div>
+            <div class="settings-sublabel" data-i18n="sublabelClear">Xóa văn bản gần đây và nghĩa tùy chỉnh</div>
+          </div>
+          <div class="settings-control">
+            <button class="btn btn-outline btn-sm" style="color:var(--accent); border-color:var(--accent);" onclick="clearAllAppData()">
+              <span data-i18n="delete">Xóa</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: Share & Promote App -->
+      <div class="settings-section">
+        <div class="settings-row" style="cursor:pointer;" onclick="shareApp()">
+          <div>
+            <div class="settings-label" style="display:flex; align-items:center; gap:6px;">
+              <span>🚀</span> <span data-i18n="shareAppTitle">Chia sẻ ứng dụng Halou (哈喽中文)</span>
+            </div>
+            <div class="settings-sublabel" data-i18n="shareAppDesc">Gửi link giới thiệu cho bạn bè cùng học tiếng Trung qua Zalo, Messenger, Facebook</div>
+          </div>
+          <div class="settings-control">
+            <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); shareApp()" style="border-radius:20px; padding:6px 14px; gap:5px;">
+              <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+              <span data-i18n="share">Chia sẻ</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="settings-row" style="cursor:pointer;" onclick="openLegalModal('privacy')">
+          <div>
+            <div class="settings-label" style="display:flex; align-items:center; gap:6px;">
+              <span>⚖️</span> <span data-i18n="legalRowLabel">Điều khoản & Quyền riêng tư</span>
+            </div>
+            <div class="settings-sublabel" data-i18n="legalRowSublabel">Quyền riêng tư, điều khoản dịch vụ và nguồn dữ liệu mở</div>
+          </div>
+          <div class="settings-control">
+            <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation(); openLegalModal('privacy')">
+              <span data-i18n="legalViewBtn">Xem chi tiết</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: About & Developer Credits -->
+      <div class="settings-section" style="text-align:center; padding:24px 16px;">
+        <div style="display:inline-flex; align-items:center; justify-content:center; width:54px; height:54px; border-radius:15px; background:var(--accent); color:#fff; font-size:24px; font-weight:900; font-family:var(--font-ui); box-shadow:0 6px 16px var(--accent-glow); margin-bottom:12px;">
+          H
+        </div>
+        <div style="font-size:22px; font-weight:800; color:var(--text-primary); letter-spacing:-0.3px;" data-i18n="appName">Halou</div>
+        <div style="font-size:13px; font-weight:500; color:var(--text-secondary); margin-top:4px; max-width:420px; margin-left:auto; margin-right:auto; line-height:1.4;" data-i18n="appSlogan">Tra từ chuẩn xác, dịch mượt ngữ cảnh, gắn Pinyin tức thì.</div>
+        <div id="app-version-badge" style="font-size:12px; font-weight:600; color:var(--accent); margin-top:4px;">Version 1.1.9 Pro</div>
+
+        <!-- Product Core Highlights -->
+        <div style="margin:18px auto 14px; max-width:420px; display:grid; grid-template-columns:1fr; gap:8px; text-align:left;">
+          <div style="padding:10px 14px; border-radius:12px; background:var(--bg-muted); border:1px solid var(--border-color); display:flex; align-items:flex-start; gap:10px;">
+            <span style="font-size:18px; line-height:1.2;">📖</span>
+            <div>
+              <div style="font-size:13px; font-weight:700; color:var(--text-primary);" data-i18n="featureDictTitle">Từ điển thông minh</div>
+              <div style="font-size:12px; color:var(--text-secondary); line-height:1.4;" data-i18n="featureDict">Tra cứu thông minh, chi tiết bộ thủ và ví dụ thực tế.</div>
+            </div>
+          </div>
+          <div style="padding:10px 14px; border-radius:12px; background:var(--bg-muted); border:1px solid var(--border-color); display:flex; align-items:flex-start; gap:10px;">
+            <span style="font-size:18px; line-height:1.2;">🤖</span>
+            <div>
+              <div style="font-size:13px; font-weight:700; color:var(--text-primary);" data-i18n="featureTranslateTitle">Dịch thuật ngữ cảnh</div>
+              <div style="font-size:12px; color:var(--text-secondary); line-height:1.4;" data-i18n="featureTranslate">Dịch hiểu ngữ cảnh, tự nhiên như người bản xứ.</div>
+            </div>
+          </div>
+          <div style="padding:10px 14px; border-radius:12px; background:var(--bg-muted); border:1px solid var(--border-color); display:flex; align-items:flex-start; gap:10px;">
+            <span style="font-size:18px; line-height:1.2;">🔤</span>
+            <div>
+              <div style="font-size:13px; font-weight:700; color:var(--text-primary);" data-i18n="featurePinyinTitle">Gắn Pinyin tức thì</div>
+              <div style="font-size:12px; color:var(--text-secondary); line-height:1.4;" data-i18n="featurePinyin">Dán văn bản để gắn Pinyin và thanh điệu tức thì.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Access Legal Badges -->
+        <div style="display:flex; justify-content:center; gap:8px; flex-wrap:wrap; margin:14px 0;">
+          <button class="legal-pill-link" onclick="openLegalModal('privacy')">
+            <span>🛡️</span> <span data-i18n="legalTabPrivacy">Quyền riêng tư</span>
+          </button>
+          <button class="legal-pill-link" onclick="openLegalModal('terms')">
+            <span>⚖️</span> <span data-i18n="legalTabTerms">Giấy phép & Sử dụng</span>
+          </button>
+          <button class="legal-pill-link" onclick="openLegalModal('sources')">
+            <span>📚</span> <span data-i18n="legalTabSources">Nguồn dữ liệu & Giấy phép</span>
+          </button>
+        </div>
+
+        <div style="display:flex; justify-content:center; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
+          <span class="badge" style="background:var(--border-color); color:var(--text-secondary); font-size:11px;">PWA Standalone</span>
+          <span class="badge" style="background:var(--border-color); color:var(--text-secondary); font-size:11px;">PDF & Word Docs</span>
+          <span class="badge" style="background:var(--border-color); color:var(--text-secondary); font-size:11px;">AI OCR Engine</span>
+          <span class="badge" style="background:var(--border-color); color:var(--text-secondary); font-size:11px;">Triple-Tier TTS</span>
+          <span class="badge" style="background:var(--border-color); color:var(--text-secondary); font-size:11px;">100% Privacy</span>
+        </div>
+
+        <div style="font-size:11.5px; color:var(--text-muted); line-height:1.6; max-width:440px; margin:0 auto; padding-top:4px;" data-i18n="appDedication">
+          Bản quyền thuộc về tác giả © 2026 · Phát triển bởi 聂诚忠 (NIE THANH TRUNG) dành cho cộng đồng học tiếng Trung toàn cầu.
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Bottom Navigation -->
+  <nav id="bottom-nav">
+    <button class="nav-tab active" data-view="input" onclick="switchView('input')">
+      <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+      <span data-i18n="tabRead">Đọc</span>
+    </button>
+    <button class="nav-tab" data-view="dict" onclick="switchView('dict')">
+      <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      <span data-i18n="tabDict">Từ điển</span>
+    </button>
+    <button class="nav-tab" data-view="settings" onclick="switchView('settings')">
+      <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3" stroke-width="2"/></svg>
+      <span data-i18n="tabSettings">Cài đặt</span>
+    </button>
+  </nav>
+</div>
+
+<!-- Bottom Sheet Popup (Word Inspector) -->
+<div id="sheet-backdrop" class="sheet-backdrop" onclick="closeWordSheet()"></div>
+<div id="word-sheet" class="bottom-sheet">
+  <div class="sheet-handle"></div>
+  
+  <div class="sheet-header">
+    <div>
+      <div id="sheet-hanzi-title" class="sheet-hanzi-title" lang="zh-CN">你好</div>
+      <div id="sheet-pinyin" class="sheet-pinyin">nǐ hǎo</div>
+      <div id="sheet-hanviet" class="sheet-hanviet"></div>
+    </div>
+    <div class="sheet-actions-top">
+      <button class="icon-btn" onclick="speakText(state.activeWord)" title="Phát âm chuẩn (1.0x)" data-i18n-title="titlePlayAudio">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+      </button>
+      <button class="icon-btn" onclick="speakText(state.activeWord, this, 0.75)" title="Nghe chậm (0.75x) - Luyện thanh điệu" data-i18n-title="playSlow" style="font-size:15px;" aria-label="Phát âm chậm">
+        🐢
+      </button>
+      <button class="icon-btn" onclick="speakActiveMeaning()" title="Nghe nghĩa theo ngôn ngữ đang xem" data-i18n-title="ttsSpeakMeaning" aria-label="Nghe nghĩa" style="font-size:14px;">
+        🗣
+      </button>
+      <button class="icon-btn" onclick="closeWordSheet()" title="Đóng" data-i18n-title="titleClose">✕</button>
+    </div>
+  </div>
+
+  <div class="sheet-grid-body">
+    <div class="sheet-col-primary">
+      <div id="sheet-badges" style="display:flex; gap:6px; margin-bottom:12px;"></div>
+
+      <!-- Hanzi Writer stroke order canvas container -->
+      <div id="hanzi-writer-box" class="hanzi-writer-container"></div>
+      
+      <div class="writer-controls">
+        <button class="btn btn-secondary btn-sm" onclick="animateActiveWriters()">
+          ▶ <span data-i18n="animateStrokes">Phát nét</span>
+        </button>
+        <button class="btn btn-outline btn-sm" onclick="splitActiveWord()">
+          🔤 <span data-i18n="splitWord">Tách thành chữ đơn</span>
+        </button>
+      </div>
+
+      <div class="sheet-definitions">
+        <!-- Nghĩa chính: theo meaningLang đang chọn -->
+        <div class="def-section" id="sheet-def-primary-section">
+          <div class="def-label" id="sheet-def-primary-label"></div>
+          <div id="sheet-def-primary" class="def-text"></div>
+        </div>
+
+        <!-- Nghĩa phụ: chỉ hiện khi bật song song hoặc có kanji JP -->
+        <div class="def-section" id="sheet-def-secondary-section" style="display:none;">
+          <div class="def-label" id="sheet-def-secondary-label"></div>
+          <div id="sheet-def-secondary" class="def-text"></div>
+        </div>
+
+        <!-- Nút thêm ngôn ngữ xem song song -->
+        <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn btn-outline btn-sm" id="sheet-btn-add-lang" onclick="toggleParallelLang()" style="font-size:12px; padding:4px 10px;"></button>
+          <button class="btn btn-outline btn-sm" onclick="openEditMeaning()" style="font-size:12px; padding:4px 10px;">
+            ✏️ <span data-i18n="editMeaning">Sửa nghĩa</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="def-label" style="margin-top:16px;" data-i18n="openExternal">Mở từ điển ngoài</div>
+      <div id="sheet-external-links" class="external-links"></div>
+    </div>
+
+    <div class="sheet-col-secondary">
+      <!-- Khung phân tích chuyên sâu AI (AI 解析) -->
+      <div id="sheet-ai-analysis-container"></div>
+
+      <div id="sheet-enrich"></div>
+
+      <!-- Cây từ ghép liên quan & Họ từ vựng -->
+      <div id="sheet-compounds-section" style="margin-top:16px;"></div>
+
+      <!-- Ví dụ câu chứa từ vựng -->
+      <div id="sheet-examples-section" style="margin-top:16px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <div class="def-label" style="margin-bottom:0;" data-i18n="examples">Ví dụ câu</div>
+          <span id="sheet-examples-count" style="font-size:11px; color:var(--text-muted);"></span>
+        </div>
+        <div id="sheet-examples-list" class="examples-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Meaning Modal -->
+<div id="edit-meaning-modal" class="modal-overlay">
+  <div class="modal-card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <div style="font-size:17px; font-weight:700;"><span data-i18n="editMeaning">Sửa nghĩa</span>: <span id="edit-meaning-word" style="color:var(--accent);"></span></div>
+      <button class="icon-btn" onclick="closeEditMeaningModal()" title="Đóng" data-i18n-title="titleClose">✕</button>
+    </div>
+    <div style="font-size:13px; color:var(--text-secondary); margin-bottom:10px;" id="edit-meaning-lang-hint"></div>
+    <textarea id="edit-meaning-input" class="textarea-box" style="height:100px; margin-bottom:14px; font-size:15px; width:100%; box-sizing:border-box;" data-i18n-ph="editMeaningPlaceholder" placeholder="Nhập nghĩa chuẩn, nghĩa bóng hoặc từ lóng..."></textarea>
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+      <button class="btn btn-secondary btn-sm" onclick="restoreDefaultMeaning()" id="btn-restore-meaning" style="display:none; color:var(--accent);">
+        ↺ <span data-i18n="restoreDefaultMeaning">Khôi phục mặc định</span>
+      </button>
+      <div style="display:flex; gap:8px; margin-left:auto;">
+        <button class="btn btn-secondary btn-sm" onclick="closeEditMeaningModal()" data-i18n="cancel">Hủy</button>
+        <button class="btn btn-primary btn-sm" onclick="saveCustomMeaning()" data-i18n="confirm">Lưu</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- OCR Modal -->
+<div id="ocr-modal" class="modal-overlay">
+  <div class="modal-card ocr-modal-card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <div style="font-size:18px; font-weight:700;" data-i18n="ocrTitle">Quét ảnh tài liệu tiếng Trung</div>
+      <button class="icon-btn" onclick="closeOcrModal()" title="Đóng" data-i18n-title="titleClose">✕</button>
+    </div>
+
+    <!-- Status & Token Usage Badge -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+      <div id="ocr-status-badge" class="ocr-status-badge free">
+        <span data-i18n="ocrLevel1Free">⚡ Cấp 1: Thuật toán nội bộ (0 Token AI)</span>
+      </div>
+      <label style="display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--text-secondary); cursor:pointer;">
+        <input type="checkbox" id="ocr-auto-ai-toggle" style="cursor:pointer;">
+        <span data-i18n="ocrAutoAi">Tự động sửa AI khi có lỗi</span>
+      </label>
+    </div>
+
+    <!-- Image Thumbnail Preview -->
+    <div id="ocr-preview-box" class="ocr-preview-container" style="display:none;">
+      <img id="ocr-preview-img" class="ocr-thumb" src="" alt="OCR Preview">
+      <div style="font-size:12px; color:var(--text-secondary); line-height:1.4;">
+        <div style="font-weight:600; color:var(--text-primary);" data-i18n="ocrPreview">Ảnh tài liệu gốc</div>
+        <div style="font-size:11px; color:var(--text-muted); margin-top:2px;" data-i18n="ocrPreviewSub">Nhận diện tự động với RapidOCR và thuật toán phục hồi dòng & đoạn.</div>
+      </div>
+    </div>
+    
+    <!-- Progress Bar -->
+    <div id="ocr-progress-container" style="display:none; margin-bottom:14px;">
+      <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;" id="ocr-progress-text" data-i18n="loadingOCR">Đang nhận diện chữ...</div>
+      <div style="width:100%; height:8px; background:var(--bg-muted); border-radius:4px; overflow:hidden;">
+        <div id="ocr-progress-bar" style="width:0%; height:100%; background:var(--accent); transition:width 0.2s;"></div>
+      </div>
+    </div>
+
+    <!-- Segmented Tabs: Processed vs Raw -->
+    <div class="ocr-tabs">
+      <button type="button" class="ocr-tab-btn active" id="ocr-tab-processed" onclick="ocrSwitchTab('processed')" data-i18n="ocrProcessed">Văn bản đã xử lý</button>
+      <button type="button" class="ocr-tab-btn" id="ocr-tab-raw" onclick="ocrSwitchTab('raw')" data-i18n="ocrRaw">Văn bản thô OCR</button>
+    </div>
+    
+    <textarea id="ocr-edit-textarea" class="textarea-box" style="height:190px; font-size:16px;" lang="zh-CN" data-i18n-ph="ocrEditPlaceholder" placeholder="Văn bản nhận diện sẽ hiển thị ở đây..."></textarea>
+    
+    <!-- Action Bar -->
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-top:14px; flex-wrap:wrap;">
+      <div style="display:flex; gap:6px; flex-wrap:wrap;">
+        <button class="btn btn-secondary btn-sm" id="btn-ocr-clean" onclick="ocrCleanNow()" title="Ghép dòng và sắp xếp lại không dùng AI (0 Token)" data-i18n-title="ocrCleanTitle">
+          <span>🧹</span> <span data-i18n="ocrReorganize">Sắp xếp đoạn (0 Token)</span>
+        </button>
+        <button class="btn btn-outline btn-sm" id="btn-ocr-repair" onclick="ocrRepairWithAi()" title="Chỉ gửi đoạn cần sửa đến AI để tiết kiệm token" data-i18n-title="ocrRepairTitle">
+          <span>✨</span> <span data-i18n="ocrRepairAi">Sửa lỗi bằng AI</span>
+        </button>
+      </div>
+
+      <div style="display:flex; gap:8px; margin-left:auto;">
+        <button class="btn btn-secondary btn-sm" onclick="rescanLastImage()" title="Quét lại ảnh" data-i18n-title="ocrRescanTitle">
+          ↺ <span data-i18n="ocrRescan">Quét lại</span>
+        </button>
+        <button class="btn btn-secondary btn-sm" onclick="closeOcrModal()">
+          <span data-i18n="cancel">Hủy</span>
+        </button>
+        <button class="btn btn-primary btn-sm" onclick="confirmOcrResult()">
+          <span data-i18n="ocrConfirm">Xác nhận và đọc</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Handwriting Modal -->
+<div id="handwriting-modal" class="modal-overlay">
+  <div class="modal-card" style="max-width:440px; padding:16px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+      <div style="font-size:16px; font-weight:700; display:flex; align-items:center; gap:6px;">
+        <span>✍️</span> <span data-i18n="handwritingTitle">Vẽ chữ Hán tra từ</span>
+      </div>
+      <button class="icon-btn" onclick="closeHandwritingModal()" title="Đóng" data-i18n-title="titleClose">✕</button>
+    </div>
+
+    <!-- Mount Container for HandwritingPad component -->
+    <div id="handwriting-pad-mount"></div>
+  </div>
+</div>
+
+<!-- Onboarding Modal -->
+<div id="onboarding-overlay" class="modal-overlay">
+  <div class="modal-card" style="text-align:center;">
+    <div id="onboarding-step-1" class="onboarding-slide">
+      <div style="font-size:42px; margin-bottom:10px;">👋</div>
+      <h2 style="font-size:22px; font-weight:800; margin-bottom:8px;" data-i18n="onboarding1Title">Chào mừng đến với Halou (哈喽中文)</h2>
+      <p style="color:var(--text-secondary); font-size:14px; margin-bottom:20px;" data-i18n="onboarding1Desc">Ứng dụng đọc và học tiếng Trung. Đầu tiên, hãy chọn ngôn ngữ của bạn:</p>
+      <div style="display:flex; flex-direction:column; gap:10px; max-width:240px; margin:0 auto 20px auto;">
+        <button class="btn btn-secondary" onclick="setUiLang('vi'); nextOnboarding();">🇻🇳 Tiếng Việt</button>
+        <button class="btn btn-secondary" onclick="setUiLang('en'); nextOnboarding();">🇺🇸 English</button>
+        <button class="btn btn-secondary" onclick="setUiLang('ja'); nextOnboarding();">🇯🇵 日本語</button>
+      </div>
+      <div style="font-size:11px; color:var(--text-muted); margin-top:14px;" data-i18n="onboardingAuthor">Một ứng dụng của 聂诚忠 (NIE THANH TRUNG)</div>
+    </div>
+
+    <div id="onboarding-step-2" class="onboarding-slide" style="display:none;">
+      <div style="font-size:42px; margin-bottom:10px;">📸</div>
+      <h2 style="font-size:22px; font-weight:800; margin-bottom:8px;" data-i18n="onboarding2Title">Dán hoặc chụp ảnh</h2>
+      <p style="color:var(--text-secondary); font-size:14px; margin-bottom:24px;" data-i18n="onboarding2Desc">Dán văn bản tiếng Trung hoặc chụp ảnh chứa chữ Hán. App sẽ nhận diện và phân tích cho bạn.</p>
+      <button class="btn btn-primary" onclick="nextOnboarding()" data-i18n="next">Tiếp tục</button>
+    </div>
+
+    <div id="onboarding-step-3" class="onboarding-slide" style="display:none;">
+      <div style="font-size:42px; margin-bottom:10px;">🔍</div>
+      <h2 style="font-size:22px; font-weight:800; margin-bottom:8px;" data-i18n="onboarding3Title">Chạm để tra nghĩa</h2>
+      <p style="color:var(--text-secondary); font-size:14px; margin-bottom:24px;" data-i18n="onboarding3Desc">Chạm vào bất kỳ từ nào để xem pinyin, nghĩa và phát âm.</p>
+      <button class="btn btn-primary" onclick="finishOnboarding()" data-i18n="getStarted">Bắt đầu</button>
+    </div>
+
+    <div style="display:flex; justify-content:center; gap:6px; margin-top:16px;">
+      <div class="onboarding-dot active" style="width:8px; height:8px; border-radius:4px; background:var(--accent);"></div>
+      <div class="onboarding-dot" style="width:8px; height:8px; border-radius:4px; background:var(--border-color);"></div>
+      <div class="onboarding-dot" style="width:8px; height:8px; border-radius:4px; background:var(--border-color);"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Legal, Privacy & Open Source Licenses Modal -->
+<div id="legal-modal" class="modal-overlay">
+  <div class="modal-card legal-modal-card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+      <div style="font-size:17px; font-weight:700; display:flex; align-items:center; gap:7px;">
+        <span>📜</span> <span data-i18n="legalModalTitle">Điều khoản, Quyền riêng tư & Bản quyền</span>
+      </div>
+      <button class="icon-btn" onclick="closeLegalModal()" title="Đóng" data-i18n-title="titleClose">✕</button>
+    </div>
+
+    <!-- Tabs -->
+    <div class="legal-tabs">
+      <button class="legal-tab-btn active" data-tab="privacy" onclick="switchLegalTab('privacy')">
+        <span>🛡️</span> <span data-i18n="legalTabPrivacy">Quyền riêng tư</span>
+      </button>
+      <button class="legal-tab-btn" data-tab="terms" onclick="switchLegalTab('terms')">
+        <span>⚖️</span> <span data-i18n="legalTabTerms">Giấy phép & Sử dụng</span>
+      </button>
+      <button class="legal-tab-btn" data-tab="sources" onclick="switchLegalTab('sources')">
+        <span>📚</span> <span data-i18n="legalTabSources">Nguồn dữ liệu & Giấy phép</span>
+      </button>
+    </div>
+
+    <!-- Content Container -->
+    <div id="legal-modal-body" style="max-height:55vh; overflow-y:auto; padding-right:4px;"></div>
+
+    <!-- Modal Footer -->
+    <div style="margin-top:16px; padding-top:12px; border-top:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+      <div style="font-size:11px; color:var(--text-muted);">
+        © 2026 <strong>NIE THANH TRUNG</strong> · Halou (哈喽中文)
+      </div>
+      <button class="btn btn-secondary btn-sm" onclick="closeLegalModal()" data-i18n="legalClose">Đóng</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div id="toast-container"></div>
+
+<!-- Embedded Datasets & App Engine -->
+  <!-- App Scripts (Strict topological dependency order) -->
+  <!-- 1. Storage & safe JSON -->
+  <script src="js/core/storage.js"></script>
+
+  <!-- 2. Embedded Offline Data Tables -->
+  <script src="js/data/i18n-data.js"></script>
+  <script src="js/data/mini-dict.js"></script>
+  <script src="js/data/hsk789.js"></script>
+  <script src="js/data/common-words.js"></script>
+  <script src="js/data/reverse-dict.js"></script>
+  <script src="js/data/dict-synsets.js"></script>
+  <script src="js/data/han-viet.js"></script>
+  <script src="js/data/kanji-data.js"></script>
+  <script src="js/data/ja-common.js"></script>
+  <script src="js/data/examples.js"></script>
+  <script src="js/data/slang-data.js"></script>
+
+  <!-- 3. Core State, Utilities & Offline Database -->
+  <script src="js/core/state.js"></script>
+  <script src="js/core/utils.js"></script>
+  <script src="js/core/db.js"></script>
+
+  <!-- 4. NLP, Translation, Karaoke & Multi-Tier Audio TTS -->
+  <script src="js/features/nlp.js"></script>
+  <script src="js/features/theme-i18n.js"></script>
+  <script src="js/features/translate.js"></script>
+  <script src="js/features/karaoke.js"></script>
+  <script src="js/features/audio-core.js"></script>
+  <script src="js/features/tts.js"></script>
+  <script src="js/features/read-aloud.js"></script>
+
+  <!-- 5. Interactive Reader & Phrase Selection -->
+  <script src="js/features/phrase-select.js"></script>
+  <script src="js/features/nav.js"></script>
+  <script src="js/features/input.js"></script>
+  <script src="js/features/reader.js"></script>
+
+  <!-- 6. OCR & Document Parsers -->
+  <script src="js/features/ocr.js"></script>
+  <script src="js/features/documents.js"></script>
+
+  <!-- 7. Dictionary, Word Detail Sheet, Smart Enrichment & Examples -->
+  <script src="js/features/dict-search-engine.js"></script>
+  <script src="js/features/dict-scoring.js"></script>
+  <script src="js/features/ext-dict.js"></script>
+  <script src="js/features/dict.js"></script>
+  <script src="js/features/word-sheet.js"></script>
+  <script src="js/features/enrich.js"></script>
+  <script src="js/data/examples-corpus.js"></script>
+  <script src="js/features/examples-core.js"></script>
+  <script src="js/features/examples.js"></script>
+
+  <!-- 8. App Settings, Onboarding, Share & Input Handlers -->
+  <script src="js/features/settings.js"></script>
+  <script src="js/features/onboarding.js"></script>
+  <script src="js/features/share.js"></script>
+  <script src="js/features/input-handlers.js"></script>
+
+  <!-- 8.5 Handwriting Recognition & Stroke Quiz -->
+  <script src="js/features/handwriting/engine.js"></script>
+  <script src="js/features/handwriting/pad.js"></script>
+  <script src="js/features/handwriting.js"></script>
+
+  <!-- 9. App Lifecycle & Initialization -->
+  <script src="js/main.js"></script>
+</body>
+</html>

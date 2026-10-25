@@ -1,6 +1,12 @@
 // js/core/state.js - Application state and language detection - Dependencies: js/core/storage.js
 
 function detectInitialLang() {
+  if (typeof location !== 'undefined') {
+    const p = (location.pathname || '').toLowerCase();
+    if (p.startsWith('/vi')) return 'vi';
+    if (p.startsWith('/ja')) return 'ja';
+    if (p.startsWith('/en')) return 'en';
+  }
   const saved = localStorage.getItem('cr_uiLang');
   if (saved && ['vi', 'en', 'ja'].includes(saved)) return saved;
   const nav = ((typeof navigator !== 'undefined' && (navigator.language || navigator.userLanguage)) || '').toLowerCase();

@@ -127,15 +127,17 @@
    * Ordered list of engines to try for a chunk.
    *
    * @param {{engine?:string, online?:boolean, hasNeuralVoice?:boolean, saveData?:boolean,
-   *          textLength?:number}} opts
-   * @returns {string[]} subset of ['youdao','baidu','google','system']
+   *          azureAvailable?:boolean, textLength?:number}} opts
+   * @returns {string[]} subset of ['azure','youdao','baidu','google','system']
    */
   function buildEnginePlan(opts) {
     var o = opts || {};
     var engine = o.engine || 'auto';
     var online = o.online !== false;
+    var azure = !!o.azureAvailable;
 
     if (engine === 'system') return ['system'];
+    if (engine === 'azure') return online ? (azure ? ['azure', 'youdao', 'baidu', 'google', 'system'] : ['youdao', 'baidu', 'google', 'system']) : ['system'];
     if (engine === 'youdao') return online ? ['youdao', 'baidu', 'system'] : ['system'];
     if (engine === 'baidu') return online ? ['baidu', 'youdao', 'system'] : ['system'];
     if (engine === 'google') return online ? ['google', 'baidu', 'system'] : ['system'];
@@ -148,6 +150,11 @@
     if (o.saveData) {
       return o.hasNeuralVoice ? ['system', 'youdao'] : ['youdao', 'system'];
     }
+
+    if (azure) {
+      return ['azure', 'youdao', 'baidu', 'google', 'system'];
+    }
+
     if (len <= 6) return ['youdao', 'baidu', 'google', 'system'];
     if (o.hasNeuralVoice) return ['system', 'baidu', 'google'];
     return ['baidu', 'google', 'youdao', 'system'];
@@ -160,6 +167,9 @@
     var encoded = encodeURIComponent(clean);
     var rate = typeof speed === 'number' && speed > 0 ? speed : 1.0;
     var isSlow = rate < 0.9;
+    if (engine === 'azure') {
+      return '/api/tts';
+    }
     if (engine === 'youdao') {
       return 'https://dict.youdao.com/dictvoice?audio=' + encoded + '&le=zh';
     }

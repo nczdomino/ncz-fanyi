@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
+  <base href="/">
   <script>
     (function() {
       try {
@@ -28,13 +29,14 @@
   <meta name="copyright" content="Bản quyền thuộc về tác giả: 聂诚忠 (Nie Thanh Trung)">
   <meta name="theme-color" content="#E8344E">
 
-  <!-- SEO Canonical & Multilingual Alternate Hreflang -->
+  <!-- SEO Canonical, Robots & Multilingual Alternate Hreflang -->
+  <base href="/">
   <link rel="canonical" href="https://halouzhongwen.com/">
   <link rel="alternate" hreflang="x-default" href="https://halouzhongwen.com/">
-  <link rel="alternate" hreflang="en" href="https://halouzhongwen.com/">
-  <link rel="alternate" hreflang="vi" href="https://halouzhongwen.com/">
-  <link rel="alternate" hreflang="ja" href="https://halouzhongwen.com/">
-  <link rel="alternate" hreflang="zh-Hans" href="https://halouzhongwen.com/">
+  <link rel="alternate" hreflang="vi" href="https://halouzhongwen.com/vi/">
+  <link rel="alternate" hreflang="en" href="https://halouzhongwen.com/en/">
+  <link rel="alternate" hreflang="ja" href="https://halouzhongwen.com/ja/">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
 
   <!-- Search Engine Verification (Bing / Microsoft) -->
   <meta name="msvalidate.01" content="BACD7B058D2C305801C895EE897F25D3">
@@ -406,6 +408,7 @@
           <div class="settings-control">
             <select id="tts-engine-select" onchange="state.ttsEngine=this.value; saveSettings()">
               <option value="auto" data-i18n="ttsAuto">Tự động thông minh (Khuyên dùng)</option>
+              <option value="azure" data-i18n="ttsAzure">Azure AI Speech (Xiaoxiao2 Dragon HD Flash)</option>
               <option value="baidu" data-i18n="ttsBaidu">Baidu AI (Chuẩn CCTV phát thanh viên)</option>
               <option value="youdao" data-i18n="ttsYoudao">Youdao TTS (Chuẩn bản xứ Bắc Kinh)</option>
               <option value="google" data-i18n="ttsGoogle">Google TTS (Trực tuyến)</option>
@@ -524,7 +527,7 @@
         </div>
         <div style="font-size:22px; font-weight:800; color:var(--text-primary); letter-spacing:-0.3px;" data-i18n="appName">Halou</div>
         <div style="font-size:13px; font-weight:500; color:var(--text-secondary); margin-top:4px; max-width:420px; margin-left:auto; margin-right:auto; line-height:1.4;" data-i18n="appSlogan">Tra từ chuẩn xác, dịch mượt ngữ cảnh, gắn Pinyin tức thì.</div>
-        <div id="app-version-badge" style="font-size:12px; font-weight:600; color:var(--accent); margin-top:4px;">Version 1.1.8 Pro</div>
+        <div id="app-version-badge" style="font-size:12px; font-weight:600; color:var(--accent); margin-top:4px;">Version 1.1.9 Pro</div>
 
         <!-- Product Core Highlights -->
         <div style="margin:18px auto 14px; max-width:420px; display:grid; grid-template-columns:1fr; gap:8px; text-align:left;">
