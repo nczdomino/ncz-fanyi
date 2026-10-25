@@ -40,6 +40,9 @@ jobs:
       - name: Example sentences (containment, ranking, quality gate)
         run: node test_examples_logic.js
 
+      - name: Language completeness (vi / ja / en)
+        run: node test_i18n_langs.js
+
       - name: Legacy suites
         run: |
           node test_dict_search.js

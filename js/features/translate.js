@@ -498,7 +498,7 @@ function copyLensText(text, btn) {
   navigator.clipboard.writeText(text).then(() => {
     if (btn) {
       const orig = btn.innerHTML;
-      btn.innerHTML = '✓ Đã chép!';
+      btn.innerHTML = tx('✓ Đã chép!', '✓ Copied!', '✓ コピーしました');
       btn.style.color = '#10B981';
       setTimeout(() => {
         btn.innerHTML = orig;
@@ -544,7 +544,7 @@ async function translateFullText() {
 
   const fullText = state.currentText || (state.sentences ? state.sentences.join('\n') : '');
   if (!fullText) {
-    box.innerHTML = '<span style="color:var(--text-muted);">Không có văn bản để dịch.</span>';
+    box.innerHTML = `<span style="color:var(--text-muted);">${tx('Không có văn bản để dịch.', 'Nothing to translate.', '翻訳するテキストがありません。')}</span>`;
     return;
   }
 

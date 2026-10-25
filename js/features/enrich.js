@@ -168,7 +168,7 @@ async function fetchOnlineExamples(word) {
           seenZh.add(seg);
           const it = {
             zh: seg,
-            source: '🎬 Phụ đề đời thực',
+            source: 'mymemory',
             isOnline: true
           };
           it[lang] = trans;
@@ -203,7 +203,7 @@ async function fetchOnlineExamples(word) {
               const it = {
                 zh: zhText,
                 en: enText,
-                source: '📺 Jukuu / Phim ảnh',
+                source: 'jukuu',
                 isOnline: true
               };
               list.push(it);
@@ -228,7 +228,7 @@ async function fetchOnlineExamples(word) {
             if (!r.text.includes(word)) continue;
 
             const flat = [].concat(...(r.translations || []));
-            const it = { zh: r.text, source: '🌐 Tatoeba', isOnline: true };
+            const it = { zh: r.text, source: 'tatoeba', isOnline: true };
 
             const trVie = flat.find(x => x && x.lang === 'vie');
             const trJpn = flat.find(x => x && x.lang === 'jpn');
@@ -253,7 +253,7 @@ async function fetchOnlineExamples(word) {
         for (const ex of wikEx) {
           if (ex && ex.zh && !seenZh.has(ex.zh)) {
             seenZh.add(ex.zh);
-            list.push({ zh: ex.zh, source: '📖 Wiktionary', isOnline: true });
+            list.push({ zh: ex.zh, source: 'wiktionary', isOnline: true });
             if (list.length >= 4) break;
           }
         }

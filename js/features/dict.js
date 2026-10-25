@@ -25,9 +25,10 @@ function getWordRadical(char) {
   if (!char || char.length !== 1 || typeof RADICALS_DATA === 'undefined') return null;
   for (const r of RADICALS_DATA) {
     if (r.chars && r.chars.includes(char)) {
+      const label = r.name || r.r;
       return {
         radical: r.r,
-        name: `Bộ ${r.name || r.r}`
+        name: tx(`Bộ ${label}`, `Radical ${label}`, `部首 ${label}`)
       };
     }
   }
@@ -173,7 +174,7 @@ function renderRecentSearches() {
   container.innerHTML = list.map(w => `
     <span class="dict-recent-chip" onclick="quickSearchDict('${escapeQuotes(w)}')">
       <span class="recent-chip-word">${escapeHtml(w)}</span>
-      <span class="recent-chip-del" onclick="removeRecentSearch('${escapeQuotes(w)}', event)" title="Xóa">✕</span>
+      <span class="recent-chip-del" onclick="removeRecentSearch('${escapeQuotes(w)}', event)" title="${tx('Xóa', 'Remove', '削除')}">✕</span>
     </span>
   `).join('');
 }

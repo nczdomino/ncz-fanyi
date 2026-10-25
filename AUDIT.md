@@ -527,6 +527,55 @@ trong câu, và nó chạy **trước** lớp khớp chuỗi con. Hệ quả đi
 
 ---
 
+## 6f. Đa ngôn ngữ: sửa rò rỉ tiếng Việt sang giao diện Nhật/Anh
+
+### Đo trước khi sửa
+
+| Kiểm tra | Kết quả |
+|---|---|
+| Khoá dịch | 254 khoá × 3 ngôn ngữ, **parity đầy đủ** (0 thiếu, 0 thừa) |
+| Giá trị Nhật/Anh lẫn tiếng Việt | **0** — bảng dịch sạch |
+| Khoá dùng trong code nhưng **thiếu bản dịch** | **3**: `btnClear` (dùng trong `index.html`), `hwClear`, `hwUndo` (dùng trong `pad.js`) |
+| Khoá `data-i18n` trong HTML thiếu | 1 (`btnClear`) |
+
+**Vì sao vẫn thấy tiếng Việt:**
+1. `t(key)` trả về **chính tên khoá** khi thiếu bản dịch, và `applyI18n()` ghi thẳng vào DOM
+   → nút hiển thị chữ `btnClear`/`hwUndo` ở **mọi ngôn ngữ**, không phải tiếng Việt mà tệ hơn.
+2. **Fallback nghĩa từ vựng**: khi không lấy được nghĩa tiếng Nhật, `word-sheet.js` rơi về
+   `dictEntry.vi` → người dùng Nhật **thỉnh thoảng** thấy nghĩa tiếng Việt (đúng hiện tượng
+   "thi thoảng" — chỉ xảy ra khi dịch máy lỗi/chậm).
+3. `state.meaningLang2` (ngôn ngữ phụ song song) **không được reset** khi đổi ngôn ngữ giao diện
+   → nếu trước đó đã bật dòng nghĩa phụ tiếng Việt, nó vẫn hiện bên cạnh tiếng Nhật.
+4. Chuỗi hard-code còn sót: `translate.js` ("✓ Đã chép!", "Không có văn bản để dịch."),
+   `word-sheet.js` (3 thông báo lỗi AI), `tts.js` ("⭐ [Được đề xuất]"),
+   `dict.js` (nhãn bộ thủ `Bộ …`), `enrich.js` (2 nhãn nguồn ví dụ), `share.js`,
+   `pad.js` (6 `aria-label`), `examples.js` (2 `aria-label`), `index.html`
+   (`aria-label` nhóm chọn ngôn ngữ), và **tiêu đề tab** trình duyệt.
+
+### Đã sửa
+
+| Việc | Chi tiết |
+|---|---|
+| **Không còn hiện tên khoá thô** | `applyI18n()` chỉ ghi đè khi bản dịch khác chính tên khoá; thêm 3 khoá còn thiếu |
+| **Fallback nghĩa** | Chỉ dùng tiếng Việt khi `meaningLang === 'vi'`; với Nhật/Anh thì fallback là **gloss tiếng Anh** (trung tính), không bao giờ là tiếng Việt |
+| **Ngôn ngữ phụ** | `setUiLang()` xoá `state.meaningLang2` nếu nó trùng ngôn ngữ mới (hoặc không hợp lệ) |
+| **Chuỗi hard-code** | Tất cả chuyển sang `tx(vi, en, ja)` |
+| **Nhãn nguồn ví dụ** | `enrich.js` phát **id chuẩn** (`tatoeba`/`mymemory`/`jukuu`/`wiktionary`), nhãn hiển thị dịch trong `examples.js` |
+| **Trợ năng** | `applyI18n()` hỗ trợ `data-i18n-aria-label`; 9 `aria-label` tiếng Việt trong `pad.js`/`examples.js`/`index.html` đã dịch |
+| **Tiêu đề tab** | `document.title` lấy từ khoá `appDocTitle` (vi/en/ja) |
+
+### Test
+
+`test_i18n_langs.js` **16 assertion**:
+- parity khoá 3 ngôn ngữ; không giá trị Nhật/Anh nào chứa dấu tiếng Việt; không bản dịch rỗng;
+- **mọi khoá `t()` trong code và mọi khoá `data-i18n*` trong HTML đều có đủ 3 ngôn ngữ**;
+- hành vi: `t()`/`tx()` theo `state.uiLang`; `applyI18n` không ghi tên khoá thô; đổi ngôn ngữ xoá `meaningLang2`;
+- fallback nghĩa có guard `lang === 'vi'`; nhánh `ja` của `getMeaningFromEntry` không chứa `entry.vi`;
+- các chuỗi từng hard-code nay nằm trong `tx()`;
+- `aria-label` không còn tiếng Việt trong `pad.js`; khoá trợ năng đủ 3 ngôn ngữ; tiêu đề tab có dịch.
+
+---
+
 ## 7. Điều đáng làm tiếp (chưa nằm trong lần sửa này)
 
 1. ~~Độ phủ từ điển~~ — **đã giải quyết một phần**: 1.615 mục tuyển chọn + 119.120 mục CC-CEDICT

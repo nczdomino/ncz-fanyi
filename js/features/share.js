@@ -46,7 +46,7 @@ function fallbackCopy(text) {
     document.execCommand('copy');
     showToast(t('shareCopied') || 'Đã sao chép link chia sẻ app!');
   } catch (e) {
-    prompt('Link chia sẻ NCZ 翻译:', window.location.href);
+    prompt(tx('Link chia sẻ NCZ 翻译:', 'NCZ 翻译 share link:', 'NCZ 翻译 共有リンク:'), window.location.href);
   }
   if (ta.parentNode) ta.parentNode.removeChild(ta);
 }

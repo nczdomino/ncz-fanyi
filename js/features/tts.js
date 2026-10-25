@@ -458,7 +458,9 @@ function testSpeechVoices() {
   if (zhVoices.length > 0) {
     const best = getBestZhVoice();
     const names = zhVoices.map(v => {
-      const isBest = best && v.name === best.name ? ' ⭐ [Được đề xuất]' : '';
+      const isBest = best && v.name === best.name
+        ? ' ' + tx('⭐ [Được đề xuất]', '⭐ [Recommended]', '⭐ [おすすめ]')
+        : '';
       return `${v.name} (${v.lang})${isBest}`;
     }).join('\n');
     const msg = `${t('foundVoices')}: ${zhVoices.length}\n${names}\n\nĐang phát âm thử nghiệm bằng giọng tốt nhất...`;

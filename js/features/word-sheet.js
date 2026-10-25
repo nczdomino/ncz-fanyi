@@ -123,7 +123,11 @@ async function openWordSheet(word) {
               } else if (trans) {
                 primaryEl.innerHTML = `${escapeHtml(trans)} <span style="font-size:11px;color:var(--text-muted)">(${t('autoTranslated')})</span>`;
               } else {
-                const fallback = (dictEntry && dictEntry.en && dictEntry.en.join('; ')) || (dictEntry && dictEntry.vi) || '';
+                // Never show Vietnamese to a Japanese/English reader. English is the
+                // neutral second choice; Vietnamese is only for Vietnamese readers.
+                const fallback = (lang === 'vi')
+                  ? ((dictEntry && dictEntry.vi) || (dictEntry && dictEntry.en ? dictEntry.en.join('; ') : ''))
+                  : (dictEntry && dictEntry.en ? dictEntry.en.join('; ') : '');
                 primaryEl.innerHTML = fallback ? escapeHtml(fallback) : `<span style="color:var(--text-muted)">${t('noMeaning')}</span>`;
               }
             }
@@ -710,7 +714,7 @@ Return ONLY valid JSON matching this schema (no markdown wrappers):
         return;
       }
     } catch (e) {
-      errorDetail = e.message || 'Lỗi khi gọi trực tiếp Google API';
+      errorDetail = e.message || tx('Lỗi khi gọi trực tiếp Google API', 'Direct Google API call failed', 'Google APIの直接呼び出しに失敗しました');
     }
   }
 
@@ -738,10 +742,10 @@ Return ONLY valid JSON matching this schema (no markdown wrappers):
         }
         return;
       }
-      errorDetail = 'Phản hồi từ AI không đúng cấu trúc.';
+      errorDetail = tx('Phản hồi từ AI không đúng cấu trúc.', 'Unexpected AI response structure.', 'AI応答の構造が不正です。');
     } else {
       const errJson = await res.json().catch(() => null);
-      errorDetail = errJson?.error || errJson?.details || `Lỗi máy chủ HTTP ${res.status} (${res.statusText})`;
+      errorDetail = errJson?.error || errJson?.details || tx(`Lỗi máy chủ HTTP ${res.status} (${res.statusText})`, `Server error HTTP ${res.status} (${res.statusText})`, `サーバーエラー HTTP ${res.status} (${res.statusText})`);
     }
   } catch (netErr) {
     if (!errorDetail) errorDetail = netErr.message || 'Không thể kết nối đến máy chủ';

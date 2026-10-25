@@ -1,6 +1,13 @@
 // js/data/i18n-data.js - Internationalization strings for Vietnamese, English, and Japanese - Dependencies: none
 const I18N_DATA = {
   "vi": {
+    "titleUiLanguage": "Ngôn ngữ giao diện",
+    "appDocTitle": "NCZ 翻译 · Trợ Thủ Đọc & Học Tiếng Trung AI Thông Minh",
+    "hwCandidateBar": "Gợi ý chữ ứng viên",
+    "hwChangeGrid": "Đổi kiểu lưới viết (Mễ / Điền / Trống)",
+    "btnClear": "Xóa",
+    "hwClear": "Xóa nét",
+    "hwUndo": "Hoàn tác",
     "appName": "NCZ翻译",
     "tabRead": "Đọc",
     "tabDict": "Từ điển",
@@ -273,6 +280,13 @@ const I18N_DATA = {
     "words": "từ"
   },
   "en": {
+    "titleUiLanguage": "Interface language",
+    "appDocTitle": "NCZ 翻译 · Smart Chinese Reading & Learning Assistant",
+    "hwCandidateBar": "Suggested characters",
+    "hwChangeGrid": "Change grid style (Mi / Tian / Blank)",
+    "btnClear": "Clear",
+    "hwClear": "Clear strokes",
+    "hwUndo": "Undo",
     "appName": "NCZ翻译",
     "tabRead": "Read",
     "tabDict": "Dictionary",
@@ -545,6 +559,13 @@ const I18N_DATA = {
     "words": "words"
   },
   "ja": {
+    "titleUiLanguage": "表示言語",
+    "appDocTitle": "NCZ 翻译 · 中国語の読解と学習アシスタント",
+    "hwCandidateBar": "候補の漢字",
+    "hwChangeGrid": "マス目の種類を変更（米／田／なし）",
+    "btnClear": "クリア",
+    "hwClear": "筆跡をクリア",
+    "hwUndo": "元に戻す",
     "appName": "NCZ翻译",
     "tabRead": "読む",
     "tabDict": "辞書",

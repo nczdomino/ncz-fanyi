@@ -240,6 +240,18 @@ function getWordCandidateExamples(word, opts) {
   return chosen;
 }
 
+/** Localised badge for the corpus a sentence came from. */
+function exampleSourceLabel(item) {
+  if (!item) return t('examples') || 'Ví dụ';
+  if (item.isContext) return t('currentTextExample') || 'Trong bài đọc';
+  const src = String(item.source || '').toLowerCase();
+  if (src.indexOf('tatoeba') !== -1) return 'Tatoeba';
+  if (src.indexOf('mymemory') !== -1) return tx('Phụ đề đời thực', 'Real-life subtitles', '実生活の字幕');
+  if (src.indexOf('jukuu') !== -1) return tx('Kho câu ví dụ', 'Example corpus', '例文コーパス');
+  if (src.indexOf('wiktionary') !== -1) return 'Wiktionary';
+  return t('examples') || 'Ví dụ';
+}
+
 function difficultyBadge(item) {
   const core = examplesCore();
   if (!core || item._level === undefined) return '';
@@ -283,10 +295,7 @@ function renderExampleListItems(container, countBadge, word, list) {
     const highlightedZh = highlightWordInSentence(item.zh, word);
     const pinyin = item.pinyin || getSentencePinyin(item.zh);
 
-    let badgeText = item.source || t('examples') || 'Ví dụ';
-    if (item.isContext) {
-      badgeText = t('currentTextExample') || 'Trong bài đọc';
-    }
+    const badgeText = exampleSourceLabel(item);
 
     let primaryTrans = item[lang] || null;
     const transId = `ex-trans-${i}-${Date.now()}`;
@@ -345,10 +354,10 @@ function renderExampleListItems(container, countBadge, word, list) {
             <button class="example-audio-btn" onclick="speakText('${escapeQuotes(item.zh)}')" title="${t('play') || 'Phát âm'}" aria-label="${t('play')}">
               <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
             </button>
-            <button class="example-audio-btn" onclick="speakText('${escapeQuotes(item.zh)}', this, 0.75)" title="${t('playSlow') || 'Nghe chậm (0.75x)'}" aria-label="Nghe chậm" style="font-size:13px;">
+            <button class="example-audio-btn" onclick="speakText('${escapeQuotes(item.zh)}', this, 0.75)" title="${t('playSlow') || 'Nghe chậm (0.75x)'}" aria-label="${tx('Nghe chậm', 'Slow audio', 'スロー再生')}" style="font-size:13px;">
               🐢
             </button>
-            <button class="example-audio-btn" onclick="repeatSpeak('${escapeQuotes(item.zh)}', 3, 1200)" title="${tx('Nghe lặp 3 lần', 'Repeat 3×', '3回リピート')}" aria-label="Repeat" style="font-size:12px;">
+            <button class="example-audio-btn" onclick="repeatSpeak('${escapeQuotes(item.zh)}', 3, 1200)" title="${tx('Nghe lặp 3 lần', 'Repeat 3×', '3回リピート')}" aria-label="${tx('Lặp lại', 'Repeat', 'リピート')}" style="font-size:12px;">
               🔁
             </button>
           </div>

@@ -503,20 +503,25 @@ async function ocrRepairWithAi() {
 
     if (!resp.ok) {
       const errData = await resp.json().catch(() => ({}));
-      let msg = errData.message;
-      if (errData.error === 'GEMINI_KEY_MISSING' || (msg && msg.includes('GEMINI_API_KEY'))) {
-        msg = tx(
-          'Chưa cấu hình API Key trên máy chủ.',
-          'AI API Key is not configured on server.',
-          'サーバーにAI APIキーが設定されていません。'
-        );
-      }
-      throw new Error(msg || tx(`Lỗi HTTP ${resp.status}`, `HTTP Error ${resp.status}`, `HTTPエラー ${resp.status}`));
+      // The server replies in Vietnamese; showing its `message` verbatim would leak
+      // Vietnamese into the Japanese/English UI. Map known codes to localised text.
+      const code = errData && errData.error;
+      const known = {
+        GEMINI_KEY_MISSING: tx('Chưa cấu hình API Key trên máy chủ.', 'AI API key is not configured on the server.', 'サーバーにAI APIキーが設定されていません。'),
+        GEMINI_CALL_FAILED: tx('Dịch vụ AI tạm thời không phản hồi. Vui lòng thử lại.', 'The AI service is temporarily unavailable. Please retry.', 'AIサービスが一時的に応答しません。再試行してください。'),
+        AI_API_ERROR: tx('Dịch vụ AI tạm thời không phản hồi. Vui lòng thử lại.', 'The AI service is temporarily unavailable. Please retry.', 'AIサービスが一時的に応答しません。再試行してください。'),
+        RATE_LIMITED: tx('Bạn thao tác quá nhanh. Vui lòng thử lại sau ít phút.', 'Too many requests. Please retry in a minute.', 'リクエストが多すぎます。しばらくしてから再試行してください。'),
+        TEXT_TOO_LONG: tx('Văn bản quá dài để sửa bằng AI một lần.', 'The text is too long to repair in one pass.', 'テキストが長すぎて一度に修正できません。'),
+        PAYLOAD_TOO_LARGE: tx('Dữ liệu gửi lên quá lớn.', 'The request payload is too large.', '送信データが大きすぎます。'),
+        ORIGIN_NOT_ALLOWED: tx('Tên miền này không được phép gọi API.', 'This origin is not allowed to call the API.', 'このオリジンはAPIを利用できません。'),
+      };
+      const msg = known[code] || tx(`Lỗi HTTP ${resp.status}`, `HTTP error ${resp.status}`, `HTTPエラー ${resp.status}`);
+      throw new Error(msg);
     }
 
     const data = await resp.json();
     if (!data.success || !data.repairedText) {
-      throw new Error(data.message || tx('Không nhận được kết quả sửa từ AI', 'No repair result received from AI', 'AIから修正結果を取得できませんでした'));
+      throw new Error(tx('Không nhận được kết quả sửa từ AI', 'No repair result received from the AI', 'AIから修正結果を取得できませんでした'));
     }
 
     window._ocrAiText = data.repairedText;

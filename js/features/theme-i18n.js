@@ -11,6 +11,13 @@ function setUiLang(lang) {
   localStorage.setItem('cr_meaningLang', lang);
   localStorage.removeItem('cr_meaningLang_custom');
 
+  // A parallel meaning language left over from the previous UI language would keep
+  // showing the old language (e.g. a Vietnamese second line next to Japanese).
+  if (state.meaningLang2 && (state.meaningLang2 === lang || !I18N_DATA[state.meaningLang2])) {
+    state.meaningLang2 = null;
+    localStorage.removeItem('cr_meaningLang2');
+  }
+
   document.documentElement.lang = lang;
 
   // Sync settings dropdowns
@@ -79,18 +86,35 @@ function updateThemeAndUI() {
   applyTheme();
   document.documentElement.lang = state.uiLang;
 
+  // Only overwrite when a real translation exists. t() returns the key itself when it is
+  // missing everywhere, which used to render raw keys like "btnClear" in the UI (and kept
+  // the authored text from ever being shown).
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
-    el.textContent = t(key);
+    const val = t(key);
+    if (val && val !== key) el.textContent = val;
   });
   document.querySelectorAll('[data-i18n-ph]').forEach(el => {
     const key = el.getAttribute('data-i18n-ph');
-    el.placeholder = t(key);
+    const val = t(key);
+    if (val && val !== key) el.placeholder = val;
   });
   document.querySelectorAll('[data-i18n-title]').forEach(el => {
     const key = el.getAttribute('data-i18n-title');
-    el.title = t(key);
+    const val = t(key);
+    if (val && val !== key) el.title = val;
   });
+  // Screen-reader labels were never localised; assistive tech announced Vietnamese in
+  // Japanese/English mode.
+  document.querySelectorAll('[data-i18n-aria-label]').forEach(el => {
+    const key = el.getAttribute('data-i18n-aria-label');
+    const val = t(key);
+    if (val && val !== key) el.setAttribute('aria-label', val);
+  });
+
+  // The browser tab title is part of the interface too.
+  const docTitle = t('appDocTitle');
+  if (docTitle && docTitle !== 'appDocTitle') document.title = docTitle;
 
   // Sync top-bar segmented language buttons
   document.querySelectorAll('.top-lang-btn').forEach(btn => {

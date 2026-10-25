@@ -76,10 +76,10 @@ class HandwritingPad {
           </div>
 
           <div class="hw-buffer-actions">
-            <button type="button" class="btn btn-secondary btn-sm hw-buffer-btn" id="btn-hw-backspace" title="${t('hwBackspace') || 'Xóa 1 chữ (⌫)'}" aria-label="Xóa 1 chữ">
+            <button type="button" class="btn btn-secondary btn-sm hw-buffer-btn" id="btn-hw-backspace" title="${t('hwBackspace') || 'Xóa 1 chữ (⌫)'}" aria-label="${t('hwBackspace')}">
               ⌫
             </button>
-            <button type="button" class="btn btn-secondary btn-sm hw-buffer-btn" id="btn-hw-clear-buffer" title="${t('hwClearBuffer') || 'Xóa toàn bộ'}" aria-label="Xóa toàn bộ">
+            <button type="button" class="btn btn-secondary btn-sm hw-buffer-btn" id="btn-hw-clear-buffer" title="${t('hwClearBuffer') || 'Xóa toàn bộ'}" aria-label="${t('hwClearBuffer')}">
               ✕
             </button>
             <button type="button" class="btn btn-primary btn-sm hw-buffer-confirm-btn" id="btn-hw-confirm" title="Xác nhận">
@@ -90,7 +90,7 @@ class HandwritingPad {
         </div>
 
         <!-- 2. Candidate Bar (Thanh ứng viên thời gian thực) -->
-        <div class="hw-candidate-bar" id="hw-candidate-bar" role="toolbar" aria-label="Gợi ý chữ ứng viên">
+        <div class="hw-candidate-bar" id="hw-candidate-bar" role="toolbar" aria-label="${t('hwCandidateBar')}">
           <div class="hw-candidate-loading" id="hw-loading-indicator" style="display:none;" title="Đang nhận diện...">
             <span class="hw-spinner"></span>
           </div>
@@ -107,16 +107,16 @@ class HandwritingPad {
         <!-- 4. Canvas Action Bar (Hoàn tác, Xóa nét, Đổi lưới) -->
         <div class="hw-action-bar">
           <div class="hw-action-left">
-            <button type="button" class="btn btn-secondary btn-sm hw-btn" id="btn-hw-undo" title="${t('hwUndoStroke') || 'Hoàn tác nét vẽ cuối'}" aria-label="Hoàn tác nét">
+            <button type="button" class="btn btn-secondary btn-sm hw-btn" id="btn-hw-undo" title="${t('hwUndoStroke') || 'Hoàn tác nét vẽ cuối'}" aria-label="${t('hwUndoStroke')}">
               <span>↩</span> <span class="hw-btn-label" id="hw-undo-label">${t('hwUndo') || tx('Hoàn tác nét', 'Undo', '一画戻す')}</span>
             </button>
-            <button type="button" class="btn btn-secondary btn-sm hw-btn" id="btn-hw-clear" title="${t('hwClearCanvas') || 'Xóa khung vẽ'}" aria-label="Xóa nét vẽ">
+            <button type="button" class="btn btn-secondary btn-sm hw-btn" id="btn-hw-clear" title="${t('hwClearCanvas') || 'Xóa khung vẽ'}" aria-label="${t('hwClearCanvas')}">
               <span>🗑</span> <span class="hw-btn-label" id="hw-clear-label">${t('hwClear') || tx('Xóa nét', 'Clear', '消去')}</span>
             </button>
           </div>
 
           <div class="hw-action-right">
-            <button type="button" class="btn btn-secondary btn-sm hw-btn" id="btn-hw-grid" title="Đổi kiểu lưới viết (Mễ / Điền / Trống)" aria-label="Đổi kiểu lưới">
+            <button type="button" class="btn btn-secondary btn-sm hw-btn" id="btn-hw-grid" title="${t('hwChangeGrid')}" aria-label="${t('hwChangeGrid')}">
               <span>🔲</span> <span class="hw-btn-label" id="hw-grid-label">${this.getGridLabel()}</span>
             </button>
           </div>
