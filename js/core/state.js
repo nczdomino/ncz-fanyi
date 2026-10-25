@@ -51,6 +51,7 @@ const state = {
   currentText: '',
   sentences: [],
   currentSentenceIndex: 0,
+  readerPlaying: false,
   viewMode: 'sentence', // 'sentence' | 'all'
   recentTexts: (function(){ const v = safeJSON('cr_recentTexts', []); return Array.isArray(v) ? v : []; })(),
   cachedTranslations: {},

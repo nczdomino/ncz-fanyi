@@ -346,7 +346,9 @@ function renderDictItemCard(item) {
   // The HTML parser decodes entities inside an attribute value *before* the JS
   // string is parsed, so escapeHtml() alone let a quote break out of the handler.
   return `
-    <div class="dict-item-card" onclick="openWordSheet('${escapeQuotes(word)}')">
+    <div class="dict-item-card" onclick="openWordSheet('${escapeQuotes(word)}')"
+         onmouseenter="typeof preloadSpeech==='function'&&preloadSpeech('${escapeQuotes(word)}')"
+         onfocus="typeof preloadSpeech==='function'&&preloadSpeech('${escapeQuotes(word)}')">
       <div style="flex:1; min-width:0; padding-right:12px;">
         <div class="dict-item-left">
           <span class="dict-hanzi" lang="zh-CN">${escapeHtml(word)}</span>

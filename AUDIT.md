@@ -420,6 +420,57 @@ phần sửa logic/bảo mật ở trên.
 
 ---
 
+## 6d. Nâng cấp âm thanh (3 đợt)
+
+### Đợt 1 — pipeline audio
+
+Ba lỗi thật trong `js/features/tts.js` cũ:
+
+| Lỗi | Bằng chứng | Hệ quả |
+|---|---|---|
+| Cắt âm thầm ở 300 ký tự | `encodeURIComponent(clean.slice(0, 300))` | Đọc cả đoạn văn chỉ phát 300 ký tự đầu |
+| Không chia nhỏ câu | gửi cả câu dài cho `speechSynthesis` | Chrome cắt utterance sau ~15 giây |
+| Fallback im lặng | chuỗi `try/catch` không thông báo | Không biết đang nghe giọng nào, vì sao khác nhau |
+| `ttsAudioCache` chết | khai báo có comment "0ms re-play" nhưng **không dùng** | Không có cache ở tầng app |
+
+Sửa:
+- **`js/features/audio-core.js`** (mới, thuần, test được): `chunkText()` chia theo dấu câu, giữ nguyên dấu, cắt câu quá dài theo dấu mềm rồi hard-split, **không mất chữ** (có test so sánh chuỗi ghép với bản gốc); `buildEnginePlan()` (offline không thử engine mạng, Save-Data ưu tiên giọng máy, luôn có giọng offline dự phòng cuối); `buildAudioUrl()`.
+- **`tts.js` viết lại**: phát từng chunk, huỷ sạch khi có yêu cầu mới (run id), nhớ engine nào đã chạy được cho loại text đó, ghi lại engine thực dùng vào `state.ttsLastEngine`, toast khi không phát được gì, tôn trọng `navigator.onLine` và `saveData`.
+- **`karaoke.js`**: thêm `karaokeChunk(start,len)` để highlight vẫn đúng khi câu được đọc thành nhiều chunk.
+- **`sw.js`**: cache riêng cho audio (200 clip, khớp theo URL để Range không làm hỏng cache), phiên bản cache lên `ncz-v3`.
+
+### Đợt 2 — đọc liên tục, lặp, preload
+
+- **`js/features/read-aloud.js`** (mới): `toggleReadAll()` đọc từ câu hiện tại đến hết, tự chuyển câu và re-render, bấm lần nữa để dừng; `repeatSpeak(text, n, gap)` lặp 3 lần có khoảng nghỉ để luyện nói theo; `preloadSpeech()` làm ấm cache khi hover (debounce 140 ms, bỏ qua khi Save-Data hoặc offline).
+- Nút **▶▶ đọc liên tục** và **🔁 lặp 3 lần** trong header của reader; thẻ kết quả từ điển preload khi hover/focus.
+
+### Đợt 3 — điều khiển
+
+- **Âm lượng** (slider 0–100%) + **tắt tiếng** (tắt tiếng dừng luôn audio đang phát), lưu vào `cr_ttsVolume` / `cr_ttsMuted`; áp cho cả `SpeechSynthesisUtterance` và `Audio`.
+- **Tốc độ mịn 0.5x–1.5x** bước 0.05 (trước chỉ có 4 mức cố định).
+- **Nghe nghĩa** theo ngôn ngữ đang xem (`ja-JP` / `vi-VN` / `en-US`) qua giọng hệ thống; báo rõ khi máy chưa cài giọng đó.
+
+### Giới hạn đã kiểm chứng
+
+**Không thể cache audio vào IndexedDB** như dự định ban đầu: cả ba endpoint TTS
+(`dict.youdao.com`, `fanyi.baidu.com`, `translate.google.com`) **không gửi
+`Access-Control-Allow-Origin`**, nên `fetch()` từ trang không đọc được bytes. Cơ chế duy nhất
+khả thi là cache của Service Worker (đã thêm). Lưu ý: **chưa kiểm chứng hành vi phát lại từ cache
+này trong trình duyệt thật** — chỉ kiểm chứng bằng test tĩnh.
+
+Ngoài ra Youdao/Baidu/Google là endpoint **không chính thức** (như ghi chú ở
+`functions/api/handwriting.js`), có thể bị chặn bất cứ lúc nào; vì vậy fallback có báo hiệu và
+giọng offline dự phòng quan trọng hơn vẻ ngoài của chúng.
+
+### Test
+
+`test_audio_core.js` **39 assertion** (chunking không mất chữ, mọi plan có giọng offline cuối,
+URL/spd, wiring, cache audio của SW, UI điều khiển, i18n 3 ngôn ngữ) và
+`test_read_aloud.js` **16 assertion** (đọc liên tục, dừng giữa đường, lặp, preload có/không
+Save-Data, wiring nút).
+
+---
+
 ## 7. Điều đáng làm tiếp (chưa nằm trong lần sửa này)
 
 1. ~~Độ phủ từ điển~~ — **đã giải quyết một phần**: 1.615 mục tuyển chọn + 119.120 mục CC-CEDICT

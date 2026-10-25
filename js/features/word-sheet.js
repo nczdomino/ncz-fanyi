@@ -1015,3 +1015,43 @@ function renderAiAnalysisCard(container, word, data) {
     </div>
   `;
 }
+
+// Speak the meaning in the language the user is currently reading it in.
+// Until now the sheet could only pronounce the Chinese headword.
+function speakActiveMeaning() {
+  const word = (typeof state !== 'undefined' && state.activeWord) ? state.activeWord : '';
+  if (!word) return;
+  const lang = (state.meaningLang || 'vi');
+
+  let text = '';
+  try {
+    const userDict = (typeof getUserDict === 'function') ? getUserDict() : {};
+    text = userDict[lang + ':' + word] || '';
+  } catch (e) {}
+
+  const entry = (typeof MINI_DICT !== 'undefined' && MINI_DICT) ? MINI_DICT[word] : null;
+  if (!text && entry) {
+    if (lang === 'en') {
+      text = entry.en ? (Array.isArray(entry.en) ? entry.en.join(', ') : entry.en) : '';
+    } else if (lang === 'ja') {
+      text = entry.ja || (typeof JA_COMMON_DICT !== 'undefined' && JA_COMMON_DICT ? (JA_COMMON_DICT[word] || '') : '');
+    } else {
+      text = entry.vi || '';
+    }
+  }
+
+  if (!text && state.cachedTranslations) {
+    text = state.cachedTranslations[lang + ':' + word] || '';
+  }
+
+  if (!text) {
+    if (typeof showToast === 'function') {
+      showToast(tx('Chưa có nghĩa để đọc', 'No meaning to read yet', '読む意味がまだありません'));
+    }
+    return;
+  }
+
+  if (typeof speakInLanguage === 'function') {
+    speakInLanguage(text, lang);
+  }
+}

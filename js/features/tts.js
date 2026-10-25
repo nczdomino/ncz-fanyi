@@ -393,6 +393,61 @@ async function speakText(text, btnEl, customSpeed) {
   }
 }
 
+// 7. Speak text in the user's meaning language (ja / vi / en) with an OS voice.
+// The app only ever spoke Chinese before; this lets a learner hear the gloss too.
+function speakInLanguage(text, lang, customSpeed) {
+  return new Promise((resolve) => {
+    const clean = String(text == null ? '' : text).trim();
+    if (!clean) return resolve(false);
+    if (isMuted()) {
+      if (typeof showToast === 'function') {
+        showToast(tx('Đang tắt tiếng — bật lại trong Cài đặt', 'Sound is muted — turn it back on in Settings', 'ミュート中 — 設定で解除してください'));
+      }
+      return resolve(false);
+    }
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return resolve(false);
+
+    const tag = lang === 'ja' ? 'ja-JP' : (lang === 'en' ? 'en-US' : 'vi-VN');
+    const prefix = tag.slice(0, 2);
+    let voices = [];
+    try { voices = window.speechSynthesis.getVoices() || []; } catch (e) { voices = []; }
+    const matches = voices.filter(v => v.lang && v.lang.toLowerCase().indexOf(prefix) === 0);
+
+    if (!matches.length) {
+      const label = lang === 'ja' ? '日本語' : (lang === 'en' ? 'English' : 'Tiếng Việt');
+      if (typeof showToast === 'function') {
+        showToast(tx('Máy chưa cài giọng ' + label, 'No ' + label + ' voice installed', label + 'の音声が未インストール'));
+      }
+      return resolve(false);
+    }
+
+    try { window.speechSynthesis.cancel(); } catch (e) {}
+
+    const utterance = new SpeechSynthesisUtterance(clean);
+    utterance.lang = matches[0].lang || tag;
+    utterance.voice = matches[0];
+    utterance.rate = Math.min(1.8, Math.max(0.5, 0.95 * clampSpeed(customSpeed || (state.ttsSpeed || 1.0))));
+    utterance.volume = ttsVolume();
+
+    let settled = false;
+    const done = (ok) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(guard);
+      resolve(ok);
+    };
+    const guard = setTimeout(() => done(false), Math.max(4000, clean.length * 320));
+
+    utterance.onend = () => done(true);
+    utterance.onerror = () => done(false);
+    try {
+      window.speechSynthesis.speak(utterance);
+    } catch (e) {
+      return done(false);
+    }
+  });
+}
+
 function testSpeechVoices() {
   if (!('speechSynthesis' in window)) {
     alert(t('speechNotSupported'));

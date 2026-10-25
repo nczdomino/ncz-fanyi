@@ -251,4 +251,61 @@ check('audio is stored by URL so Range responses cannot poison it', () => {
   assert.ok(/cache\.put\(url\.href/.test(swSrc), 'audio is stored by request, not URL');
 });
 
+// ------------------------------------------------------- controls (round 3)
+console.log('--- Volume, mute, fine speed, meaning voice ---');
+
+const settingsSrc = fs.readFileSync(path.join(__dirname, 'js/features/settings.js'), 'utf8');
+const indexSrc = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
+const sheetSrc = fs.readFileSync(path.join(__dirname, 'js/features/word-sheet.js'), 'utf8');
+
+check('speech rate is a fine slider, not four fixed steps', () => {
+  assert.ok(/id="tts-speed-range"/.test(indexSrc), 'speed slider missing');
+  assert.ok(/id="tts-speed-select"/.test(indexSrc) === false, 'the old coarse select is still there');
+  assert.ok(/min="0\.5" max="1\.5" step="0\.05"/.test(indexSrc), 'unexpected slider range');
+  assert.ok(/function setTtsSpeed\(/.test(settingsSrc), 'setTtsSpeed missing');
+});
+
+check('volume slider and mute button exist and persist', () => {
+  assert.ok(/id="tts-volume-range"/.test(indexSrc), 'volume slider missing');
+  assert.ok(/id="tts-mute-btn"/.test(indexSrc), 'mute button missing');
+  assert.ok(/function setTtsVolume\(/.test(settingsSrc), 'setTtsVolume missing');
+  assert.ok(/function toggleTtsMute\(/.test(settingsSrc), 'toggleTtsMute missing');
+  assert.ok(/cr_ttsVolume/.test(settingsSrc), 'volume is not persisted');
+  assert.ok(/cr_ttsMuted/.test(settingsSrc), 'mute is not persisted');
+});
+
+check('muting stops playback instead of just ignoring the next request', () => {
+  assert.ok(/state\.ttsMuted && typeof stopSpeech === 'function'/.test(settingsSrc),
+    'toggling mute does not stop current audio');
+});
+
+check('speakText refuses to play while muted and says why', () => {
+  assert.ok(/if \(isMuted\(\)\)/.test(ttsSrc), 'speakText ignores mute');
+});
+
+check('volume is applied to both audio paths', () => {
+  assert.ok(/utterance\.volume = ttsVolume\(\)/.test(ttsSrc), 'system voice ignores volume');
+  assert.ok(/audio\.volume = ttsVolume\(\)/.test(ttsSrc), 'audio element ignores volume');
+});
+
+check('the meaning can be spoken in the current language', () => {
+  assert.ok(/function speakInLanguage\(/.test(ttsSrc), 'speakInLanguage missing');
+  assert.ok(/function speakActiveMeaning\(/.test(sheetSrc), 'speakActiveMeaning missing');
+  assert.ok(/onclick="speakActiveMeaning\(\)"/.test(indexSrc), 'no UI entry point for it');
+  assert.ok(/ja-JP/.test(ttsSrc) && /vi-VN/.test(ttsSrc) && /en-US/.test(ttsSrc), 'language tags missing');
+});
+
+check('a missing language voice is reported, not silently ignored', () => {
+  assert.ok(/No ' \+ label \+ ' voice installed/.test(ttsSrc) || /voice installed/.test(ttsSrc),
+    'no feedback when the OS lacks that voice');
+});
+
+check('new settings strings are translated in all three languages', () => {
+  const i18n = fs.readFileSync(path.join(__dirname, 'js/data/i18n-data.js'), 'utf8');
+  for (const key of ['ttsVolume', 'ttsMute', 'ttsSpeakMeaning']) {
+    const count = (i18n.match(new RegExp('"' + key + '"', 'g')) || []).length;
+    assert.ok(count >= 3, `key ${key} appears ${count} time(s), expected vi/en/ja`);
+  }
+});
+
 console.log(`\n🎉 ${passed} audio pipeline tests passed.\n`);

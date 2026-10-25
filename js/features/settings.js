@@ -181,8 +181,60 @@ function renderSettingsView() {
   const ttsSelect = document.getElementById('tts-engine-select');
   if (ttsSelect) ttsSelect.value = state.ttsEngine || 'auto';
 
-  const ttsSpeedSelect = document.getElementById('tts-speed-select');
-  if (ttsSpeedSelect) ttsSpeedSelect.value = String(state.ttsSpeed || 1.0);
+  const ttsSpeedRange = document.getElementById('tts-speed-range');
+  if (ttsSpeedRange) ttsSpeedRange.value = String(state.ttsSpeed || 1.0);
+  const ttsSpeedLabel = document.getElementById('tts-speed-label');
+  if (ttsSpeedLabel) ttsSpeedLabel.textContent = Number(state.ttsSpeed || 1.0).toFixed(2) + 'x';
+
+  const volRange = document.getElementById('tts-volume-range');
+  if (volRange) volRange.value = String(typeof state.ttsVolume === 'number' ? state.ttsVolume : 1);
+  const volLabel = document.getElementById('tts-volume-label');
+  if (volLabel) volLabel.textContent = Math.round((typeof state.ttsVolume === 'number' ? state.ttsVolume : 1) * 100) + '%';
+  const muteBtn = document.getElementById('tts-mute-btn');
+  if (muteBtn) {
+    muteBtn.textContent = state.ttsMuted ? '🔇' : '🔊';
+    muteBtn.title = state.ttsMuted ? (t('ttsUnmute') || 'Bật tiếng') : (t('ttsMute') || 'Tắt tiếng');
+  }
+}
+
+// Fine-grained speech rate (0.5x - 1.5x in 0.05 steps). The old UI only offered four
+// fixed values, which is too coarse for tone practice.
+function setTtsSpeed(value) {
+  const n = Math.min(1.5, Math.max(0.5, parseFloat(value) || 1));
+  state.ttsSpeed = Math.round(n * 100) / 100;
+  const label = document.getElementById('tts-speed-label');
+  if (label) label.textContent = state.ttsSpeed.toFixed(2) + 'x';
+  saveSettings();
+}
+
+function setTtsVolume(value) {
+  const n = Math.min(1, Math.max(0, parseFloat(value) || 0));
+  state.ttsVolume = Math.round(n * 100) / 100;
+  // Moving the slider up implies the user wants sound again.
+  if (state.ttsVolume > 0 && state.ttsMuted) state.ttsMuted = false;
+  const label = document.getElementById('tts-volume-label');
+  if (label) label.textContent = Math.round(state.ttsVolume * 100) + '%';
+  const muteBtn = document.getElementById('tts-mute-btn');
+  if (muteBtn) muteBtn.textContent = state.ttsMuted ? '🔇' : '🔊';
+  saveSettings();
+}
+
+function toggleTtsMute() {
+  state.ttsMuted = !state.ttsMuted;
+  const muteBtn = document.getElementById('tts-mute-btn');
+  if (muteBtn) {
+    muteBtn.textContent = state.ttsMuted ? '🔇' : '🔊';
+    muteBtn.title = state.ttsMuted ? (t('ttsUnmute') || 'Bật tiếng') : (t('ttsMute') || 'Tắt tiếng');
+  }
+  if (state.ttsMuted && typeof stopSpeech === 'function') {
+    try { stopSpeech(); } catch (e) {}
+  }
+  saveSettings();
+  if (typeof showToast === 'function') {
+    showToast(state.ttsMuted
+      ? (t('ttsMute') || 'Tắt tiếng')
+      : (t('ttsUnmute') || 'Bật tiếng'));
+  }
 }
 
 function saveSettings() {
@@ -192,6 +244,10 @@ function saveSettings() {
   if (state.ttsSpeed) {
     localStorage.setItem('cr_ttsSpeed', state.ttsSpeed);
   }
+  if (typeof state.ttsVolume === 'number') {
+    localStorage.setItem('cr_ttsVolume', String(state.ttsVolume));
+  }
+  localStorage.setItem('cr_ttsMuted', state.ttsMuted ? '1' : '0');
 }
 
 function handleSettingChange(key, val) {

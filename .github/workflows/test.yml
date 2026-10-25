@@ -34,6 +34,9 @@ jobs:
       - name: Speech pipeline (chunking, engine choice, audio cache)
         run: node test_audio_core.js
 
+      - name: Read-aloud (continuous reading, shadowing, preload)
+        run: node test_read_aloud.js
+
       - name: Legacy suites
         run: |
           node test_dict_search.js

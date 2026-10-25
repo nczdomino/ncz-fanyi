@@ -385,12 +385,27 @@
             <div class="settings-sublabel" data-i18n="sublabelTtsSpeed">Tốc độ đọc mặc định (chọn chậm để luyện 4 thanh điệu)</div>
           </div>
           <div class="settings-control">
-            <select id="tts-speed-select" onchange="state.ttsSpeed=parseFloat(this.value); saveSettings()">
-              <option value="0.75" data-i18n="speedSlow">0.75x (Chậm - Luyện nghe thanh điệu)</option>
-              <option value="0.85">0.85x (Vừa phải)</option>
-              <option value="1" data-i18n="speedNormal">1.0x (Tự nhiên chuẩn)</option>
-              <option value="1.15" data-i18n="speedFast">1.15x (Nhanh)</option>
-            </select>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <input type="range" id="tts-speed-range" min="0.5" max="1.5" step="0.05" value="1"
+                     oninput="setTtsSpeed(this.value)" aria-label="Speech rate" style="width:110px;">
+              <span id="tts-speed-label" style="font-size:12px; font-weight:700; min-width:48px; text-align:right;">1.00x</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-row">
+          <div>
+            <div class="settings-label" data-i18n="ttsVolume">Âm lượng giọng đọc</div>
+            <div class="settings-sublabel" data-i18n="sublabelTtsVolume">Điều chỉnh âm lượng hoặc tắt tiếng hoàn toàn</div>
+          </div>
+          <div class="settings-control">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <input type="range" id="tts-volume-range" min="0" max="1" step="0.05" value="1"
+                     oninput="setTtsVolume(this.value)" aria-label="Volume" style="width:95px;">
+              <span id="tts-volume-label" style="font-size:12px; font-weight:700; min-width:42px; text-align:right;">100%</span>
+              <button class="btn btn-secondary btn-sm" id="tts-mute-btn" onclick="toggleTtsMute()"
+                      data-i18n-title="ttsMute" title="Tắt tiếng" style="min-width:38px;">🔊</button>
+            </div>
           </div>
         </div>
 
@@ -523,6 +538,9 @@
       </button>
       <button class="icon-btn" onclick="speakText(state.activeWord, this, 0.75)" title="Nghe chậm (0.75x) - Luyện thanh điệu" data-i18n-title="playSlow" style="font-size:15px;" aria-label="Phát âm chậm">
         🐢
+      </button>
+      <button class="icon-btn" onclick="speakActiveMeaning()" title="Nghe nghĩa theo ngôn ngữ đang xem" data-i18n-title="ttsSpeakMeaning" aria-label="Nghe nghĩa" style="font-size:14px;">
+        🗣
       </button>
       <button class="icon-btn" onclick="closeWordSheet()" title="Đóng" data-i18n-title="titleClose">✕</button>
     </div>
@@ -767,6 +785,7 @@
   <script src="js/features/karaoke.js"></script>
   <script src="js/features/audio-core.js"></script>
   <script src="js/features/tts.js"></script>
+  <script src="js/features/read-aloud.js"></script>
 
   <!-- 5. Interactive Reader & Phrase Selection -->
   <script src="js/features/phrase-select.js"></script>
