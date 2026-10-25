@@ -471,7 +471,23 @@
         </div>
       </div>
 
+      <!-- Section: Share & Promote App -->
       <div class="settings-section">
+        <div class="settings-row" style="cursor:pointer;" onclick="shareApp()">
+          <div>
+            <div class="settings-label" style="display:flex; align-items:center; gap:6px;">
+              <span>🚀</span> <span data-i18n="shareAppTitle">Chia sẻ ứng dụng Halou (哈喽中文)</span>
+            </div>
+            <div class="settings-sublabel" data-i18n="shareAppDesc">Gửi link giới thiệu cho bạn bè cùng học tiếng Trung qua Zalo, Messenger, Facebook</div>
+          </div>
+          <div class="settings-control">
+            <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); shareApp()" style="border-radius:20px; padding:6px 14px; gap:5px;">
+              <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+              <span data-i18n="share">Chia sẻ</span>
+            </button>
+          </div>
+        </div>
+
         <div class="settings-row" style="cursor:pointer;" onclick="openLegalModal('privacy')">
           <div>
             <div class="settings-label" style="display:flex; align-items:center; gap:6px;">
@@ -494,7 +510,7 @@
         </div>
         <div style="font-size:22px; font-weight:800; color:var(--text-primary); letter-spacing:-0.3px;" data-i18n="appName">Halou</div>
         <div style="font-size:13px; font-weight:500; color:var(--text-secondary); margin-top:4px; max-width:420px; margin-left:auto; margin-right:auto; line-height:1.4;" data-i18n="appSlogan">Tra từ chuẩn xác, dịch mượt ngữ cảnh, gắn Pinyin tức thì.</div>
-        <div id="app-version-badge" style="font-size:12px; font-weight:600; color:var(--accent); margin-top:4px;">Version 1.1.5 Pro</div>
+        <div id="app-version-badge" style="font-size:12px; font-weight:600; color:var(--accent); margin-top:4px;">Version 1.1.6 Pro</div>
 
         <!-- Product Core Highlights -->
         <div style="margin:18px auto 14px; max-width:420px; display:grid; grid-template-columns:1fr; gap:8px; text-align:left;">
