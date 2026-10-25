@@ -1,27 +1,21 @@
 // api/ocr.js - Vercel Serverless Function Proxy for RapidOCR Service
+import { applyCors, rejectDisallowedOrigin, enforceRateLimit, readBody, noStore } from './_lib/http.js';
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,POST');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+  // Restricted CORS: this endpoint previously answered with `*` for every caller.
+  applyCors(req, res, process.env);
+  noStore(res);
 
   if (req.method === 'OPTIONS') {
-    return res.status(200).end();
+    res.status(204).end();
+    return;
   }
 
-  const ocrServiceUrl = process.env.RAPIDOCR_API_URL ? process.env.RAPIDOCR_API_URL.trim() : '';
-  const ocrAuthToken = (process.env.RAPIDOCR_API_KEY || process.env.RAPIDOCR_AUTH_TOKEN || process.env.RAPIDOCR_SECRET_KEY || '').trim();
-
-  if (req.method === 'GET') {
-    return res.status(200).json({
-      status: 'ok',
-      configured: Boolean(ocrServiceUrl),
-      service: 'RapidOCR Proxy',
-    });
+  if (rejectDisallowedOrigin((req.headers && req.headers.origin) || '', req, process.env)) {
+    return res.status(403).json({ error: 'ORIGIN_NOT_ALLOWED' });
   }
 
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method Not Allowed' });
-  }
+  // Cost control: this endpoint calls a paid upstream.
+  if (enforceRateLimit(req, res, 'ocr', 30, 60000)) return;
 
   if (!ocrServiceUrl) {
     return res.status(200).json({
@@ -57,14 +51,14 @@ export default async function handler(req, res) {
     clearTimeout(timer);
 
     if (!backendResp.ok) {
-      const errText = await backendResp.text();
+      // Upstream error bodies can contain internal host names and credential hints.
+      console.error('[ocr] upstream HTTP', backendResp.status);
       return res.status(200).json({
         success: false,
         configured: true,
         fallback: 'client',
         error: `HTTP_${backendResp.status}`,
         message: 'Dịch vụ RapidOCR trả về lỗi',
-        details: errText.slice(0, 500),
       });
     }
 

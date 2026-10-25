@@ -22,6 +22,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application source code
 COPY app.py .
 
+# Run as an unprivileged user: a compromised OCR container should not be root.
+RUN useradd --create-home --uid 10001 ocruser \
+    && chown -R ocruser:ocruser /app
+USER ocruser
+
 EXPOSE 8000
 
 # Run FastAPI with uvicorn

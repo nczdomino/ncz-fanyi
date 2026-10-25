@@ -1,24 +1,25 @@
 // functions/api/translate.js - Cloudflare Pages Function Proxy for Google Gemini AI
-export async function onRequestOptions() {
-  return new Response(null, {
-    status: 204,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
-      'Access-Control-Max-Age': '86400',
-    },
-  });
+import { optionsResponse, jsonCorsHeaders, rejectOrigin, enforceRate, readJson } from '../_lib/http.js';
+export async function onRequestOptions(context) {
+  return optionsResponse(context.request, context.env);
 }
 
 export async function onRequestPost(context) {
   const { request, env } = context;
 
   // Common CORS headers
-  const corsHeaders = {
-    'Content-Type': 'application/json; charset=utf-8',
-    'Access-Control-Allow-Origin': '*',
-  };
+  const corsHeaders = jsonCorsHeaders(request, env);
+
+  if (rejectOrigin(request, env)) {
+    return new Response(JSON.stringify({ error: 'ORIGIN_NOT_ALLOWED' }), {
+      status: 403,
+      headers: corsHeaders,
+    });
+  }
+
+  // Cost control: this endpoint calls a paid upstream.
+  const limited = enforceRate(request, env, 'translate', 30, 60000);
+  if (limited) return limited;
 
   const apiKey = env.GEMINI_API_KEY;
   if (!apiKey) {
@@ -33,7 +34,14 @@ export async function onRequestPost(context) {
   try {
     let body;
     try {
-      body = await request.json();
+      const __parsed = await readJson(request, 131072);
+    if (!__parsed.ok) {
+      return new Response(JSON.stringify({ error: __parsed.reason }), {
+        status: __parsed.reason === 'PAYLOAD_TOO_LARGE' ? 413 : 400,
+        headers: corsHeaders,
+      });
+    }
+    body = __parsed.value;
     } catch (e) {
       return new Response(
         JSON.stringify({ error: 'Invalid JSON request body' }),
@@ -41,7 +49,13 @@ export async function onRequestPost(context) {
       );
     }
 
-    const { text, targetLang = 'vi', type = 'lenses' } = body || {};
+    const { text, targetLang = 'vi', type: rawType = 'lenses' } = body || {};
+    // Never build the prompt from an attacker-controlled "type".
+    const ALLOWED_TYPES = ['lenses', 'full', 'analyze_word'];
+    if (ALLOWED_TYPES.indexOf(rawType) === -1) {
+      return new Response(JSON.stringify({ error: 'INVALID_TYPE' }), { status: 400, headers: corsHeaders });
+    }
+    const type = rawType;
     if (!text || typeof text !== 'string') {
       return new Response(
         JSON.stringify({ error: 'Missing or invalid "text" parameter' }),
@@ -56,7 +70,7 @@ export async function onRequestPost(context) {
       );
     }
 
-    const lang = targetLang || 'vi';
+    const lang = (targetLang === 'ja' || targetLang === 'en') ? targetLang : 'vi';
     const isJa = lang === 'ja';
     const isEn = lang === 'en';
     const langName = isJa ? '日本語' : (isEn ? 'English' : 'Tiếng Việt');
@@ -274,12 +288,13 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG một chuỗi JSON hợp lệ với c
     }
 
     if (!response || !response.ok) {
+      console.error('[translate] upstream failure', lastStatus, String(errDetails).slice(0, 300));
       return new Response(
         JSON.stringify({
-          error: 'AI API responded with error',
-          details: errDetails,
+          error: 'AI_API_ERROR',
+          message: 'Dịch vụ AI tạm thời không phản hồi. Vui lòng thử lại sau.',
         }),
-        { status: lastStatus || 500, headers: corsHeaders }
+        { status: lastStatus === 429 ? 429 : 502, headers: corsHeaders }
       );
     }
 

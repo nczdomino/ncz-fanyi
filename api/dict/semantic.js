@@ -1,21 +1,21 @@
 // api/dict/semantic.js - Vercel Serverless Function Proxy for AI Semantic Reverse Dictionary Search
+import { applyCors, rejectDisallowedOrigin, enforceRateLimit, readBody, noStore } from '../_lib/http.js';
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
-  );
+  // Restricted CORS: this endpoint previously answered with `*` for every caller.
+  applyCors(req, res, process.env);
+  noStore(res);
 
   if (req.method === 'OPTIONS') {
-    res.status(200).end();
+    res.status(204).end();
     return;
   }
 
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method Not Allowed. Use POST.' });
+  if (rejectDisallowedOrigin((req.headers && req.headers.origin) || '', req, process.env)) {
+    return res.status(403).json({ error: 'ORIGIN_NOT_ALLOWED' });
   }
+
+  // Cost control: this endpoint calls a paid upstream.
+  if (enforceRateLimit(req, res, 'semantic', 20, 60000)) return;
 
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
@@ -25,13 +25,19 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { query, targetLang = 'vi' } = req.body || {};
+    const parsedBody = readBody(req, 32 * 1024);
+    if (!parsedBody.ok) {
+      return res.status(parsedBody.reason === 'PAYLOAD_TOO_LARGE' ? 413 : 400)
+        .json({ error: parsedBody.reason });
+    }
+
+    const { query, targetLang = 'vi' } = parsedBody.value || {};
     if (!query || typeof query !== 'string' || !query.trim()) {
       return res.status(400).json({ error: 'Missing or invalid "query" parameter' });
     }
 
     const cleanQuery = query.trim().slice(0, 300);
-    const lang = targetLang || 'vi';
+    const lang = (targetLang === 'ja' || targetLang === 'en') ? targetLang : 'vi';
     const isJa = lang === 'ja';
     const isEn = lang === 'en';
 
@@ -127,9 +133,10 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG định dạng JSON hợp lệ theo s
     }
 
     if (!response || !response.ok) {
-      return res.status(lastStatus || 500).json({
-        error: 'AI API responded with error',
-        details: errDetails,
+      console.error('[semantic] upstream failure', lastStatus, String(errDetails).slice(0, 300));
+      return res.status(lastStatus === 429 ? 429 : 502).json({
+        error: 'AI_API_ERROR',
+        message: 'Dịch vụ AI tạm thời không phản hồi. Vui lòng thử lại sau.',
       });
     }
 
@@ -151,7 +158,8 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG định dạng JSON hợp lệ theo s
       });
     }
   } catch (error) {
-    return res.status(500).json({ error: error.message || 'Internal Server Error' });
+    console.error('[semantic] internal error', error && error.message);
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 }
 

@@ -1,16 +1,21 @@
 // api/ocr/repair.js - Vercel Serverless Function: Gemini OCR Text Repair
+import { applyCors, rejectDisallowedOrigin, enforceRateLimit, readBody, noStore } from '../_lib/http.js';
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,POST');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+  // Restricted CORS: this endpoint previously answered with `*` for every caller.
+  applyCors(req, res, process.env);
+  noStore(res);
 
   if (req.method === 'OPTIONS') {
-    return res.status(200).end();
+    res.status(204).end();
+    return;
   }
 
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method Not Allowed' });
+  if (rejectDisallowedOrigin((req.headers && req.headers.origin) || '', req, process.env)) {
+    return res.status(403).json({ error: 'ORIGIN_NOT_ALLOWED' });
   }
+
+  // Cost control: this endpoint calls a paid upstream.
+  if (enforceRateLimit(req, res, 'ocr-repair', 20, 60000)) return;
 
   const apiKey = (process.env.GEMINI_API_KEY || '').trim();
   if (!apiKey) {
@@ -21,7 +26,13 @@ export default async function handler(req, res) {
     });
   }
 
-  const { text, segments, context: surroundingContext } = req.body || {};
+  const parsedBody = readBody(req, 64 * 1024);
+  if (!parsedBody.ok) {
+    return res.status(parsedBody.reason === 'PAYLOAD_TOO_LARGE' ? 413 : 400)
+      .json({ success: false, error: parsedBody.reason });
+  }
+
+  const { text, segments, context: surroundingContext } = parsedBody.value || {};
   const textToFix = (typeof text === 'string' && text.trim())
     ? text.trim()
     : (Array.isArray(segments) ? segments.map(s => typeof s === 'string' ? s : (s.text || '')).join('\n') : '');
@@ -103,11 +114,11 @@ Quy tắc:
   }
 
   if (!geminiResp || !geminiResp.ok) {
-    return res.status(lastStatus || 500).json({
+    console.error('[ocr-repair] upstream failure', lastStatus, String(lastErr).slice(0, 300));
+    return res.status(lastStatus === 429 ? 429 : 502).json({
       success: false,
       error: 'GEMINI_CALL_FAILED',
-      message: 'Google Gemini API trả về lỗi',
-      details: lastErr.slice(0, 500),
+      message: 'Dịch vụ AI tạm thời không phản hồi. Vui lòng thử lại sau.',
     });
   }
 

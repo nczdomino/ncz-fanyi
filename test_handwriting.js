@@ -206,7 +206,17 @@ for (const k of hwKeys) {
 // 7. Test Security & Backend Proxy Structure
 console.log('\n7. Verifying Backend Proxy and Security Standards...');
 const cfProxyCode = fs.readFileSync('functions/api/handwriting.js', 'utf8');
-assert(cfProxyCode.includes('Access-Control-Allow-Origin'), 'CORS headers implemented');
+// CORS is now emitted by the shared helper instead of a hard-coded `*` header, so the
+// check verifies both the wiring and the helper that actually sets the header.
+const cfHttpLib = fs.readFileSync('functions/_lib/http.js', 'utf8');
+assert(
+  cfProxyCode.includes('jsonCorsHeaders') && cfHttpLib.includes('Access-Control-Allow-Origin'),
+  'CORS headers implemented'
+);
+assert(
+  !cfProxyCode.includes("'Access-Control-Allow-Origin': '*'"),
+  'CORS must not be a hard-coded wildcard'
+);
 assert(cfProxyCode.includes('https://inputtools.google.com/request'), 'Targets Google Input Tools API endpoint');
 assert(cfProxyCode.includes('data[1][0][1]'), 'Extracts candidate array from Google response data[1][0][1]');
 assert(cfProxyCode.includes('unofficial') || cfProxyCode.includes('không chính thức'), 'Contains disclaimer documentation regarding unofficial Google API');

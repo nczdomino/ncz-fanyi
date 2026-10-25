@@ -1,45 +1,33 @@
 // functions/api/ocr.js - Cloudflare Pages Function Proxy for RapidOCR Service
-export async function onRequestOptions() {
-  return new Response(null, {
-    status: 204,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
-      'Access-Control-Max-Age': '86400',
-    },
-  });
+import { optionsResponse, jsonCorsHeaders, rejectOrigin, enforceRate, readJson } from '../_lib/http.js';
+export async function onRequestOptions(context) {
+  return optionsResponse(context.request, context.env);
 }
 
 export async function onRequestGet(context) {
-  const { env } = context;
-  const isConfigured = Boolean(env && env.RAPIDOCR_API_URL);
+  // No configuration probe: an anonymous caller should not learn whether the
+  // upstream OCR service is wired up.
   return new Response(
-    JSON.stringify({
-      status: 'ok',
-      service: 'RapidOCR Proxy',
-      configured: isConfigured,
-      hint: isConfigured
-        ? 'RapidOCR URL is configured.'
-        : 'Set RAPIDOCR_API_URL in Cloudflare Pages Environment Variables to enable server-side RapidOCR.',
-    }),
-    {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-        'Access-Control-Allow-Origin': '*',
-      },
-    }
+    JSON.stringify({ status: 'ok', service: 'RapidOCR Proxy' }),
+    { status: 200, headers: jsonCorsHeaders(context.request, context.env) }
   );
 }
 
 export async function onRequestPost(context) {
   const { request, env } = context;
 
-  const corsHeaders = {
-    'Content-Type': 'application/json; charset=utf-8',
-    'Access-Control-Allow-Origin': '*',
-  };
+  const corsHeaders = jsonCorsHeaders(request, env);
+
+  if (rejectOrigin(request, env)) {
+    return new Response(JSON.stringify({ error: 'ORIGIN_NOT_ALLOWED' }), {
+      status: 403,
+      headers: corsHeaders,
+    });
+  }
+
+  // Cost control: this endpoint calls a paid upstream.
+  const limited = enforceRate(request, env, 'ocr', 30, 60000);
+  if (limited) return limited;
 
   const ocrServiceUrl = (env && env.RAPIDOCR_API_URL) ? env.RAPIDOCR_API_URL.trim() : '';
   const ocrAuthToken = (env && (env.RAPIDOCR_API_KEY || env.RAPIDOCR_AUTH_TOKEN || env.RAPIDOCR_SECRET_KEY)) ? (env.RAPIDOCR_API_KEY || env.RAPIDOCR_AUTH_TOKEN || env.RAPIDOCR_SECRET_KEY).trim() : '';
@@ -76,7 +64,14 @@ export async function onRequestPost(context) {
     };
 
     if (contentType.includes('application/json')) {
-      const body = await request.json();
+      const parsed = await readJson(request, 8388608); // 8 MB base64 ceiling
+      if (!parsed.ok) {
+        return new Response(JSON.stringify({ error: parsed.reason }), {
+          status: parsed.reason === 'PAYLOAD_TOO_LARGE' ? 413 : 400,
+          headers: corsHeaders,
+        });
+      }
+      const body = parsed.value;
       if (!body || !body.image) {
         return new Response(
           JSON.stringify({ success: false, error: 'Thiếu dữ liệu ảnh (image base64)' }),
@@ -146,7 +141,6 @@ export async function onRequestPost(context) {
           fallback: 'client',
           error: `HTTP_${response.status}`,
           message: `Dịch vụ RapidOCR trả về mã lỗi HTTP ${response.status}`,
-          details: errText.slice(0, 500),
         }),
         { status: 200, headers: corsHeaders }
       );

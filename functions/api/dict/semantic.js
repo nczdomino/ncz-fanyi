@@ -1,23 +1,24 @@
 // functions/api/dict/semantic.js - Cloudflare Pages Function Proxy for AI Semantic Reverse Dictionary Search
-export async function onRequestOptions() {
-  return new Response(null, {
-    status: 204,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
-      'Access-Control-Max-Age': '86400',
-    },
-  });
+import { optionsResponse, jsonCorsHeaders, rejectOrigin, enforceRate, readJson } from '../../_lib/http.js';
+export async function onRequestOptions(context) {
+  return optionsResponse(context.request, context.env);
 }
 
 export async function onRequestPost(context) {
   const { request, env } = context;
 
-  const corsHeaders = {
-    'Content-Type': 'application/json; charset=utf-8',
-    'Access-Control-Allow-Origin': '*',
-  };
+  const corsHeaders = jsonCorsHeaders(request, env);
+
+  if (rejectOrigin(request, env)) {
+    return new Response(JSON.stringify({ error: 'ORIGIN_NOT_ALLOWED' }), {
+      status: 403,
+      headers: corsHeaders,
+    });
+  }
+
+  // Cost control: this endpoint calls a paid upstream.
+  const limited = enforceRate(request, env, 'semantic', 20, 60000);
+  if (limited) return limited;
 
   const apiKey = env.GEMINI_API_KEY;
   if (!apiKey) {
@@ -32,7 +33,14 @@ export async function onRequestPost(context) {
   try {
     let body;
     try {
-      body = await request.json();
+      const __parsed = await readJson(request, 32768);
+    if (!__parsed.ok) {
+      return new Response(JSON.stringify({ error: __parsed.reason }), {
+        status: __parsed.reason === 'PAYLOAD_TOO_LARGE' ? 413 : 400,
+        headers: corsHeaders,
+      });
+    }
+    body = __parsed.value;
     } catch (e) {
       return new Response(
         JSON.stringify({ error: 'Invalid JSON request body' }),
@@ -145,12 +153,13 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG định dạng JSON hợp lệ theo s
     }
 
     if (!response || !response.ok) {
+      console.error('[semantic] upstream failure', lastStatus, String(errDetails).slice(0, 300));
       return new Response(
         JSON.stringify({
-          error: 'AI API responded with error',
-          details: errDetails,
+          error: 'AI_API_ERROR',
+          message: 'Dịch vụ AI tạm thời không phản hồi. Vui lòng thử lại sau.',
         }),
-        { status: lastStatus || 500, headers: corsHeaders }
+        { status: lastStatus === 429 ? 429 : 502, headers: corsHeaders }
       );
     }
 

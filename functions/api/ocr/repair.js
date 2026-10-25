@@ -1,23 +1,24 @@
 // functions/api/ocr/repair.js - Cloudflare Pages Function: Gemini OCR Text Repair
-export async function onRequestOptions() {
-  return new Response(null, {
-    status: 204,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
-      'Access-Control-Max-Age': '86400',
-    },
-  });
+import { optionsResponse, jsonCorsHeaders, rejectOrigin, enforceRate, readJson } from '../../_lib/http.js';
+export async function onRequestOptions(context) {
+  return optionsResponse(context.request, context.env);
 }
 
 export async function onRequestPost(context) {
   const { request, env } = context;
 
-  const corsHeaders = {
-    'Content-Type': 'application/json; charset=utf-8',
-    'Access-Control-Allow-Origin': '*',
-  };
+  const corsHeaders = jsonCorsHeaders(request, env);
+
+  if (rejectOrigin(request, env)) {
+    return new Response(JSON.stringify({ error: 'ORIGIN_NOT_ALLOWED' }), {
+      status: 403,
+      headers: corsHeaders,
+    });
+  }
+
+  // Cost control: this endpoint calls a paid upstream.
+  const limited = enforceRate(request, env, 'ocr-repair', 20, 60000);
+  if (limited) return limited;
 
   const apiKey = (env && env.GEMINI_API_KEY) ? env.GEMINI_API_KEY.trim() : '';
   if (!apiKey) {
@@ -33,7 +34,14 @@ export async function onRequestPost(context) {
 
   let body;
   try {
-    body = await request.json();
+    const __parsed = await readJson(request, 65536);
+    if (!__parsed.ok) {
+      return new Response(JSON.stringify({ error: __parsed.reason }), {
+        status: __parsed.reason === 'PAYLOAD_TOO_LARGE' ? 413 : 400,
+        headers: corsHeaders,
+      });
+    }
+    body = __parsed.value;
   } catch (e) {
     return new Response(
       JSON.stringify({ success: false, error: 'INVALID_JSON', message: 'Dữ liệu yêu cầu không hợp lệ' }),
@@ -130,14 +138,14 @@ Quy tắc:
   }
 
   if (!geminiResp || !geminiResp.ok) {
+    console.error('[ocr-repair] upstream failure', lastStatus, String(lastErr).slice(0, 300));
     return new Response(
       JSON.stringify({
         success: false,
         error: 'GEMINI_CALL_FAILED',
-        message: 'Google Gemini API trả về lỗi khi sửa văn bản OCR',
-        details: lastErr.slice(0, 500),
+        message: 'Dịch vụ AI tạm thời không phản hồi. Vui lòng thử lại sau.',
       }),
-      { status: lastStatus || 500, headers: corsHeaders }
+      { status: lastStatus === 429 ? 429 : 502, headers: corsHeaders }
     );
   }
 

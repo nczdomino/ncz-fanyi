@@ -3,30 +3,38 @@
 // Đây là endpoint proxy gọi API không chính thức (unofficial) của Google Input Tools.
 // Google có thể thay đổi định dạng, áp dụng rate-limit hoặc chặn endpoint này bất cứ lúc nào.
 // Engine trên client PHẢI dùng FallbackEngine để tự động quay về HanziLookup offline nếu proxy thất bại.
+import { optionsResponse, jsonCorsHeaders, rejectOrigin, enforceRate, readJson } from '../_lib/http.js';
 
-export async function onRequestOptions() {
-  return new Response(null, {
-    status: 204,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
-      'Access-Control-Max-Age': '86400',
-    },
-  });
+export async function onRequestOptions(context) {
+  return optionsResponse(context.request, context.env);
 }
 
 export async function onRequestPost(context) {
-  const { request } = context;
+  const { request, env } = context;
 
-  const corsHeaders = {
-    'Content-Type': 'application/json; charset=utf-8',
-    'Access-Control-Allow-Origin': '*',
-  };
+  const corsHeaders = jsonCorsHeaders(request, env);
+
+  if (rejectOrigin(request, env)) {
+    return new Response(JSON.stringify({ error: 'ORIGIN_NOT_ALLOWED' }), {
+      status: 403,
+      headers: corsHeaders,
+    });
+  }
+
+  // Cost control: this endpoint calls a paid upstream.
+  const limited = enforceRate(request, env, 'handwriting', 60, 60000);
+  if (limited) return limited;
 
   let body;
   try {
-    body = await request.json();
+    const __parsed = await readJson(request, 262144);
+    if (!__parsed.ok) {
+      return new Response(JSON.stringify({ error: __parsed.reason }), {
+        status: __parsed.reason === 'PAYLOAD_TOO_LARGE' ? 413 : 400,
+        headers: corsHeaders,
+      });
+    }
+    body = __parsed.value;
   } catch (err) {
     return new Response(
       JSON.stringify({ success: false, error: 'INVALID_JSON', message: 'Payload JSON không hợp lệ' }),
@@ -42,17 +50,36 @@ export async function onRequestPost(context) {
     );
   }
 
+  // Caps stop a single caller from turning this proxy into an amplification vector.
+  const MAX_REQUESTS = 8;
+  const MAX_STROKES = 64;
+  const MAX_POINTS_PER_STROKE = 600;
+  if (requests.length > MAX_REQUESTS) {
+    return new Response(
+      JSON.stringify({ success: false, error: 'TOO_MANY_REQUESTS_IN_PAYLOAD' }),
+      { status: 400, headers: corsHeaders }
+    );
+  }
+
   // Chuẩn bị payload theo đúng format của Google Input Tools
   const googlePayload = {
-    options: options || 'enable_pre_space',
+    options: options === 'enable_pre_space' ? options : 'enable_pre_space',
     requests: requests.map(req => ({
-      writing_guide: req.writing_guide || {
-        writing_area_width: 300,
-        writing_area_height: 300,
-      },
-      ink: req.ink || [],
-      language: req.language === 'zh_TW' ? 'zh_TW' : 'zh_CN',
-      max_num_results: Math.min(20, Math.max(1, req.max_num_results || 10)),
+      writing_guide: req && req.writing_guide
+        ? {
+            writing_area_width: Math.min(2048, Math.max(1, Number(req.writing_guide.writing_area_width) || 300)),
+            writing_area_height: Math.min(2048, Math.max(1, Number(req.writing_guide.writing_area_height) || 300)),
+          }
+        : { writing_area_width: 300, writing_area_height: 300 },
+      ink: (Array.isArray(req && req.ink) ? req.ink : []).slice(0, MAX_STROKES).map(stroke =>
+        Array.isArray(stroke)
+          ? stroke.slice(0, MAX_POINTS_PER_STROKE)
+              .filter(pt => Array.isArray(pt) && pt.length >= 2)
+              .map(pt => [Number(pt[0]) || 0, Number(pt[1]) || 0])
+          : []
+      ),
+      language: (req && req.language) === 'zh_TW' ? 'zh_TW' : 'zh_CN',
+      max_num_results: Math.min(20, Math.max(1, Number(req && req.max_num_results) || 10)),
     })),
   };
 

@@ -11,6 +11,13 @@ from pydantic import BaseModel
 from PIL import Image
 import numpy as np
 
+# Hard limits: a hostile upload must not be able to exhaust the container.
+# Pillow's decompression-bomb guard is raised only as far as we actually need.
+Image.MAX_IMAGE_PIXELS = 40_000_000          # ~40 MP
+MAX_UPLOAD_BYTES = 12 * 1024 * 1024          # 12 MB
+MAX_PIXELS = 40_000_000
+ALLOWED_FORMATS = {"PNG", "JPEG", "JPG", "WEBP", "BMP", "GIF", "TIFF"}
+
 # RapidOCR engine loader (supports both rapidocr and rapidocr_onnxruntime)
 try:
     from rapidocr import RapidOCR
@@ -26,17 +33,29 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Enable CORS for Cloudflare Pages and cross-origin calls
+# CORS: `allow_origins=["*"]` together with `allow_credentials=True` is an invalid,
+# security-relevant combination (browsers reject it and it signals a misconfiguration).
+# Set OCR_ALLOWED_ORIGINS="https://site-a.example,https://site-b.example" to restrict.
+_raw_origins = os.environ.get("OCR_ALLOWED_ORIGINS", "").strip()
+_allowed_origins = [o.strip() for o in _raw_origins.split(",") if o.strip()] or ["*"]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=_allowed_origins,
+    allow_credentials=False,
+    allow_methods=["POST", "GET", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization", "X-API-Key"],
 )
 
-# Optional security token via environment variable
+# Optional security token via environment variable.
+# Set OCR_REQUIRE_TOKEN=1 in production so the service refuses to start without one
+# instead of silently serving unauthenticated requests.
 SECRET_TOKEN = os.environ.get("RAPIDOCR_SECRET_KEY", "").strip()
+REQUIRE_TOKEN = os.environ.get("OCR_REQUIRE_TOKEN", "").strip() in ("1", "true", "yes")
+if REQUIRE_TOKEN and not SECRET_TOKEN:
+    raise RuntimeError(
+        "OCR_REQUIRE_TOKEN is set but RAPIDOCR_SECRET_KEY is empty: refusing to start "
+        "an unauthenticated public OCR service."
+    )
 
 # Lazy-loaded singleton OCR engine
 _ocr_engine = None
@@ -59,7 +78,8 @@ def verify_token(authorization: Optional[str] = Header(None), x_api_key: Optiona
     elif x_api_key:
         token = x_api_key.strip()
     
-    if token != SECRET_TOKEN:
+    import secrets as _secrets
+    if not _secrets.compare_digest(token, SECRET_TOKEN):
         raise HTTPException(status_code=401, detail="Unauthorized: Invalid OCR Secret Key")
     return True
 
@@ -133,26 +153,41 @@ async def run_ocr(
     img_bytes = None
 
     if file:
-        img_bytes = await file.read()
+        img_bytes = await file.read(MAX_UPLOAD_BYTES + 1)
     elif json_body and json_body.image:
         b64_str = json_body.image
         if "," in b64_str:
             b64_str = b64_str.split(",", 1)[1]
+        # base64 is ~4/3 of the raw size; reject before decoding.
+        if len(b64_str) > MAX_UPLOAD_BYTES * 2:
+            raise HTTPException(status_code=413, detail="Image payload too large")
         try:
-            img_bytes = base64.b64decode(b64_str)
-        except Exception as e:
-            raise HTTPException(status_code=400, detail=f"Invalid base64 image data: {str(e)}")
-    
+            img_bytes = base64.b64decode(b64_str, validate=False)
+        except Exception:
+            # Do not echo decoder internals back to the caller.
+            raise HTTPException(status_code=400, detail="Invalid base64 image data")
+
     if not img_bytes:
         raise HTTPException(status_code=400, detail="No image provided. Send multipart 'file' or JSON 'image' base64.")
+
+    if len(img_bytes) > MAX_UPLOAD_BYTES:
+        raise HTTPException(status_code=413, detail="Image payload too large")
 
     # Image validation and safety check
     try:
         pil_img = Image.open(io.BytesIO(img_bytes))
+        if pil_img.format not in ALLOWED_FORMATS:
+            raise HTTPException(status_code=415, detail="Unsupported image format")
+        width, height = pil_img.size
+        if width * height > MAX_PIXELS:
+            raise HTTPException(status_code=413, detail="Image resolution too large")
         pil_img.verify()
-        pil_img = Image.open(io.BytesIO(img_bytes)) # Reopen after verify
-    except Exception as img_err:
-        raise HTTPException(status_code=400, detail=f"Cannot decode image file: {str(img_err)}")
+        pil_img = Image.open(io.BytesIO(img_bytes))  # Reopen after verify
+    except HTTPException:
+        raise
+    except Exception:
+        # Never leak decoder internals (file paths, library versions) to the caller.
+        raise HTTPException(status_code=400, detail="Cannot decode image file")
 
     # Execute RapidOCR inference
     try:
@@ -161,7 +196,8 @@ async def run_ocr(
         rgb_img = np.array(pil_img.convert("RGB"))
         ocr_out = engine(rgb_img)
     except Exception as infer_err:
-        raise HTTPException(status_code=500, detail=f"RapidOCR inference error: {str(infer_err)}")
+        print(f"[ocr] inference error: {type(infer_err).__name__}: {infer_err}")
+        raise HTTPException(status_code=500, detail="RapidOCR inference error")
 
     parsed_lines = parse_rapidocr_result(ocr_out)
     total_time_ms = round((time.time() - start_time) * 1000, 2)

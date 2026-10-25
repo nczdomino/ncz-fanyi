@@ -1,22 +1,31 @@
 // api/translate.js - Vercel Serverless Function Proxy for Google Gemini AI
+import { applyCors, rejectDisallowedOrigin, enforceRateLimit, readBody, noStore, clampString } from './_lib/http.js';
+
+// Cost control: this endpoint spends Gemini quota, so it is rate limited per client IP.
+const RATE_LIMIT = 30;          // requests
+const RATE_WINDOW_MS = 60_000;  // per minute
+const MAX_TEXT_LENGTH = 25_000;
+const ALLOWED_TYPES = new Set(['lenses', 'full', 'analyze_word']);
+
 export default async function handler(req, res) {
-  // Setup CORS
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
-  );
+  // Restricted CORS (allows '*' plus Allow-Credentials was an invalid, exploitable pair).
+  applyCors(req, res, process.env);
+  noStore(res);
 
   if (req.method === 'OPTIONS') {
-    res.status(200).end();
+    res.status(204).end();
     return;
   }
 
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed. Use POST.' });
   }
+
+  if (rejectDisallowedOrigin((req.headers && req.headers.origin) || '', req, process.env)) {
+    return res.status(403).json({ error: 'ORIGIN_NOT_ALLOWED' });
+  }
+
+  if (enforceRateLimit(req, res, 'translate', RATE_LIMIT, RATE_WINDOW_MS)) return;
 
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
@@ -26,16 +35,30 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { text, targetLang = 'vi', type = 'lenses' } = req.body || {};
-    if (!text || typeof text !== 'string') {
+    const parsedBody = readBody(req);
+    if (!parsedBody.ok) {
+      return res.status(parsedBody.reason === 'PAYLOAD_TOO_LARGE' ? 413 : 400)
+        .json({ error: parsedBody.reason });
+    }
+
+    const body = parsedBody.value || {};
+    const { text: rawText, targetLang = 'vi', type: rawType = 'lenses' } = body;
+
+    if (!rawText || typeof rawText !== 'string') {
       return res.status(400).json({ error: 'Missing or invalid "text" parameter' });
     }
 
-    if (text.length > 25000) {
+    const text = rawText;
+    if (text.length > MAX_TEXT_LENGTH) {
       return res.status(400).json({ error: 'Văn bản vượt quá giới hạn tối đa 25,000 ký tự.' });
     }
 
-    const lang = targetLang || 'vi';
+    // Never build the prompt from an attacker-controlled "type".
+    if (!ALLOWED_TYPES.has(rawType)) {
+      return res.status(400).json({ error: 'INVALID_TYPE' });
+    }
+    const type = rawType;
+    const lang = (targetLang === 'ja' || targetLang === 'en') ? targetLang : 'vi';
     const isJa = lang === 'ja';
     const isEn = lang === 'en';
     const langName = isJa ? '日本語' : (isEn ? 'English' : 'Tiếng Việt');
@@ -253,9 +276,10 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG một chuỗi JSON hợp lệ với c
     }
 
     if (!response || !response.ok) {
-      return res.status(lastStatus || 500).json({
-        error: 'AI API responded with error',
-        details: errDetails
+      console.error('[translate] upstream failure', lastStatus, String(errDetails).slice(0, 300));
+      return res.status(lastStatus === 429 ? 429 : 502).json({
+        error: 'AI_API_ERROR',
+        message: 'Dịch vụ AI tạm thời không phản hồi. Vui lòng thử lại sau.'
       });
     }
 
@@ -295,7 +319,8 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG một chuỗi JSON hợp lệ với c
       });
     }
   } catch (error) {
-    return res.status(500).json({ error: error.message || 'Internal Server Error' });
+    console.error('[translate] internal error', error && error.message);
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 }
 
