@@ -393,7 +393,7 @@ function renderLegalContent() {
         </div>
         <div class="legal-card-desc">
           開発者・著作者: <strong>NIE THANH TRUNG（聂诚忠）</strong><br>
-          著作権表示: <strong>© 2026 NIE THANH TRUNG (NCZ Fanyi). All rights reserved.</strong>
+          著作権表示: <strong>© 2026 NIE THANH TRUNG (哈喽 中文 / HALOU ZHONGWEN). All rights reserved.</strong>
         </div>
       </div>
 
@@ -402,7 +402,7 @@ function renderLegalContent() {
           <span>🎓</span> 利用目的と許諾範囲
         </div>
         <div class="legal-card-desc">
-          <strong>NCZ Fanyi</strong> は、世界中の中国語学習者、語学研究者、教育コミュニティを支援するために無償提供されています。非営利の学習・学術・教育目的で自由にご活用いただけます。
+          <strong>哈喽 中文 (HALOU ZHONGWEN)</strong> は、世界中の中国語学習者、語学研究者、教育コミュニティを支援するために無償提供されています。非営利の学習・学術・教育目的で自由にご活用いただけます。
         </div>
       </div>
 
@@ -528,7 +528,7 @@ function renderLegalContent() {
         </div>
         <div class="legal-card-desc">
           Author & Lead Developer: <strong>NIE THANH TRUNG (聂诚忠)</strong><br>
-          Copyright Notice: <strong>© 2026 NIE THANH TRUNG (NCZ Fanyi). All rights reserved.</strong>
+          Copyright Notice: <strong>© 2026 NIE THANH TRUNG (HALOU ZHONGWEN / 哈喽 中文). All rights reserved.</strong>
         </div>
       </div>
 
@@ -537,7 +537,7 @@ function renderLegalContent() {
           <span>🎓</span> Permitted Educational Use
         </div>
         <div class="legal-card-desc">
-          <strong>NCZ Fanyi</strong> is provided free of charge for educational, linguistic research, and personal Chinese language study purposes worldwide.
+          <strong>HALOU ZHONGWEN (哈喽 中文)</strong> is provided free of charge for educational, linguistic research, and personal Chinese language study purposes worldwide.
         </div>
       </div>
 
@@ -664,7 +664,7 @@ function renderLegalContent() {
         </div>
         <div class="legal-card-desc">
           Tác giả & Nhà phát triển: <strong>NIE THANH TRUNG (聂诚忠)</strong><br>
-          Bản quyền ứng dụng: <strong>© 2026 NIE THANH TRUNG (NCZ Fanyi). All rights reserved.</strong>
+          Bản quyền ứng dụng: <strong>© 2026 NIE THANH TRUNG (哈喽 中文 / HALOU ZHONGWEN). All rights reserved.</strong>
         </div>
       </div>
 
@@ -673,7 +673,7 @@ function renderLegalContent() {
           <span>🎓</span> Mục đích sử dụng hợp pháp
         </div>
         <div class="legal-card-desc">
-          Ứng dụng <strong>NCZ Fanyi</strong> được phát triển và cung cấp hoàn toàn miễn phí phục vụ mục đích <strong>học tập, nghiên cứu ngôn ngữ, giáo dục phi thương mại và hỗ trợ cộng đồng</strong> người học tiếng Trung, tiếng Việt, tiếng Anh và tiếng Nhật trên toàn cầu.
+          Ứng dụng <strong>哈喽 中文 (HALOU ZHONGWEN)</strong> được phát triển và cung cấp hoàn toàn miễn phí phục vụ mục đích <strong>học tập, nghiên cứu ngôn ngữ, giáo dục phi thương mại và hỗ trợ cộng đồng</strong> người học tiếng Trung, tiếng Việt, tiếng Anh và tiếng Nhật trên toàn cầu.
         </div>
       </div>
 

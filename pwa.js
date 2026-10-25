@@ -8,8 +8,8 @@
     const startUrl = origin ? (origin + pathname) : '.';
 
     const manifest = {
-      name: "NCZ 翻译 · Trợ Thủ Đọc & Học Tiếng Trung AI",
-      short_name: "NCZ 翻译",
+      name: "哈喽 中文 (HALOU ZHONGWEN) · Trợ Thủ Đọc & Học Tiếng Trung AI",
+      short_name: "哈喽 中文",
       description: "Ứng dụng tra cứu từ điển HSK 1-6 tức thì, phát âm giọng chuẩn bản xứ AI, nhận diện tài liệu ảnh OCR và dịch tiếng Trung của tác giả 聂诚忠 (Nie Thanh Trung)",
       author: "聂诚忠 (Nie Thanh Trung)",
       start_url: startUrl,

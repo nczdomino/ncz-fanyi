@@ -1,8 +1,8 @@
 {
-  "name": "ncz-fanyi",
-  "version": "1.1.0",
+  "name": "halouzhongwen",
+  "version": "1.1.1",
   "private": true,
-  "description": "Offline-first Chinese dictionary & translation PWA for Vietnamese, Japanese and English learners",
+  "description": "哈喽 中文 (HALOU ZHONGWEN) - Offline-first Chinese dictionary & reading PWA for Vietnamese, Japanese and English learners",
   "scripts": {
     "test": "node test_dict_scoring.js && node test_dict_render.js && node test_i18n_langs.js && node test_examples_logic.js && node test_audio_core.js && node test_read_aloud.js && node test_ext_dict.js && node test_api_security.mjs && node test_sw.js && node test_dict_search.js && node test_hsk789_and_live_dict.js && node test_ocr.js && node test_handwriting.js",
     "test:dict": "node test_dict_scoring.js && node test_dict_render.js",
@@ -13,7 +13,12 @@
     "build:cedict": "node tools/build-cedict.js",
     "test:audio": "node test_audio_core.js && node test_read_aloud.js",
     "test:examples": "node test_examples_logic.js",
-    "test:i18n": "node test_i18n_langs.js"
+    "test:i18n": "node test_i18n_langs.js",
+    "bump": "node tools/bump-version.js patch",
+    "bump:minor": "node tools/bump-version.js minor",
+    "bump:major": "node tools/bump-version.js major",
+    "update": "npm test && node tools/bump-version.js patch --push",
+    "update:minor": "npm test && node tools/bump-version.js minor --push"
   },
   "license": "MIT"
 }
