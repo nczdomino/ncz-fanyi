@@ -185,6 +185,52 @@ try {
 }
 vm.runInContext('state.selectedRadical = null; state.showHskBrowser = false; state.dictFilterHSK = "all";', ctx);
 
+// The extended dictionary (~2.8 MB) must only be fetched when it could possibly help:
+// CC-CEDICT has Chinese headwords with English glosses, so kana and accented-Vietnamese
+// queries must never trigger the download.
+let extCalls = 0;
+ctx.ensureExtDict = function () {
+  extCalls += 1;
+  return Promise.resolve(false);
+};
+
+function resetExtState() {
+  vm.runInContext('state._extDictRequested = false; EXT_DICT.loaded = false; EXT_DICT.loading = null;', ctx);
+}
+
+resetExtState();
+extCalls = 0;
+render('ひらがなのたんご');
+console.log(extCalls === 0
+  ? '  ✅ kana queries do not trigger the extended-dictionary download'
+  : `  ❌ kana query triggered ${extCalls} download(s)`);
+if (extCalls !== 0) failures++;
+
+resetExtState();
+extCalls = 0;
+render('bánh xèo');
+console.log(extCalls === 0
+  ? '  ✅ accented Vietnamese queries do not trigger the download'
+  : `  ❌ Vietnamese query triggered ${extCalls} download(s)`);
+if (extCalls !== 0) failures++;
+
+resetExtState();
+extCalls = 0;
+render('zzzqx');
+console.log(extCalls === 1
+  ? '  ✅ a plain-ASCII miss does trigger the download once'
+  : `  ❌ expected 1 download for an ASCII miss, got ${extCalls}`);
+if (extCalls !== 1) failures++;
+
+resetExtState();
+extCalls = 0;
+render('龘');
+console.log(extCalls === 1
+  ? '  ✅ a Hanzi miss triggers the download'
+  : `  ❌ expected 1 download for a Hanzi miss, got ${extCalls}`);
+if (extCalls !== 1) failures++;
+resetExtState();
+
 // XSS regression: a hostile "word" must not be able to break out of the onclick handler.
 // MINI_DICT is a lexical binding inside the vm realm, so mutate it there and make the
 // scoring engine rebuild its index.

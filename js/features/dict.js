@@ -269,6 +269,21 @@ function highlightHit(text, query) {
   return out;
 }
 
+// CC-CEDICT has Chinese headwords with English glosses only, so it can never answer a
+// Japanese kana query or a Vietnamese query with tone marks. Downloading ~2.8 MB for
+// those would be pure waste — only Hanzi and plain ASCII (English) queries qualify.
+const VI_CHARS_RE = /[àáảãạăắằẳẵặâấầẩẫậèéẻẽẹêếềểễệìíỉĩịòóỏõọôốồổỗộơớờởỡợùúủũụưứừửữựỳýỷỹỵđ]/i;
+
+function isExtDictEligible(q) {
+  if (!q) return false;
+  const text = String(q).trim();
+  if (!text) return false;
+  if (/[\u4e00-\u9fff]/.test(text)) return true;      // Chinese: yes
+  if (/[\u3040-\u30ff]/.test(text)) return false;     // kana: cannot help
+  if (VI_CHARS_RE.test(text)) return false;             // Vietnamese with tones: cannot help
+  return /^[a-z0-9' \-]+$/i.test(text);                // plain ASCII (English / pinyin)
+}
+
 // Cached so a re-render never fires the same Japanese translation twice. The old code
 // issued one network request per card on every keystroke when meaningLang === 'ja'.
 const _jaTranslationRequested = new Set();
@@ -559,13 +574,14 @@ function renderDictView() {
     // Nothing in the curated dictionary: pull in the extended one and retry once.
     // This is the only place the ~7 MB dataset is ever requested.
     let extLoading = false;
-    if (query && typeof ensureExtDict === 'function' && !EXT_DICT.loaded && !EXT_DICT.loading && !state._extDictRequested) {
+    const extEligible = isExtDictEligible(query);
+    if (extEligible && typeof ensureExtDict === 'function' && !EXT_DICT.loaded && !EXT_DICT.loading && !state._extDictRequested) {
       state._extDictRequested = true;
       extLoading = true;
       ensureExtDict().then(ok => {
         if (ok) renderDictView();
       });
-    } else if (query && typeof EXT_DICT !== 'undefined' && EXT_DICT.loading) {
+    } else if (extEligible && typeof EXT_DICT !== 'undefined' && EXT_DICT.loading) {
       extLoading = true;
     }
 

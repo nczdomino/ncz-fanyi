@@ -387,6 +387,7 @@ phần sửa logic/bảo mật ở trên.
 | **Dữ liệu** | `tools/build-cedict.js` tải và chuyển CC-CEDICT → `js/data/cedict.json`: **119.120 mục**, 6.84 MB (2.83 MB gzip khi host nén). Chỉ giữ headword giản thể, tối đa 2 gloss (mỗi gloss ≤ 60 ký tự), pinyin đã chuyển sang dấu, bỏ stub "variant of"/tên riêng trùng |
 | **Giấy phép** | CC BY-SA 4.0 — `js/data/cedict-LICENSE.txt` + dòng ghi công hiện trong UI khi có kết quả mở rộng |
 | **Tải theo yêu cầu** | Chỉ fetch khi từ điển chính **không** tìm thấy gì (`dict.js` no-match branch), có guard chống gọi lặp; Service Worker cache lại cho lần sau |
+| **Lọc trước khi tải** | Chỉ tải khi truy vấn **có thể** khớp: chữ Hán, hoặc ASCII thuần (Anh/pinyin). Truy vấn có dấu tiếng Việt hoặc kana **không** kích hoạt tải — CC-CEDICT chỉ có gloss tiếng Anh nên không thể giúp, tải 2.8 MB sẽ là lãng phí (có test cho cả 4 trường hợp) |
 | **Xếp hạng** | Chỉ số `gloss đầu tiên → headword` dựng một lần (250 ms), nhờ đó `mahjong`→麻将, `travel`→旅行, `sofa`→沙发 thay vì để từ dài/ngắn hơn thắng; ưu tiên headword 2 chữ; blob-scan dự phòng cho khớp một phần |
 | **Không phá tốc độ** | Từ điển mở rộng **tách khỏi** chỉ mục chính; `ăn` vẫn 0.7 ms và `stats.extUsed = 0` khi từ điển chính đã có đáp án (có test) |
 
