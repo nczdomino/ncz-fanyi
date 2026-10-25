@@ -192,13 +192,91 @@ const REVERSE_DICT_ENTRIES = [
   { zh: "中午", py: "zhōng wǔ", vi: "buổi trưa", keys: ["trua", "buoi trua", "noon", "midday", "昼"] },
   { zh: "下午", py: "xià wǔ", vi: "buổi chiều", keys: ["chieu", "buoi chieu", "afternoon", "午後"] },
   { zh: "晚上", py: "wǎn shang", vi: "buổi tối, ban đêm", keys: ["toi", "buoi toi", "dem", "evening", "night", "夜", "晩"] },
+
+  // --- Bổ sung: tiếng Nhật (kana) ---
+  // Người Nhật gõ kana, không gõ Hán tự. Không có các khoá này thì でんしゃ / でんわ /
+  // ねむい / おはよう đều không tra được gì.
+  { zh: "电车", py: "diàn chē", vi: "tàu điện", keys: ["でんしゃ", "densha", "電車"] },
+  { zh: "电话", py: "diàn huà", vi: "điện thoại", keys: ["でんわ", "denwa", "電話"] },
+  { zh: "公司", py: "gōng sī", vi: "công ty", keys: ["かいしゃ", "kaisha", "会社"] },
+  { zh: "车站", py: "chē zhàn", vi: "ga, bến xe", keys: ["えき", "eki", "駅"] },
+  { zh: "老师", py: "lǎo shī", vi: "giáo viên, thầy cô", keys: ["せんせい", "sensei", "先生"] },
+  { zh: "朋友", py: "péng you", vi: "bạn bè", keys: ["ともだち", "tomodachi", "友達", "友だち"] },
+  { zh: "困", py: "kùn", vi: "buồn ngủ", keys: ["ねむい", "nemui", "眠い"] },
+  { zh: "高兴", py: "gāo xìng", vi: "vui", keys: ["うれしい", "ureshii", "嬉しい"] },
+  { zh: "开心", py: "kāi xīn", vi: "vui vẻ", keys: ["たのしい", "tanoshii", "楽しい"] },
+  { zh: "难过", py: "nán guò", vi: "buồn", keys: ["かなしい", "kanashii", "悲しい"] },
+  { zh: "早上好", py: "zǎo shang hǎo", vi: "chào buổi sáng", keys: ["おはよう", "ohayou", "ohayo", "おはようございます"] },
+  { zh: "晚上好", py: "wǎn shang hǎo", vi: "chào buổi tối", keys: ["こんばんは", "konbanwa"] },
+  { zh: "晚安", py: "wǎn ān", vi: "chúc ngủ ngon", keys: ["おやすみ", "oyasumi", "おやすみなさい"] },
+  { zh: "再见", py: "zài jiàn", vi: "tạm biệt", keys: ["またね", "matane", "じゃあね"] },
+  { zh: "对不起", py: "duì bu qǐ", vi: "xin lỗi", keys: ["ごめん", "gomen", "ごめんなさい"] },
+  { zh: "吃", py: "chī", vi: "ăn", keys: ["たべる", "taberu", "食べる"] },
+  { zh: "喝", py: "hē", vi: "uống", keys: ["のむ", "nomu", "飲む"] },
+  { zh: "看", py: "kàn", vi: "xem, nhìn", keys: ["みる", "miru", "見る"] },
+  { zh: "去", py: "qù", vi: "đi", keys: ["いく", "iku", "行く"] },
+  { zh: "来", py: "lái", vi: "đến", keys: ["くる", "kuru", "来る"] },
+  { zh: "水", py: "shuǐ", vi: "nước", keys: ["みず", "mizu"] },
+  { zh: "山", py: "shān", vi: "núi", keys: ["やま", "yama"] },
+  { zh: "川", py: "chuān", vi: "sông", keys: ["かわ", "kawa"] },
+  { zh: "海", py: "hǎi", vi: "biển", keys: ["うみ", "umi"] },
+  { zh: "空", py: "kōng", vi: "trời, không", keys: ["そら", "sora"] },
+  { zh: "雨", py: "yǔ", vi: "mưa", keys: ["あめ", "ame"] },
+  { zh: "雪", py: "xuě", vi: "tuyết", keys: ["ゆき", "yuki"] },
+  { zh: "风", py: "fēng", vi: "gió", keys: ["かぜ", "kaze"] },
+  { zh: "花", py: "huā", vi: "hoa", keys: ["はな", "hana"] },
+  { zh: "星", py: "xīng", vi: "sao", keys: ["ほし", "hoshi"] },
+  { zh: "米饭", py: "mǐ fàn", vi: "cơm", keys: ["ごはん", "gohan"] },
+  { zh: "日本", py: "rì běn", vi: "Nhật Bản", keys: ["にほん", "nihon", "にっぽん"] },
+  { zh: "中国", py: "zhōng guó", vi: "Trung Quốc", keys: ["ちゅうごく", "chuugoku"] },
+  { zh: "学校", py: "xué xiào", vi: "trường học", keys: ["がっこう", "gakkou"] },
+  { zh: "家", py: "jiā", vi: "nhà", keys: ["いえ", "ie", "うち", "uchi"] },
+  { zh: "工作", py: "gōng zuò", vi: "công việc, làm việc", keys: ["しごと", "shigoto"] },
+  { zh: "学", py: "xué", vi: "học", keys: ["まなぶ", "manabu", "学ぶ"] },
+  { zh: "书", py: "shū", vi: "sách", keys: ["ほん", "hon"] },
+
+  // --- Bổ sung: cụm tiếng Việt thông dụng còn thiếu ---
+  { zh: "睡觉", py: "shuì jiào", vi: "ngủ", keys: ["di ngu", "đi ngủ"] },
+  { zh: "想家", py: "xiǎng jiā", vi: "nhớ nhà", keys: ["nho nha", "nhớ nhà"] },
+  { zh: "相爱", py: "xiāng ài", vi: "yêu nhau", keys: ["yeu nhau", "yêu nhau"] },
+  { zh: "放学", py: "fàng xué", vi: "tan học", keys: ["tan hoc", "tan học"] },
+  { zh: "喝咖啡", py: "hē kā fēi", vi: "uống cà phê", keys: ["uong ca phe", "uống cà phê"] },
+  { zh: "起床", py: "qǐ chuáng", vi: "thức dậy", keys: ["thuc day", "thức dậy"] },
+  { zh: "回家", py: "huí jiā", vi: "về nhà", keys: ["ve nha", "về nhà"] },
+  { zh: "米粉", py: "mǐ fěn", vi: "bún", keys: ["bun cha", "bún chả", "bun", "bún"] },
+  { zh: "河粉", py: "hé fěn", vi: "phở", keys: ["pho", "phở"] },
+  { zh: "摩托车", py: "mó tuō chē", vi: "xe máy", keys: ["xe may", "xe máy"] },
+  { zh: "奥黛", py: "ào dài", vi: "áo dài", keys: ["ao dai", "áo dài"] },
+  { zh: "生日快乐", py: "shēng rì kuài lè", vi: "chúc mừng sinh nhật", keys: ["sinh nhat", "sinh nhật", "happy birthday"] },
+  { zh: "帮帮我", py: "bāng bang wǒ", vi: "giúp tôi với", keys: ["giup toi voi", "giúp tôi với"] },
+  { zh: "让我看看", py: "ràng wǒ kàn kan", vi: "cho tôi xem", keys: ["cho toi xem", "cho tôi xem"] },
+  { zh: "非常感谢", py: "fēi cháng gǎn xiè", vi: "cảm ơn rất nhiều", keys: ["cam on rat nhieu", "cảm ơn rất nhiều"] },
+  { zh: "我爱你", py: "wǒ ài nǐ", vi: "tôi yêu bạn", keys: ["toi yeu ban", "tôi yêu bạn", "anh yeu em", "em yeu anh"] },
+  { zh: "你好吗", py: "nǐ hǎo ma", vi: "bạn khỏe không", keys: ["ban khoe khong", "bạn khỏe không", "how are you"] },
+
+  // --- Bổ sung: cụm tiếng Anh thông dụng ---
+  { zh: "大", py: "dà", vi: "to, lớn", keys: ["very big", "big", "large"] },
+  { zh: "吃", py: "chī", vi: "ăn", keys: ["to eat", "eat"] },
+  { zh: "去", py: "qù", vi: "đi", keys: ["to go", "go"] },
+  { zh: "我爱你", py: "wǒ ài nǐ", vi: "tôi yêu bạn", keys: ["i love you", "love you"] },
+  { zh: "多少钱", py: "duō shao qián", vi: "bao nhiêu tiền", keys: ["how much", "how much money"] }
 ];
 
 // Inverted lookup map for O(1) direct phrase lookup
 const REVERSE_DICT_INDEX = new Map();
 
+// The index is built at load time, but stripVietnameseTones() lives in
+// js/features/dict-search-engine.js and may not exist yet at that moment. Previously the
+// first (tone-unaware) build was cached forever, so accented Vietnamese keys never got
+// their unaccented variants. Track how the index was built and rebuild once when the
+// helper shows up.
+let _reverseIndexToneAware = false;
+
 function buildReverseDictIndex() {
-  if (REVERSE_DICT_INDEX.size > 0) return;
+  const canStrip = typeof stripVietnameseTones === 'function';
+  if (REVERSE_DICT_INDEX.size > 0 && (_reverseIndexToneAware || !canStrip)) return;
+  REVERSE_DICT_INDEX.clear();
+  _reverseIndexToneAware = canStrip;
   for (const item of REVERSE_DICT_ENTRIES) {
     for (const k of item.keys) {
       const cleanKey = k.trim().toLowerCase();

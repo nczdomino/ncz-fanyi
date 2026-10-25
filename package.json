@@ -1,0 +1,12 @@
+{
+  "name": "ncz-fanyi",
+  "version": "1.1.0",
+  "private": true,
+  "description": "Offline-first Chinese dictionary & translation PWA for Vietnamese, Japanese and English learners",
+  "scripts": {
+    "test": "node test_dict_scoring.js && node test_dict_render.js && node test_dict_search.js && node test_hsk789_and_live_dict.js && node test_ocr.js && node test_handwriting.js",
+    "test:dict": "node test_dict_scoring.js && node test_dict_render.js",
+    "test:search": "node test_dict_search.js"
+  },
+  "license": "MIT"
+}

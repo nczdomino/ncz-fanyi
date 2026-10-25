@@ -41,10 +41,15 @@ function getCompoundWords(targetWord) {
   const results = [];
   const seen = new Set([targetWord]);
 
+  // Related compounds must actually contain the looked-up word. The old check used
+  // chars.some(...), so looking up 学生 also listed every word containing either 学 or 生,
+  // which is how the "từ ghép liên quan" row filled up with unrelated vocabulary.
   for (const w of Object.keys(MINI_DICT)) {
     if (seen.has(w)) continue;
-    const matches = targetWord.length === 1 ? w.includes(targetWord) : chars.some(c => w.includes(c));
-    if (matches && w.length <= 4) {
+    const related = targetWord.length === 1
+      ? w.includes(targetWord)
+      : (w.includes(targetWord) || (chars.every(c => w.includes(c)) && w.length <= chars.length + 2));
+    if (related && w.length <= 4) {
       seen.add(w);
       const e = MINI_DICT[w];
       results.push({
@@ -62,7 +67,7 @@ function getCompoundWords(targetWord) {
   if (results.length < 14 && typeof SLANG_MAP !== 'undefined') {
     for (const w of Object.keys(SLANG_MAP)) {
       if (seen.has(w)) continue;
-      if (chars.some(c => w.includes(c)) && w.length <= 6) {
+      if (w.includes(targetWord) && w.length <= 6) {
         seen.add(w);
         const s = SLANG_MAP[w];
         results.push({
@@ -78,9 +83,13 @@ function getCompoundWords(targetWord) {
     }
   }
 
+  // Previous comparator returned -1 whenever *a* started with the word, even when b did
+  // too, which made the order (and therefore the rendered list) unstable.
   results.sort((a, b) => {
-    if (a.word.startsWith(targetWord)) return -1;
-    if (b.word.startsWith(targetWord)) return 1;
+    const aHead = a.word.startsWith(targetWord) ? 0 : 1;
+    const bHead = b.word.startsWith(targetWord) ? 0 : 1;
+    if (aHead !== bHead) return aHead - bHead;
+    if (a.word.length !== b.word.length) return a.word.length - b.word.length;
     return (a.hsk || 99) - (b.hsk || 99);
   });
   return results.slice(0, 12);
@@ -216,11 +225,6 @@ function renderRadicalBrowser() {
 // --- Module: Word Sheet Modal & Hanzi Writer ---
 
 // --- Module: Dictionary View ---
-function removeToneMarks(str) {
-  if (!str) return '';
-  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ü/g, 'v');
-}
-
 function toggleHskBrowser() {
   state.showHskBrowser = !state.showHskBrowser;
   renderDictView();
@@ -243,6 +247,88 @@ function quickSearchDict(word) {
   renderDictView();
 }
 
+// Cached so a re-render never fires the same Japanese translation twice. The old code
+// issued one network request per card on every keystroke when meaningLang === 'ja'.
+const _jaTranslationRequested = new Set();
+const JA_AUTO_TRANSLATE_LIMIT = 12;
+
+function renderDictItemCard(item) {
+  const lang = state.meaningLang || 'vi';
+  const userDict = getUserDict();
+  const customKey = lang + ':' + item.word;
+  const word = item.word;
+  let meaning = userDict[customKey];
+
+  if (!meaning) {
+    if (lang === 'en') {
+      meaning = item.en && item.en.length ? item.en.join('; ') : '';
+    } else if (lang === 'ja') {
+      if (item.ja) {
+        meaning = item.ja;
+      } else if (typeof JA_COMMON_DICT !== 'undefined' && JA_COMMON_DICT[word]) {
+        meaning = JA_COMMON_DICT[word];
+      } else if (KANJI_DATA[word] && KANJI_DATA[word].ja_meaning) {
+        meaning = KANJI_DATA[word].ja_meaning;
+      } else if (state.cachedTranslations['ja:' + word]) {
+        meaning = state.cachedTranslations['ja:' + word];
+      } else if (item.tier !== 'related' &&
+                 !_jaTranslationRequested.has(word) &&
+                 _jaTranslationRequested.size < JA_AUTO_TRANSLATE_LIMIT) {
+        _jaTranslationRequested.add(word);
+        meaning = '';
+        translateTextOnline(word, 'ja').then(trans => {
+          if (!trans) {
+            _jaTranslationRequested.delete(word);
+            return;
+          }
+          if (state.meaningLang === 'ja') {
+            const el = document.getElementById('dict-meaning-' + word);
+            if (el) el.textContent = trans;
+          }
+        });
+      } else {
+        meaning = '';
+      }
+    } else {
+      meaning = item.vi || (item.en && item.en.length ? item.en.join('; ') : '');
+    }
+  }
+
+  let subReadingHtml = '';
+  if (lang === 'vi' && item.hanviet) {
+    subReadingHtml = `<span class="dict-hanviet">${escapeHtml(item.hanviet)}</span>`;
+  } else if (lang === 'ja') {
+    const kj = KANJI_DATA[word];
+    if (kj) {
+      const kana = kj.on + (kj.kun && kj.kun !== '-' ? ' / ' + kj.kun : '');
+      subReadingHtml = `<span class="dict-hanviet">${escapeHtml(kana)}</span>`;
+    }
+  }
+
+  // NOTE: openWordSheet() must use escapeQuotes() here, not escapeHtml().
+  // The HTML parser decodes entities inside an attribute value *before* the JS
+  // string is parsed, so escapeHtml() alone let a quote break out of the handler.
+  return `
+    <div class="dict-item-card" onclick="openWordSheet('${escapeQuotes(word)}')">
+      <div style="flex:1; min-width:0; padding-right:12px;">
+        <div class="dict-item-left">
+          <span class="dict-hanzi" lang="zh-CN">${escapeHtml(word)}</span>
+          <span class="dict-pinyin">${escapeHtml(item.pinyin)}</span>
+          ${subReadingHtml}
+        </div>
+        <div id="dict-meaning-${escapeHtml(word)}" class="dict-meaning">${escapeHtml(meaning || (lang === 'ja' ? '…' : t('noMeaning')))}</div>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+        ${item.hsk ? `<span class="badge ${String(item.hsk).includes('7') || String(item.hsk).includes('8') || String(item.hsk).includes('9') ? 'badge-hsk-pro' : 'badge-hsk'}">HSK ${item.hsk}</span>` : ''}
+        ${(item.type === 'slang' || !!getSlangEntry(word)) ? `<span class="badge" style="background:rgba(232,52,78,0.12); color:var(--accent); border:1px solid rgba(232,52,78,0.3); font-weight:700;">🔥 Slang</span>` : ''}
+        <button class="icon-btn" style="width:34px; height:34px;" onclick="event.stopPropagation(); speakText('${escapeQuotes(word)}')" title="${t('play')}" aria-label="${t('play')}">
+          <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+        </button>
+      </div>
+    </div>
+  `;
+}
+
 function renderDictView() {
   const container = document.getElementById('dict-results-container');
   const viewContainer = document.getElementById('dict-view-container');
@@ -257,7 +343,6 @@ function renderDictView() {
   if (!container) return;
 
   const query = state.searchQuery.trim().toLowerCase();
-  const cleanQuery = removeToneMarks(query).replace(/\s+/g, '');
   const filterHSK = state.dictFilterHSK;
   const isBrowsingHsk = state.showHskBrowser;
 
@@ -319,47 +404,15 @@ function renderDictView() {
     }
   }
 
-  // Pre-normalize query for multi-lingual and reverse matching
-  const queryNoTone = typeof stripVietnameseTones === 'function' ? stripVietnameseTones(query).toLowerCase() : query;
-  const queryNormVi = typeof normalizeVietnameseQuery === 'function' ? normalizeVietnameseQuery(query) : query;
-  const queryNormViNoTone = typeof stripVietnameseTones === 'function' ? stripVietnameseTones(queryNormVi) : queryNormVi;
-  const jaNorm = typeof normalizeJapaneseQuery === 'function' ? normalizeJapaneseQuery(query) : { raw: query, hiragana: query, kanjiEquivalent: '' };
-  const stemmedEn = typeof stemEnglishWord === 'function' ? stemEnglishWord(query) : query;
-
+  // Query normalisation for multi-lingual matching now lives in dict-scoring.js.
+  // (The old inline normalisers here existed only to feed the hand-rolled scoring loop.)
   // Query or Browse mode: Find matches
   let matches = [];
   const seenWords = new Set();
   const isHanziQuery = /[\u4e00-\u9fff]/.test(query);
 
-  // 1. High-Priority: Check Reverse Dictionary Dataset first (only for non-Chinese queries)
-  if (query && !isHanziQuery && typeof findReverseMatches === 'function' && filterHSK === 'all') {
-    const revList = findReverseMatches(query, 25);
-    for (const r of revList) {
-      if (seenWords.has(r.zh)) continue;
-      seenWords.add(r.zh);
-      const inMini = MINI_DICT[r.zh];
-      if (inMini) {
-        matches.push({
-          word: r.zh,
-          ...inMini,
-          isReverseMatch: true,
-          score: r.score || (r.matchType === 'exact' ? 1000 : 650)
-        });
-      } else {
-        matches.push({
-          word: r.zh,
-          pinyin: r.py || '',
-          vi: r.vi || '',
-          en: [],
-          ja: '',
-          hanviet: getWordHanViet(r.zh),
-          type: 'reverse',
-          isReverseMatch: true,
-          score: r.score || (r.matchType === 'exact' ? 1000 : 650)
-        });
-      }
-    }
-  }
+  // 1. Reverse-dictionary phrase book is handled inside searchDictionary() so that
+  //    reverse hits and definition hits share one scoring scale (see dict-scoring.js).
 
   if (state.selectedRadical && !query) {
     const radItem = (typeof RADICALS_DATA !== 'undefined') ? RADICALS_DATA.find(r => r.r === state.selectedRadical) : null;
@@ -412,186 +465,26 @@ function renderDictView() {
       }
     }
   } else {
-    // Search mode with active query: Unified Relevance Scoring Engine
-    const allWords = Object.keys(MINI_DICT);
-    for (const w of allWords) {
-      const entry = MINI_DICT[w];
-      if (filterHSK !== 'all') {
-        if (filterHSK === '7-9') {
-          const h = String(entry.hsk);
-          if (h !== '7-9' && h !== '7' && h !== '8' && h !== '9' && !(entry.hsk >= 7 && entry.hsk <= 9)) {
-            continue;
-          }
-        } else if (String(entry.hsk) !== filterHSK) {
-          continue;
-        }
+    // Search mode: delegate to the language-aware ranking engine (js/features/dict-scoring.js).
+    //
+    // Two long-standing bugs are fixed by this delegation:
+    //  a) Pinyin used to outrank real meanings, so "di" returned 底 (dǐ) above 去 (qù) and
+    //     "ăn" was flooded with 安静 / 安全 / 按照.
+    //  b) The HSK filter used to be applied to *search* results as well, so after tapping
+    //     "HSK 3" a perfectly valid query such as "ăn" silently returned nothing.
+    if (typeof searchDictionary === 'function') {
+      const engineRes = searchDictionary(query, { limit: 120, includeSlang: true });
+      for (const item of engineRes.matches) {
+        if (seenWords.has(item.word)) continue;
+        seenWords.add(item.word);
+        matches.push(item);
       }
-
-      let score = 0;
-
-      // 1. Chinese Hanzi matching
-      if (isHanziQuery) {
-        if (w === query) {
-          score = 2000;
-        } else if (w.startsWith(query)) {
-          score = 1500;
-        } else if (w.includes(query)) {
-          score = 1200;
-        }
-      }
-
-      // 2. Pinyin matching
-      const entryPyClean = removeToneMarks((entry.pinyin || '').toLowerCase()).replace(/\s+/g, '');
-      const entryPyLower = (entry.pinyin || '').toLowerCase();
-      if (entryPyLower === query || entryPyClean === cleanQuery) {
-        score = Math.max(score, 1100);
-      } else if (cleanQuery.length >= 2 && entryPyClean.startsWith(cleanQuery)) {
-        score = Math.max(score, 850);
-      } else if (entryPyLower.includes(query) || (cleanQuery.length >= 3 && entryPyClean.includes(cleanQuery))) {
-        score = Math.max(score, 600);
-      }
-
-      // 3. Vietnamese Definition matching (strictly token-aware & syllable-aligned)
-      if (entry.vi) {
-        const viLower = entry.vi.toLowerCase();
-        const viNoTone = typeof stripVietnameseTones === 'function' ? stripVietnameseTones(viLower) : viLower;
-
-        if (viLower === query || viNoTone === queryNoTone) {
-          score = Math.max(score, 950);
-        } else if (queryNoTone.includes(' ') && viNoTone.includes(queryNoTone)) {
-          score = Math.max(score, 820);
-        } else {
-          const viTokens = viNoTone.split(/[^a-z0-9]+/);
-          if (viTokens.includes(queryNoTone)) {
-            score = Math.max(score, 800);
-          } else if (queryNoTone.length >= 3 && viTokens.some(t => t.startsWith(queryNoTone))) {
-            score = Math.max(score, 450);
-          }
-        }
-      }
-
-      // 4. English Definition matching
-      if (entry.en && Array.isArray(entry.en)) {
-        for (const e of entry.en) {
-          const eLower = e.toLowerCase();
-          if (eLower === query) {
-            score = Math.max(score, 900);
-            break;
-          } else if (query.length >= 3 && eLower.startsWith(query)) {
-            score = Math.max(score, 700);
-            break;
-          } else {
-            const eTokens = eLower.split(/[^a-z0-9]+/);
-            if (eTokens.includes(query)) {
-              score = Math.max(score, 650);
-              break;
-            } else if (stemmedEn && typeof stemEnglishWord === 'function' && stemEnglishWord(eLower) === stemmedEn) {
-              score = Math.max(score, 600);
-              break;
-            }
-          }
-        }
-      }
-
-      // 5. Japanese matching
-      const kanjiEntry = KANJI_DATA[w];
-      if (entry.ja) {
-        const jaLower = entry.ja.toLowerCase();
-        if (jaLower === query || (jaNorm.hiragana && jaLower.includes(jaNorm.hiragana)) || (jaNorm.kanjiEquivalent && jaLower.includes(jaNorm.kanjiEquivalent))) {
-          score = Math.max(score, 850);
-        }
-      }
-      if (kanjiEntry) {
-        if ((kanjiEntry.on && kanjiEntry.on.toLowerCase().includes(query)) ||
-            (kanjiEntry.kun && kanjiEntry.kun.toLowerCase().includes(query)) ||
-            (kanjiEntry.ja_meaning && kanjiEntry.ja_meaning.toLowerCase().includes(query)) ||
-            (jaNorm.hiragana && kanjiEntry.kun && kanjiEntry.kun.includes(jaNorm.hiragana))) {
-          score = Math.max(score, 800);
-        }
-      }
-      if (jaNorm.kanjiEquivalent && w === jaNorm.kanjiEquivalent) {
-        score = Math.max(score, 1200);
-      }
-
-      // 6. Han-Viet matching
-      if (entry.hanviet) {
-        const hvLower = entry.hanviet.toLowerCase();
-        const hvNoTone = typeof stripVietnameseTones === 'function' ? stripVietnameseTones(hvLower) : hvLower;
-        if (hvLower === query || hvNoTone === queryNoTone) {
-          score = Math.max(score, 750);
-        } else if (queryNoTone.length >= 3 && (hvLower.startsWith(query) || hvNoTone.startsWith(queryNoTone))) {
-          score = Math.max(score, 500);
-        }
-      }
-
-      if (score > 0) {
-        if (seenWords.has(w)) {
-          const existing = matches.find(m => m.word === w);
-          if (existing && score > (existing.score || 0)) {
-            existing.score = score;
-          }
-        } else {
+    } else {
+      console.warn('dict-scoring.js is not loaded; falling back to basic Hanzi matching only.');
+      for (const w of Object.keys(MINI_DICT)) {
+        if (isHanziQuery && w.includes(query)) {
+          matches.push({ word: w, ...MINI_DICT[w], score: w === query ? 1000 : 800 });
           seenWords.add(w);
-          matches.push({ word: w, ...entry, score });
-        }
-      }
-    }
-
-    // Also search Slang dictionary if filter allows
-    if (filterHSK === 'all' || filterHSK === 'slang') {
-      const allSlang = (ENRICH.remote || []).concat(SLANG_BUILTIN || []);
-      for (const it of allSlang) {
-        if (!it || !it.w) continue;
-        let score = 0;
-
-        if (isHanziQuery) {
-          if (it.w === query || (it.alias && it.alias.includes(query))) score = 2000;
-          else if (it.w.startsWith(query)) score = 1500;
-          else if (it.w.includes(query)) score = 1200;
-        }
-
-        const cleanPy = removeToneMarks((it.py || '').toLowerCase()).replace(/\s+/g, '');
-        if ((it.py || '').toLowerCase() === query || cleanPy === cleanQuery) {
-          score = Math.max(score, 1100);
-        } else if (cleanQuery.length >= 2 && cleanPy.startsWith(cleanQuery)) {
-          score = Math.max(score, 850);
-        }
-
-        if (it.vi) {
-          const viLow = it.vi.toLowerCase();
-          const viNoT = typeof stripVietnameseTones === 'function' ? stripVietnameseTones(viLow) : viLow;
-          if (viLow === query || viNoT === queryNoTone) {
-            score = Math.max(score, 950);
-          } else if (queryNoTone.includes(' ') && viNoT.includes(queryNoTone)) {
-            score = Math.max(score, 820);
-          } else {
-            const viTokens = viNoT.split(/[^a-z0-9]+/);
-            if (viTokens.includes(queryNoTone)) {
-              score = Math.max(score, 800);
-            }
-          }
-        }
-
-        if (score > 0) {
-          if (seenWords.has(it.w)) {
-            const existing = matches.find(m => m.word === it.w);
-            if (existing && score > (existing.score || 0)) {
-              existing.score = score;
-            }
-          } else {
-            seenWords.add(it.w);
-            matches.push({
-              word: it.w,
-              pinyin: it.py || '',
-              vi: it.vi || '',
-              en: it.en ? (Array.isArray(it.en) ? it.en : [it.en]) : [],
-              ja: it.ja || '',
-              hanviet: getWordHanViet(it.w),
-              type: 'slang',
-              isSlang: true,
-              score
-            });
-          }
         }
       }
     }
@@ -701,12 +594,24 @@ function renderDictView() {
       </div>
     `;
   }
+  // Split confident matches from loosely related words. Rendering them as two
+  // groups is what stops a one-syllable query ("ăn") from looking like a wall of noise.
+  const primaryItems = query ? matches.filter(m => m.tier !== 'related') : matches;
+  const relatedItems = query ? matches.filter(m => m.tier === 'related') : [];
+  const primaryCount = primaryItems.length;
+  const relatedCount = relatedItems.length;
+
   if (query) {
-    let countText = `Tìm thấy <b>${matches.length}</b> kết quả cho "<b>${escapeHtml(query)}</b>"`;
+    let countText;
     if (state.uiLang === 'ja') {
-      countText = `「<b>${escapeHtml(query)}</b>」の検索結果: <b>${matches.length}</b>件`;
+      countText = `「<b>${escapeHtml(query)}</b>」の検索結果: <b>${primaryCount}</b>件`;
+      if (relatedCount) countText += `（関連語 <b>${relatedCount}</b>件）`;
     } else if (state.uiLang === 'en') {
-      countText = `Found <b>${matches.length}</b> results for "<b>${escapeHtml(query)}</b>"`;
+      countText = `Found <b>${primaryCount}</b> results for "<b>${escapeHtml(query)}</b>"`;
+      if (relatedCount) countText += ` · <b>${relatedCount}</b> related`;
+    } else {
+      countText = `Tìm thấy <b>${primaryCount}</b> kết quả cho "<b>${escapeHtml(query)}</b>"`;
+      if (relatedCount) countText += ` · <b>${relatedCount}</b> từ liên quan`;
     }
     const closeSearchText = state.uiLang === 'ja' ? '✕ 検索を閉じる' : (state.uiLang === 'en' ? '✕ Close search' : '✕ Đóng tìm kiếm');
 
@@ -723,65 +628,19 @@ function renderDictView() {
   }
 
   html += '<div class="dict-results-list">';
-  matches.forEach(item => {
-    const lang = state.meaningLang;
-    const userDict = getUserDict();
-    const customKey = lang + ':' + item.word;
-    let meaning = userDict[customKey];
-    if (!meaning) {
-      if (lang === 'en') {
-        meaning = item.en ? item.en.join('; ') : '';
-      } else if (lang === 'ja') {
-        if (item.ja) meaning = item.ja;
-        else if (typeof JA_COMMON_DICT !== 'undefined' && JA_COMMON_DICT[item.word]) meaning = JA_COMMON_DICT[item.word];
-        else if (KANJI_DATA[item.word] && KANJI_DATA[item.word].ja_meaning) meaning = KANJI_DATA[item.word].ja_meaning;
-        else if (state.cachedTranslations['ja:' + item.word]) meaning = state.cachedTranslations['ja:' + item.word];
-        else {
-          meaning = '';
-          translateTextOnline(item.word, 'ja').then(trans => {
-            if (trans && state.meaningLang === 'ja') {
-              const el = document.getElementById('dict-meaning-' + item.word);
-              if (el) el.textContent = trans;
-            }
-          });
-        }
-      } else {
-        meaning = item.vi || (item.en ? item.en.join('; ') : '');
-      }
-    }
+  html += primaryItems.map(renderDictItemCard).join('');
+  html += '</div>';
 
-    let subReadingHtml = '';
-    if (lang === 'vi' && item.hanviet) {
-      subReadingHtml = `<span class="dict-hanviet">${escapeHtml(item.hanviet)}</span>`;
-    } else if (lang === 'ja') {
-      const kj = KANJI_DATA[item.word];
-      if (kj) {
-        const kana = kj.on + (kj.kun && kj.kun !== '-' ? ' / ' + kj.kun : '');
-        subReadingHtml = `<span class="dict-hanviet">${escapeHtml(kana)}</span>`;
-      }
-    }
-
+  if (relatedItems.length) {
     html += `
-      <div class="dict-item-card" onclick="openWordSheet('${escapeHtml(item.word)}')">
-        <div style="flex:1; min-width:0; padding-right:12px;">
-          <div class="dict-item-left">
-            <span class="dict-hanzi" lang="zh-CN">${escapeHtml(item.word)}</span>
-            <span class="dict-pinyin">${escapeHtml(item.pinyin)}</span>
-            ${subReadingHtml}
-          </div>
-          <div id="dict-meaning-${escapeHtml(item.word)}" class="dict-meaning">${escapeHtml(meaning || (lang === 'ja' ? '...' : t('noMeaning')))}</div>
-        </div>
-        <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
-          ${item.hsk ? `<span class="badge ${String(item.hsk).includes('7') || String(item.hsk).includes('8') || String(item.hsk).includes('9') ? 'badge-hsk-pro' : 'badge-hsk'}">HSK ${item.hsk}</span>` : ''}
-          ${(item.type === 'slang' || !!getSlangEntry(item.word)) ? `<span class="badge" style="background:rgba(232,52,78,0.12); color:var(--accent); border:1px solid rgba(232,52,78,0.3); font-weight:700;">🔥 Slang</span>` : ''}
-          <button class="icon-btn" style="width:34px; height:34px;" onclick="event.stopPropagation(); speakText('${escapeQuotes(item.word)}')" title="${t('play')}" aria-label="${t('play')}">
-            <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
-          </button>
-        </div>
+      <div class="dict-related-divider">
+        <span>${tx('Từ liên quan (nghĩa phụ / cách dùng khác)', 'Related words (other senses / usages)', '関連語（別の意味・用法）')}</span>
+      </div>
+      <div class="dict-results-list dict-results-related">
+        ${relatedItems.map(renderDictItemCard).join('')}
       </div>
     `;
-  });
-  html += '</div>';
+  }
 
   // 1. Live Multi-Dictionary Online Extension Container (Khám phá thêm từ vựng liên quan)
   html += '<div id="dict-live-results-container"></div>';

@@ -1333,3 +1333,41 @@
   background: var(--accent-subtle);
   transform: translateY(-1px);
 }
+
+/* ------------------------------------------------------------------
+   Related-words group.
+   Secondary matches are visually demoted instead of being mixed into
+   the confident results, which is what made short queries look noisy.
+------------------------------------------------------------------- */
+.dict-related-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 2px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+  text-transform: none;
+}
+
+.dict-related-divider::before,
+.dict-related-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border-color);
+}
+
+.dict-results-related {
+  opacity: 0.92;
+}
+
+.dict-results-related .dict-item-card {
+  padding: 10px 14px;
+  background: color-mix(in srgb, var(--bg-surface) 70%, transparent);
+}
+
+.dict-results-related .dict-hanzi {
+  font-size: 20px;
+}

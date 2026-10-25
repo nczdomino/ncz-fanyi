@@ -31,7 +31,11 @@ function stripVietnameseTones(str) {
   for (const [nonTone, regex] of Object.entries(VI_DIACRITICS_MAP)) {
     res = res.replace(regex, nonTone);
   }
-  return res.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  // NFD splits precomposed characters so the combining marks can be removed, but it
+  // also decomposes Japanese kana with dakuten/handakuten (ず -> す + U+3099). Those
+  // marks are outside U+0300..U+036F, so without re-composing to NFC every kana query
+  // containing が/ず/で/ぼ/ぱ no longer matches the dictionary text.
+  return res.normalize('NFD').replace(/[\u0300-\u036f]/g, '').normalize('NFC');
 }
 
 function normalizeVietnameseQuery(str) {
@@ -85,7 +89,10 @@ const HIRAGANA_TO_KANJI_MAP = {
 
 function katakanaToHiragana(str) {
   if (!str) return '';
-  return str.replace(/[\u30a1-\u30f6]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0x60));
+  // NFC first: a decomposed katakana (e.g. ガ as カ + U+3099) would otherwise leave the
+  // voiced mark behind and produce a non-standard hiragana sequence.
+  const s = String(str).normalize('NFC');
+  return s.replace(/[\u30a1-\u30f6]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0x60));
 }
 
 function normalizeJapaneseQuery(str) {
@@ -227,6 +234,7 @@ function getLanguageBadgeInfo(langCode, query, uiLang = 'vi') {
 if (typeof window !== 'undefined') {
   window.stripVietnameseTones = stripVietnameseTones;
   window.normalizeVietnameseQuery = normalizeVietnameseQuery;
+  window.katakanaToHiragana = katakanaToHiragana;
   window.normalizeJapaneseQuery = normalizeJapaneseQuery;
   window.stemEnglishWord = stemEnglishWord;
   window.levenshteinDistance = levenshteinDistance;
@@ -239,6 +247,7 @@ if (typeof module !== 'undefined' && module.exports) {
     stripVietnameseTones,
     normalizeVietnameseQuery,
     normalizeJapaneseQuery,
+    katakanaToHiragana,
     stemEnglishWord,
     levenshteinDistance,
     detectSearchLanguage,
