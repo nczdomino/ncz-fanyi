@@ -183,6 +183,17 @@ class HandwritingPad {
 
     const btnGrid = this.container.querySelector('#btn-hw-grid');
     if (btnGrid) btnGrid.addEventListener('click', () => this.toggleGrid());
+
+    // Auto-update canvas stroke and grid colors when dark/light theme toggles
+    if (typeof MutationObserver !== 'undefined' && typeof document !== 'undefined' && document.documentElement) {
+      this._themeObserver = new MutationObserver(() => {
+        this.redrawCanvas();
+      });
+      this._themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['data-theme']
+      });
+    }
   }
 
   _getCanvasPoint(e) {
@@ -268,6 +279,12 @@ class HandwritingPad {
     this.setupCanvas();
   }
 
+  _isDarkMode() {
+    if (typeof document === 'undefined' || !document.documentElement) return false;
+    return document.documentElement.getAttribute('data-theme') === 'dark' ||
+           (typeof state !== 'undefined' && state.darkMode === 'dark');
+  }
+
   redrawCanvas() {
     if (!this.ctx) return;
     const w = this.canvasWidth;
@@ -275,15 +292,18 @@ class HandwritingPad {
 
     this.ctx.clearRect(0, 0, w, h);
 
+    const isDark = this._isDarkMode();
+
     // 1. Draw Grid
-    this.drawGrid(w, h);
+    this.drawGrid(w, h, isDark);
 
     // 2. Draw user strokes
     this.ctx.save();
     this.ctx.lineCap = 'round';
     this.ctx.lineJoin = 'round';
     this.ctx.lineWidth = Math.max(4.5, Math.min(7.0, w / 45));
-    this.ctx.strokeStyle = '#1E293B';
+    // High-contrast ink: off-white/light in dark mode, dark slate in light mode
+    this.ctx.strokeStyle = isDark ? '#F8FAFC' : '#1E293B';
 
     for (const stroke of this.strokes) {
       if (!stroke || stroke.length === 0) continue;
@@ -303,17 +323,17 @@ class HandwritingPad {
     this.ctx.restore();
   }
 
-  drawGrid(w, h) {
+  drawGrid(w, h, isDark = false) {
     if (this.gridType === 'none') return;
 
     this.ctx.save();
     // Outer border
-    this.ctx.strokeStyle = 'rgba(226, 54, 78, 0.25)';
+    this.ctx.strokeStyle = isDark ? 'rgba(244, 63, 94, 0.45)' : 'rgba(226, 54, 78, 0.25)';
     this.ctx.lineWidth = 1.5;
     this.ctx.strokeRect(4, 4, w - 8, h - 8);
 
     // Grid guide lines (dashed)
-    this.ctx.strokeStyle = 'rgba(226, 54, 78, 0.16)';
+    this.ctx.strokeStyle = isDark ? 'rgba(244, 63, 94, 0.25)' : 'rgba(226, 54, 78, 0.16)';
     this.ctx.lineWidth = 1.0;
     this.ctx.setLineDash([4, 4]);
 
@@ -546,6 +566,10 @@ class HandwritingPad {
   }
 
   destroy() {
+    if (this._themeObserver) {
+      this._themeObserver.disconnect();
+      this._themeObserver = null;
+    }
     if (this.debounceTimer) clearTimeout(this.debounceTimer);
     window.removeEventListener('keydown', this._onKeyDown);
     window.removeEventListener('resize', this._onResize);
