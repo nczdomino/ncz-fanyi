@@ -138,6 +138,19 @@ expect('tôi yêu bạn', ['我爱你']);
 expect('buồn ngủ', ['困']);
 expect('to eat', ['吃']);
 
+// Round three: typo suggestions and matched-fragment highlighting.
+const suggHtml = render('aple');
+console.log(suggHtml.indexOf('dict-suggest-divider') !== -1
+  ? '  ✅ "did you mean" group renders for a typo'
+  : '  ❌ "did you mean" group missing for "aple"');
+if (suggHtml.indexOf('dict-suggest-divider') === -1) failures++;
+
+const hitHtml = render('ăn');
+console.log(hitHtml.indexOf('<mark class="dict-hit">') !== -1
+  ? '  ✅ matched fragment is highlighted in the definition'
+  : '  ❌ no <mark class="dict-hit"> in the rendered result');
+if (hitHtml.indexOf('<mark class="dict-hit">') === -1) failures++;
+
 // The related-words divider must appear for a query with secondary hits.
 const html = render('ăn');
 if (html.indexOf('dict-related-divider') !== -1) {

@@ -208,7 +208,26 @@ check('"hoc sjnh" degrades gracefully (no crash, no junk flood)', () => {
 console.log('\n--- Result structure & safety ---');
 check('matches carry a tier', () => {
   const r = search('ăn', { limit: 20 });
-  for (const m of r.matches) assert.ok(['primary', 'related', 'weak'].indexOf(m.tier) !== -1, 'bad tier: ' + m.tier);
+  for (const m of r.matches) {
+    assert.ok(['primary', 'related', 'suggestion'].indexOf(m.tier) !== -1, 'bad tier: ' + m.tier);
+  }
+});
+check('a typo query returns suggestions, not confident results', () => {
+  const r = search('aple', { limit: 10 });
+  assert.ok(r.matches.length > 0, 'no suggestions for "aple"');
+  for (const m of r.matches) assert.strictEqual(m.tier, 'suggestion', 'unexpected tier for ' + m.word);
+});
+check('no suggestions are added when a confident match exists', () => {
+  const r = search('ăn', { limit: 20 });
+  assert.ok(r.matches.some(m => m.tier === 'primary'), 'expected primary hits');
+  assert.strictEqual(r.matches.filter(m => m.tier === 'suggestion').length, 0,
+    'suggestions should not compete with confident results');
+});
+check('Japanese meaning is filled from JA_COMMON_DICT', () => {
+  const hit = search('学校', { limit: 1 }).matches[0];
+  assert.ok(hit && hit.ja, 'expected a Japanese meaning for 学校');
+  const hit2 = search('老师', { limit: 1 }).matches[0];
+  assert.ok(hit2 && hit2.ja, 'expected a Japanese meaning for 老师');
 });
 check('no duplicate words in a result set', () => {
   const r = words(search('ăn', { limit: 120 }));

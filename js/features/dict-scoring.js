@@ -265,9 +265,16 @@
           enGlosses.push({ norm: gn, nt: normNoTone(gn), tokens: lem });
         }
       }
+      // 1,469 of 1,615 entries have no `ja` field, but JA_COMMON_DICT covers every one of
+      // them. Resolve it here so scoring *and* the rendered card get a Japanese meaning
+      // without shipping a duplicated data file.
+      var jaValue = e.ja || '';
+      if (!jaValue && typeof JA_COMMON_DICT !== 'undefined' && JA_COMMON_DICT) {
+        jaValue = JA_COMMON_DICT[w] || '';
+      }
       var jaSenses = [];
-      if (e.ja) {
-        var jaRaw = splitRaw(e.ja);
+      if (jaValue) {
+        var jaRaw = splitRaw(jaValue);
         for (var j = 0; j < jaRaw.length; j++) {
           var jn = norm(stripParens(jaRaw[j]));
           if (jn) jaSenses.push({ norm: jn, hira: kataToHira(jn) });
@@ -303,6 +310,7 @@
         vi: viSenses,
         en: enGlosses,
         ja: jaSenses,
+        jaDisplay: jaValue,
         py: py,
         hv: hv,
         hvToned: hvToned,
@@ -736,12 +744,18 @@
         }
         return;
       }
+      // Centralised Japanese fallback: covers the Hanzi path, the reverse dictionary and
+      // the slang dictionary as well as the main scan.
+      var jaFallback = '';
+      if (!(entry && entry.ja) && typeof JA_COMMON_DICT !== 'undefined' && JA_COMMON_DICT) {
+        jaFallback = JA_COMMON_DICT[word] || '';
+      }
       var item = {
         word: word,
         pinyin: (entry && entry.pinyin) || '',
         vi: (entry && entry.vi) || '',
         en: entry && entry.en ? (Array.isArray(entry.en) ? entry.en : [entry.en]) : [],
-        ja: (entry && entry.ja) || '',
+        ja: (entry && entry.ja) || jaFallback || '',
         hanviet: (entry && entry.hanviet) || '',
         type: (entry && entry.type) || 'word',
         hsk: entry ? entry.hsk : undefined,
@@ -848,7 +862,10 @@
 
         if (best) {
           best.score += specificBonus(item.hsk);
-          push(item.word, item.entry, best, 'dict', { hanviet: item.hvDisplay });
+          push(item.word, item.entry, best, 'dict', {
+            hanviet: item.hvDisplay,
+            ja: item.jaDisplay || (item.entry && item.entry.ja) || ''
+          });
         }
       }
     }
@@ -978,6 +995,7 @@
     var final = [];
     var primaryCount = 0;
     var relatedCount = 0;
+    var suggestionCount = 0;
     var weak = [];
 
     for (var ci = 0; ci < matches.length; ci++) {
@@ -985,15 +1003,25 @@
       if (cm.score <= 0) continue;
       if (cm.score >= PRIMARY_MIN) { cm.tier = 'primary'; primaryCount++; }
       else if (cm.score >= RELATED_MIN) { cm.tier = 'related'; relatedCount++; }
-      else { cm.tier = 'weak'; weak.push(cm); continue; }
+      else { weak.push(cm); continue; }
       final.push(cm);
     }
 
-    // Only surface weak (fuzzy / han-viet) hits when nothing better was found.
-    if (!primaryCount && !relatedCount && weak.length) {
-      weak.sort(function (a, b) { return b.score - a.score; });
-      final = weak.slice(0, 12);
-      for (var wk = 0; wk < final.length; wk++) final[wk].tier = 'weak';
+    // "Did you mean ..." — only when nothing confident was found, so it never competes
+    // with a real answer. Fuzzy typo hits are preferred over other weak matches.
+    if (!primaryCount) {
+      weak.sort(function (a, b) {
+        var af = a.matchField === 'fuzzy' ? 0 : 1;
+        var bf = b.matchField === 'fuzzy' ? 0 : 1;
+        if (af !== bf) return af - bf;
+        return b.score - a.score;
+      });
+      var showSuggestions = weak.slice(0, relatedCount ? 4 : 8);
+      for (var wk = 0; wk < showSuggestions.length; wk++) {
+        showSuggestions[wk].tier = 'suggestion';
+        suggestionCount++;
+        final.push(showSuggestions[wk]);
+      }
     }
 
     final.sort(function (a, b) {
@@ -1013,6 +1041,7 @@
       total: final.length,
       primary: primaryCount,
       related: relatedCount,
+      suggestions: suggestionCount,
       fuzzy: fuzzyCount,
       strongestDefinition: Math.round(strongestDefinition),
       pinyinDemoted: pinyinDemoted,

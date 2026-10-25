@@ -17,6 +17,19 @@ export default async function handler(req, res) {
   // Cost control: this endpoint calls a paid upstream.
   if (enforceRateLimit(req, res, 'ocr', 30, 60000)) return;
 
+  const ocrServiceUrl = process.env.RAPIDOCR_API_URL ? process.env.RAPIDOCR_API_URL.trim() : '';
+  const ocrAuthToken = (process.env.RAPIDOCR_API_KEY || process.env.RAPIDOCR_AUTH_TOKEN || process.env.RAPIDOCR_SECRET_KEY || '').trim();
+
+  if (req.method === 'GET') {
+    // No `configured` flag: an anonymous probe must not reveal whether the upstream
+    // OCR service is wired up.
+    return res.status(200).json({ status: 'ok', service: 'RapidOCR Proxy' });
+  }
+
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method Not Allowed' });
+  }
+
   if (!ocrServiceUrl) {
     return res.status(200).json({
       success: false,
@@ -39,13 +52,22 @@ export default async function handler(req, res) {
       headers['X-API-Key'] = ocrAuthToken;
     }
 
+    const parsedBody = readBody(req, 8 * 1024 * 1024); // 8 MB base64 ceiling
+    if (!parsedBody.ok) {
+      return res.status(parsedBody.reason === 'PAYLOAD_TOO_LARGE' ? 413 : 400).json({
+        success: false,
+        error: parsedBody.reason,
+        fallback: 'client',
+      });
+    }
+
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 25000);
 
     const backendResp = await fetch(targetEndpoint, {
       method: 'POST',
       headers,
-      body: JSON.stringify(req.body || {}),
+      body: JSON.stringify(parsedBody.value || {}),
       signal: controller.signal,
     });
     clearTimeout(timer);
@@ -71,12 +93,13 @@ export default async function handler(req, res) {
       elapse_ms: data.time_ms || data.elapse || null,
     });
   } catch (err) {
+    console.error('[ocr] network error', err && err.message);
     return res.status(200).json({
       success: false,
       configured: true,
       fallback: 'client',
       error: 'NETWORK_ERROR',
-      message: err.message || 'Không thể kết nối đến máy chủ RapidOCR',
+      message: 'Không thể kết nối đến máy chủ RapidOCR',
     });
   }
 }

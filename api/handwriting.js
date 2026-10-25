@@ -15,6 +15,10 @@ export default async function handler(req, res) {
   }
 
   // Cost control: this endpoint calls a paid upstream.
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method Not Allowed. Use POST.' });
+  }
+
   if (enforceRateLimit(req, res, 'handwriting', 60, 60000)) return;
 
   const parsedBody = readBody(req, 256 * 1024);

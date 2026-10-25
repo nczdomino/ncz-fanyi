@@ -247,6 +247,28 @@ function quickSearchDict(word) {
   renderDictView();
 }
 
+// Wrap the part of the definition that actually matched, so a result explains itself.
+// Escaping and highlighting are done in one pass to avoid double-escaping.
+function highlightHit(text, query) {
+  const t = String(text == null ? '' : text);
+  const q = String(query == null ? '' : query).trim();
+  if (!t || q.length < 2) return escapeHtml(t);
+  const lower = t.toLowerCase();
+  const ql = q.toLowerCase();
+  let idx = lower.indexOf(ql);
+  if (idx === -1) return escapeHtml(t);
+  let out = '';
+  let i = 0;
+  while (idx !== -1) {
+    out += escapeHtml(t.slice(i, idx));
+    out += '<mark class="dict-hit">' + escapeHtml(t.slice(idx, idx + q.length)) + '</mark>';
+    i = idx + q.length;
+    idx = lower.indexOf(ql, i);
+  }
+  out += escapeHtml(t.slice(i));
+  return out;
+}
+
 // Cached so a re-render never fires the same Japanese translation twice. The old code
 // issued one network request per card on every keystroke when meaningLang === 'ja'.
 const _jaTranslationRequested = new Set();
@@ -316,7 +338,7 @@ function renderDictItemCard(item) {
           <span class="dict-pinyin">${escapeHtml(item.pinyin)}</span>
           ${subReadingHtml}
         </div>
-        <div id="dict-meaning-${escapeHtml(word)}" class="dict-meaning">${escapeHtml(meaning || (lang === 'ja' ? '…' : t('noMeaning')))}</div>
+        <div id="dict-meaning-${escapeHtml(word)}" class="dict-meaning">${highlightHit(meaning || (lang === 'ja' ? '…' : t('noMeaning')), state.searchQuery)}</div>
       </div>
       <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
         ${item.hsk ? `<span class="badge ${String(item.hsk).includes('7') || String(item.hsk).includes('8') || String(item.hsk).includes('9') ? 'badge-hsk-pro' : 'badge-hsk'}">HSK ${item.hsk}</span>` : ''}
@@ -596,22 +618,27 @@ function renderDictView() {
   }
   // Split confident matches from loosely related words. Rendering them as two
   // groups is what stops a one-syllable query ("ăn") from looking like a wall of noise.
-  const primaryItems = query ? matches.filter(m => m.tier !== 'related') : matches;
+  const primaryItems = query ? matches.filter(m => m.tier !== 'related' && m.tier !== 'suggestion') : matches;
   const relatedItems = query ? matches.filter(m => m.tier === 'related') : [];
+  const suggestionItems = query ? matches.filter(m => m.tier === 'suggestion') : [];
   const primaryCount = primaryItems.length;
   const relatedCount = relatedItems.length;
+  const suggestionCount = suggestionItems.length;
 
   if (query) {
     let countText;
     if (state.uiLang === 'ja') {
       countText = `「<b>${escapeHtml(query)}</b>」の検索結果: <b>${primaryCount}</b>件`;
       if (relatedCount) countText += `（関連語 <b>${relatedCount}</b>件）`;
+      if (suggestionCount) countText += `（もしかして <b>${suggestionCount}</b>件）`;
     } else if (state.uiLang === 'en') {
       countText = `Found <b>${primaryCount}</b> results for "<b>${escapeHtml(query)}</b>"`;
       if (relatedCount) countText += ` · <b>${relatedCount}</b> related`;
+      if (suggestionCount) countText += ` · <b>${suggestionCount}</b> suggestions`;
     } else {
       countText = `Tìm thấy <b>${primaryCount}</b> kết quả cho "<b>${escapeHtml(query)}</b>"`;
       if (relatedCount) countText += ` · <b>${relatedCount}</b> từ liên quan`;
+      if (suggestionCount) countText += ` · <b>${suggestionCount}</b> gợi ý`;
     }
     const closeSearchText = state.uiLang === 'ja' ? '✕ 検索を閉じる' : (state.uiLang === 'en' ? '✕ Close search' : '✕ Đóng tìm kiếm');
 
@@ -638,6 +665,17 @@ function renderDictView() {
       </div>
       <div class="dict-results-list dict-results-related">
         ${relatedItems.map(renderDictItemCard).join('')}
+      </div>
+    `;
+  }
+
+  if (suggestionItems.length) {
+    html += `
+      <div class="dict-related-divider dict-suggest-divider">
+        <span>${tx('Có phải bạn muốn tìm…', 'Did you mean…', 'もしかして…')}</span>
+      </div>
+      <div class="dict-results-list dict-results-related dict-results-suggest">
+        ${suggestionItems.map(renderDictItemCard).join('')}
       </div>
     `;
   }

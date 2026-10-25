@@ -1371,3 +1371,25 @@
 .dict-results-related .dict-hanzi {
   font-size: 20px;
 }
+
+/* Matched fragment inside a definition, so a result explains why it ranked. */
+mark.dict-hit {
+  background: rgba(232, 52, 78, 0.14);
+  color: inherit;
+  font-weight: 700;
+  border-radius: 3px;
+  padding: 0 2px;
+}
+
+/* "Did you mean ..." group for typo-tolerant suggestions. */
+.dict-suggest-divider {
+  color: var(--accent);
+}
+.dict-suggest-divider::before,
+.dict-suggest-divider::after {
+  background: linear-gradient(to right, transparent, var(--accent), transparent);
+  opacity: 0.35;
+}
+.dict-results-suggest .dict-item-card {
+  border-style: dashed;
+}
