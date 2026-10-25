@@ -466,6 +466,20 @@
             </button>
           </div>
         </div>
+
+        <div class="settings-row" style="cursor:pointer;" onclick="openLegalModal('privacy')">
+          <div>
+            <div class="settings-label" style="display:flex; align-items:center; gap:6px;">
+              <span>⚖️</span> <span data-i18n="legalRowLabel">Điều khoản & Quyền riêng tư</span>
+            </div>
+            <div class="settings-sublabel" data-i18n="legalRowSublabel">Quyền riêng tư, điều khoản dịch vụ và nguồn dữ liệu mở</div>
+          </div>
+          <div class="settings-control">
+            <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation(); openLegalModal('privacy')">
+              <span data-i18n="legalViewBtn">Xem chi tiết</span>
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- Section: About & Developer Credits -->
@@ -479,12 +493,25 @@
         <div style="margin:16px auto; max-width:360px; padding:14px 16px; border-radius:12px; background:var(--bg-secondary); border:1px solid var(--border-color); text-align:left;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:12px;">
             <span style="font-size:12.5px; color:var(--text-muted); flex-shrink:0;" data-i18n="appAuthor">Tác giả</span>
-            <span style="font-size:13px; font-weight:700; color:var(--text-primary); text-align:right;">聂诚忠 (Nie Thanh Trung)</span>
+            <span style="font-size:13px; font-weight:700; color:var(--text-primary); text-align:right;">聂诚忠 (NIE THANH TRUNG)</span>
           </div>
           <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
             <span style="font-size:12.5px; color:var(--text-muted); flex-shrink:0;" data-i18n="appLicense">Bản quyền</span>
             <span style="font-size:12.5px; font-weight:600; color:var(--text-secondary); text-align:right;" data-i18n="appCopyrightNote">Bản quyền thuộc về tác giả</span>
           </div>
+        </div>
+
+        <!-- Quick Access Legal Badges -->
+        <div style="display:flex; justify-content:center; gap:8px; flex-wrap:wrap; margin:14px 0 16px;">
+          <button class="legal-pill-link" onclick="openLegalModal('privacy')">
+            <span>🛡️</span> <span data-i18n="legalTabPrivacy">Quyền riêng tư</span>
+          </button>
+          <button class="legal-pill-link" onclick="openLegalModal('terms')">
+            <span>⚖️</span> <span data-i18n="legalTabTerms">Giấy phép & Sử dụng</span>
+          </button>
+          <button class="legal-pill-link" onclick="openLegalModal('sources')">
+            <span>📚</span> <span data-i18n="legalTabSources">Nguồn dữ liệu & Giấy phép</span>
+          </button>
         </div>
 
         <div style="display:flex; justify-content:center; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
@@ -727,7 +754,7 @@
         <button class="btn btn-secondary" onclick="setUiLang('en'); nextOnboarding();">🇺🇸 English</button>
         <button class="btn btn-secondary" onclick="setUiLang('ja'); nextOnboarding();">🇯🇵 日本語</button>
       </div>
-      <div style="font-size:11px; color:var(--text-muted); margin-top:14px;" data-i18n="onboardingAuthor">Một ứng dụng của 聂诚忠 (Nie Thanh Trung)</div>
+      <div style="font-size:11px; color:var(--text-muted); margin-top:14px;" data-i18n="onboardingAuthor">Một ứng dụng của 聂诚忠 (NIE THANH TRUNG)</div>
     </div>
 
     <div id="onboarding-step-2" class="onboarding-slide" style="display:none;">
@@ -748,6 +775,42 @@
       <div class="onboarding-dot active" style="width:8px; height:8px; border-radius:4px; background:var(--accent);"></div>
       <div class="onboarding-dot" style="width:8px; height:8px; border-radius:4px; background:var(--border-color);"></div>
       <div class="onboarding-dot" style="width:8px; height:8px; border-radius:4px; background:var(--border-color);"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Legal, Privacy & Open Source Licenses Modal -->
+<div id="legal-modal" class="modal-overlay">
+  <div class="modal-card legal-modal-card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+      <div style="font-size:17px; font-weight:700; display:flex; align-items:center; gap:7px;">
+        <span>📜</span> <span data-i18n="legalModalTitle">Điều khoản, Quyền riêng tư & Bản quyền</span>
+      </div>
+      <button class="icon-btn" onclick="closeLegalModal()" title="Đóng" data-i18n-title="titleClose">✕</button>
+    </div>
+
+    <!-- Tabs -->
+    <div class="legal-tabs">
+      <button class="legal-tab-btn active" data-tab="privacy" onclick="switchLegalTab('privacy')">
+        <span>🛡️</span> <span data-i18n="legalTabPrivacy">Quyền riêng tư</span>
+      </button>
+      <button class="legal-tab-btn" data-tab="terms" onclick="switchLegalTab('terms')">
+        <span>⚖️</span> <span data-i18n="legalTabTerms">Giấy phép & Sử dụng</span>
+      </button>
+      <button class="legal-tab-btn" data-tab="sources" onclick="switchLegalTab('sources')">
+        <span>📚</span> <span data-i18n="legalTabSources">Nguồn dữ liệu & Giấy phép</span>
+      </button>
+    </div>
+
+    <!-- Content Container -->
+    <div id="legal-modal-body" style="max-height:55vh; overflow-y:auto; padding-right:4px;"></div>
+
+    <!-- Modal Footer -->
+    <div style="margin-top:16px; padding-top:12px; border-top:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+      <div style="font-size:11px; color:var(--text-muted);">
+        © 2026 <strong>NIE THANH TRUNG</strong> · NCZ Fanyi
+      </div>
+      <button class="btn btn-secondary btn-sm" onclick="closeLegalModal()" data-i18n="legalClose">Đóng</button>
     </div>
   </div>
 </div>
