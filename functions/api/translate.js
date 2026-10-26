@@ -123,23 +123,23 @@ export async function onRequestPost(context) {
         prompt = `あなたは中国語辞典です。次の見出し語を調べてください: "${text}"
 
 有効なJSONのみを出力してください:
-{"word":"${text}","pinyin":"ピンイン","partOfSpeech":"品詞","primaryMeaning":"主な日本語の意味","secondaryMeanings":["最大2つ"],"nuanceAndUsage":"ニュアンスを1文で","formality":"口語/フォーマルなど","examples":[{"zh":"中国語例文","pinyin":"ピンイン","vi":"日本語訳"}],"synonymsAndDifferences":[{"word":"類義語","diff":"違い"}],"memoryTip":"覚え方"}
+{"word":"${text}","pinyin":"ピンイン","partOfSpeech":"品詞","primaryMeaning":"主な日本語の意味","secondaryMeanings":["最大3つ"],"nuanceAndUsage":"ニュアンスを2〜3文で","formality":"口語/フォーマルなど","examples":[{"zh":"中国語例文","pinyin":"ピンイン","vi":"日本語訳"}],"synonymsAndDifferences":[{"word":"類義語","diff":"違い"}],"memoryTip":"覚え方"}
 
-例文は最大2つ、類義語は最大2つ。JSON以外は出力しないでください。`;
+例文は3つ、類義語は3つまで。JSON以外は出力しないでください。`;
       } else if (isEn) {
         prompt = `You are a Chinese dictionary. Look up this headword: "${text}"
 
 Return ONLY valid JSON:
-{"word":"${text}","pinyin":"pinyin","partOfSpeech":"part of speech","primaryMeaning":"primary English meaning","secondaryMeanings":["max 2"],"nuanceAndUsage":"one sentence of nuance","formality":"casual/formal/etc","examples":[{"zh":"Chinese example","pinyin":"pinyin","vi":"English translation"}],"synonymsAndDifferences":[{"word":"synonym","diff":"difference"}],"memoryTip":"memory tip"}
+{"word":"${text}","pinyin":"pinyin","partOfSpeech":"part of speech","primaryMeaning":"primary English meaning","secondaryMeanings":["max 3"],"nuanceAndUsage":"2-3 sentences of nuance and usage","formality":"casual/formal/etc","examples":[{"zh":"Chinese example","pinyin":"pinyin","vi":"English translation"}],"synonymsAndDifferences":[{"word":"synonym","diff":"difference"}],"memoryTip":"memory tip"}
 
-At most 2 examples and 2 synonyms. Output JSON only.`;
+Up to 3 examples and 3 synonyms. Output JSON only.`;
       } else {
         prompt = `Bạn là từ điển tiếng Trung. Tra mục từ: "${text}"
 
 Chỉ trả về JSON hợp lệ:
-{"word":"${text}","pinyin":"pinyin","partOfSpeech":"từ loại","primaryMeaning":"nghĩa tiếng Việt ngắn gọn","secondaryMeanings":["tối đa 2"],"nuanceAndUsage":"một câu về sắc thái","formality":"khẩu ngữ/trang trọng...","examples":[{"zh":"câu tiếng Trung","pinyin":"pinyin","vi":"bản dịch tiếng Việt"}],"synonymsAndDifferences":[{"word":"từ gần nghĩa","diff":"khác biệt"}],"memoryTip":"mẹo nhớ"}
+{"word":"${text}","pinyin":"pinyin","partOfSpeech":"từ loại","primaryMeaning":"nghĩa tiếng Việt ngắn gọn","secondaryMeanings":["tối đa 3"],"nuanceAndUsage":"2-3 câu về sắc thái và cách dùng","formality":"khẩu ngữ/trang trọng...","examples":[{"zh":"câu tiếng Trung","pinyin":"pinyin","vi":"bản dịch tiếng Việt"}],"synonymsAndDifferences":[{"word":"từ gần nghĩa","diff":"khác biệt"}],"memoryTip":"mẹo nhớ"}
 
-Tối đa 2 ví dụ và 2 từ gần nghĩa. Không thêm chữ nào ngoài JSON.`;
+Tối đa 3 ví dụ và 3 từ gần nghĩa. Không thêm chữ nào ngoài JSON.`;
       }
     } else if (type === 'analyze_word') {
       if (isJa) {
@@ -309,8 +309,8 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG một chuỗi JSON hợp lệ với c
     const geminiBody = {
       contents: [{ parts: [{ text: prompt }] }],
       generationConfig: {
+        // Uncapped output so dictionary cards are never cut mid-sentence.
         temperature: 0.3,
-        maxOutputTokens: type === 'dict_lookup' ? 1024 : 2048,
       },
     };
 

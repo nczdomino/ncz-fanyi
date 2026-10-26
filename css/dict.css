@@ -1485,3 +1485,468 @@ mark.dict-hit {
   border-radius: 10px;
   text-align: center;
 }
+
+/* --- Automatic AI lookup card (shown when every local dictionary missed) ---
+   The card is the only answer on screen in that case, so it gets a real hierarchy:
+   headword -> meaning -> nuance -> examples -> synonyms -> memory tip. */
+.ai-lookup-section {
+  --ai-accent: #7C3AED;
+  --ai-accent-soft: rgba(139, 92, 246, 0.10);
+  --ai-accent-line: rgba(139, 92, 246, 0.26);
+  margin-top: 14px;
+  margin-bottom: 16px;
+  border: 1px solid var(--ai-accent-line);
+  border-radius: var(--radius-lg, 14px);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(37, 99, 235, 0.04) 100%);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+  overflow: hidden;
+}
+
+[data-theme="dark"] .ai-lookup-section {
+  --ai-accent: #A78BFA;
+  --ai-accent-soft: rgba(139, 92, 246, 0.18);
+  --ai-accent-line: rgba(167, 139, 250, 0.32);
+}
+
+.ai-lookup-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 11px 14px;
+  background: var(--ai-accent-soft);
+  border-bottom: 1px solid var(--ai-accent-line);
+}
+
+.ai-lookup-head-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--text-primary);
+}
+
+.ai-lookup-head-title b {
+  color: var(--ai-accent);
+  font-weight: 800;
+}
+
+.ai-lookup-badge {
+  flex-shrink: 0;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  color: var(--ai-accent);
+  background: var(--bg-surface);
+  border: 1px solid var(--ai-accent-line);
+}
+
+.ai-lookup-card {
+  padding: 16px;
+  background: var(--bg-surface);
+}
+
+.ai-lookup-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ai-lookup-headword {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.ai-lookup-hanzi {
+  font-family: var(--font-hanzi);
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1.15;
+  color: var(--text-primary);
+}
+
+.ai-lookup-reading {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.ai-lookup-pinyin {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--accent);
+}
+
+.ai-lookup-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.ai-lookup-tag {
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.5;
+  padding: 2px 9px;
+  border-radius: 999px;
+  white-space: nowrap;
+  color: var(--text-secondary);
+  background: var(--bg-muted);
+  border: 1px solid var(--border-color);
+}
+
+.ai-lookup-tag-ai {
+  color: var(--ai-accent);
+  background: var(--ai-accent-soft);
+  border-color: var(--ai-accent-line);
+}
+
+.ai-lookup-speak {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+}
+
+.ai-lookup-primary {
+  margin-top: 14px;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.55;
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+
+.ai-lookup-secondary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.ai-lookup-secondary span {
+  font-size: 12.5px;
+  line-height: 1.5;
+  padding: 3px 10px;
+  border-radius: 999px;
+  color: var(--text-secondary);
+  background: var(--bg-muted);
+}
+
+.ai-lookup-nuance {
+  margin-top: 14px;
+  padding: 10px 12px 10px 14px;
+  border-left: 3px solid var(--warning);
+  border-radius: 0 10px 10px 0;
+  background: rgba(245, 158, 11, 0.07);
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+
+.ai-lookup-nuance-label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--warning);
+}
+
+.ai-lookup-block {
+  margin-top: 16px;
+}
+
+.ai-lookup-block-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.ai-lookup-example {
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-base);
+}
+
+.ai-lookup-example:last-child {
+  margin-bottom: 0;
+}
+
+.ai-lookup-ex-zh {
+  font-family: var(--font-hanzi);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.55;
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+
+.ai-lookup-ex-py {
+  margin-top: 2px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--accent);
+}
+
+.ai-lookup-ex-vi {
+  margin-top: 4px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.ai-lookup-syn {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 9px 12px;
+  margin-bottom: 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-base);
+}
+
+.ai-lookup-syn:last-child {
+  margin-bottom: 0;
+}
+
+.ai-lookup-syn-word {
+  flex-shrink: 0;
+  padding: 2px 9px;
+  border-radius: 8px;
+  font-family: var(--font-hanzi);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ai-accent);
+  background: var(--ai-accent-soft);
+}
+
+.ai-lookup-syn-diff {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.ai-lookup-tip {
+  margin-top: 16px;
+  padding: 10px 12px;
+  border: 1px dashed rgba(16, 185, 129, 0.4);
+  border-radius: 10px;
+  background: rgba(16, 185, 129, 0.07);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+
+.ai-lookup-foot {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border-color);
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.ai-lookup-foot-dot {
+  flex-shrink: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--success);
+}
+
+/* Semantic suggestions reuse the same shell but are a list of clickable words. */
+.ai-lookup-concept {
+  margin-top: 12px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+
+.ai-lookup-concept b {
+  color: var(--text-primary);
+}
+
+.ai-lookup-matches {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.ai-lookup-match {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 11px 13px;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-base);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ai-lookup-match:hover,
+.ai-lookup-match:focus-visible {
+  border-color: var(--ai-accent);
+  background: var(--ai-accent-soft);
+  transform: translateY(-1px);
+  outline: none;
+}
+
+.ai-lookup-match-top {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ai-lookup-match-zh {
+  font-family: var(--font-hanzi);
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--text-primary);
+}
+
+.ai-lookup-match-py {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.ai-lookup-match-hsk {
+  margin-left: auto;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+  color: var(--ai-accent);
+  background: var(--ai-accent-soft);
+  border: 1px solid var(--ai-accent-line);
+}
+
+.ai-lookup-match-meaning {
+  margin-top: 5px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+
+.ai-lookup-match-nuance {
+  margin-top: 3px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-muted);
+  overflow-wrap: anywhere;
+}
+
+.ai-lookup-match-example {
+  margin-top: 7px;
+  padding-top: 7px;
+  border-top: 1px dashed var(--border-color);
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+}
+
+/* Placeholder shown during the debounce window, before the request even starts. */
+.ai-lookup-placeholder {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 14px;
+  padding: 13px 15px;
+  border: 1px dashed var(--ai-accent-line, rgba(139, 92, 246, 0.35));
+  border-radius: var(--radius-lg, 14px);
+  background: rgba(139, 92, 246, 0.04);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+/* Loading skeleton: mirrors the final card so the layout does not jump. */
+.ai-lookup-sk {
+  display: block;
+  border-radius: 6px;
+  background: linear-gradient(
+    90deg,
+    var(--bg-muted) 25%,
+    rgba(139, 92, 246, 0.12) 37%,
+    var(--bg-muted) 63%
+  );
+  background-size: 400% 100%;
+  animation: aiLookupShimmer 1.4s ease infinite;
+}
+
+@keyframes aiLookupShimmer {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
+
+.ai-lookup-sk-hanzi {
+  width: 58px;
+  height: 40px;
+  border-radius: 10px;
+}
+
+.ai-lookup-sk-pill {
+  width: 74px;
+  height: 16px;
+  border-radius: 999px;
+}
+
+.ai-lookup-sk-line {
+  height: 12px;
+  margin-top: 10px;
+}
+
+.ai-lookup-sk-line.short {
+  width: 55%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ai-lookup-sk { animation: none; }
+  .ai-lookup-match:hover { transform: none; }
+}
+
+@media (max-width: 600px) {
+  .ai-lookup-card { padding: 13px; }
+  .ai-lookup-hanzi { font-size: 28px; }
+  .ai-lookup-primary { font-size: 15.5px; }
+  .ai-lookup-head { padding: 10px 12px; }
+  .ai-lookup-head-title { font-size: 12.5px; }
+  .ai-lookup-match-hsk { margin-left: 0; }
+}

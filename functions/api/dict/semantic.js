@@ -159,17 +159,17 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG định dạng JSON hợp lệ theo s
 
     if (isFast) {
       prompt += isJa
-        ? '\n\n必ず最も適切な3件だけを返し、各項目は簡潔にしてください。'
+        ? '\n\n最も適切な4件を返し、各項目は簡潔にしてください。'
         : (isEn
-          ? '\n\nReturn only the 3 best matches and keep every field concise.'
-          : '\n\nChỉ trả về đúng 3 kết quả phù hợp nhất và giữ mỗi trường thật ngắn gọn.');
+          ? '\n\nReturn the 4 best matches and keep every field concise.'
+          : '\n\nTrả về 4 kết quả phù hợp nhất và giữ mỗi trường ngắn gọn.');
     }
 
     const geminiBody = {
       contents: [{ parts: [{ text: prompt }] }],
       generationConfig: {
+        // Uncapped output so the JSON answer is never truncated.
         temperature: 0.3,
-        maxOutputTokens: isFast ? 1024 : 2048,
         responseMimeType: 'application/json',
       },
     };

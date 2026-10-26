@@ -582,8 +582,16 @@ function renderDictView() {
     const afterExtDict = (ok) => {
       if (ok) {
         renderDictView();
+        return;
+      }
+      // The extended dictionary missed too: now the AI is worth paying for.
+      const mode = typeof aiLookupMode === 'function' ? aiLookupMode(query, detectedLang) : 'semantic';
+      const canUseAi = typeof aiLookupEligible === 'function' && aiLookupEligible(query, mode);
+      if (canUseAi) {
+        // Re-render so the AI answer replaces the "no results" card instead of being
+        // pushed underneath it.
+        renderDictView();
       } else if (query && typeof autoAiLookup === 'function') {
-        // The extended dictionary missed too: now the AI is worth paying for.
         autoAiLookup(query, detectedLang);
       }
     };
@@ -596,25 +604,38 @@ function renderDictView() {
       EXT_DICT.loading.then(afterExtDict);
     }
 
+    // Would the AI be allowed to answer this query? When it is, the big "no results"
+    // card is dropped: an AI answer plus "nothing found" on the same screen reads like
+    // a bug, and it pushed the actual answer below the fold. While the free extended
+    // dictionary is still downloading we reserve the slot but skip the placeholder,
+    // because the word may still turn up there.
+    const aiMode = typeof aiLookupMode === 'function' ? aiLookupMode(query, detectedLang) : 'semantic';
+    const aiCanAnswer = !!query &&
+      typeof aiLookupEligible === 'function' && aiLookupEligible(query, aiMode);
+    const aiEligible = aiCanAnswer && !extLoading;
+
     let noMatchHtml = `
       ${extLoading ? `<div class="dict-ext-loading">⏳ ${tx('Đang tải từ điển mở rộng (119.000 mục)…', 'Loading the extended dictionary (119k entries)…', '拡張辞書を読み込み中…')}</div>` : ''}
       <div class="dict-no-match-wrapper">
-        <div class="dict-no-match-header">
-          <div style="font-size:36px; margin-bottom:8px;">🔍</div>
-          <div style="font-size:16px; font-weight:700; color:var(--text-primary);">${t('noResults')}</div>
-          <div style="font-size:13px; color:var(--text-muted); margin-top:4px;">${noMatchSub}</div>
-        </div>
+        ${aiCanAnswer ? `
+          <div id="dict-ai-fallback-container">${aiEligible && typeof aiLookupPlaceholderHtml === 'function' ? aiLookupPlaceholderHtml() : ''}</div>
+        ` : `
+          <div class="dict-no-match-header">
+            <div style="font-size:36px; margin-bottom:8px;">🔍</div>
+            <div style="font-size:16px; font-weight:700; color:var(--text-primary);">${t('noResults')}</div>
+            <div style="font-size:13px; color:var(--text-muted); margin-top:4px;">${noMatchSub}</div>
+          </div>
+          <div id="dict-ai-fallback-container"></div>
+        `}
 
         <!-- 1. Live Multi-Dictionary API Auto Gợi ý -->
         <div id="dict-live-results-container"></div>
 
-        <!-- 1b. AI fallback: only fires when every local dictionary missed. -->
-        <div id="dict-ai-fallback-container"></div>
-
         <!-- 2. Bản đồ sắc thái (nếu có) -->
         ${mindmapHtml}
 
-        <!-- 3. Tra cứu ngữ cảnh AI -->
+        <!-- 3. Tra cứu ngữ cảnh AI: pointless once the AI already answered automatically -->
+        ${aiCanAnswer ? '' : `
         <div class="dict-semantic-action-bar" style="margin-top:14px;">
           <div>
             <div class="dict-semantic-action-text">✨ ${t('dictSemanticTitle') || 'Tra cứu theo ngữ cảnh thông minh (AI)'}</div>
@@ -625,6 +646,7 @@ function renderDictView() {
           </button>
         </div>
         <div id="dict-semantic-results-area"></div>
+        `}
 
         <!-- 4. Tra cứu nhanh trên các đại từ điển chuyên sâu -->
         <div class="dict-ext-section" style="margin-top:14px;">
@@ -644,9 +666,8 @@ function renderDictView() {
       triggerLiveDictSearch(query, detectedLang, seenWords);
     }
     // Every local dictionary missed: let the AI fill the gap. The helper is debounced,
-    // cached for 30 days and budget-limited, so typing does not burn tokens. When the
-    // extended dictionary is still downloading, wait for it first — it is free.
-    if (query && !extLoading && typeof autoAiLookup === 'function') {
+    // cached for 30 days and budget-limited, so typing does not burn tokens.
+    if (aiEligible && typeof autoAiLookup === 'function') {
       autoAiLookup(query, detectedLang);
     }
     return;
@@ -746,8 +767,12 @@ function renderDictView() {
   // 1b. If the engine only produced "did you mean" suggestions, the word is effectively
   // missing from the dictionary. Reserve a slot for the automatic AI answer.
   const needsAiFallback = !!query && primaryCount === 0;
+  const aiAutoAnswers = needsAiFallback && typeof aiLookupEligible === 'function' &&
+    aiLookupEligible(query, typeof aiLookupMode === 'function'
+      ? aiLookupMode(query, typeof detectSearchLanguage === 'function' ? detectSearchLanguage(query) : 'latin')
+      : 'semantic');
   if (needsAiFallback) {
-    html += '<div id="dict-ai-fallback-container"></div>';
+    html += `<div id="dict-ai-fallback-container">${aiAutoAnswers && typeof aiLookupPlaceholderHtml === 'function' ? aiLookupPlaceholderHtml() : ''}</div>`;
   }
 
   // 2. Bản đồ sắc thái HSK & Slang (gọn gàng, không che khuất từ chính)
@@ -762,6 +787,7 @@ function renderDictView() {
       : `https://dict.naver.com/linedict/zhendict/#/cnen/search?query=${encodeURIComponent(query)}`;
 
     html += `
+      ${aiAutoAnswers ? '' : `
       <div class="dict-semantic-action-bar" style="margin-top:14px;">
         <div>
           <div class="dict-semantic-action-text">✨ ${t('dictSemanticTitle') || 'Tra cứu theo ngữ cảnh thông minh (AI)'}</div>
@@ -772,6 +798,7 @@ function renderDictView() {
         </button>
       </div>
       <div id="dict-semantic-results-area"></div>
+      `}
 
       <!-- Đại từ điển chuyên sâu -->
       <div class="dict-ext-section" style="margin-top:14px;">

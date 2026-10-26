@@ -149,24 +149,66 @@ function aiLookupStillWanted(query) {
 }
 
 function aiLookupHeaderBadge() {
-  return '<span class="badge" style="font-size:10.5px; background:rgba(139,92,246,0.12); color:#7C3AED; border:1px solid rgba(139,92,246,0.25);">AI</span>';
+  return '<span class="ai-lookup-badge">AI</span>';
+}
+
+function aiLookupShell(titleHtml, bodyHtml) {
+  return `
+    <div class="ai-lookup-section">
+      <div class="ai-lookup-head">
+        <span class="ai-lookup-head-title">${titleHtml}</span>
+        ${aiLookupHeaderBadge()}
+      </div>
+      ${bodyHtml}
+    </div>
+  `;
+}
+
+function aiLookupFootHtml(cached) {
+  return `
+    <div class="ai-lookup-foot">
+      <span class="ai-lookup-foot-dot"></span>
+      <span>${cached
+        ? tx('Kết quả đã lưu trong máy, không tốn thêm chi phí.', 'Cached on this device — no extra cost.', 'この端末に保存済みの結果です。')
+        : tx('Kết quả được lưu 30 ngày để lần sau tra miễn phí.', 'Saved for 30 days so the next lookup is free.', '30日間保存され、次回は無料で表示されます。')}</span>
+    </div>`;
+}
+
+// Rendered by dict.js during the debounce window, so the results area is never blank.
+function aiLookupPlaceholderHtml() {
+  return `
+    <div class="ai-lookup-placeholder">
+      <span>✨</span>
+      <span>${tx('Không có trong từ điển máy. AI đang bổ sung kết quả…', 'Not in the local dictionary. AI is filling the gap…', 'ローカル辞書にありません。AIが結果を補完します…')}</span>
+    </div>`;
 }
 
 function renderAiFallbackLoading(query) {
   var el = aiLookupFindContainer();
   if (!el) return;
-  el.innerHTML = `
-    <div class="dict-live-section" style="margin-top:14px;">
-      <div class="dict-live-header">
-        <span>✨ ${tx('AI đang tra từ', 'AI is looking it up', 'AIが調べています')}: <b>${escapeHtml(query)}</b></span>
-        ${aiLookupHeaderBadge()}
+  el.innerHTML = aiLookupShell(
+    `<span>✨</span><span>${tx('AI đang tra từ', 'AI is looking it up', 'AIが調べています')}: <b>${escapeHtml(query)}</b></span>`,
+    `
+      <div class="ai-lookup-card">
+        <div class="ai-lookup-top">
+          <div class="ai-lookup-headword">
+            <span class="ai-lookup-sk ai-lookup-sk-hanzi"></span>
+            <div class="ai-lookup-reading">
+              <span class="ai-lookup-sk ai-lookup-sk-pill"></span>
+              <span class="ai-lookup-sk ai-lookup-sk-pill" style="width:52px;"></span>
+            </div>
+          </div>
+        </div>
+        <span class="ai-lookup-sk ai-lookup-sk-line" style="width:82%; margin-top:18px;"></span>
+        <span class="ai-lookup-sk ai-lookup-sk-line" style="width:64%;"></span>
+        <span class="ai-lookup-sk ai-lookup-sk-line short" style="margin-top:16px;"></span>
+        <span class="ai-lookup-sk ai-lookup-sk-line" style="width:70%;"></span>
+        <div class="ai-lookup-foot" style="border-top:none;">
+          <span>${tx('Từ điển chưa có từ này, AI đang bổ sung kết quả…', 'Not in the dictionary yet — AI is filling the gap…', '辞書にないため、AIが結果を補完しています…')}</span>
+        </div>
       </div>
-      <div style="display:flex; align-items:center; gap:8px; padding:12px 4px; color:var(--text-muted); font-size:13px;">
-        <span class="spinner-small" style="display:inline-block; width:15px; height:15px; border:2px solid var(--accent); border-top-color:transparent; border-radius:50%; animation:spin 0.8s linear infinite;"></span>
-        <span>${tx('Từ điển chưa có từ này, AI đang bổ sung kết quả…', 'Not in the dictionary yet — AI is filling the gap…', '辞書にないため、AIが結果を補完しています…')}</span>
-      </div>
-    </div>
-  `;
+    `
+  );
 }
 
 function renderAiFallbackError(query, mode, lang, message) {
@@ -174,14 +216,16 @@ function renderAiFallbackError(query, mode, lang, message) {
   if (!el) return;
   var retryLabel = tx('Thử lại', 'Retry', '再試行');
   el.innerHTML = `
-    <div class="dict-live-section" style="margin-top:14px; border-color:rgba(239,68,68,0.35);">
-      <div class="dict-live-header">
-        <span>⚠️ ${tx('AI chưa trả được kết quả', 'AI could not return a result', 'AIの結果を取得できませんでした')}</span>
+    <div class="ai-lookup-section" style="--ai-accent:#DC2626; --ai-accent-soft:rgba(220,38,38,0.07); --ai-accent-line:rgba(220,38,38,0.28);">
+      <div class="ai-lookup-head">
+        <span class="ai-lookup-head-title">⚠️ ${tx('AI chưa trả được kết quả', 'AI could not return a result', 'AIの結果を取得できませんでした')}</span>
         ${aiLookupHeaderBadge()}
       </div>
-      <div style="padding:8px 4px; font-size:12.5px; color:var(--text-muted); line-height:1.5;">
-        ${escapeHtml(message || tx('Vui lòng thử lại sau.', 'Please try again later.', '後でもう一度お試しください。'))}
-        <button type="button" class="btn btn-outline btn-sm" style="margin-left:8px; font-size:11.5px; padding:2px 9px;"
+      <div class="ai-lookup-card" style="display:flex; align-items:flex-start; gap:10px; flex-wrap:wrap;">
+        <div style="flex:1 1 220px; font-size:13px; line-height:1.55; color:var(--text-secondary);">
+          ${escapeHtml(message || tx('Vui lòng thử lại sau.', 'Please try again later.', '後でもう一度お試しください。'))}
+        </div>
+        <button type="button" class="btn btn-outline btn-sm" style="font-size:12px; padding:5px 12px; border-radius:10px;"
           onclick="retryAutoAiLookup('${escapeQuotes(query)}', '${escapeQuotes(mode)}', '${escapeQuotes(lang)}')">↺ ${retryLabel}</button>
       </div>
     </div>
@@ -193,12 +237,12 @@ function renderAiFallbackBudgetNotice(query) {
   if (!el) return;
   var wait = aiLookupBudgetResetIn();
   el.innerHTML = `
-    <div class="dict-live-section" style="margin-top:14px; border-color:rgba(245,158,11,0.35);">
-      <div class="dict-live-header">
-        <span>💡 ${tx('AI tạm nghỉ để tiết kiệm chi phí', 'AI is paused to save cost', 'コスト節約のためAIを一時停止中')}</span>
+    <div class="ai-lookup-section" style="--ai-accent:#B45309; --ai-accent-soft:rgba(245,158,11,0.09); --ai-accent-line:rgba(245,158,11,0.32);">
+      <div class="ai-lookup-head">
+        <span class="ai-lookup-head-title">💡 ${tx('AI tạm nghỉ để tiết kiệm chi phí', 'AI is paused to save cost', 'コスト節約のためAIを一時停止中')}</span>
         ${aiLookupHeaderBadge()}
       </div>
-      <div style="padding:8px 4px; font-size:12.5px; color:var(--text-muted); line-height:1.5;">
+      <div class="ai-lookup-card" style="font-size:13px; line-height:1.6; color:var(--text-secondary);">
         ${tx(
           `Bạn đã dùng khá nhiều lượt tra AI. Thử lại sau ${wait || 60} giây, hoặc bấm vào một từ điển bên dưới.`,
           `You have used many AI lookups. Try again in ${wait || 60}s, or use one of the dictionaries below.`,
@@ -213,21 +257,22 @@ function renderAiFallbackSemantic(concept, matches, query, cached) {
   var el = aiLookupFindContainer();
   if (!el) return;
   var items = '';
-  var list = Array.isArray(matches) ? matches.slice(0, 5) : [];
+  var list = Array.isArray(matches) ? matches.slice(0, 6) : [];
   for (var i = 0; i < list.length; i++) {
     var m = list[i] || {};
+    if (!m.word) continue;
     items += `
-      <div class="dict-semantic-item" onclick="openWordSheet('${escapeQuotes(m.word || '')}')">
-        <div class="dict-semantic-item-top">
-          <div>
-            <span class="dict-semantic-zh">${escapeHtml(m.word || '')}</span>
-            <span class="dict-semantic-py">${escapeHtml(m.pinyin || '')}</span>
-          </div>
-          ${m.hsk ? `<span class="dict-semantic-hsk-badge">${escapeHtml(m.hsk)}</span>` : ''}
+      <div class="ai-lookup-match" role="button" tabindex="0"
+           onclick="openWordSheet('${escapeQuotes(m.word)}')"
+           onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+        <div class="ai-lookup-match-top">
+          <span class="ai-lookup-match-zh" lang="zh-CN">${escapeHtml(m.word)}</span>
+          ${m.pinyin ? `<span class="ai-lookup-match-py">${escapeHtml(m.pinyin)}</span>` : ''}
+          ${m.hsk ? `<span class="ai-lookup-match-hsk">${escapeHtml(m.hsk)}</span>` : ''}
         </div>
-        <div class="dict-semantic-meaning">${escapeHtml(m.meaning || '')}</div>
-        ${m.nuance ? `<div class="dict-semantic-nuance">💡 ${escapeHtml(m.nuance)}</div>` : ''}
-        ${m.example ? `<div class="dict-semantic-example">💬 ${escapeHtml(m.example)}</div>` : ''}
+        ${m.meaning ? `<div class="ai-lookup-match-meaning">${escapeHtml(m.meaning)}</div>` : ''}
+        ${m.nuance ? `<div class="ai-lookup-match-nuance">${escapeHtml(m.nuance)}</div>` : ''}
+        ${m.example ? `<div class="ai-lookup-match-example">💬 ${escapeHtml(m.example)}</div>` : ''}
       </div>
     `;
   }
@@ -235,22 +280,18 @@ function renderAiFallbackSemantic(concept, matches, query, cached) {
     renderAiFallbackError(query, 'semantic', aiLookupTargetLang(), tx('AI không tìm thấy từ phù hợp.', 'AI found no suitable word.', 'AIは適切な単語を見つけられませんでした。'));
     return;
   }
-  el.innerHTML = `
-    <div class="dict-live-section" style="margin-top:14px;">
-      <div class="dict-live-header">
-        <span>✨ ${tx('AI gợi ý từ phù hợp', 'AI suggests matching words', 'AIによる候補')}: <b>${escapeHtml(concept || query)}</b></span>
-        ${aiLookupHeaderBadge()}
-      </div>
-      <div class="dict-semantic-results-box" style="margin-top:8px;">
-        <div>${items}</div>
-        <div style="font-size:11px; color:var(--text-muted); padding:6px 2px 0;">
-          ${cached
-            ? tx('Kết quả đã lưu trong máy, không tốn thêm chi phí.', 'Cached on this device — no extra cost.', 'この端末に保存済みの結果です。')
-            : tx('Kết quả được lưu 30 ngày để lần sau tra miễn phí.', 'Saved for 30 days so the next lookup is free.', '30日間保存され、次回は無料で表示されます。')}
+  el.innerHTML = aiLookupShell(
+    `<span>✨</span><span>${tx('AI gợi ý từ phù hợp', 'AI suggests matching words', 'AIによる候補')}</span>`,
+    `
+      <div class="ai-lookup-card">
+        <div class="ai-lookup-concept" style="margin-top:0;">
+          ${tx('Bạn đang tìm', 'You are looking for', '探している内容')}: <b>${escapeHtml(concept || query)}</b>
         </div>
+        <div class="ai-lookup-matches">${items}</div>
+        ${aiLookupFootHtml(cached)}
       </div>
-    </div>
-  `;
+    `
+  );
 }
 
 function renderAiFallbackWord(entry, query, cached) {
@@ -258,19 +299,20 @@ function renderAiFallbackWord(entry, query, cached) {
   if (!el) return;
   var e = entry || {};
   var word = e.word || query;
-  var meanings = Array.isArray(e.secondaryMeanings) ? e.secondaryMeanings.filter(Boolean).slice(0, 3) : [];
-  var examples = Array.isArray(e.examples) ? e.examples.slice(0, 2) : [];
-  var synonyms = Array.isArray(e.synonymsAndDifferences) ? e.synonymsAndDifferences.slice(0, 2) : [];
+  var meanings = Array.isArray(e.secondaryMeanings) ? e.secondaryMeanings.filter(Boolean).slice(0, 4) : [];
+  var examples = Array.isArray(e.examples) ? e.examples.slice(0, 4) : [];
+  var synonyms = Array.isArray(e.synonymsAndDifferences) ? e.synonymsAndDifferences.slice(0, 4) : [];
 
   var examplesHtml = '';
   for (var i = 0; i < examples.length; i++) {
     var ex = examples[i] || {};
     var tr = ex.vi || ex.ja || ex.en || ex.translation || '';
+    if (!ex.zh && !tr) continue;
     examplesHtml += `
-      <div class="ai-word-example-item" style="margin-top:6px;">
-        <div class="ai-word-ex-zh"><span>${escapeHtml(ex.zh || '')}</span></div>
-        ${ex.pinyin ? `<div class="ai-word-ex-py">${escapeHtml(ex.pinyin)}</div>` : ''}
-        ${tr ? `<div class="ai-word-ex-vi">${escapeHtml(tr)}</div>` : ''}
+      <div class="ai-lookup-example">
+        ${ex.zh ? `<div class="ai-lookup-ex-zh" lang="zh-CN">${escapeHtml(ex.zh)}</div>` : ''}
+        ${ex.pinyin ? `<div class="ai-lookup-ex-py">${escapeHtml(ex.pinyin)}</div>` : ''}
+        ${tr ? `<div class="ai-lookup-ex-vi">${escapeHtml(tr)}</div>` : ''}
       </div>
     `;
   }
@@ -278,39 +320,64 @@ function renderAiFallbackWord(entry, query, cached) {
   var synonymsHtml = '';
   for (var j = 0; j < synonyms.length; j++) {
     var s = synonyms[j] || {};
-    synonymsHtml += `<div class="ai-word-diff-item"><b style="color:var(--accent);">${escapeHtml(s.word || '')}:</b> <span style="color:var(--text-secondary);">${escapeHtml(s.diff || '')}</span></div>`;
+    if (!s.word && !s.diff) continue;
+    synonymsHtml += `
+      <div class="ai-lookup-syn">
+        ${s.word ? `<span class="ai-lookup-syn-word" lang="zh-CN">${escapeHtml(s.word)}</span>` : ''}
+        ${s.diff ? `<span class="ai-lookup-syn-diff">${escapeHtml(s.diff)}</span>` : ''}
+      </div>
+    `;
   }
 
-  el.innerHTML = `
-    <div class="dict-live-section" style="margin-top:14px;">
-      <div class="dict-live-header">
-        <span>✨ ${tx('AI bổ sung từ chưa có trong từ điển', 'AI filled in a word missing from the dictionary', '辞書にない単語をAIが補完')}</span>
-        ${aiLookupHeaderBadge()}
-      </div>
-      <div class="dict-item-card" style="cursor:default; margin-top:8px;">
-        <div style="flex:1; min-width:0;">
-          <div class="dict-item-left">
-            <span class="dict-hanzi" lang="zh-CN">${escapeHtml(word)}</span>
-            <span class="dict-pinyin">${escapeHtml(e.pinyin || '')}</span>
-            ${e.partOfSpeech ? `<span class="dict-hanviet">${escapeHtml(e.partOfSpeech)}</span>` : ''}
+  var tags = '';
+  if (e.partOfSpeech) tags += `<span class="ai-lookup-tag">${escapeHtml(e.partOfSpeech)}</span>`;
+  if (e.formality) tags += `<span class="ai-lookup-tag ai-lookup-tag-ai">${escapeHtml(e.formality)}</span>`;
+
+  el.innerHTML = aiLookupShell(
+    `<span>✨</span><span>${tx('AI bổ sung từ chưa có trong từ điển', 'AI filled in a word missing from the dictionary', '辞書にない単語をAIが補完')}</span>`,
+    `
+      <div class="ai-lookup-card">
+        <div class="ai-lookup-top">
+          <div class="ai-lookup-headword">
+            <span class="ai-lookup-hanzi" lang="zh-CN">${escapeHtml(word)}</span>
+            <div class="ai-lookup-reading">
+              ${e.pinyin ? `<span class="ai-lookup-pinyin">${escapeHtml(e.pinyin)}</span>` : ''}
+              ${tags ? `<div class="ai-lookup-tags">${tags}</div>` : ''}
+            </div>
           </div>
-          <div class="dict-meaning">
-            <b>${escapeHtml(e.primaryMeaning || '')}</b>
-            ${meanings.length ? `<div style="font-size:12.5px; color:var(--text-secondary); margin-top:2px;">${meanings.map(escapeHtml).join(' • ')}</div>` : ''}
-          </div>
+          <button type="button" class="icon-btn ai-lookup-speak" onclick="speakText('${escapeQuotes(word)}')"
+            title="${tx('Nghe phát âm', 'Listen', '発音を聞く')}" aria-label="${tx('Nghe phát âm', 'Listen', '発音を聞く')}">
+            <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+          </button>
         </div>
+
+        ${e.primaryMeaning ? `<div class="ai-lookup-primary">${escapeHtml(e.primaryMeaning)}</div>` : ''}
+        ${meanings.length ? `<div class="ai-lookup-secondary">${meanings.map(function (m) { return `<span>${escapeHtml(m)}</span>`; }).join('')}</div>` : ''}
+
+        ${e.nuanceAndUsage ? `
+          <div class="ai-lookup-nuance">
+            <span class="ai-lookup-nuance-label">${tx('Sắc thái & cách dùng', 'Nuance & usage', 'ニュアンスと用法')}</span>
+            ${escapeHtml(e.nuanceAndUsage)}
+          </div>` : ''}
+
+        ${examplesHtml ? `
+          <div class="ai-lookup-block">
+            <div class="ai-lookup-block-title">💬 ${tx('Ví dụ', 'Examples', '例文')}</div>
+            ${examplesHtml}
+          </div>` : ''}
+
+        ${synonymsHtml ? `
+          <div class="ai-lookup-block">
+            <div class="ai-lookup-block-title">🔄 ${tx('Từ gần nghĩa', 'Near synonyms', '類義語')}</div>
+            ${synonymsHtml}
+          </div>` : ''}
+
+        ${e.memoryTip ? `<div class="ai-lookup-tip">🧠 ${escapeHtml(e.memoryTip)}</div>` : ''}
+
+        ${aiLookupFootHtml(cached)}
       </div>
-      ${e.nuanceAndUsage ? `<div class="ai-word-nuance-box" style="margin-top:8px;">${escapeHtml(e.nuanceAndUsage)}</div>` : ''}
-      ${examplesHtml ? `<div style="margin-top:8px;"><div class="ai-word-section-title">${tx('Ví dụ', 'Examples', '例文')}</div>${examplesHtml}</div>` : ''}
-      ${synonymsHtml ? `<div style="margin-top:8px;"><div class="ai-word-section-title">${tx('Từ gần nghĩa', 'Near synonyms', '類義語')}</div>${synonymsHtml}</div>` : ''}
-      ${e.memoryTip ? `<div class="ai-word-tip-box" style="margin-top:8px;">🧠 ${escapeHtml(e.memoryTip)}</div>` : ''}
-      <div style="font-size:11px; color:var(--text-muted); padding:6px 2px 0;">
-        ${cached
-          ? tx('Kết quả đã lưu trong máy, không tốn thêm chi phí.', 'Cached on this device — no extra cost.', 'この端末に保存済みの結果です。')
-          : tx('Kết quả được lưu 30 ngày để lần sau tra miễn phí.', 'Saved for 30 days so the next lookup is free.', '30日間保存され、次回は無料で表示されます。')}
-      </div>
-    </div>
-  `;
+    `
+  );
 }
 
 function aiLookupRenderRecord(rec, query, mode, lang) {
@@ -433,7 +500,19 @@ function autoAiLookup(query, detectedLang) {
   if (AI_LOOKUP.autoRequested.has(key)) {
     // A re-render (language switch, etc.) should still show a cached answer without a call.
     aiLookupGetCached(key).then(function (rec) {
-      if (rec && rec.ok && aiLookupStillWanted(q)) aiLookupRenderRecord(rec, q, mode, lang);
+      if (!aiLookupStillWanted(q)) return;
+      if (rec && rec.ok) {
+        aiLookupRenderRecord(rec, q, mode, lang);
+      } else if (rec && !rec.ok) {
+        // Failures are cached for 10 minutes; show the retry card again instead of
+        // leaving the placeholder on screen forever.
+        renderAiFallbackError(q, mode, lang, rec.message);
+      } else {
+        // The cache entry expired or the write failed. Forgetting the "already asked"
+        // marker lets the debounced path try once more; budget/inflight still guard it.
+        AI_LOOKUP.autoRequested.delete(key);
+        autoAiLookup(q, detectedLang);
+      }
     });
     return;
   }
@@ -486,4 +565,7 @@ if (typeof window !== 'undefined') {
   window.autoAnalyzeWordWithAi = autoAnalyzeWordWithAi;
   window.aiLookupKey = aiLookupKey;
   window.aiLookupGetCached = aiLookupGetCached;
+  window.aiLookupEligible = aiLookupEligible;
+  window.aiLookupMode = aiLookupMode;
+  window.aiLookupPlaceholderHtml = aiLookupPlaceholderHtml;
 }

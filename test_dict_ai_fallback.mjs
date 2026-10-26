@@ -195,6 +195,23 @@ console.log('\n--- Debounce and the Hanzi word path ---');
     assert.ok(html.indexOf('dá') !== -1, 'missing pinyin');
   });
 
+  await check('the word card uses its own layout, not the dictionary row', () => {
+    const html = h.container().innerHTML;
+    assert.ok(html.indexOf('ai-lookup-section') !== -1, 'missing AI card shell');
+    assert.ok(html.indexOf('ai-lookup-headword') !== -1, 'missing headword block');
+    assert.ok(html.indexOf('ai-lookup-primary') !== -1, 'missing primary meaning');
+    assert.ok(html.indexOf('ai-lookup-foot') !== -1, 'missing cache footer');
+    assert.ok(html.indexOf('dict-live-section') === -1, 'legacy live section reused');
+    assert.ok(html.indexOf('dict-item-card') === -1, 'legacy dictionary row reused');
+  });
+
+  await check('the loading state is a skeleton, not a bare spinner', () => {
+    h.ctx.renderAiFallbackLoading('龘');
+    const html = h.container().innerHTML;
+    assert.ok(html.indexOf('ai-lookup-sk') !== -1, 'no skeleton');
+    assert.ok(html.indexOf('ai-lookup-section') !== -1, 'loading lost the card shell');
+  });
+
   await check('a second identical lookup is served from cache (no new request)', async () => {
     h.ctx.state.searchQuery = '';
     h.ctx.state.searchQuery = '龘';
@@ -203,6 +220,19 @@ console.log('\n--- Debounce and the Hanzi word path ---');
     await settle();
     assert.strictEqual(h.calls.length, 1, 'cache miss cost a second request');
     assert.ok(h.container().innerHTML.indexOf('rồng bay') !== -1, 'cached card not re-rendered');
+  });
+
+  await check('an evicted cache entry is fetched again instead of dead-ending', async () => {
+    const key = h.ctx.aiLookupKey('word', 'vi', '龘');
+    h.ctx.AI_LOOKUP.ram.delete(key);
+    h.db.delete(key);
+    h.ctx.state.searchQuery = '龘';
+    h.ctx.autoAiLookup('龘', 'zh');
+    await settle();
+    h.flushTimers();
+    await settle();
+    assert.strictEqual(h.calls.length, 2, 'no retry after the cache entry disappeared');
+    assert.ok(h.container().innerHTML.indexOf('rồng bay') !== -1, 'retried card not rendered');
   });
 
   await check('the IndexedDB cache is written for the 30-day offline reuse', () => {
@@ -242,6 +272,14 @@ console.log('\n--- Semantic (reverse) path ---');
     const html = h.container().innerHTML;
     assert.ok(html.indexOf('困') !== -1, 'missing suggested word');
     assert.ok(html.indexOf('kùn') !== -1, 'missing pinyin');
+  });
+
+  await check('suggestions use the dedicated match list, not the old semantic list', () => {
+    const html = h.container().innerHTML;
+    assert.ok(html.indexOf('ai-lookup-match') !== -1, 'missing match list');
+    assert.ok(html.indexOf('ai-lookup-match-zh') !== -1, 'missing match headword');
+    assert.ok(html.indexOf('ai-lookup-concept') !== -1, 'missing concept line');
+    assert.ok(html.indexOf('dict-semantic-item') === -1, 'legacy semantic item reused');
   });
 
   await check('a repeat semantic lookup is free', async () => {
@@ -300,12 +338,15 @@ console.log('\n--- Failure handling ---');
   });
 
   await check('the failure is cached for 10 minutes, not retried on re-render', async () => {
+    h.container().innerHTML = '';
     h.ctx.state.searchQuery = '';
     h.ctx.state.searchQuery = 'từ lỗi';
     h.ctx.autoAiLookup('từ lỗi', 'latin');
     h.flushTimers();
     await settle();
     assert.strictEqual(h.calls.length, 1, 'cached failure triggered another request');
+    assert.ok(h.container().innerHTML.indexOf('AI chưa trả được kết quả') !== -1,
+      'cached failure was not re-rendered after a view switch');
   });
 
   await check('the explicit retry button does spend one more request', async () => {
@@ -336,6 +377,18 @@ console.log('\n--- Wiring ---');
     const src = fs.readFileSync(path.join(import.meta.dirname, 'js/features/word-sheet.js'), 'utf8');
     assert.ok(src.indexOf('autoAnalyzeWordWithAi(') !== -1, 'word sheet never auto-analyzes');
     assert.ok(src.indexOf('isUnknownWord') !== -1, 'no local-dictionary guard');
+  });
+
+  await check('dict.js suppresses the "no results" card and manual AI bar when the AI can answer', () => {
+    const src = fs.readFileSync(path.join(import.meta.dirname, 'js/features/dict.js'), 'utf8');
+    assert.ok(src.indexOf('aiCanAnswer') !== -1, 'no layout gate for the no-match card');
+    assert.ok(src.indexOf('aiAutoAnswers') !== -1, 'manual semantic bar is not suppressed');
+  });
+
+  await check('the debounce placeholder belongs to the AI card family', () => {
+    const h = makeHarness();
+    assert.strictEqual(typeof h.ctx.aiLookupPlaceholderHtml, 'function', 'placeholder not exported');
+    assert.ok(h.ctx.aiLookupPlaceholderHtml().indexOf('ai-lookup-placeholder') !== -1, 'placeholder markup missing');
   });
 }
 
