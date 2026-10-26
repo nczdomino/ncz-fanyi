@@ -5,7 +5,32 @@ import { applyCors, rejectDisallowedOrigin, enforceRateLimit, readBody, noStore,
 const RATE_LIMIT = 30;          // requests
 const RATE_WINDOW_MS = 60_000;  // per minute
 const MAX_TEXT_LENGTH = 25_000;
-const ALLOWED_TYPES = new Set(['lenses', 'full', 'analyze_word']);
+const ALLOWED_TYPES = new Set(['lenses', 'full', 'analyze_word', 'dict_lookup']);
+
+// Best-effort per-instance cache for the automatic dictionary fallback. Serverless
+// instances do not share memory, but a warm instance serves every repeat lookup for
+// free, which is exactly the traffic pattern this feature creates.
+const LOOKUP_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
+const LOOKUP_CACHE_MAX = 500;
+const lookupCache = new Map();
+
+function lookupCacheGet(key) {
+  const hit = lookupCache.get(key);
+  if (!hit) return null;
+  if (Date.now() - hit.ts > LOOKUP_CACHE_TTL_MS) {
+    lookupCache.delete(key);
+    return null;
+  }
+  return hit.value;
+}
+
+function lookupCacheSet(key, value) {
+  lookupCache.set(key, { ts: Date.now(), value });
+  if (lookupCache.size > LOOKUP_CACHE_MAX) {
+    const oldest = lookupCache.keys().next().value;
+    if (oldest !== undefined) lookupCache.delete(oldest);
+  }
+}
 
 export default async function handler(req, res) {
   // Restricted CORS (allows '*' plus Allow-Credentials was an invalid, exploitable pair).
@@ -63,6 +88,12 @@ export default async function handler(req, res) {
     const isEn = lang === 'en';
     const langName = isJa ? '日本語' : (isEn ? 'English' : 'Tiếng Việt');
 
+    // Repeat lookups are free: the same word + language is answered from memory.
+    if (type === 'dict_lookup') {
+      const cached = lookupCacheGet(lang + ':' + text.trim().toLowerCase());
+      if (cached) return res.status(200).json({ entry: cached, cached: true });
+    }
+
     let prompt = '';
     if (type === 'full') {
       if (isJa) {
@@ -71,6 +102,31 @@ export default async function handler(req, res) {
         prompt = `You are a professional Chinese-to-English translator. Translate the following Chinese text into fluent, accurate, and natural English, preserving all context, paragraph structure, and tone:\n\n${text}\n\nNote: Output only the translated text without any commentary or greetings.`;
       } else {
         prompt = `Bạn là một chuyên gia dịch thuật cao cấp chuyên ngữ văn tiếng Trung. Hãy dịch toàn bộ văn bản sau sang ${langName} một cách chuẩn xác, nhuần nhuyễn, tự nhiên, giữ trọn vẹn ngữ cảnh và giữ nguyên cấu trúc phân đoạn văn bản:\n\n${text}\n\nCHÚ Ý: Chỉ xuất ra nội dung bản dịch hoàn chỉnh, không thêm lời chào, phần mở đầu hay giải thích gì thêm.`;
+      }
+    } else if (type === 'dict_lookup') {
+      // Deliberately compact: this prompt runs automatically whenever a lookup misses,
+      // so it asks for one card's worth of data instead of a full lesson.
+      if (isJa) {
+        prompt = `あなたは中国語辞典です。次の見出し語を調べてください: "${text}"
+
+有効なJSONのみを出力してください:
+{"word":"${text}","pinyin":"ピンイン","partOfSpeech":"品詞","primaryMeaning":"主な日本語の意味","secondaryMeanings":["最大2つ"],"nuanceAndUsage":"ニュアンスを1文で","formality":"口語/フォーマルなど","examples":[{"zh":"中国語例文","pinyin":"ピンイン","vi":"日本語訳"}],"synonymsAndDifferences":[{"word":"類義語","diff":"違い"}],"memoryTip":"覚え方"}
+
+例文は最大2つ、類義語は最大2つ。JSON以外は出力しないでください。`;
+      } else if (isEn) {
+        prompt = `You are a Chinese dictionary. Look up this headword: "${text}"
+
+Return ONLY valid JSON:
+{"word":"${text}","pinyin":"pinyin","partOfSpeech":"part of speech","primaryMeaning":"primary English meaning","secondaryMeanings":["max 2"],"nuanceAndUsage":"one sentence of nuance","formality":"casual/formal/etc","examples":[{"zh":"Chinese example","pinyin":"pinyin","vi":"English translation"}],"synonymsAndDifferences":[{"word":"synonym","diff":"difference"}],"memoryTip":"memory tip"}
+
+At most 2 examples and 2 synonyms. Output JSON only.`;
+      } else {
+        prompt = `Bạn là từ điển tiếng Trung. Tra mục từ: "${text}"
+
+Chỉ trả về JSON hợp lệ:
+{"word":"${text}","pinyin":"pinyin","partOfSpeech":"từ loại","primaryMeaning":"nghĩa tiếng Việt ngắn gọn","secondaryMeanings":["tối đa 2"],"nuanceAndUsage":"một câu về sắc thái","formality":"khẩu ngữ/trang trọng...","examples":[{"zh":"câu tiếng Trung","pinyin":"pinyin","vi":"bản dịch tiếng Việt"}],"synonymsAndDifferences":[{"word":"từ gần nghĩa","diff":"khác biệt"}],"memoryTip":"mẹo nhớ"}
+
+Tối đa 2 ví dụ và 2 từ gần nghĩa. Không thêm chữ nào ngoài JSON.`;
       }
     } else if (type === 'analyze_word') {
       if (isJa) {
@@ -241,7 +297,8 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG một chuỗi JSON hợp lệ với c
       contents: [{ parts: [{ text: prompt }] }],
       generationConfig: {
         temperature: 0.3,
-        maxOutputTokens: 2048
+        // The automatic fallback only needs one compact card, so cap the output.
+        maxOutputTokens: type === 'dict_lookup' ? 1024 : 2048
       }
     };
 
@@ -249,8 +306,11 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG một chuỗi JSON hợp lệ với c
       geminiBody.generationConfig.responseMimeType = 'application/json';
     }
 
-    // Google API: gemini-3.5-flash is the verified active model
-    const CANDIDATE_MODELS = ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-flash-latest'];
+    // Google API: gemini-3.5-flash is the verified active model. For the high-volume
+    // automatic lookup we try the cheaper "lite" model first and fall through on error.
+    const CANDIDATE_MODELS = type === 'dict_lookup'
+      ? ['gemini-3.5-flash-lite', 'gemini-3.5-flash', 'gemini-flash-latest']
+      : ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-flash-latest'];
     let response = null;
     let errDetails = '';
     let lastStatus = 500;
@@ -288,6 +348,20 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG một chuỗi JSON hợp lệ với c
 
     if (type === 'full') {
       return res.status(200).json({ result: outputText.trim() });
+    }
+
+    if (type === 'dict_lookup') {
+      const cacheKey = lang + ':' + text.trim().toLowerCase();
+      try {
+        const cleanJson = outputText.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
+        const parsed = JSON.parse(cleanJson);
+        lookupCacheSet(cacheKey, parsed);
+        return res.status(200).json({ entry: parsed });
+      } catch (parseErr) {
+        const fallbackEntry = { word: text, primaryMeaning: outputText.trim() };
+        lookupCacheSet(cacheKey, fallbackEntry);
+        return res.status(200).json({ entry: fallbackEntry });
+      }
     }
 
     if (type === 'analyze_word') {

@@ -576,16 +576,24 @@ function renderDictView() {
 
     // Nothing in the curated dictionary: pull in the extended one and retry once.
     // This is the only place the ~7 MB dataset is ever requested.
+    const detectedLang = typeof detectSearchLanguage === 'function' ? detectSearchLanguage(query) : 'latin';
     let extLoading = false;
     const extEligible = isExtDictEligible(query);
+    const afterExtDict = (ok) => {
+      if (ok) {
+        renderDictView();
+      } else if (query && typeof autoAiLookup === 'function') {
+        // The extended dictionary missed too: now the AI is worth paying for.
+        autoAiLookup(query, detectedLang);
+      }
+    };
     if (extEligible && typeof ensureExtDict === 'function' && !EXT_DICT.loaded && !EXT_DICT.loading && !state._extDictRequested) {
       state._extDictRequested = true;
       extLoading = true;
-      ensureExtDict().then(ok => {
-        if (ok) renderDictView();
-      });
+      ensureExtDict().then(afterExtDict);
     } else if (extEligible && typeof EXT_DICT !== 'undefined' && EXT_DICT.loading) {
       extLoading = true;
+      EXT_DICT.loading.then(afterExtDict);
     }
 
     let noMatchHtml = `
@@ -599,6 +607,9 @@ function renderDictView() {
 
         <!-- 1. Live Multi-Dictionary API Auto Gợi ý -->
         <div id="dict-live-results-container"></div>
+
+        <!-- 1b. AI fallback: only fires when every local dictionary missed. -->
+        <div id="dict-ai-fallback-container"></div>
 
         <!-- 2. Bản đồ sắc thái (nếu có) -->
         ${mindmapHtml}
@@ -630,7 +641,13 @@ function renderDictView() {
     `;
     container.innerHTML = noMatchHtml;
     if (query && !/[\u4e00-\u9fff]/.test(query)) {
-      triggerLiveDictSearch(query, typeof detectSearchLanguage === 'function' ? detectSearchLanguage(query) : 'latin', seenWords);
+      triggerLiveDictSearch(query, detectedLang, seenWords);
+    }
+    // Every local dictionary missed: let the AI fill the gap. The helper is debounced,
+    // cached for 30 days and budget-limited, so typing does not burn tokens. When the
+    // extended dictionary is still downloading, wait for it first — it is free.
+    if (query && !extLoading && typeof autoAiLookup === 'function') {
+      autoAiLookup(query, detectedLang);
     }
     return;
   }
@@ -726,6 +743,13 @@ function renderDictView() {
   // 1. Live Multi-Dictionary Online Extension Container (Khám phá thêm từ vựng liên quan)
   html += '<div id="dict-live-results-container"></div>';
 
+  // 1b. If the engine only produced "did you mean" suggestions, the word is effectively
+  // missing from the dictionary. Reserve a slot for the automatic AI answer.
+  const needsAiFallback = !!query && primaryCount === 0;
+  if (needsAiFallback) {
+    html += '<div id="dict-ai-fallback-container"></div>';
+  }
+
   // 2. Bản đồ sắc thái HSK & Slang (gọn gàng, không che khuất từ chính)
   if (mindmapHtml) {
     html += mindmapHtml;
@@ -767,6 +791,9 @@ function renderDictView() {
 
   if (query && !/[\u4e00-\u9fff]/.test(query)) {
     triggerLiveDictSearch(query, typeof detectSearchLanguage === 'function' ? detectSearchLanguage(query) : 'latin', seenWords);
+  }
+  if (needsAiFallback && typeof autoAiLookup === 'function') {
+    autoAiLookup(query, typeof detectSearchLanguage === 'function' ? detectSearchLanguage(query) : 'latin');
   }
 }
 
@@ -841,6 +868,20 @@ function toggleMindmapDetails(btn) {
 // --- AI Semantic Context Search Handler ---
 async function executeSemanticSearch(query) {
   if (!query) return;
+
+  // Reuse the automatic fallback's cached answer: the user should never pay twice for
+  // the same query just because they pressed the manual AI button afterwards.
+  const aiLang = typeof aiLookupTargetLang === 'function'
+    ? aiLookupTargetLang()
+    : (state.meaningLang || state.uiLang || 'vi');
+  if (typeof aiLookupGetCached === 'function' && typeof aiLookupKey === 'function') {
+    const cached = await aiLookupGetCached(aiLookupKey('semantic', aiLang, query));
+    if (cached && cached.ok && cached.data && cached.data.kind === 'semantic') {
+      renderSemanticResults(cached.data.concept, cached.data.matches);
+      return;
+    }
+  }
+
   const area = document.getElementById('dict-semantic-results-area');
   const btn = document.getElementById('dict-semantic-trigger-btn');
   if (btn) btn.disabled = true;
@@ -859,7 +900,8 @@ async function executeSemanticSearch(query) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         query: query,
-        targetLang: state.uiLang || 'vi'
+        targetLang: aiLang,
+        fast: true
       })
     });
     if (!resp.ok) {

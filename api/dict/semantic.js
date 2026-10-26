@@ -1,5 +1,30 @@
 // api/dict/semantic.js - Vercel Serverless Function Proxy for AI Semantic Reverse Dictionary Search
 import { applyCors, rejectDisallowedOrigin, enforceRateLimit, readBody, noStore } from '../_lib/http.js';
+
+// Best-effort per-instance cache for the automatic fallback. A warm instance answers
+// repeated queries for free; the browser also caches them for 30 days.
+const SEMANTIC_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
+const SEMANTIC_CACHE_MAX = 300;
+const semanticCache = new Map();
+
+function semanticCacheGet(key) {
+  const hit = semanticCache.get(key);
+  if (!hit) return null;
+  if (Date.now() - hit.ts > SEMANTIC_CACHE_TTL_MS) {
+    semanticCache.delete(key);
+    return null;
+  }
+  return hit.value;
+}
+
+function semanticCacheSet(key, value) {
+  semanticCache.set(key, { ts: Date.now(), value });
+  if (semanticCache.size > SEMANTIC_CACHE_MAX) {
+    const oldest = semanticCache.keys().next().value;
+    if (oldest !== undefined) semanticCache.delete(oldest);
+  }
+}
+
 export default async function handler(req, res) {
   // Restricted CORS: this endpoint previously answered with `*` for every caller.
   applyCors(req, res, process.env);
@@ -35,7 +60,7 @@ export default async function handler(req, res) {
         .json({ error: parsedBody.reason });
     }
 
-    const { query, targetLang = 'vi' } = parsedBody.value || {};
+    const { query, targetLang = 'vi', fast = false } = parsedBody.value || {};
     if (!query || typeof query !== 'string' || !query.trim()) {
       return res.status(400).json({ error: 'Missing or invalid "query" parameter' });
     }
@@ -44,6 +69,18 @@ export default async function handler(req, res) {
     const lang = (targetLang === 'ja' || targetLang === 'en') ? targetLang : 'vi';
     const isJa = lang === 'ja';
     const isEn = lang === 'en';
+    const isFast = fast === true;
+
+    const cacheKey = lang + ':' + (isFast ? 'f:' : 'n:') + cleanQuery.toLowerCase();
+    const cached = semanticCacheGet(cacheKey);
+    if (cached) {
+      return res.status(200).json({
+        success: true,
+        concept: cached.concept,
+        matches: cached.matches,
+        cached: true,
+      });
+    }
 
     let prompt = '';
     if (isJa) {
@@ -102,16 +139,27 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG định dạng JSON hợp lệ theo s
 }`;
     }
 
+    // Automatic fallback: ask for a compact answer and keep the output cap low.
+    if (isFast) {
+      prompt += isJa
+        ? '\n\n必ず最も適切な3件だけを返し、各項目は簡潔にしてください。'
+        : (isEn
+          ? '\n\nReturn only the 3 best matches and keep every field concise.'
+          : '\n\nChỉ trả về đúng 3 kết quả phù hợp nhất và giữ mỗi trường thật ngắn gọn.');
+    }
+
     const geminiBody = {
       contents: [{ parts: [{ text: prompt }] }],
       generationConfig: {
         temperature: 0.3,
-        maxOutputTokens: 2048,
+        maxOutputTokens: isFast ? 1024 : 2048,
         responseMimeType: 'application/json',
       },
     };
 
-    const CANDIDATE_MODELS = ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-flash-latest'];
+    const CANDIDATE_MODELS = isFast
+      ? ['gemini-3.5-flash-lite', 'gemini-3.5-flash', 'gemini-flash-latest']
+      : ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-flash-latest'];
     let response = null;
     let errDetails = '';
     let lastStatus = 500;
@@ -150,10 +198,13 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG định dạng JSON hợp lệ theo s
     try {
       const cleanJson = outputText.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
       const parsed = JSON.parse(cleanJson);
+      const concept = parsed.concept || cleanQuery;
+      const matches = Array.isArray(parsed.matches) ? parsed.matches : [];
+      semanticCacheSet(cacheKey, { concept, matches });
       return res.status(200).json({
         success: true,
-        concept: parsed.concept || cleanQuery,
-        matches: Array.isArray(parsed.matches) ? parsed.matches : [],
+        concept,
+        matches,
       });
     } catch (parseErr) {
       return res.status(500).json({

@@ -1,5 +1,29 @@
 // functions/api/translate.js - Cloudflare Pages Function Proxy for Google Gemini AI
 import { optionsResponse, jsonCorsHeaders, rejectOrigin, enforceRate, readJson } from '../_lib/http.js';
+
+// Best-effort per-instance cache for the automatic dictionary fallback (see api/translate.js).
+const LOOKUP_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
+const LOOKUP_CACHE_MAX = 500;
+const lookupCache = new Map();
+
+function lookupCacheGet(key) {
+  const hit = lookupCache.get(key);
+  if (!hit) return null;
+  if (Date.now() - hit.ts > LOOKUP_CACHE_TTL_MS) {
+    lookupCache.delete(key);
+    return null;
+  }
+  return hit.value;
+}
+
+function lookupCacheSet(key, value) {
+  lookupCache.set(key, { ts: Date.now(), value });
+  if (lookupCache.size > LOOKUP_CACHE_MAX) {
+    const oldest = lookupCache.keys().next().value;
+    if (oldest !== undefined) lookupCache.delete(oldest);
+  }
+}
+
 export async function onRequestOptions(context) {
   return optionsResponse(context.request, context.env);
 }
@@ -51,7 +75,7 @@ export async function onRequestPost(context) {
 
     const { text, targetLang = 'vi', type: rawType = 'lenses' } = body || {};
     // Never build the prompt from an attacker-controlled "type".
-    const ALLOWED_TYPES = ['lenses', 'full', 'analyze_word'];
+    const ALLOWED_TYPES = ['lenses', 'full', 'analyze_word', 'dict_lookup'];
     if (ALLOWED_TYPES.indexOf(rawType) === -1) {
       return new Response(JSON.stringify({ error: 'INVALID_TYPE' }), { status: 400, headers: corsHeaders });
     }
@@ -75,6 +99,16 @@ export async function onRequestPost(context) {
     const isEn = lang === 'en';
     const langName = isJa ? '日本語' : (isEn ? 'English' : 'Tiếng Việt');
 
+    if (type === 'dict_lookup') {
+      const cached = lookupCacheGet(lang + ':' + text.trim().toLowerCase());
+      if (cached) {
+        return new Response(
+          JSON.stringify({ entry: cached, cached: true }),
+          { status: 200, headers: corsHeaders }
+        );
+      }
+    }
+
     let prompt = '';
     if (type === 'full') {
       if (isJa) {
@@ -83,6 +117,29 @@ export async function onRequestPost(context) {
         prompt = `You are a professional Chinese-to-English translator. Translate the following Chinese text into fluent, accurate, and natural English, preserving all context, paragraph structure, and tone:\n\n${text}\n\nNote: Output only the translated text without any commentary or greetings.`;
       } else {
         prompt = `Bạn là một chuyên gia dịch thuật cao cấp chuyên ngữ văn tiếng Trung. Hãy dịch toàn bộ văn bản sau sang ${langName} một cách chuẩn xác, nhuần nhuyễn, tự nhiên, giữ trọn vẹn ngữ cảnh và giữ nguyên cấu trúc phân đoạn văn bản:\n\n${text}\n\nCHÚ Ý: Chỉ xuất ra nội dung bản dịch hoàn chỉnh, không thêm lời chào, phần mở đầu hay giải thích gì thêm.`;
+      }
+    } else if (type === 'dict_lookup') {
+      if (isJa) {
+        prompt = `あなたは中国語辞典です。次の見出し語を調べてください: "${text}"
+
+有効なJSONのみを出力してください:
+{"word":"${text}","pinyin":"ピンイン","partOfSpeech":"品詞","primaryMeaning":"主な日本語の意味","secondaryMeanings":["最大2つ"],"nuanceAndUsage":"ニュアンスを1文で","formality":"口語/フォーマルなど","examples":[{"zh":"中国語例文","pinyin":"ピンイン","vi":"日本語訳"}],"synonymsAndDifferences":[{"word":"類義語","diff":"違い"}],"memoryTip":"覚え方"}
+
+例文は最大2つ、類義語は最大2つ。JSON以外は出力しないでください。`;
+      } else if (isEn) {
+        prompt = `You are a Chinese dictionary. Look up this headword: "${text}"
+
+Return ONLY valid JSON:
+{"word":"${text}","pinyin":"pinyin","partOfSpeech":"part of speech","primaryMeaning":"primary English meaning","secondaryMeanings":["max 2"],"nuanceAndUsage":"one sentence of nuance","formality":"casual/formal/etc","examples":[{"zh":"Chinese example","pinyin":"pinyin","vi":"English translation"}],"synonymsAndDifferences":[{"word":"synonym","diff":"difference"}],"memoryTip":"memory tip"}
+
+At most 2 examples and 2 synonyms. Output JSON only.`;
+      } else {
+        prompt = `Bạn là từ điển tiếng Trung. Tra mục từ: "${text}"
+
+Chỉ trả về JSON hợp lệ:
+{"word":"${text}","pinyin":"pinyin","partOfSpeech":"từ loại","primaryMeaning":"nghĩa tiếng Việt ngắn gọn","secondaryMeanings":["tối đa 2"],"nuanceAndUsage":"một câu về sắc thái","formality":"khẩu ngữ/trang trọng...","examples":[{"zh":"câu tiếng Trung","pinyin":"pinyin","vi":"bản dịch tiếng Việt"}],"synonymsAndDifferences":[{"word":"từ gần nghĩa","diff":"khác biệt"}],"memoryTip":"mẹo nhớ"}
+
+Tối đa 2 ví dụ và 2 từ gần nghĩa. Không thêm chữ nào ngoài JSON.`;
       }
     } else if (type === 'analyze_word') {
       if (isJa) {
@@ -253,7 +310,7 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG một chuỗi JSON hợp lệ với c
       contents: [{ parts: [{ text: prompt }] }],
       generationConfig: {
         temperature: 0.3,
-        maxOutputTokens: 2048,
+        maxOutputTokens: type === 'dict_lookup' ? 1024 : 2048,
       },
     };
 
@@ -261,8 +318,10 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG một chuỗi JSON hợp lệ với c
       geminiBody.generationConfig.responseMimeType = 'application/json';
     }
 
-    // Google API: gemini-3.5-flash is the verified active model
-    const CANDIDATE_MODELS = ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-flash-latest'];
+    // Try the cheaper "lite" model first for the automatic, high-volume lookup path.
+    const CANDIDATE_MODELS = type === 'dict_lookup'
+      ? ['gemini-3.5-flash-lite', 'gemini-3.5-flash', 'gemini-flash-latest']
+      : ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-flash-latest'];
     let response = null;
     let errDetails = '';
     let lastStatus = 500;
@@ -306,6 +365,26 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG một chuỗi JSON hợp lệ với c
         JSON.stringify({ result: outputText.trim() }),
         { status: 200, headers: corsHeaders }
       );
+    }
+
+    if (type === 'dict_lookup') {
+      const cacheKey = lang + ':' + text.trim().toLowerCase();
+      try {
+        const cleanJson = outputText.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
+        const parsed = JSON.parse(cleanJson);
+        lookupCacheSet(cacheKey, parsed);
+        return new Response(
+          JSON.stringify({ entry: parsed }),
+          { status: 200, headers: corsHeaders }
+        );
+      } catch (parseErr) {
+        const fallbackEntry = { word: text, primaryMeaning: outputText.trim() };
+        lookupCacheSet(cacheKey, fallbackEntry);
+        return new Response(
+          JSON.stringify({ entry: fallbackEntry }),
+          { status: 200, headers: corsHeaders }
+        );
+      }
     }
 
     if (type === 'analyze_word') {

@@ -506,6 +506,16 @@ async function renderWordSheetAiSection(word) {
       </div>
     </div>
   `;
+
+  // Automatic AI analysis only for words that are genuinely absent from every local
+  // source. Known words keep the manual button, so we never spend tokens unnecessarily.
+  const isUnknownWord = !MINI_DICT[word] &&
+    !getSlangEntry(word) &&
+    !(typeof JA_COMMON_DICT !== 'undefined' && JA_COMMON_DICT && JA_COMMON_DICT[word]) &&
+    !(typeof KANJI_DATA !== 'undefined' && KANJI_DATA && KANJI_DATA[word]);
+  if (isUnknownWord && typeof autoAnalyzeWordWithAi === 'function') {
+    autoAnalyzeWordWithAi(word, currentLang);
+  }
 }
 
 function sanitizeAiError(msg) {

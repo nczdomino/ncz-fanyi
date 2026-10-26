@@ -1,5 +1,29 @@
 // functions/api/dict/semantic.js - Cloudflare Pages Function Proxy for AI Semantic Reverse Dictionary Search
 import { optionsResponse, jsonCorsHeaders, rejectOrigin, enforceRate, readJson } from '../../_lib/http.js';
+
+// Best-effort per-instance cache for the automatic fallback (see api/dict/semantic.js).
+const SEMANTIC_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
+const SEMANTIC_CACHE_MAX = 300;
+const semanticCache = new Map();
+
+function semanticCacheGet(key) {
+  const hit = semanticCache.get(key);
+  if (!hit) return null;
+  if (Date.now() - hit.ts > SEMANTIC_CACHE_TTL_MS) {
+    semanticCache.delete(key);
+    return null;
+  }
+  return hit.value;
+}
+
+function semanticCacheSet(key, value) {
+  semanticCache.set(key, { ts: Date.now(), value });
+  if (semanticCache.size > SEMANTIC_CACHE_MAX) {
+    const oldest = semanticCache.keys().next().value;
+    if (oldest !== undefined) semanticCache.delete(oldest);
+  }
+}
+
 export async function onRequestOptions(context) {
   return optionsResponse(context.request, context.env);
 }
@@ -48,7 +72,7 @@ export async function onRequestPost(context) {
       );
     }
 
-    const { query, targetLang = 'vi' } = body || {};
+    const { query, targetLang = 'vi', fast = false } = body || {};
     if (!query || typeof query !== 'string' || !query.trim()) {
       return new Response(
         JSON.stringify({ error: 'Missing or invalid "query" parameter' }),
@@ -57,9 +81,24 @@ export async function onRequestPost(context) {
     }
 
     const cleanQuery = query.trim().slice(0, 300);
-    const lang = targetLang || 'vi';
+    const lang = (targetLang === 'ja' || targetLang === 'en') ? targetLang : 'vi';
     const isJa = lang === 'ja';
     const isEn = lang === 'en';
+    const isFast = fast === true;
+
+    const cacheKey = lang + ':' + (isFast ? 'f:' : 'n:') + cleanQuery.toLowerCase();
+    const cached = semanticCacheGet(cacheKey);
+    if (cached) {
+      return new Response(
+        JSON.stringify({
+          success: true,
+          concept: cached.concept,
+          matches: cached.matches,
+          cached: true,
+        }),
+        { status: 200, headers: corsHeaders }
+      );
+    }
 
     let prompt = '';
     if (isJa) {
@@ -118,16 +157,26 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG định dạng JSON hợp lệ theo s
 }`;
     }
 
+    if (isFast) {
+      prompt += isJa
+        ? '\n\n必ず最も適切な3件だけを返し、各項目は簡潔にしてください。'
+        : (isEn
+          ? '\n\nReturn only the 3 best matches and keep every field concise.'
+          : '\n\nChỉ trả về đúng 3 kết quả phù hợp nhất và giữ mỗi trường thật ngắn gọn.');
+    }
+
     const geminiBody = {
       contents: [{ parts: [{ text: prompt }] }],
       generationConfig: {
         temperature: 0.3,
-        maxOutputTokens: 2048,
+        maxOutputTokens: isFast ? 1024 : 2048,
         responseMimeType: 'application/json',
       },
     };
 
-    const CANDIDATE_MODELS = ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-flash-latest'];
+    const CANDIDATE_MODELS = isFast
+      ? ['gemini-3.5-flash-lite', 'gemini-3.5-flash', 'gemini-flash-latest']
+      : ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-flash-latest'];
     let response = null;
     let errDetails = '';
     let lastStatus = 500;
@@ -169,11 +218,14 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG định dạng JSON hợp lệ theo s
     try {
       const cleanJson = outputText.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
       const parsed = JSON.parse(cleanJson);
+      const concept = parsed.concept || cleanQuery;
+      const matches = Array.isArray(parsed.matches) ? parsed.matches : [];
+      semanticCacheSet(cacheKey, { concept, matches });
       return new Response(
         JSON.stringify({
           success: true,
-          concept: parsed.concept || cleanQuery,
-          matches: Array.isArray(parsed.matches) ? parsed.matches : [],
+          concept,
+          matches,
         }),
         { status: 200, headers: corsHeaders }
       );
