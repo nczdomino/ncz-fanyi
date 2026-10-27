@@ -62,7 +62,6 @@ function phraseRender() {
     <span class="phrase-text" lang="zh-CN">${escapeHtml(phrase)}</span>
     <button class="btn btn-primary btn-sm" onclick="phraseLookup()">${tx('Tra / Dịch cụm', 'Look up / Translate', '調べる / 翻訳')}</button>
     <button class="btn btn-secondary btn-sm" onclick="phraseSpeak()" title="${t('play') || tx('Phát âm chuẩn', 'Pronounce', '発音')}">🔊</button>
-    <button class="btn btn-secondary btn-sm" onclick="phraseSpeakSlow()" title="${t('playSlow') || tx('Nghe chậm (0.75x)', 'Slow audio (0.75x)', 'スロー再生 (0.75x)')}">🐢</button>
     <button class="btn btn-secondary btn-sm" onclick="phraseClear()">✕</button>`;
   bar.classList.add('show');
 }
