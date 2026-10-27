@@ -36,13 +36,13 @@ assert.strictEqual(catalogRaw.length, 81, 'Catalog has exactly 81 items across a
 console.log(`  ✅ Catalog contains ${catalogRaw.length} verified grammar points (HSK 1 -> HSK 7-9)`);
 
 assert(Array.isArray(samplesRaw), 'Samples is an array');
-assert.strictEqual(samplesRaw.length, 7, 'Samples has 7 in-depth grammar points');
+assert.strictEqual(samplesRaw.length, 17, 'Samples has 17 in-depth grammar points');
 console.log(`  ✅ Samples contain ${samplesRaw.length} detailed rule blueprints`);
 
 // Verify grammar-data.js exports
 const bundledData = require('./js/data/grammar-data.js');
 assert.strictEqual(bundledData.HSK_GRAMMAR_CATALOG.length, 81, 'grammar-data.js catalog loaded');
-assert.strictEqual(bundledData.HSK_GRAMMAR_SAMPLES.length, 7, 'grammar-data.js samples loaded');
+assert.strictEqual(bundledData.HSK_GRAMMAR_SAMPLES.length, 17, 'grammar-data.js samples loaded');
 console.log('  ✅ grammar-data.js loaded properly in Node.js runtime');
 
 // 2. TypeScript Types Schema Audit
@@ -129,8 +129,8 @@ console.log(`  ✅ Category "comparison" filter returns ${comparisonItems.length
 
 // Filter by hasDetailOnly
 const detailedOnly = filterGrammarCatalog({ hasDetailOnly: true });
-assert.strictEqual(detailedOnly.length, 7, 'hasDetailOnly returns exactly 7 detailed rules');
-console.log('  ✅ hasDetailOnly filter accurately isolates the 7 detailed rule samples');
+assert.strictEqual(detailedOnly.length, 17, 'hasDetailOnly returns exactly 17 detailed rules');
+console.log('  ✅ hasDetailOnly filter accurately isolates the 17 detailed rule samples');
 
 // Diacritic & Multilingual search queries
 const searchVi = filterGrammarCatalog({ query: 'so sanh' }); // unaccented search
@@ -163,6 +163,33 @@ assert(Array.isArray(joinedSample.detail.fill_blank), 'Fill in blank present');
 assert(Array.isArray(joinedSample.detail.error_correction), 'Error correction present');
 assert(Array.isArray(joinedSample.detail.quiz), 'Quiz present');
 console.log('  ✅ JoinedGrammarPoint embeds 100% of the rich pedagogical schema');
+
+// Verify newly added high-frequency grammar points have full details
+const newDetailedKeys = [
+  'hsk1_you_possession_existence',
+  'hsk1_zai_existence_location',
+  'hsk1_ma_yes_no_question',
+  'hsk2_le_completion_aspect',
+  'hsk3_bei_passive',
+  'hsk1_de_possessive_attributive',
+  'hsk2_guo_experiential_aspect',
+  'hsk2_zhe_durative_aspect',
+  'hsk2_yinwei_suoyi',
+  'hsk3_yue_lai_yue_yue_yue'
+];
+
+newDetailedKeys.forEach(id => {
+  const item = joinedAll.find(x => x.catalog.id === id);
+  assert(item, `Grammar point ${id} exists in catalog`);
+  assert.strictEqual(item.hasDetail, true, `Grammar point ${id} hasDetail is true`);
+  assert(item.detail.structure_blocks.length > 0, `${id} has structure blocks`);
+  assert(item.detail.examples.length >= 1, `${id} has rich examples`);
+  assert(item.detail.puzzles.length > 0, `${id} has puzzles`);
+  assert(item.detail.fill_blank.length > 0, `${id} has fill_blank`);
+  assert(item.detail.error_correction.length > 0, `${id} has error_correction`);
+  assert(item.detail.quiz.length > 0, `${id} has quiz`);
+  console.log(`  ✅ Verified new detailed grammar lesson: ${id}`);
+});
 
 // 6. UI Components Rendering Verification
 console.log('\n--- 6. UI Components Rendering (StructureFormula & TokenizedSentence) ---');
