@@ -50,6 +50,39 @@
   let _catalogCache = null;
   let _samplesCache = null;
   let _samplesMap = null;
+  let _searchIndexMap = null;
+  let _allJoinedCache = null;
+  const _wordMatchCache = new Map();
+  let _levelsCache = null;
+  const _categoriesCache = new Map();
+
+  function ensureSearchIndex() {
+    if (_searchIndexMap) return;
+    const catalog = getCatalogData();
+    if (!_samplesMap) getSamplesData();
+
+    _searchIndexMap = new Map();
+    for (let i = 0; i < catalog.length; i++) {
+      const item = catalog[i];
+      const detail = _samplesMap ? _samplesMap.get(item.id) : null;
+      const parts = [
+        item.zh_name || '',
+        normalizeSearchStr(item.vi_name),
+        normalizeSearchStr(item.en_name),
+        normalizeSearchStr(item.ja_name),
+        normalizeSearchStr(item.id)
+      ];
+      if (detail) {
+        if (detail.formula) parts.push(normalizeSearchStr(detail.formula));
+        if (Array.isArray(detail.keywords)) {
+          for (let k = 0; k < detail.keywords.length; k++) {
+            parts.push(normalizeSearchStr(detail.keywords[k]));
+          }
+        }
+      }
+      _searchIndexMap.set(item.id, parts.join(' '));
+    }
+  }
 
   function getCatalogData() {
     if (_catalogCache) return _catalogCache;
@@ -117,6 +150,15 @@
     const catalog = getCatalogData();
     if (!_samplesMap) getSamplesData();
 
+    // Fast-path: return shallow copy when no filter or search active
+    if (level === 'all' && standard === 'all' && category === 'all' && !normQuery && !hasDetailOnly) {
+      return catalog.slice();
+    }
+
+    if (normQuery) {
+      ensureSearchIndex();
+    }
+
     return catalog.filter(item => {
       // 1. Level Filter
       if (level !== 'all' && item.level !== level) {
@@ -141,27 +183,35 @@
         return false;
       }
 
-      // 5. Query Search
+      // 5. Query Search (Pre-indexed O(1) text search)
       if (normQuery) {
-        const matchZh = item.zh_name && item.zh_name.toLowerCase().includes(query.toLowerCase());
-        const matchVi = normalizeSearchStr(item.vi_name).includes(normQuery);
-        const matchEn = normalizeSearchStr(item.en_name).includes(normQuery);
-        const matchJa = normalizeSearchStr(item.ja_name).includes(normQuery);
-        const matchId = normalizeSearchStr(item.id).includes(normQuery);
-
-        let matchKeywords = false;
-        let matchFormula = false;
-        if (detail) {
-          if (Array.isArray(detail.keywords)) {
-            matchKeywords = detail.keywords.some(k => normalizeSearchStr(k).includes(normQuery));
+        const indexStr = _searchIndexMap ? _searchIndexMap.get(item.id) : null;
+        if (indexStr) {
+          const matchZh = item.zh_name && item.zh_name.toLowerCase().includes(query.toLowerCase());
+          if (!indexStr.includes(normQuery) && !matchZh) {
+            return false;
           }
-          if (detail.formula) {
-            matchFormula = normalizeSearchStr(detail.formula).includes(normQuery);
-          }
-        }
+        } else {
+          const matchZh = item.zh_name && item.zh_name.toLowerCase().includes(query.toLowerCase());
+          const matchVi = normalizeSearchStr(item.vi_name).includes(normQuery);
+          const matchEn = normalizeSearchStr(item.en_name).includes(normQuery);
+          const matchJa = normalizeSearchStr(item.ja_name).includes(normQuery);
+          const matchId = normalizeSearchStr(item.id).includes(normQuery);
 
-        if (!matchZh && !matchVi && !matchEn && !matchJa && !matchId && !matchKeywords && !matchFormula) {
-          return false;
+          let matchKeywords = false;
+          let matchFormula = false;
+          if (detail) {
+            if (Array.isArray(detail.keywords)) {
+              matchKeywords = detail.keywords.some(k => normalizeSearchStr(k).includes(normQuery));
+            }
+            if (detail.formula) {
+              matchFormula = normalizeSearchStr(detail.formula).includes(normQuery);
+            }
+          }
+
+          if (!matchZh && !matchVi && !matchEn && !matchJa && !matchId && !matchKeywords && !matchFormula) {
+            return false;
+          }
         }
       }
 
@@ -175,10 +225,22 @@
    * @returns {Array<Object>} Joined grammar objects { ...catalogItem, detail, hasDetail: boolean }
    */
   function getJoinedGrammarList(options) {
+    const isDefault = !options || (
+      (!options.level || options.level === 'all') &&
+      (!options.standard || options.standard === 'all') &&
+      (!options.category || options.category === 'all') &&
+      (!options.query || !options.query.trim()) &&
+      !options.hasDetailOnly
+    );
+
+    if (isDefault && _allJoinedCache) {
+      return _allJoinedCache;
+    }
+
     const filtered = filterGrammarCatalog(options);
     if (!_samplesMap) getSamplesData();
 
-    return filtered.map(item => {
+    const result = filtered.map(item => {
       const detail = _samplesMap.get(item.id) || null;
       return Object.assign({}, item, {
         detail: detail,
@@ -186,6 +248,11 @@
         catalog: item
       });
     });
+
+    if (isDefault) {
+      _allJoinedCache = result;
+    }
+    return result;
   }
 
   const CATEGORY_META = {
@@ -226,6 +293,10 @@
    * Get unique Categories with count and localized titles
    */
   function getGrammarCategories(locale) {
+    const loc = locale || (typeof state !== 'undefined' && state.uiLang) || 'vi';
+    if (_categoriesCache.has(loc)) {
+      return _categoriesCache.get(loc);
+    }
     const catalog = getCatalogData();
     const map = new Map();
 
@@ -237,7 +308,7 @@
     const result = [];
     map.forEach((count, cat) => {
       const meta = CATEGORY_META[cat];
-      const title = meta ? (meta[locale] || meta.vi || cat) : cat;
+      const title = meta ? (meta[loc] || meta.vi || cat) : cat;
       const icon = meta ? meta.icon : '🏷️';
       result.push({
         id: cat,
@@ -248,13 +319,16 @@
     });
 
     // Sort by count DESC
-    return result.sort((a, b) => b.count - a.count);
+    result.sort((a, b) => b.count - a.count);
+    _categoriesCache.set(loc, result);
+    return result;
   }
 
   /**
    * Get unique Levels with count
    */
   function getGrammarLevels() {
+    if (_levelsCache) return _levelsCache;
     const catalog = getCatalogData();
     const levels = ['HSK1', 'HSK2', 'HSK3', 'HSK4', 'HSK5', 'HSK6', 'HSK7-9'];
     const map = new Map();
@@ -266,10 +340,11 @@
       }
     });
 
-    return levels.map(l => ({
+    _levelsCache = levels.map(l => ({
       level: l,
       count: map.get(l) || 0
     }));
+    return _levelsCache;
   }
 
   /**
@@ -282,6 +357,10 @@
     const cleanWord = word.trim();
     if (!cleanWord) return [];
 
+    if (_wordMatchCache.has(cleanWord)) {
+      return _wordMatchCache.get(cleanWord);
+    }
+
     const joined = getJoinedGrammarList();
     const hits = joined.filter(item => {
       const zh = item.zh_name || (item.catalog && item.catalog.zh_name);
@@ -293,11 +372,19 @@
       return false;
     });
 
-    return hits.sort((a, b) => {
+    const sortedHits = hits.sort((a, b) => {
       if (a.hasDetail && !b.hasDetail) return -1;
       if (!a.hasDetail && b.hasDetail) return 1;
       return 0;
     });
+
+    // Cap cache at 256 entries
+    if (_wordMatchCache.size >= 256) {
+      const firstKey = _wordMatchCache.keys().next().value;
+      _wordMatchCache.delete(firstKey);
+    }
+    _wordMatchCache.set(cleanWord, sortedHits);
+    return sortedHits;
   }
 
   // --- LocalStorage Practice Progress Tracking ---

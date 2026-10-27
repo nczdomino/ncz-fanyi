@@ -679,14 +679,6 @@
     }
 
     // Render Catalog Explorer
-    const joinedList = grammarService.getJoinedGrammarList({
-      level: gState.level,
-      standard: gState.standard,
-      category: gState.category,
-      query: gState.query,
-      hasDetailOnly: gState.hasDetailOnly
-    });
-
     const categories = grammarService.getGrammarCategories(loc);
     const levels = grammarService.getGrammarLevels();
 
@@ -929,22 +921,50 @@
     renderGrammarView();
   };
 
+  let _grammarSearchTimer = null;
+  let _grammarSearchRaf = null;
+
   window.handleGrammarSearchInput = function (val) {
-    grammarStore.setState({ query: val });
-    const grid = document.querySelector('.grammar-catalog-grid');
     const clearBtn = document.getElementById('grammar-search-clear-btn');
     if (clearBtn) {
       clearBtn.style.display = val ? 'flex' : 'none';
     }
-    if (grid) {
-      const loc = (typeof state !== 'undefined' && state.uiLang) || 'vi';
-      grid.innerHTML = buildGrammarCatalogCardsHtml(loc);
-    } else {
-      renderGrammarView();
+
+    if (_grammarSearchTimer) clearTimeout(_grammarSearchTimer);
+    if (_grammarSearchRaf) {
+      if (typeof cancelAnimationFrame === 'function') cancelAnimationFrame(_grammarSearchRaf);
+      _grammarSearchRaf = null;
     }
+
+    // Debounce 60ms to prevent layout thrashing on mobile keyboards
+    _grammarSearchTimer = setTimeout(() => {
+      _grammarSearchTimer = null;
+      const executeUpdate = () => {
+        _grammarSearchRaf = null;
+        grammarStore.setState({ query: val });
+        const grid = document.querySelector('.grammar-catalog-grid');
+        if (grid) {
+          const loc = (typeof state !== 'undefined' && state.uiLang) || 'vi';
+          grid.innerHTML = buildGrammarCatalogCardsHtml(loc);
+        } else {
+          renderGrammarView();
+        }
+      };
+
+      if (typeof requestAnimationFrame === 'function') {
+        _grammarSearchRaf = requestAnimationFrame(executeUpdate);
+      } else {
+        executeUpdate();
+      }
+    }, 60);
   };
 
   window.clearGrammarSearch = function () {
+    if (_grammarSearchTimer) { clearTimeout(_grammarSearchTimer); _grammarSearchTimer = null; }
+    if (_grammarSearchRaf) {
+      if (typeof cancelAnimationFrame === 'function') cancelAnimationFrame(_grammarSearchRaf);
+      _grammarSearchRaf = null;
+    }
     grammarStore.setState({ query: '' });
     const input = document.getElementById('grammar-search-input');
     if (input) input.value = '';
