@@ -39,6 +39,15 @@ function aiLookupTargetLang() {
   return (typeof state !== 'undefined' && (state.meaningLang || state.uiLang)) || 'vi';
 }
 
+// Pick a label in the language of the answer, not the UI language. In Chinese
+// dictionary mode the whole AI card should read as Chinese.
+function aiLookupText(lang, vi, en, ja, zh) {
+  if (lang === 'zh') return zh || vi;
+  if (lang === 'ja') return ja || vi;
+  if (lang === 'en') return en || vi;
+  return vi;
+}
+
 // A Japanese description is usually kanji + kana, so kana is the reliable signal that
 // the input is a sentence to describe rather than a Chinese headword to look up.
 function aiLookupHasKana(query) {
@@ -145,9 +154,13 @@ function aiLookupFindContainer() {
   return document.getElementById('dict-ai-fallback-container');
 }
 
-function aiLookupStillWanted(query) {
+function aiLookupStillWanted(query, lang) {
   if (typeof state === 'undefined') return true;
-  return aiLookupNormalize(state.searchQuery) === aiLookupNormalize(query);
+  if (aiLookupNormalize(state.searchQuery) !== aiLookupNormalize(query)) return false;
+  // The user switched dictionary mode while the request was in flight. A Vietnamese
+  // answer must never paint over a Chinese-mode result (and vice versa).
+  if (lang && typeof dictMeaningLang === 'function' && dictMeaningLang() !== lang) return false;
+  return true;
 }
 
 function aiLookupHeaderBadge() {
@@ -166,30 +179,42 @@ function aiLookupShell(titleHtml, bodyHtml) {
   `;
 }
 
-function aiLookupFootHtml(cached) {
+function aiLookupFootHtml(cached, lang) {
   return `
     <div class="ai-lookup-foot">
       <span class="ai-lookup-foot-dot"></span>
       <span>${cached
-        ? tx('Kết quả đã lưu trong máy, không tốn thêm chi phí.', 'Cached on this device — no extra cost.', 'この端末に保存済みの結果です。')
-        : tx('Kết quả được lưu 30 ngày để lần sau tra miễn phí.', 'Saved for 30 days so the next lookup is free.', '30日間保存され、次回は無料で表示されます。')}</span>
+        ? aiLookupText(lang,
+          'Kết quả đã lưu trong máy, không tốn thêm chi phí.',
+          'Cached on this device — no extra cost.',
+          'この端末に保存済みの結果です。',
+          '结果已保存在本机，不会产生额外费用。')
+        : aiLookupText(lang,
+          'Kết quả được lưu 30 ngày để lần sau tra miễn phí.',
+          'Saved for 30 days so the next lookup is free.',
+          '30日間保存され、次回は無料で表示されます。',
+          '结果会保存 30 天，下次查询免费。')}</span>
     </div>`;
 }
 
 // Rendered by dict.js during the debounce window, so the results area is never blank.
-function aiLookupPlaceholderHtml() {
+function aiLookupPlaceholderHtml(lang) {
   return `
     <div class="ai-lookup-placeholder">
       <span>✨</span>
-      <span>${tx('Không có trong từ điển máy. AI đang bổ sung kết quả…', 'Not in the local dictionary. AI is filling the gap…', 'ローカル辞書にありません。AIが結果を補完します…')}</span>
+      <span>${aiLookupText(lang,
+        'Không có trong từ điển máy. AI đang bổ sung kết quả…',
+        'Not in the local dictionary. AI is filling the gap…',
+        'ローカル辞書にありません。AIが結果を補完します…',
+        '本地词典暂无结果，AI 正在补充中文释义…')}</span>
     </div>`;
 }
 
-function renderAiFallbackLoading(query) {
+function renderAiFallbackLoading(query, lang) {
   var el = aiLookupFindContainer();
   if (!el) return;
   el.innerHTML = aiLookupShell(
-    `<span>✨</span><span>${tx('AI đang tra từ', 'AI is looking it up', 'AIが調べています')}: <b>${escapeHtml(query)}</b></span>`,
+    `<span>✨</span><span>${aiLookupText(lang, 'AI đang tra từ', 'AI is looking it up', 'AIが調べています', 'AI 正在查询')}: <b>${escapeHtml(query)}</b></span>`,
     `
       <div class="ai-lookup-card">
         <div class="ai-lookup-top">
@@ -206,7 +231,7 @@ function renderAiFallbackLoading(query) {
         <span class="ai-lookup-sk ai-lookup-sk-line short" style="margin-top:16px;"></span>
         <span class="ai-lookup-sk ai-lookup-sk-line" style="width:70%;"></span>
         <div class="ai-lookup-foot" style="border-top:none;">
-          <span>${tx('Từ điển chưa có từ này, AI đang bổ sung kết quả…', 'Not in the dictionary yet — AI is filling the gap…', '辞書にないため、AIが結果を補完しています…')}</span>
+          <span>${aiLookupText(lang, 'Từ điển chưa có từ này, AI đang bổ sung kết quả…', 'Not in the dictionary yet — AI is filling the gap…', '辞書にないため、AIが結果を補完しています…', '词典暂无该词，AI 正在补充中文释义…')}</span>
         </div>
       </div>
     `
@@ -216,16 +241,16 @@ function renderAiFallbackLoading(query) {
 function renderAiFallbackError(query, mode, lang, message) {
   var el = aiLookupFindContainer();
   if (!el) return;
-  var retryLabel = tx('Thử lại', 'Retry', '再試行');
+  var retryLabel = aiLookupText(lang, 'Thử lại', 'Retry', '再試行', '重试');
   el.innerHTML = `
     <div class="ai-lookup-section" style="--ai-accent:#DC2626; --ai-accent-soft:rgba(220,38,38,0.07); --ai-accent-line:rgba(220,38,38,0.28);">
       <div class="ai-lookup-head">
-        <span class="ai-lookup-head-title">⚠️ ${tx('AI chưa trả được kết quả', 'AI could not return a result', 'AIの結果を取得できませんでした')}</span>
+        <span class="ai-lookup-head-title">⚠️ ${aiLookupText(lang, 'AI chưa trả được kết quả', 'AI could not return a result', 'AIの結果を取得できませんでした', 'AI 暂时无法返回结果')}</span>
         ${aiLookupHeaderBadge()}
       </div>
       <div class="ai-lookup-card" style="display:flex; align-items:flex-start; gap:10px; flex-wrap:wrap;">
         <div style="flex:1 1 220px; font-size:13px; line-height:1.55; color:var(--text-secondary);">
-          ${escapeHtml(message || tx('Vui lòng thử lại sau.', 'Please try again later.', '後でもう一度お試しください。'))}
+          ${escapeHtml(message || aiLookupText(lang, 'Vui lòng thử lại sau.', 'Please try again later.', '後でもう一度お試しください。', '请稍后重试。'))}
         </div>
         <button type="button" class="btn btn-outline btn-sm" style="font-size:12px; padding:5px 12px; border-radius:10px;"
           onclick="retryAutoAiLookup('${escapeQuotes(query)}', '${escapeQuotes(mode)}', '${escapeQuotes(lang)}')">↺ ${retryLabel}</button>
@@ -234,28 +259,29 @@ function renderAiFallbackError(query, mode, lang, message) {
   `;
 }
 
-function renderAiFallbackBudgetNotice(query) {
+function renderAiFallbackBudgetNotice(query, lang) {
   var el = aiLookupFindContainer();
   if (!el) return;
   var wait = aiLookupBudgetResetIn();
   el.innerHTML = `
     <div class="ai-lookup-section" style="--ai-accent:#B45309; --ai-accent-soft:rgba(245,158,11,0.09); --ai-accent-line:rgba(245,158,11,0.32);">
       <div class="ai-lookup-head">
-        <span class="ai-lookup-head-title">💡 ${tx('AI tạm nghỉ để tiết kiệm chi phí', 'AI is paused to save cost', 'コスト節約のためAIを一時停止中')}</span>
+        <span class="ai-lookup-head-title">💡 ${aiLookupText(lang, 'AI tạm nghỉ để tiết kiệm chi phí', 'AI is paused to save cost', 'コスト節約のためAIを一時停止中', 'AI 暂停以节省费用')}</span>
         ${aiLookupHeaderBadge()}
       </div>
       <div class="ai-lookup-card" style="font-size:13px; line-height:1.6; color:var(--text-secondary);">
-        ${tx(
+        ${aiLookupText(lang,
           `Bạn đã dùng khá nhiều lượt tra AI. Thử lại sau ${wait || 60} giây, hoặc bấm vào một từ điển bên dưới.`,
           `You have used many AI lookups. Try again in ${wait || 60}s, or use one of the dictionaries below.`,
-          `AI検索の利用回数が多くなっています。${wait || 60}秒後にもう一度お試しください。`
+          `AI検索の利用回数が多くなっています。${wait || 60}秒後にもう一度お試しください。`,
+          `你已使用较多 AI 查询。请在 ${wait || 60} 秒后重试，或点击下方词典。`
         )}
       </div>
     </div>
   `;
 }
 
-function renderAiFallbackSemantic(concept, matches, query, cached) {
+function renderAiFallbackSemantic(concept, matches, query, cached, lang) {
   var el = aiLookupFindContainer();
   if (!el) return;
   var items = '';
@@ -279,24 +305,28 @@ function renderAiFallbackSemantic(concept, matches, query, cached) {
     `;
   }
   if (!items) {
-    renderAiFallbackError(query, 'semantic', aiLookupTargetLang(), tx('AI không tìm thấy từ phù hợp.', 'AI found no suitable word.', 'AIは適切な単語を見つけられませんでした。'));
+    renderAiFallbackError(query, 'semantic', lang, aiLookupText(lang,
+      'AI không tìm thấy từ phù hợp.',
+      'AI found no suitable word.',
+      'AIは適切な単語を見つけられませんでした。',
+      'AI 没有找到合适的词语。'));
     return;
   }
   el.innerHTML = aiLookupShell(
-    `<span>✨</span><span>${tx('AI gợi ý từ phù hợp', 'AI suggests matching words', 'AIによる候補')}</span>`,
+    `<span>✨</span><span>${aiLookupText(lang, 'AI gợi ý từ phù hợp', 'AI suggests matching words', 'AIによる候補', 'AI 推荐的词语')}</span>`,
     `
       <div class="ai-lookup-card">
         <div class="ai-lookup-concept" style="margin-top:0;">
-          ${tx('Bạn đang tìm', 'You are looking for', '探している内容')}: <b>${escapeHtml(concept || query)}</b>
+          ${aiLookupText(lang, 'Bạn đang tìm', 'You are looking for', '探している内容', '你正在查找')}: <b>${escapeHtml(concept || query)}</b>
         </div>
         <div class="ai-lookup-matches">${items}</div>
-        ${aiLookupFootHtml(cached)}
+        ${aiLookupFootHtml(cached, lang)}
       </div>
     `
   );
 }
 
-function renderAiFallbackWord(entry, query, cached) {
+function renderAiFallbackWord(entry, query, cached, lang) {
   var el = aiLookupFindContainer();
   if (!el) return;
   var e = entry || {};
@@ -308,7 +338,7 @@ function renderAiFallbackWord(entry, query, cached) {
   var examplesHtml = '';
   for (var i = 0; i < examples.length; i++) {
     var ex = examples[i] || {};
-    var tr = ex.vi || ex.ja || ex.en || ex.translation || '';
+    var tr = ex.explanation || ex.vi || ex.ja || ex.en || ex.translation || '';
     if (!ex.zh && !tr) continue;
     examplesHtml += `
       <div class="ai-lookup-example">
@@ -334,9 +364,14 @@ function renderAiFallbackWord(entry, query, cached) {
   var tags = '';
   if (e.partOfSpeech) tags += `<span class="ai-lookup-tag">${escapeHtml(e.partOfSpeech)}</span>`;
   if (e.formality) tags += `<span class="ai-lookup-tag ai-lookup-tag-ai">${escapeHtml(e.formality)}</span>`;
+  var listenLabel = aiLookupText(lang, 'Nghe phát âm', 'Listen', '発音を聞く', '朗读');
 
   el.innerHTML = aiLookupShell(
-    `<span>✨</span><span>${tx('AI bổ sung từ chưa có trong từ điển', 'AI filled in a word missing from the dictionary', '辞書にない単語をAIが補完')}</span>`,
+    `<span>✨</span><span>${aiLookupText(lang,
+      'AI bổ sung từ chưa có trong từ điển',
+      'AI filled in a word missing from the dictionary',
+      '辞書にない単語をAIが補完',
+      'AI 中文词典释义')}</span>`,
     `
       <div class="ai-lookup-card">
         <div class="ai-lookup-top">
@@ -348,7 +383,7 @@ function renderAiFallbackWord(entry, query, cached) {
             </div>
           </div>
           <button type="button" class="icon-btn ai-lookup-speak" onclick="speakText('${escapeQuotes(word)}')"
-            title="${tx('Nghe phát âm', 'Listen', '発音を聞く')}" aria-label="${tx('Nghe phát âm', 'Listen', '発音を聞く')}">
+            title="${listenLabel}" aria-label="${listenLabel}">
             <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
           </button>
         </div>
@@ -358,38 +393,49 @@ function renderAiFallbackWord(entry, query, cached) {
 
         ${e.nuanceAndUsage ? `
           <div class="ai-lookup-nuance">
-            <span class="ai-lookup-nuance-label">${tx('Sắc thái & cách dùng', 'Nuance & usage', 'ニュアンスと用法')}</span>
+            <span class="ai-lookup-nuance-label">${aiLookupText(lang, 'Sắc thái & cách dùng', 'Nuance & usage', 'ニュアンスと用法', '语体与用法')}</span>
             ${escapeHtml(e.nuanceAndUsage)}
           </div>` : ''}
 
         ${examplesHtml ? `
           <div class="ai-lookup-block">
-            <div class="ai-lookup-block-title">💬 ${tx('Ví dụ', 'Examples', '例文')}</div>
+            <div class="ai-lookup-block-title">💬 ${aiLookupText(lang, 'Ví dụ', 'Examples', '例文', '例句')}</div>
             ${examplesHtml}
           </div>` : ''}
 
         ${synonymsHtml ? `
           <div class="ai-lookup-block">
-            <div class="ai-lookup-block-title">🔄 ${tx('Từ gần nghĩa', 'Near synonyms', '類義語')}</div>
+            <div class="ai-lookup-block-title">🔄 ${aiLookupText(lang, 'Từ gần nghĩa', 'Near synonyms', '類義語', '近义词')}</div>
             ${synonymsHtml}
           </div>` : ''}
 
         ${e.memoryTip ? `<div class="ai-lookup-tip">🧠 ${escapeHtml(e.memoryTip)}</div>` : ''}
 
-        ${aiLookupFootHtml(cached)}
+        ${aiLookupFootHtml(cached, lang)}
       </div>
     `
   );
+
+  // In Chinese mode the AI entry is also the definition for the local result card.
+  // Cache it and paint it into the card that is already on screen, so switching modes
+  // back and forth never leaves a blank or an English placeholder behind.
+  if (lang === 'zh' && e.primaryMeaning) {
+    if (typeof state !== 'undefined' && state.cachedTranslations) {
+      state.cachedTranslations['zh:' + word] = e.primaryMeaning;
+    }
+    var localMeaningEl = document.getElementById('dict-meaning-' + word);
+    if (localMeaningEl) localMeaningEl.textContent = e.primaryMeaning;
+  }
 }
 
 function aiLookupRenderRecord(rec, query, mode, lang) {
   if (!rec || !rec.ok || !rec.data) return false;
   if (rec.data.kind === 'semantic') {
-    renderAiFallbackSemantic(rec.data.concept, rec.data.matches, query, true);
+    renderAiFallbackSemantic(rec.data.concept, rec.data.matches, query, true, lang);
     return true;
   }
   if (rec.data.kind === 'word') {
-    renderAiFallbackWord(rec.data.entry, query, true);
+    renderAiFallbackWord(rec.data.entry, query, true, lang);
     return true;
   }
   return false;
@@ -403,24 +449,24 @@ async function aiLookupStart(query, mode, lang, force) {
   if (!force) {
     var cached = await aiLookupGetCached(key);
     if (cached && cached.ok) {
-      if (aiLookupStillWanted(q)) aiLookupRenderRecord(cached, q, mode, lang);
+      if (aiLookupStillWanted(q, lang)) aiLookupRenderRecord(cached, q, mode, lang);
       return;
     }
     if (cached && !cached.ok) {
-      if (aiLookupStillWanted(q)) renderAiFallbackError(q, mode, lang, cached.message);
+      if (aiLookupStillWanted(q, lang)) renderAiFallbackError(q, mode, lang, cached.message);
       return;
     }
   }
 
   if (AI_LOOKUP.inflight.has(key)) return;
-  if (!aiLookupStillWanted(q)) return;
+  if (!aiLookupStillWanted(q, lang)) return;
 
   if (!aiLookupAllowBudget()) {
-    renderAiFallbackBudgetNotice(q);
+    renderAiFallbackBudgetNotice(q, lang);
     return;
   }
 
-  renderAiFallbackLoading(q);
+  renderAiFallbackLoading(q, lang);
 
   // Cancel the previous auto-lookup when the user has moved on. The server may still
   // finish its Gemini call, but the browser stops waiting and the stale result cannot
@@ -483,16 +529,24 @@ async function aiLookupStart(query, mode, lang, force) {
   AI_LOOKUP.inflight.set(key, request);
   try {
     var rec = await request;
-    if (aiLookupStillWanted(q)) aiLookupRenderRecord(rec, q, mode, lang);
+    if (aiLookupStillWanted(q, lang)) aiLookupRenderRecord(rec, q, mode, lang);
   } catch (err) {
     // The user typed something else; do not cache or render an aborted request.
     if (err && err.name === 'AbortError') return;
     var msg = (err && err.message) ? err.message : '';
     var publicMsg = /EMPTY_AI_RESPONSE/.test(msg)
-      ? tx('AI không tìm thấy kết quả phù hợp.', 'AI found no suitable result.', 'AIは適切な結果を見つけられませんでした。')
-      : tx('Không kết nối được AI. Kết quả sẽ được thử lại sau ít phút.', 'Could not reach AI. It will retry later.', 'AIに接続できませんでした。しばらくしてから再試行します。');
+      ? aiLookupText(lang,
+        'AI không tìm thấy kết quả phù hợp.',
+        'AI found no suitable result.',
+        'AIは適切な結果を見つけられませんでした。',
+        'AI 没有找到合适的结果。')
+      : aiLookupText(lang,
+        'Không kết nối được AI. Kết quả sẽ được thử lại sau ít phút.',
+        'Could not reach AI. It will retry later.',
+        'AIに接続できませんでした。しばらくしてから再試行します。',
+        '暂时无法连接 AI，几分钟后会自动重试。');
     aiLookupSetCached(key, { ts: Date.now(), ok: false, message: publicMsg });
-    if (aiLookupStillWanted(q)) renderAiFallbackError(q, mode, lang, publicMsg);
+    if (aiLookupStillWanted(q, lang)) renderAiFallbackError(q, mode, lang, publicMsg);
   } finally {
     AI_LOOKUP.inflight.delete(key);
     if (AI_LOOKUP.abortKey === key) {
@@ -511,17 +565,17 @@ function retryAutoAiLookup(query, mode, lang) {
 }
 
 // Called from renderDictView() when the local search produced no confident result.
-function autoAiLookup(query, detectedLang) {
+function autoAiLookup(query, detectedLang, langOverride) {
   var q = aiLookupNormalize(query);
   if (!q) return;
   var mode = aiLookupMode(q, detectedLang);
-  var lang = aiLookupTargetLang();
+  var lang = langOverride || aiLookupTargetLang();
   var key = aiLookupKey(mode, lang, q);
   if (!aiLookupEligible(q, mode)) return;
   if (AI_LOOKUP.autoRequested.has(key)) {
     // A re-render (language switch, etc.) should still show a cached answer without a call.
     aiLookupGetCached(key).then(function (rec) {
-      if (!aiLookupStillWanted(q)) return;
+      if (!aiLookupStillWanted(q, lang)) return;
       if (rec && rec.ok) {
         aiLookupRenderRecord(rec, q, mode, lang);
       } else if (rec && !rec.ok) {
@@ -532,7 +586,7 @@ function autoAiLookup(query, detectedLang) {
         // The cache entry expired or the write failed. Forgetting the "already asked"
         // marker lets the debounced path try once more; budget/inflight still guard it.
         AI_LOOKUP.autoRequested.delete(key);
-        autoAiLookup(q, detectedLang);
+        autoAiLookup(q, detectedLang, lang);
       }
     });
     return;
@@ -555,7 +609,7 @@ function autoAiLookup(query, detectedLang) {
     AI_LOOKUP.timer = null;
     var p = AI_LOOKUP.pending;
     if (!p || p.key !== key) return;
-    if (!aiLookupStillWanted(q)) return;
+    if (!aiLookupStillWanted(q, lang)) return;
     aiLookupStart(q, mode, lang, false);
   }, AI_LOOKUP.debounceMs);
 }
@@ -596,7 +650,7 @@ function cancelPendingAiLookup() {
 
 // Enter-to-search: skip the 550 ms debounce and ask immediately. Only meaningful when
 // the local dictionaries missed (the caller checks that the fallback slot is on screen).
-function flushAiLookup(query, detectedLang) {
+function flushAiLookup(query, detectedLang, langOverride) {
   var q = aiLookupNormalize(query);
   if (!q) return;
   if (AI_LOOKUP.timer) {
@@ -606,7 +660,7 @@ function flushAiLookup(query, detectedLang) {
   AI_LOOKUP.pending = null;
   var mode = aiLookupMode(q, detectedLang);
   if (!aiLookupEligible(q, mode)) return;
-  var lang = aiLookupTargetLang();
+  var lang = langOverride || aiLookupTargetLang();
   AI_LOOKUP.autoRequested.add(aiLookupKey(mode, lang, q));
   aiLookupStart(q, mode, lang, false);
 }

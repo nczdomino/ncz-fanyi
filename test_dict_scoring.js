@@ -284,6 +284,21 @@ check('2-kana query does not match a longer kun reading', () => {
   assert.ok(t.indexOf('病') === -1, 'やま must not match 病 (やまい)');
   assert.ok(t.indexOf('叹为观止') === -1, 'やま must not match 感嘆してやまない');
 });
+check('kana and kanji forms share the same reverse lookup', () => {
+  // べんきょう/勉強/勉強する must all reach 学习; 食べる/食べました must reach 吃.
+  assert.strictEqual(top('べんきょう')[0], '学习', 'got ' + top('べんきょう').join(', '));
+  assert.strictEqual(top('勉強')[0], '学习', 'got ' + top('勉強').join(', '));
+  assert.strictEqual(top('勉強する')[0], '学习', 'got ' + top('勉強する').join(', '));
+  assert.strictEqual(top('食べる')[0], '吃', 'got ' + top('食べる').join(', '));
+  assert.strictEqual(top('食べました')[0], '吃', 'got ' + top('食べました').join(', '));
+});
+check('a short kana reading does not flood the results with ほん* compounds', () => {
+  const t = top('ほん', 5);
+  assert.ok(t.indexOf('本') !== -1, '本 missing from ' + t.join(', '));
+  for (const noise of ['真正', '本来', '本质', '奔波', '本能']) {
+    assert.ok(t.indexOf(noise) === -1, `"${noise}" should not be a top result for "ほん" (got ${t.join(', ')})`);
+  }
+});
 
 // ------------------------------------------------------- romaji -> hiragana
 console.log('\n--- Romaji conversion (previously a 40-entry table) ---');

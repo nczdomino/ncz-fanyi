@@ -11,6 +11,12 @@ function setUiLang(lang) {
   localStorage.setItem('cr_meaningLang', lang);
   localStorage.removeItem('cr_meaningLang_custom');
 
+  // The dictionary follows the app language unless the user explicitly picked a
+  // dictionary mode. A UI-language switch resets that override, matching the old
+  // behaviour of the top-bar language buttons.
+  state.dictMeaningLang = null;
+  localStorage.removeItem('cr_dictMeaningLang');
+
   // A parallel meaning language left over from the previous UI language would keep
   // showing the old language (e.g. a Vietnamese second line next to Japanese).
   if (state.meaningLang2 && (state.meaningLang2 === lang || !I18N_DATA[state.meaningLang2])) {

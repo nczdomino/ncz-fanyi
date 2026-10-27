@@ -300,14 +300,17 @@ function detectSearchLanguage(query) {
   if (!query) return 'all';
   const q = query.trim();
 
-  // Contains Chinese Hanzi
-  if (/[\u4e00-\u9fff]/.test(q)) {
-    return 'zh';
-  }
-
-  // Contains Japanese Hiragana or Katakana
+  // Kana is the decisive signal. Mixed queries such as 食べる / 勉強する contain
+  // Hanzi too, but a Japanese learner typed a Japanese word, not a Chinese one.
+  // Checking Hanzi first routed every mixed query to the Chinese path and returned
+  // zero results for 食べる / 勉強.
   if (/[\u3040-\u30ff]/.test(q)) {
     return 'ja';
+  }
+
+  // Pure Hanzi (with optional punctuation) is a Chinese headword.
+  if (/[\u4e00-\u9fff]/.test(q)) {
+    return 'zh';
   }
 
   // Pinyin-only diacritics first: ǒ/ǐ/ǔ/ǎ/ě and the macron forms never occur in

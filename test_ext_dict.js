@@ -189,7 +189,9 @@ check('the extended dictionary is not consulted when the curated one has answers
 });
 check('removing the extended dictionary restores the plain behaviour', () => {
   ctx.dictSetExtendedDictionary(null);
-  assert.strictEqual(words('旅行', 3).length, 0);
+  // 牌桌 only exists in the synthetic CC-CEDICT set. (旅行 is a bad probe here now:
+  // the Japanese reverse index legitimately resolves it to 旅游/旅行社.)
+  assert.strictEqual(words('牌桌', 3).length, 0);
   ctx.dictSetExtendedDictionary(SYNTHETIC_EXT);
 });
 

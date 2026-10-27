@@ -66,9 +66,10 @@ export default async function handler(req, res) {
     }
 
     const cleanQuery = query.trim().slice(0, 300);
-    const lang = (targetLang === 'ja' || targetLang === 'en') ? targetLang : 'vi';
+    const lang = (targetLang === 'ja' || targetLang === 'en' || targetLang === 'zh') ? targetLang : 'vi';
     const isJa = lang === 'ja';
     const isEn = lang === 'en';
+    const isZh = lang === 'zh';
     const isFast = fast === true;
 
     const cacheKey = lang + ':' + (isFast ? 'f:' : 'n:') + cleanQuery.toLowerCase();
@@ -120,6 +121,24 @@ Strict requirement: Return ONLY a valid JSON object matching this schema:
     }
   ]
 }`;
+    } else if (isZh) {
+      prompt = `你是一位汉语词汇专家。请根据用户下面的中文描述、语境或感受，推荐 3 到 5 个最贴切的汉语词语、成语或口语表达。
+用户查询："${cleanQuery}"
+
+必须只输出符合以下结构的有效 JSON：
+{
+  "concept": "对查询概念的简短概括",
+  "matches": [
+    {
+      "word": "汉语词语（汉字）",
+      "pinyin": "带声调的标准拼音",
+      "meaning": "用简明中文解释词义",
+      "nuance": "语体、搭配和使用语境",
+      "hsk": "HSK 等级（如 HSK 1-6、成语或口语）",
+      "example": "简短实用的中文例句（含拼音和简单解释）"
+    }
+  ]
+}`;
     } else {
       prompt = `Bạn là một chuyên gia ngữ văn và từ điển học tiếng Trung. Dựa trên mô tả, cảm xúc, ngữ cảnh hoặc ý định của người dùng dưới đây, hãy gợi ý 3 đến 5 từ vựng, thành ngữ hoặc cách diễn đạt tiếng Trung chuẩn xác và tự nhiên nhất.
 Mô tả người dùng tìm kiếm: "${cleanQuery}"
@@ -147,7 +166,9 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG định dạng JSON hợp lệ theo s
         ? '\n\n最も適切な4件を返し、各項目は簡潔にしてください。'
         : (isEn
           ? '\n\nReturn the 4 best matches and keep every field concise.'
-          : '\n\nTrả về 4 kết quả phù hợp nhất và giữ mỗi trường ngắn gọn.');
+          : (isZh
+            ? '\n\n返回最合适的 4 条结果，每个字段保持简洁。'
+            : '\n\nTrả về 4 kết quả phù hợp nhất và giữ mỗi trường ngắn gọn.'));
     }
 
     const geminiBody = {

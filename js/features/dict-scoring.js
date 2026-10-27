@@ -149,8 +149,9 @@
 
   function detectLang(q) {
     if (typeof detectSearchLanguage === 'function') return detectSearchLanguage(q);
-    if (/[\u4e00-\u9fff]/.test(q)) return 'zh';
+    // Same precedence as detectSearchLanguage(): kana beats Hanzi in mixed queries.
     if (/[\u3040-\u30ff]/.test(q)) return 'ja';
+    if (/[\u4e00-\u9fff]/.test(q)) return 'zh';
     if (/[àáảãạăắằẳẵặâấầẩẫậèéẻẽẹêếềểễệìíỉĩịòóỏõọôốồổỗộơớờởỡợùúủũụưứừửữựỳýỷỹỵđ]/i.test(q)) return 'vi';
     if (/[āáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]/i.test(q)) return 'pinyin';
     return 'latin';
@@ -376,30 +377,73 @@
         add(stripParens(raw), zh);
       }
     }
-    _jaIdx = { src: JA, size: keys.length, map: map };
+    _jaIdx = { src: JA, size: keys.length, map: map, keys: Object.keys(map) };
     return _jaIdx;
   }
 
   function lookupJaIndex(ctx) {
-    if (ctx.lang !== 'ja' && !ctx.jaHira) return [];
+    if (!ctx) return [];
+    // The index is useful for kana queries, mixed kanji+kana queries and even a pure
+    // kanji Japanese form (勉強). It is small (a few thousand keys), so probing it for
+    // every query costs almost nothing and never pollutes a Chinese exact match.
+    if (!ctx.jaHira && !ctx.jaKanji && ctx.lang !== 'ja' && !ctx.isHanzi) return [];
     var idx = buildJaReverseIndex();
     if (!idx) return [];
     var out = [];
     var seen = Object.create(null);
+
     var probes = [];
-    var q = kataToHira(ctx.qNorm);
-    if (q && q.length >= 2) probes.push(q);
-    if (ctx.jaHira) {
-      var h = kataToHira(norm(ctx.jaHira));
-      if (h && h.length >= 2 && probes.indexOf(h) === -1) probes.push(h);
+    function addProbe(value) {
+      var p = kataToHira(norm(value));
+      if (!p || p.length < 2 || probes.indexOf(p) !== -1) return;
+      probes.push(p);
+      // Polite / past / negative forms are common in a dictionary search box:
+      // 食べました -> 食べ, 勉強します -> 勉強し. Adding the stem lets the prefix
+      // lookup below find 食べる / 勉強する without a full Japanese morphological parser.
+      var suffixes = ['ませんでした', 'ました', 'ません', 'ます', 'なかった', 'ない', 'て', 'た'];
+      for (var s = 0; s < suffixes.length; s++) {
+        var suf = suffixes[s];
+        if (p.length > suf.length + 1 && p.slice(-suf.length) === suf) {
+          var stem = p.slice(0, -suf.length);
+          if (stem.length >= 2 && probes.indexOf(stem) === -1) probes.push(stem);
+        }
+      }
     }
-    for (var p = 0; p < probes.length; p++) {
-      var hit = idx.map[probes[p]];
-      if (!hit) continue;
+
+    addProbe(ctx.qNorm);
+    addProbe(ctx.jaHira);
+    addProbe(ctx.jaKanji);
+
+    function collect(key) {
+      var hit = idx.map[key];
+      if (!hit) return false;
       for (var i = 0; i < hit.length; i++) {
         if (seen[hit[i]]) continue;
         seen[hit[i]] = 1;
         out.push(hit[i]);
+      }
+      return true;
+    }
+
+    // Exact hits win. Only when nothing is exact do we fall back to a short prefix
+    // match, which is what resolves 勉強 -> 勉強する and べんきょう -> 勉強する.
+    var exact = false;
+    for (var p = 0; p < probes.length; p++) {
+      if (collect(probes[p])) exact = true;
+    }
+    if (!exact) {
+      for (var q = 0; q < probes.length; q++) {
+        var probe = probes[q];
+        if (probe.length < 2) continue;
+        // A 2-kana prefix is too weak: ほん would pull in ほんもの (真正), ほんらい
+        // (本来), ほんしつ (本質)… while the real answer 本 is found through its
+        // kanji reading. Keep short prefixes only for mixed stems such as 食べ
+        // (食べました -> 食べる), where the kanji pins down the word.
+        if (probe.length < 3 && !/[\u4e00-\u9fff]/.test(probe)) continue;
+        for (var k = 0; k < idx.keys.length; k++) {
+          var key = idx.keys[k];
+          if (key.length <= probe.length + 3 && key.indexOf(probe) === 0) collect(key);
+        }
       }
     }
     return out;
@@ -1036,9 +1080,10 @@
     if (workingQuery !== query) lang = 'pinyin';
     result.detected = lang;
 
-    var isHanzi = /[\u4e00-\u9fff]/.test(workingQuery);
+    var isHanzi = /[\u4e00-\u9fff]/.test(workingQuery) && !/[\u3040-\u30ff]/.test(workingQuery);
     var jaInfo = normalizeJa(workingQuery);
     var jaHira = (jaInfo && jaInfo.hiragana && norm(jaInfo.hiragana) !== qNorm) ? jaInfo.hiragana : '';
+    var jaKanji = (jaInfo && jaInfo.kanjiEquivalent) ? jaInfo.kanjiEquivalent : '';
 
     var ctx = {
       lang: lang,
@@ -1050,6 +1095,7 @@
       hasSpace: qN.indexOf(' ') !== -1,
       viToned: /[àáảãạăắằẳẵặâấầẩẫậèéẻẽẹêếềểễệìíỉĩịòóỏõọôốồổỗộơớờởỡợùúủũụưứừửữựỳýỷỹỵđ]/i.test(workingQuery),
       jaHira: jaHira,
+      jaKanji: jaKanji,
       // True when jaHira came from a romaji conversion rather than a real kana query.
       // In that case only exact Japanese hits are accepted, so English words whose
       // mechanical conversion looks kana-ish cannot pollute the results.
@@ -1163,7 +1209,9 @@
     }
 
     // ---- 2b. Japanese -> Chinese table ----------------------------------
-    if (lang === 'ja' || jaHira) {
+    // Run for kana, mixed kanji+kana and pure-kanji queries. The latter is what makes
+    // 勉強 resolve to 学习 even though 勉強 itself is not a CC-CEDICT headword.
+    if (lang === 'ja' || jaHira || jaKanji || isHanzi) {
       var jaZh = lookupJaIndex(ctx);
       var JA_MAP_SCORE = SC.JA_EXACT + 10;
       for (var jz = 0; jz < jaZh.length; jz++) {

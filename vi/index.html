@@ -255,6 +255,15 @@
           <button id="dict-search-clear" class="ai-search-clear" onclick="clearDictSearch()" style="display:none;" title="Xóa tìm kiếm" data-i18n-title="btnClear">✕</button>
         </div>
 
+        <!-- Chọn ngôn ngữ nghĩa trong từ điển (VI / JA / EN / 中文) -->
+        <div id="dict-meaning-switch" class="dict-meaning-switch" role="group" aria-label="Ngôn ngữ nghĩa trong từ điển">
+          <span class="dict-meaning-switch-label" data-i18n="dictMeaningMode">Nghĩa từ điển:</span>
+          <button type="button" class="dict-meaning-btn" data-lang="vi" onclick="setDictMeaningLang('vi')" title="Tiếng Việt">VI</button>
+          <button type="button" class="dict-meaning-btn" data-lang="ja" onclick="setDictMeaningLang('ja')" title="日本語">JA</button>
+          <button type="button" class="dict-meaning-btn" data-lang="en" onclick="setDictMeaningLang('en')" title="English">EN</button>
+          <button type="button" class="dict-meaning-btn" data-lang="zh" onclick="setDictMeaningLang('zh')" title="中文（中文释义）">中文</button>
+        </div>
+
         <!-- Thanh chỉ báo ngôn ngữ tìm kiếm tự động -->
         <div id="dict-search-badge-bar" class="dict-search-badge-bar" style="display:none;"></div>
 

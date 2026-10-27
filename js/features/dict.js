@@ -1,5 +1,29 @@
 // js/features/dict.js - Dictionary view, radical browser, compounds search and history - Dependencies: js/core/state.js, js/core/storage.js, js/core/utils.js, js/data/mini-dict.js, js/data/slang-data.js, js/features/nlp.js, js/features/word-sheet.js
 
+// Dictionary-only meaning language. `zh` gives a Chinese–Chinese experience without
+// changing the language used by the reader, translator or word sheet.
+function setDictMeaningLang(lang) {
+  if (['vi', 'en', 'ja', 'zh'].indexOf(lang) === -1) return;
+  if (typeof cancelPendingAiLookup === 'function') cancelPendingAiLookup();
+  state.dictMeaningLang = lang;
+  localStorage.setItem('cr_dictMeaningLang', lang);
+  updateDictMeaningSwitch();
+  if (state.currentView === 'dict') renderDictView();
+  if (typeof showToast === 'function') {
+    const label = typeof getLangName === 'function' ? getLangName(lang) : lang;
+    showToast((t('dictMeaningMode') || 'Nghĩa từ điển:') + ' ' + label);
+  }
+}
+
+function updateDictMeaningSwitch() {
+  const active = typeof dictMeaningLang === 'function'
+    ? dictMeaningLang()
+    : (state.meaningLang || 'vi');
+  document.querySelectorAll('#dict-meaning-switch .dict-meaning-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-lang') === active);
+  });
+}
+
 function getWordMeasureWord(word) {
   if (!word || typeof MEASURE_WORDS === 'undefined') return null;
   const direct = MEASURE_WORDS[word];
@@ -104,7 +128,7 @@ function renderWordCompounds(word) {
     container.innerHTML = '';
     return;
   }
-  const lang = state.meaningLang || 'vi';
+  const lang = typeof dictMeaningLang === 'function' ? dictMeaningLang() : (state.meaningLang || 'vi');
   let html = `
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
       <div class="def-label" style="margin-bottom:0;">🌳 ${t('relatedCompounds') || tx('Từ ghép liên quan (Họ từ vựng)', 'Related Compound Words', '関連する複合語')}</div>
@@ -113,7 +137,7 @@ function renderWordCompounds(word) {
     <div class="dict-compounds-grid">
   `;
   for (const c of compounds) {
-    const m = (lang === 'vi' ? c.vi : (lang === 'ja' ? (c.ja || c.vi) : c.en)) || '';
+    const m = (lang === 'vi' ? c.vi : (lang === 'ja' ? (c.ja || c.vi) : (lang === 'zh' ? (c.zhDef || '') : c.en))) || '';
     html += `
       <div class="dict-compound-chip" onclick="openWordSheet('${escapeQuotes(c.word)}')">
         <div style="display:flex; align-items:baseline; gap:6px;">
@@ -279,8 +303,10 @@ function isExtDictEligible(q) {
   if (!q) return false;
   const text = String(q).trim();
   if (!text) return false;
-  if (/[\u4e00-\u9fff]/.test(text)) return true;      // Chinese: yes
+  // Kana is checked before Hanzi: 食べる contains 食 but CC-CEDICT cannot answer a
+  // Japanese word, so downloading a 7 MB Chinese dictionary would be wasted traffic.
   if (/[\u3040-\u30ff]/.test(text)) return false;     // kana: cannot help
+  if (/[\u4e00-\u9fff]/.test(text)) return true;      // Chinese: yes
   if (VI_CHARS_RE.test(text)) return false;             // Vietnamese with tones: cannot help
   return /^[a-z0-9' \-]+$/i.test(text);                // plain ASCII (English / pinyin)
 }
@@ -291,14 +317,22 @@ const _jaTranslationRequested = new Set();
 const JA_AUTO_TRANSLATE_LIMIT = 12;
 
 function renderDictItemCard(item) {
-  const lang = state.meaningLang || 'vi';
+  const lang = typeof dictMeaningLang === 'function' ? dictMeaningLang() : (state.meaningLang || 'vi');
   const userDict = getUserDict();
   const customKey = lang + ':' + item.word;
   const word = item.word;
   let meaning = userDict[customKey];
 
   if (!meaning) {
-    if (lang === 'en') {
+    if (lang === 'zh') {
+      // Chinese–Chinese mode: a Chinese definition comes from the AI card below and is
+      // cached under zh:<word>. Until it arrives, show the CC-CEDICT English gloss with
+      // an explicit EN tag instead of a blank line.
+      meaning = state.cachedTranslations['zh:' + word] || item.zhDef || '';
+      if (!meaning && item.en && item.en.length) {
+        meaning = 'EN: ' + item.en.join('; ');
+      }
+    } else if (lang === 'en') {
       meaning = item.en && item.en.length ? item.en.join('; ') : '';
     } else if (lang === 'ja') {
       if (item.ja) {
@@ -319,7 +353,9 @@ function renderDictItemCard(item) {
             _jaTranslationRequested.delete(word);
             return;
           }
-          if (state.meaningLang === 'ja') {
+          state.cachedTranslations['ja:' + word] = trans;
+          const currentLang = typeof dictMeaningLang === 'function' ? dictMeaningLang() : state.meaningLang;
+          if (currentLang === 'ja') {
             const el = document.getElementById('dict-meaning-' + word);
             if (el) el.textContent = trans;
           }
@@ -386,6 +422,11 @@ function renderDictView() {
   const query = state.searchQuery.trim().toLowerCase();
   const filterHSK = state.dictFilterHSK;
   const isBrowsingHsk = state.showHskBrowser;
+  const meaningLang = typeof dictMeaningLang === 'function' ? dictMeaningLang() : (state.meaningLang || 'vi');
+  const detectedLang = typeof detectSearchLanguage === 'function' ? detectSearchLanguage(query) : 'latin';
+
+  // Reflect the active dictionary meaning mode (VI / JA / EN / 中文) in the top switch.
+  if (typeof updateDictMeaningSwitch === 'function') updateDictMeaningSwitch();
 
   // Opening the dictionary is the clearest signal that the extended dataset will be
   // useful. The loader itself decides whether the connection can afford the full file;
@@ -582,7 +623,6 @@ function renderDictView() {
 
     // Nothing in the curated dictionary: load just enough of the extended one and retry.
     // Hanzi only needs one shard; reverse lookups still need the full gloss index.
-    const detectedLang = typeof detectSearchLanguage === 'function' ? detectSearchLanguage(query) : 'latin';
     let extLoading = false;
     const extEligible = isExtDictEligible(query);
     const afterExtDict = (ok) => {
@@ -596,7 +636,7 @@ function renderDictView() {
       if (loadEl) loadEl.remove();
       // The extended dictionary missed too: now the AI is worth paying for.
       if (query && typeof autoAiLookup === 'function') {
-        autoAiLookup(query, detectedLang);
+        autoAiLookup(query, detectedLang, meaningLang);
       }
     };
     if (extEligible && typeof tryExtDictForQuery === 'function') {
@@ -618,7 +658,7 @@ function renderDictView() {
       ${extLoading ? `<div class="dict-ext-loading">⏳ ${tx('Đang tải từ điển mở rộng (119.000 mục)…', 'Loading the extended dictionary (119k entries)…', '拡張辞書を読み込み中…')}</div>` : ''}
       <div class="dict-no-match-wrapper">
         ${aiCanAnswer ? `
-          <div id="dict-ai-fallback-container">${aiEligible && typeof aiLookupPlaceholderHtml === 'function' ? aiLookupPlaceholderHtml() : ''}</div>
+          <div id="dict-ai-fallback-container">${aiEligible && typeof aiLookupPlaceholderHtml === 'function' ? aiLookupPlaceholderHtml(meaningLang) : ''}</div>
         ` : `
           <div class="dict-no-match-header">
             <div style="font-size:36px; margin-bottom:8px;">🔍</div>
@@ -662,7 +702,7 @@ function renderDictView() {
     // Every local dictionary missed: let the AI fill the gap. The helper is debounced,
     // cached for 30 days and budget-limited, so typing does not burn tokens.
     if (aiEligible && typeof autoAiLookup === 'function') {
-      autoAiLookup(query, detectedLang);
+      autoAiLookup(query, detectedLang, meaningLang);
     }
     return;
   }
@@ -756,14 +796,17 @@ function renderDictView() {
   }
 
   // 1b. If the engine only produced "did you mean" suggestions, the word is effectively
-  // missing from the dictionary. Reserve a slot for the automatic AI answer.
+  // missing from the dictionary. Reserve a slot for the automatic AI answer. In Chinese
+  // meaning mode the AI card is also shown when local results exist, because it is the
+  // source of the Chinese–Chinese definition.
   const needsAiFallback = !!query && primaryCount === 0;
-  const aiAutoAnswers = needsAiFallback && typeof aiLookupEligible === 'function' &&
-    aiLookupEligible(query, typeof aiLookupMode === 'function'
-      ? aiLookupMode(query, typeof detectSearchLanguage === 'function' ? detectSearchLanguage(query) : 'latin')
-      : 'semantic');
-  if (needsAiFallback) {
-    html += `<div id="dict-ai-fallback-container">${aiAutoAnswers && typeof aiLookupPlaceholderHtml === 'function' ? aiLookupPlaceholderHtml() : ''}</div>`;
+  const aiMode = typeof aiLookupMode === 'function' ? aiLookupMode(query, detectedLang) : 'semantic';
+  const aiCanAnswer = !!query && typeof aiLookupEligible === 'function' && aiLookupEligible(query, aiMode);
+  const zhAiCard = !!query && meaningLang === 'zh' && aiCanAnswer;
+  const showAiCard = needsAiFallback || zhAiCard;
+  const aiAutoAnswers = showAiCard && aiCanAnswer;
+  if (showAiCard) {
+    html += `<div id="dict-ai-fallback-container">${aiAutoAnswers && typeof aiLookupPlaceholderHtml === 'function' ? aiLookupPlaceholderHtml(meaningLang) : ''}</div>`;
   }
 
   // 2. Bản đồ sắc thái HSK & Slang (gọn gàng, không che khuất từ chính)
@@ -807,8 +850,8 @@ function renderDictView() {
 
   container.innerHTML = html;
 
-  if (needsAiFallback && typeof autoAiLookup === 'function') {
-    autoAiLookup(query, typeof detectSearchLanguage === 'function' ? detectSearchLanguage(query) : 'latin');
+  if (showAiCard && typeof autoAiLookup === 'function') {
+    autoAiLookup(query, detectedLang, meaningLang);
   }
 }
 
@@ -886,9 +929,9 @@ async function executeSemanticSearch(query) {
 
   // Reuse the automatic fallback's cached answer: the user should never pay twice for
   // the same query just because they pressed the manual AI button afterwards.
-  const aiLang = typeof aiLookupTargetLang === 'function'
-    ? aiLookupTargetLang()
-    : (state.meaningLang || state.uiLang || 'vi');
+  const aiLang = typeof dictMeaningLang === 'function'
+    ? dictMeaningLang()
+    : (typeof aiLookupTargetLang === 'function' ? aiLookupTargetLang() : (state.meaningLang || state.uiLang || 'vi'));
   if (typeof aiLookupGetCached === 'function' && typeof aiLookupKey === 'function') {
     const cached = await aiLookupGetCached(aiLookupKey('semantic', aiLang, query));
     if (cached && cached.ok && cached.data && cached.data.kind === 'semantic') {
@@ -1041,7 +1084,8 @@ function handleDictSearchEnter(val) {
   const aiBox = document.getElementById('dict-ai-fallback-container');
   if (aiBox && typeof flushAiLookup === 'function') {
     const lang = typeof detectSearchLanguage === 'function' ? detectSearchLanguage(q) : 'latin';
-    flushAiLookup(q, lang);
+    const meaningLang = typeof dictMeaningLang === 'function' ? dictMeaningLang() : (state.meaningLang || 'vi');
+    flushAiLookup(q, lang, meaningLang);
   }
 }
 

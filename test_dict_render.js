@@ -256,5 +256,38 @@ if (xssHtml.indexOf('<img') === -1 && xssHtml.indexOf('" onerror=') === -1 && xs
   console.log('  ❌ XSS: hostile entry produced raw HTML');
 }
 
+// Chinese–Chinese mode: the definition cached from the AI card is reused on every
+// re-render and survives switching to another meaning language and back.
+vm.runInContext(
+  'state.cachedTranslations["zh:吃"] = "把食物放进嘴里咀嚼并吞下"; setDictMeaningLang("zh");',
+  ctx
+);
+const zhHtml = render('吃');
+if (zhHtml.indexOf('把食物放进嘴里咀嚼并吞下') !== -1 && zhHtml.indexOf('dict-item-card') !== -1) {
+  console.log('  ✅ Chinese mode renders the cached Chinese definition');
+} else {
+  failures++;
+  console.log('  ❌ Chinese mode did not render the cached definition');
+}
+
+vm.runInContext('setDictMeaningLang("vi");', ctx);
+const viAfterZhHtml = render('吃');
+if (viAfterZhHtml.indexOf('ăn') !== -1 && viAfterZhHtml.indexOf('把食物放进嘴里咀嚼并吞下') === -1) {
+  console.log('  ✅ switching back to Vietnamese restores the local meaning');
+} else {
+  failures++;
+  console.log('  ❌ Vietnamese mode leaked or lost the Chinese definition');
+}
+
+vm.runInContext('setDictMeaningLang("zh");', ctx);
+const zhAgainHtml = render('吃');
+if (zhAgainHtml.indexOf('把食物放进嘴里咀嚼并吞下') !== -1) {
+  console.log('  ✅ switching back to Chinese reuses the cached definition');
+} else {
+  failures++;
+  console.log('  ❌ Chinese definition disappeared after a round-trip');
+}
+vm.runInContext('setDictMeaningLang("vi"); delete state.cachedTranslations["zh:吃"];', ctx);
+
 console.log(failures === 0 ? '\n🎉 render smoke test passed.\n' : `\n❌ ${failures} render failures\n`);
 process.exit(failures === 0 ? 0 : 1);

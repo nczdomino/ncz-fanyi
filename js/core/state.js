@@ -24,11 +24,20 @@ function detectInitialMeaningLang(uiLang) {
   return uiLang;
 }
 
+// The dictionary has its own meaning language. It normally follows the app language,
+// but a learner can switch it to Chinese for a Chinese–Chinese dictionary experience
+// without changing the language used by the reader, translator and word sheet.
+function detectInitialDictMeaningLang() {
+  const saved = localStorage.getItem('cr_dictMeaningLang');
+  return (saved && ['vi', 'en', 'ja', 'zh'].includes(saved)) ? saved : null;
+}
+
 const _initialUiLang = detectInitialLang();
 const state = {
   currentView: 'input',
   uiLang: _initialUiLang,
   meaningLang: detectInitialMeaningLang(_initialUiLang),
+  dictMeaningLang: detectInitialDictMeaningLang(),
   meaningLang2: (function(){
     const s = localStorage.getItem('cr_meaningLang2');
     return (s && ['vi','en','ja'].includes(s)) ? s : null;
@@ -78,3 +87,14 @@ const state = {
   cachedAiAnalysis: {},
   cloudHandwritingEnabled: localStorage.getItem('cr_cloudHandwriting') === '1', // Tùy chọn, tắt mặc định
 };
+
+// Resolve the language used for dictionary meanings. `zh` is intentionally scoped to
+// the dictionary: the reader, translator and word sheet keep using the app language.
+function dictMeaningLang() {
+  if (typeof state === 'undefined' || !state) return 'vi';
+  const own = state.dictMeaningLang;
+  if (own && ['vi', 'en', 'ja', 'zh'].includes(own)) return own;
+  const fallback = state.meaningLang;
+  if (fallback && ['vi', 'en', 'ja'].includes(fallback)) return fallback;
+  return state.uiLang || 'vi';
+}

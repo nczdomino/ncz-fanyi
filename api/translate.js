@@ -83,10 +83,11 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'INVALID_TYPE' });
     }
     const type = rawType;
-    const lang = (targetLang === 'ja' || targetLang === 'en') ? targetLang : 'vi';
+    const lang = (targetLang === 'ja' || targetLang === 'en' || targetLang === 'zh') ? targetLang : 'vi';
     const isJa = lang === 'ja';
     const isEn = lang === 'en';
-    const langName = isJa ? '日本語' : (isEn ? 'English' : 'Tiếng Việt');
+    const isZh = lang === 'zh';
+    const langName = isZh ? '中文' : (isJa ? '日本語' : (isEn ? 'English' : 'Tiếng Việt'));
 
     // Repeat lookups are free: the same word + language is answered from memory.
     if (type === 'dict_lookup') {
@@ -100,6 +101,8 @@ export default async function handler(req, res) {
         prompt = `あなたは中国語から日本語へのプロの翻訳者です。次の中国語の文章全体を、文脈やニュアンス、段落構造を忠実に保ちながら、極めて自然で流暢な日本語に翻訳してください:\n\n${text}\n\n注意: 挨拶や説明は一切含めず、翻訳結果の文章のみを出力してください。`;
       } else if (isEn) {
         prompt = `You are a professional Chinese-to-English translator. Translate the following Chinese text into fluent, accurate, and natural English, preserving all context, paragraph structure, and tone:\n\n${text}\n\nNote: Output only the translated text without any commentary or greetings.`;
+      } else if (isZh) {
+        prompt = `你是一位专业的中文编辑。请用简明、规范、自然的现代汉语改写下面的中文文本，保留原意、语气和段落结构；如果原文是其他语言，请翻译成中文。\n\n${text}\n\n注意：只输出改写或翻译后的正文，不要添加任何解释、问候或标题。`;
       } else {
         prompt = `Bạn là một chuyên gia dịch thuật cao cấp chuyên ngữ văn tiếng Trung. Hãy dịch toàn bộ văn bản sau sang ${langName} một cách chuẩn xác, nhuần nhuyễn, tự nhiên, giữ trọn vẹn ngữ cảnh và giữ nguyên cấu trúc phân đoạn văn bản:\n\n${text}\n\nCHÚ Ý: Chỉ xuất ra nội dung bản dịch hoàn chỉnh, không thêm lời chào, phần mở đầu hay giải thích gì thêm.`;
       }
@@ -120,6 +123,13 @@ Return ONLY valid JSON:
 {"word":"${text}","pinyin":"pinyin","partOfSpeech":"part of speech","primaryMeaning":"primary English meaning","secondaryMeanings":["max 3"],"nuanceAndUsage":"2-3 sentences of nuance and usage","formality":"casual/formal/etc","examples":[{"zh":"Chinese example","pinyin":"pinyin","vi":"English translation"}],"synonymsAndDifferences":[{"word":"synonym","diff":"difference"}],"memoryTip":"memory tip"}
 
 Up to 3 examples and 3 synonyms. Output JSON only.`;
+      } else if (isZh) {
+        prompt = `你是一位面向中文学习者的汉语词典编纂者。请解释下面的词条："${text}"
+
+只输出有效的 JSON：
+{"word":"${text}","pinyin":"拼音","partOfSpeech":"词性","primaryMeaning":"用简明中文解释该词最常用的意思（1-2 句）","secondaryMeanings":["最多 3 个其他义项"],"nuanceAndUsage":"用中文说明使用语境、常见搭配和语体（2-3 句）","formality":"口语/书面/正式等","examples":[{"zh":"中文例句","pinyin":"拼音","explanation":"用更简单的中文解释这句例句"}],"synonymsAndDifferences":[{"word":"近义词","diff":"用中文说明区别"}],"memoryTip":"用中文给出的记忆提示"}
+
+最多 3 个例句和 3 个近义词。只输出 JSON，不要输出其他内容。`;
       } else {
         prompt = `Bạn là từ điển tiếng Trung. Tra mục từ: "${text}"
 
@@ -205,6 +215,43 @@ Strict requirement: Return ONLY a valid JSON object matching this schema:
   "commonMistakes": "common learner mistakes",
   "memoryTip": "memory tip"
 }`;
+      } else if (isZh) {
+        prompt = `你是一位面向中文学习者的汉语词典编辑。请深入分析下面的词语："${text}"
+
+请用简明、规范的现代汉语说明：
+1. 主要义项和次要义项。
+2. 标准拼音和词性（名词、动词、形容词、口语、网络用语等）。
+3. 使用语境、语体色彩和常见搭配。
+4. 2-3 个实用的中文例句，附拼音和简单的中文解释。
+5. 近义词、反义词，以及用法和语体上的区别。
+6. 中文学习者常见的错误或注意事项（如有）。
+7. 便于记忆的技巧（字源、拆字、联想等）。
+
+必须只输出符合以下结构的有效 JSON，不要添加 Markdown 或额外文字：
+{
+  "word": "${text}",
+  "pinyin": "拼音",
+  "partOfSpeech": "词性",
+  "primaryMeaning": "主要中文释义",
+  "secondaryMeanings": ["次要义项"],
+  "nuanceAndUsage": "语境、语体和搭配说明",
+  "formality": "语体（口语 / 书面 / 正式等）",
+  "examples": [
+    {
+      "zh": "中文例句",
+      "pinyin": "例句拼音",
+      "explanation": "用简单中文解释这句例句"
+    }
+  ],
+  "synonymsAndDifferences": [
+    {
+      "word": "近义词（含拼音）",
+      "diff": "用法和语体区别"
+    }
+  ],
+  "commonMistakes": "常见错误或注意事项",
+  "memoryTip": "记忆技巧"
+}`;
       } else {
         prompt = `Bạn là trợ lý từ điển tiếng Trung cao cấp dành cho người Việt học tiếng Trung.
 
@@ -275,6 +322,20 @@ Return ONLY a valid JSON object:
   "native": "Natural everyday English translation",
   "genz": "Gen Z / internet slang translation",
   "business": "Professional / formal corporate translation"
+}`;
+      } else if (isZh) {
+        prompt = `你是一位专业的中文编辑。请把下面的中文句子改写成 3 种不同风格：
+1. "native": 自然、流畅、日常的现代汉语。
+2. "genz": 年轻人、网络社交平台常用的口语或网络表达。
+3. "business": 正式、礼貌、适合职场和公文的表达。
+
+中文句子："${text}"
+
+只输出有效的 JSON：
+{
+  "native": "自然日常的中文改写",
+  "genz": "年轻人口语/网络风格的中文改写",
+  "business": "正式职场风格的中文改写"
 }`;
       } else {
         prompt = `Bạn là một chuyên gia dịch thuật tiếng Trung sang Tiếng Việt. Hãy phân tích câu tiếng Trung sau và tạo ra 3 phiên bản dịch (3 lăng kính) phong phú, chính xác theo đúng ngữ cảnh:

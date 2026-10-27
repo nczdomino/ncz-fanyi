@@ -292,6 +292,62 @@ console.log('\n--- Semantic (reverse) path ---');
   });
 }
 
+// ============================================================ 3b. Chinese mode
+console.log('\n--- Chinese–Chinese dictionary mode ---');
+{
+  const ZH_DEF = '把食物放进嘴里咀嚼并吞下';
+  const h = makeHarness({
+    respond: () => ({
+      payload: {
+        entry: {
+          word: '吃', pinyin: 'chī', primaryMeaning: ZH_DEF,
+          nuanceAndUsage: '口语常用', examples: [], synonyms: [], memoryTip: '',
+        },
+      },
+    }),
+  });
+  h.ctx.state.dictMeaningLang = 'zh';
+  h.ctx.state.cachedTranslations = {};
+  h.ctx.dictMeaningLang = () => h.ctx.state.dictMeaningLang || h.ctx.state.meaningLang || 'vi';
+  const meaningEl = h.ctx.document.getElementById('dict-meaning-吃');
+
+  await check('Chinese mode asks the AI for a Chinese definition', async () => {
+    h.ctx.state.searchQuery = '吃';
+    h.ctx.autoAiLookup('吃', 'zh', 'zh');
+    h.flushTimers();
+    await settle();
+    assert.strictEqual(h.calls.length, 1, 'expected exactly one request');
+    assert.strictEqual(h.calls[0].body.targetLang, 'zh');
+    assert.ok(h.ctx.aiLookupKey('word', 'zh', '吃').indexOf(':zh:') !== -1, 'cache key must include zh');
+  });
+
+  await check('the Chinese definition is cached and painted into the local card', () => {
+    assert.strictEqual(h.ctx.state.cachedTranslations['zh:吃'], ZH_DEF);
+    assert.strictEqual(meaningEl.textContent, ZH_DEF);
+    assert.ok(h.container().innerHTML.indexOf('语体与用法') !== -1, 'AI card labels are not Chinese');
+  });
+
+  await check('switching away cancels a pending Chinese lookup', async () => {
+    h.ctx.state.dictMeaningLang = 'vi';
+    h.ctx.state.searchQuery = '书';
+    h.ctx.autoAiLookup('书', 'zh', 'zh');
+    h.ctx.state.dictMeaningLang = 'vi';
+    h.flushTimers();
+    await settle();
+    assert.strictEqual(h.calls.length, 1, 'a stale Chinese request was still sent');
+  });
+
+  await check('switching back to Chinese reuses the cached answer for free', async () => {
+    h.ctx.state.dictMeaningLang = 'zh';
+    h.ctx.state.searchQuery = '吃';
+    h.ctx.autoAiLookup('吃', 'zh', 'zh');
+    h.flushTimers();
+    await settle();
+    assert.strictEqual(h.calls.length, 1, 'cached Chinese answer cost a second request');
+    assert.ok(h.container().innerHTML.indexOf(ZH_DEF) !== -1, 'cached Chinese card was not re-rendered');
+  });
+}
+
 // ============================================================ 4. client budget
 console.log('\n--- Client budget (6/minute) ---');
 {
