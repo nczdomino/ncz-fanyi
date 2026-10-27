@@ -289,5 +289,61 @@ if (zhAgainHtml.indexOf('把食物放进嘴里咀嚼并吞下') !== -1) {
 }
 vm.runInContext('setDictMeaningLang("vi"); delete state.cachedTranslations["zh:吃"];', ctx);
 
+// Mobile and IME search interactions:
+console.log('\n--- Mobile & IME search interaction tests ---');
+// 1. handleDictSearchInput with isComposing: true (standard on Android Gboard predictive text)
+vm.runInContext(`
+  handleDictSearchInput({ target: { value: '你好' }, isComposing: true });
+`, ctx);
+const hanziInputHtml = results.innerHTML;
+if (hanziInputHtml.indexOf('dict-item-card') !== -1 && hanziInputHtml.indexOf('你好') !== -1) {
+  console.log('  ✅ handleDictSearchInput triggers search even when isComposing is true (Gboard/Android)');
+} else {
+  failures++;
+  console.log('  ❌ handleDictSearchInput dropped search when isComposing was true');
+}
+
+// 2. handleDictSearchCompositionEnd
+vm.runInContext(`
+  handleDictSearchCompositionEnd({ target: { value: '吃' } });
+`, ctx);
+const compEndHtml = results.innerHTML;
+if (compEndHtml.indexOf('dict-item-card') !== -1 && compEndHtml.indexOf('吃') !== -1) {
+  console.log('  ✅ handleDictSearchCompositionEnd immediately searches committed text');
+} else {
+  failures++;
+  console.log('  ❌ handleDictSearchCompositionEnd failed to search committed text');
+}
+
+// 3. handleDictSearchSubmit (Mobile keyboard Go/Search action or Form Submit)
+let blurred = false;
+const searchInpEl = ctx.document.getElementById('dict-search-input');
+searchInpEl.value = '学习';
+searchInpEl.blur = () => { blurred = true; };
+vm.runInContext(`
+  handleDictSearchSubmit({ preventDefault: () => {} });
+`, ctx);
+const submitHtml = results.innerHTML;
+if (submitHtml.indexOf('dict-item-card') !== -1 && submitHtml.indexOf('学习') !== -1 && blurred) {
+  console.log('  ✅ handleDictSearchSubmit executes search and blurs input to hide mobile keyboard');
+} else {
+  failures++;
+  console.log('  ❌ handleDictSearchSubmit failed to execute search or blur input');
+}
+
+// 4. handleDictSearchKeydown with Enter key
+blurred = false;
+searchInpEl.value = '谢谢';
+vm.runInContext(`
+  handleDictSearchKeydown({ key: 'Enter', keyCode: 13, target: document.getElementById('dict-search-input'), preventDefault: () => {} });
+`, ctx);
+const enterHtml = results.innerHTML;
+if (enterHtml.indexOf('dict-item-card') !== -1 && enterHtml.indexOf('谢谢') !== -1 && blurred) {
+  console.log('  ✅ handleDictSearchKeydown with Enter executes search immediately');
+} else {
+  failures++;
+  console.log('  ❌ handleDictSearchKeydown with Enter failed to execute search');
+}
+
 console.log(failures === 0 ? '\n🎉 render smoke test passed.\n' : `\n❌ ${failures} render failures\n`);
 process.exit(failures === 0 ? 0 : 1);

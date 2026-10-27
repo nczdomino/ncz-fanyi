@@ -1066,11 +1066,21 @@ function handleDictSearch(val) {
 }
 
 function handleDictSearchInput(event) {
-  if (!event || event.isComposing) return;
-  handleDictSearch(event.target ? event.target.value : '');
+  // Mobile virtual keyboards (Gboard, Samsung Keyboard, iOS) set event.isComposing=true
+  // for all predictive text typing. We always run our 180ms debounced live search
+  // so users get instant results without having to press Enter or extra keys.
+  const val = event && event.target ? event.target.value : (typeof event === 'string' ? event : '');
+  handleDictSearch(val);
 }
 
-// Enter is an explicit "I am done typing": skip both debounces and ask the AI now.
+function handleDictSearchCompositionEnd(event) {
+  // When IME composition finishes (e.g. user selects candidate, completes Telex/VNI word),
+  // immediately update and search the committed value.
+  const val = event && event.target ? event.target.value : '';
+  handleDictSearch(val);
+}
+
+// Enter/Submit is an explicit "I am done typing": skip debounces and ask the AI immediately if local dict missed.
 function handleDictSearchEnter(val) {
   clearTimeout(dictSearchTimer);
   dictSearchTimer = null;
@@ -1089,13 +1099,30 @@ function handleDictSearchEnter(val) {
   }
 }
 
+function handleDictSearchSubmit(event) {
+  if (event && typeof event.preventDefault === 'function') {
+    event.preventDefault();
+  }
+  const input = document.getElementById('dict-search-input');
+  const val = input ? input.value : '';
+  handleDictSearchEnter(val);
+  if (input && typeof input.blur === 'function') {
+    input.blur(); // Dismiss mobile soft keyboard so results are clearly visible
+  }
+}
+
 function handleDictSearchKeydown(event) {
-  if (!event || event.key !== 'Enter') return;
-  // Safari reports isComposing=false while an IME candidate is still open; keyCode 229
-  // is the reliable signal there.
-  if (event.isComposing || event.keyCode === 229) return;
+  if (!event) return;
+  const isEnter = event.key === 'Enter' || event.keyCode === 13;
+  if (!isEnter) return;
+  // If user is actively selecting a candidate in an IME candidate menu on desktop, let IME handle it
+  if (event.isComposing) return;
   event.preventDefault();
-  handleDictSearchEnter(event.target ? event.target.value : '');
+  const val = event.target ? event.target.value : '';
+  handleDictSearchEnter(val);
+  if (event.target && typeof event.target.blur === 'function') {
+    event.target.blur(); // Dismiss mobile soft keyboard
+  }
 }
 
 function handleDictSearchFocus() {
@@ -1158,4 +1185,14 @@ function searchOnline(query) {
     // Non-Hanzi queries (Vietnamese/Japanese/English) trigger AI Semantic search
     executeSemanticSearch(query);
   }
+}
+
+if (typeof window !== 'undefined') {
+  window.handleDictSearch = handleDictSearch;
+  window.handleDictSearchInput = handleDictSearchInput;
+  window.handleDictSearchCompositionEnd = handleDictSearchCompositionEnd;
+  window.handleDictSearchEnter = handleDictSearchEnter;
+  window.handleDictSearchSubmit = handleDictSearchSubmit;
+  window.handleDictSearchKeydown = handleDictSearchKeydown;
+  window.handleDictSearchFocus = handleDictSearchFocus;
 }
