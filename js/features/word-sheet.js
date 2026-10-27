@@ -57,6 +57,18 @@ async function openWordSheet(word) {
     badgesContainer.innerHTML += `<span class="badge" style="background:rgba(46,160,67,0.12); color:#2EA043; border:1px solid rgba(46,160,67,0.3); font-weight:600;">📏 ${escapeHtml(mwInfo.label)}</span>`;
   }
 
+  // Grammar Match Badge (Links directly to HSK Grammar View)
+  if (typeof grammarService !== 'undefined' && typeof grammarService.findGrammarPointsByWord === 'function') {
+    const matchedGrammar = grammarService.findGrammarPointsByWord(word);
+    if (matchedGrammar && matchedGrammar.length > 0) {
+      const gPoint = matchedGrammar[0];
+      const cat = gPoint.catalog;
+      const curUi = (typeof state !== 'undefined' && state.uiLang) || 'vi';
+      const gTitle = (cat && (curUi === 'ja' ? cat.ja_name : (curUi === 'en' ? cat.en_name : cat.vi_name))) || (cat && cat.zh_name) || '';
+      badgesContainer.innerHTML += `<button class="badge" onclick="closeWordSheet(); switchView('grammar'); if(typeof openGrammarDetail==='function') openGrammarDetail('${escapeQuotes(cat.id)}');" title="${escapeQuotes(gTitle)}" style="background:rgba(59,130,246,0.12); color:#2563EB; border:1px solid rgba(59,130,246,0.3); font-weight:700; cursor:pointer;">📚 ${escapeHtml(gTitle || cat.zh_name)}</button>`;
+    }
+  }
+
   // Meanings — chỉ hiển thị theo meaningLang đang chọn
   const lang = state.meaningLang; // 'vi' | 'en' | 'ja'
   const lang2 = state.meaningLang2; // ngôn ngữ song song (nếu bật)

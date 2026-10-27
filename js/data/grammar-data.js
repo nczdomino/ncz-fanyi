@@ -1,0 +1,10830 @@
+// js/data/grammar-data.js - HSK 2.0 & 3.0 Grammar Catalog & Detailed Rules
+(function () {
+  const catalog = [
+  {
+    "id": "hsk1_shi_sentence",
+    "level": "HSK1",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“是”字句",
+    "vi_name": "Câu chữ 是 (là)",
+    "ja_name": "「是」構文（〜は〜です）",
+    "en_name": "The 是 (shì) copula sentence",
+    "category": "sentence_pattern",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_you_possession_existence",
+    "level": "HSK1",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“有”字句（领有与存在）",
+    "vi_name": "Câu chữ 有 (sở hữu và tồn tại)",
+    "ja_name": "「有」構文（所有・存在）",
+    "en_name": "The 有 (yǒu) sentence for possession and existence",
+    "category": "sentence_pattern",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_zai_existence_location",
+    "level": "HSK1",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“在”表示位置与存在",
+    "vi_name": "Cấu trúc 在 chỉ vị trí và sự tồn tại",
+    "ja_name": "所在を表す「在」",
+    "en_name": "Expressing location with 在 (zài)",
+    "category": "preposition",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_ma_yes_no_question",
+    "level": "HSK1",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“吗”是非问句",
+    "vi_name": "Câu hỏi Có-Không với trợ từ 吗",
+    "ja_name": "語気助詞「吗」による疑問文",
+    "en_name": "Yes-no questions with 吗 (ma)",
+    "category": "question",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_ne_elliptical_question",
+    "level": "HSK1",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“呢”省略问句",
+    "vi_name": "Câu hỏi tỉnh lược với trợ từ 呢 (còn... thì sao?)",
+    "ja_name": "省略疑問文を作る「呢」（〜は？）",
+    "en_name": "Follow-up questions with 呢 (ne)",
+    "category": "question",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_interrogative_pronouns",
+    "level": "HSK1",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "特殊疑问句（什么/谁/哪儿/怎么/几/多少）",
+    "vi_name": "Câu hỏi dùng đại từ nghi vấn (什么, 谁, 哪儿, 怎么, 几, 多少)",
+    "ja_name": "疑問詞疑問文（什么・谁・哪儿・怎么・几・多少）",
+    "en_name": "Wh-questions with interrogative pronouns",
+    "category": "question",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_bu_negation",
+    "level": "HSK1",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "否定副词“不”",
+    "vi_name": "Phó từ phủ định 不",
+    "ja_name": "否定副詞「不」",
+    "en_name": "Standard negation with 不 (bù)",
+    "category": "negation",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_mei_meiyou_negation",
+    "level": "HSK1",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "否定副词“没/没有”",
+    "vi_name": "Phó từ phủ định 没 / 没有",
+    "ja_name": "所有・過去の否定「没／没有」",
+    "en_name": "Negating possession and past actions with 没/没有 (méi/méiyǒu)",
+    "category": "negation",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_de_possessive_attributive",
+    "level": "HSK1",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "结构助词“的”（定语标记）",
+    "vi_name": "Trợ từ kết cấu 的 nối định ngữ và sở hữu",
+    "ja_name": "構造助詞「的」（連体修飾・所有）",
+    "en_name": "Possession and modification with 的 (de)",
+    "category": "particle",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_hen_adjective_predicate",
+    "level": "HSK1",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "形容词谓语句与程度副词“很”",
+    "vi_name": "Câu vị ngữ tính từ và phó từ mức độ 很",
+    "ja_name": "形容詞述語文と「很」の働き",
+    "en_name": "Adjective predicate sentences with 很 (hěn)",
+    "category": "sentence_pattern",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_numeral_measure_word",
+    "level": "HSK1",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "数量名结构（数词+量词+名词）",
+    "vi_name": "Cấu trúc Số từ + Lượng từ + Danh từ (个, 本, 口, 块, 杯...)",
+    "ja_name": "数量詞構造（数詞＋量詞＋名詞）",
+    "en_name": "Numeral + Measure Word + Noun structure",
+    "category": "measure_word",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_time_word_position",
+    "level": "HSK1",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "时间词作状语的位置",
+    "vi_name": "Vị trí của từ chỉ thời gian làm trạng ngữ",
+    "ja_name": "時間詞の語順（主語の前／直後）",
+    "en_name": "Placement of time expressions before the verb",
+    "category": "sentence_pattern",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_zai_progressive",
+    "level": "HSK1",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“在/正在+V+呢”表示动作正在进行",
+    "vi_name": "Cấu trúc 在/正在 + V (+ 呢) diễn tả hành động đang diễn ra",
+    "ja_name": "進行を表す「在／正在＋V（＋呢）」",
+    "en_name": "Ongoing actions with 在/正在 (zài/zhèngzài)",
+    "category": "aspect",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_modal_hui_neng_xiang",
+    "level": "HSK1",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "能愿动词“会、能、想”",
+    "vi_name": "Động từ năng nguyện 会, 能, 想",
+    "ja_name": "助動詞「会・能・想」の使い分け",
+    "en_name": "Modal verbs 会 (huì), 能 (néng), and 想 (xiǎng)",
+    "category": "modal",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_le_modal_change",
+    "level": "HSK1",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "语气助词“了”（表示发生或变化）",
+    "vi_name": "Trợ từ ngữ khí 了 ở cuối câu (đã xảy ra / thay đổi trạng thái)",
+    "ja_name": "文末の「了」（完了・変化）",
+    "en_name": "Sentence-final particle 了 (le) for new situations",
+    "category": "particle",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk1_tai_le_exclamation",
+    "level": "HSK1",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“太+Adj+了”感叹结构",
+    "vi_name": "Cấu trúc cảm thán 太 + Tính từ + 了 (quá... rồi!)",
+    "ja_name": "感嘆を表す「太＋形容詞＋了」",
+    "en_name": "Exclamations with 太...了 (tài...le)",
+    "category": "sentence_pattern",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk2_le_completion_aspect",
+    "level": "HSK2",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "动态助词“了”（动作完成）",
+    "vi_name": "Trợ từ động thái 了 đứng sau động từ (hoàn thành hành động)",
+    "ja_name": "アスペクト助詞「了」（動作の完了）",
+    "en_name": "Aspect particle 了 (le) for completed actions",
+    "category": "aspect",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk2_guo_experiential_aspect",
+    "level": "HSK2",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "动态助词“过”（曾经经历）",
+    "vi_name": "Trợ từ động thái 过 diễn tả trải nghiệm (đã từng)",
+    "ja_name": "経験を0表すアスペクト助詞「过」（〜したことがある）",
+    "en_name": "Experiential particle 过 (guò)",
+    "category": "aspect",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk2_zhe_durative_aspect",
+    "level": "HSK2",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "动态助词“着”（状态持续）",
+    "vi_name": "Trợ từ động thái 着 diễn tả trạng thái duy trì",
+    "ja_name": "状態の持続を表す「着」（〜している／〜てある）",
+    "en_name": "Continuous state particle 着 (zhe)",
+    "category": "aspect",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk2_bi_comparison",
+    "level": "HSK2",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“比”字比较句",
+    "vi_name": "Câu so sánh hơn với chữ 比",
+    "ja_name": "「比」を用いた比較文（AはBより〜）",
+    "en_name": "Comparisons using 比 (bǐ)",
+    "category": "comparison",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk2_de_degree_complement",
+    "level": "HSK2",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "状态补语/程度补语（V+得+Adj）",
+    "vi_name": "Bổ ngữ trạng thái / mức độ dùng 得 (V + 得 + Adj)",
+    "ja_name": "様態補語・程度補語（V＋得＋形容詞）",
+    "en_name": "Complement of degree/manner with 得 (de)",
+    "category": "complement",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk2_resultative_complement_basic",
+    "level": "HSK2",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "结果补语（V+完/好/见/到/懂/错）",
+    "vi_name": "Bổ ngữ kết quả cơ bản (V + 完/好/见/到/懂/错)",
+    "ja_name": "結果補語の基本（V＋完／好／见／到／懂／错）",
+    "en_name": "Basic resultative complements (完, 好, 见, 到, 懂, 错)",
+    "category": "complement",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk2_directional_complement_simple",
+    "level": "HSK2",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "简单趋向补语（V+来/去）",
+    "vi_name": "Bổ ngữ xu hướng đơn (V + 来 / 去)",
+    "ja_name": "単純方向補語（V＋来／去）",
+    "en_name": "Simple directional complements (来 lái / 去 qù)",
+    "category": "complement",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk2_affirmative_negative_question",
+    "level": "HSK2",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "正反问句（V不V / V没V）",
+    "vi_name": "Câu hỏi chính phản (V 不 V / V 没 V)",
+    "ja_name": "反復疑問文（V不V／V没V）",
+    "en_name": "Affirmative-negative questions (V-not-V)",
+    "category": "question",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk2_haishi_alternative_question",
+    "level": "HSK2",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“还是”选择问句",
+    "vi_name": "Câu hỏi lựa chọn với 还是 (hay là)",
+    "ja_name": "選択疑問文を作る「还是」（AそれともB？）",
+    "en_name": "Alternative questions with 还是 (háishì)",
+    "category": "question",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk2_yao_le_imminent_action",
+    "level": "HSK2",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“要/快要/就要…了”表示即将发生",
+    "vi_name": "Cấu trúc 要/快要/就要...了 diễn tả việc sắp xảy ra",
+    "ja_name": "近未来を表す「要／快要／就要…了」（もうすぐ〜する）",
+    "en_name": "Imminent actions with 要/快要/就要...了",
+    "category": "aspect",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk2_yinwei_suoyi",
+    "level": "HSK2",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“因为…所以…”因果复句",
+    "vi_name": "Câu ghép nhân quả 因为... 所以... (vì... nên...)",
+    "ja_name": "因果関係「因为…所以…」（なぜなら〜だから）",
+    "en_name": "Cause and effect with 因为...所以... (because...therefore...)",
+    "category": "conjunction",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk2_suiran_danshi",
+    "level": "HSK2",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“虽然…但是…”转折复句",
+    "vi_name": "Câu ghép chuyển ngoặt 虽然... 但是... (tuy... nhưng...)",
+    "ja_name": "逆接「虽然…但是…」（〜だけれども、しかし〜）",
+    "en_name": "Concession with 虽然...但是... (although...but...)",
+    "category": "conjunction",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk2_verb_reduplication",
+    "level": "HSK2",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "动词重叠（AA / A一A）与“V一下”",
+    "vi_name": "Lặp lại động từ (AA / A一A) và V + 一下",
+    "ja_name": "動詞の重ね型（AA／A一A）と「V一下」（ちょっと〜する）",
+    "en_name": "Verb reduplication and V + 一下 (yīxià)",
+    "category": "reduplication",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk2_shi_de_emphasis",
+    "level": "HSK2",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“是…的”强调句（时间/地点/方式）",
+    "vi_name": "Cấu trúc nhấn mạnh 是...的 (thời gian, địa điểm, cách thức)",
+    "ja_name": "強調構文「是…的」（いつ・どこで・どのように）",
+    "en_name": "The 是...的 (shì...de) focus construction",
+    "category": "sentence_pattern",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk2_preposition_cong_dao_li_dui",
+    "level": "HSK2",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "常用介词（从…到…、离、对、向、往）",
+    "vi_name": "Giới từ thông dụng: 从...到..., 离, 对, 向, 往",
+    "ja_name": "頻出前置詞（从…到…、离、对、向、往）",
+    "en_name": "Common prepositions: 从...到..., 离, 对, 向, 往",
+    "category": "preposition",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk2_bie_bu_yao_imperative",
+    "level": "HSK2",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "祈使否定“别…（了）/ 不要…（了）”",
+    "vi_name": "Câu cầu khiến phủ định 别...(了) / 不要...(了) (đừng... nữa)",
+    "ja_name": "禁止を表す「别…（了）／不要…（了）」（〜しないで）",
+    "en_name": "Negative imperatives with 别 (bié) and 不要 (búyào)",
+    "category": "negation",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk3_ba_construction",
+    "level": "HSK3",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“把”字句（处置式）",
+    "vi_name": "Câu chữ 把 (câu xử lý)",
+    "ja_name": "「把」構文（処置文）",
+    "en_name": "The 把 (bǎ) disposal construction",
+    "category": "sentence_pattern",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk3_bei_passive",
+    "level": "HSK3",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“被”字句（与叫/让被动句）",
+    "vi_name": "Câu bị động với 被 (và 叫 / 让)",
+    "ja_name": "「被」（および「叫・让」）による受身文",
+    "en_name": "Passive sentences with 被 (bèi), 叫 (jiào), and 让 (ràng)",
+    "category": "sentence_pattern",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk3_compound_directional_complement",
+    "level": "HSK3",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "复合趋向补语（V+上来/下去/进来/出去/回来/过去/起来）",
+    "vi_name": "Bổ ngữ xu hướng kép (V + 上来/下去/进来/出去/回来/过去/起来)",
+    "ja_name": "複合方向補語（V＋上来／下去／进来／出去／回来／过去／起来）",
+    "en_name": "Compound directional complements",
+    "category": "complement",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk3_potential_complement",
+    "level": "HSK3",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "可能补语（V+得/不+结果/趋向）",
+    "vi_name": "Bổ ngữ khả năng (V + 得/不 + kết quả/xu hướng)",
+    "ja_name": "可能補語（V＋得／不＋結果／方向）",
+    "en_name": "Potential complements (V + 得/不 + result/direction)",
+    "category": "complement",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk3_duration_complement",
+    "level": "HSK3",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "时量补语（V+了+时间段）",
+    "vi_name": "Bổ ngữ thời lượng (V + 了 + khoảng thời gian)",
+    "ja_name": "時量補語（動作の継続時間）",
+    "en_name": "Complement of duration",
+    "category": "complement",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk3_frequency_complement",
+    "level": "HSK3",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "动量补语（V+了/过+次数/遍/趟）",
+    "vi_name": "Bổ ngữ động lượng (số lần: 次, 遍, 趟)",
+    "ja_name": "動量補語（回数：次・遍・趟）",
+    "en_name": "Complement of frequency (次, 遍, 趟)",
+    "category": "complement",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk3_yue_lai_yue_yue_yue",
+    "level": "HSK3",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“越来越…”与“越A越B”",
+    "vi_name": "Cấu trúc 越来越... (càng ngày càng...) và 越A越B (càng A càng B)",
+    "ja_name": "「越来越…」（ますます〜）と「越A越B」（AすればするほどB）",
+    "en_name": "Increasing degree with 越来越 and 越A越B",
+    "category": "comparison",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk3_gen_yi_yang_comparison",
+    "level": "HSK3",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“A跟/和B（不）一样”平比句",
+    "vi_name": "So sánh ngang bằng A 跟/和 B (不) 一样",
+    "ja_name": "同等比較「A跟／和B（不）一样」（AはBと同じ／違う）",
+    "en_name": "Expressing similarity/difference with 跟/和...(不)一样",
+    "category": "comparison",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk3_adverb_cai_vs_jiu",
+    "level": "HSK3",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "副词“才”与“就”的对比",
+    "vi_name": "Phân biệt phó từ 才 (mới) và 就 (đã/liền)",
+    "ja_name": "副詞「才」（やっと）と「就」（すぐに・もう）の対比",
+    "en_name": "Contrasting adverbs 才 (cái) and 就 (jiù)",
+    "category": "other",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk3_adverb_you_vs_zai",
+    "level": "HSK3",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "副词“又”与“再”的对比",
+    "vi_name": "Phân biệt phó từ lặp lại 又 (đã lại) và 再 (sẽ lại)",
+    "ja_name": "反復を表す副詞「又」（既実現）と「再」（未実現）",
+    "en_name": "Contrasting repetition adverbs 又 (yòu) and 再 (zài)",
+    "category": "other",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk3_yi_bian_yi_bian",
+    "level": "HSK3",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“一边…一边…”同时进行",
+    "vi_name": "Cấu trúc 一边... 一边... (vừa... vừa...)",
+    "ja_name": "同時進行「一边…一边…」（〜しながら〜する）",
+    "en_name": "Simultaneous actions with 一边...一边...",
+    "category": "conjunction",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk3_yi_jiu_sequence",
+    "level": "HSK3",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“一…就…”紧接复句",
+    "vi_name": "Cấu trúc 一... 就... (hễ/vừa... thì liền...)",
+    "ja_name": "「一…就…」（〜するとすぐに…）",
+    "en_name": "As soon as with 一...就... (yī...jiù...)",
+    "category": "conjunction",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk3_bu_dan_er_qie",
+    "level": "HSK3",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“不但/不仅…而且/还…”递进复句",
+    "vi_name": "Câu ghép tăng tiến 不但/不仅... 而且/还... (không những... mà còn...)",
+    "ja_name": "累加「不但／不仅…而且／还…」（〜だけでなく、さらに〜）",
+    "en_name": "Not only... but also... with 不但...而且...",
+    "category": "conjunction",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk3_zhi_yao_jiu_zhi_you_cai",
+    "level": "HSK3",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "条件复句“只要…就…”与“只有…才…”",
+    "vi_name": "Câu điều kiện 只要...就... (chỉ cần... là...) và 只有...才... (chỉ có... mới...)",
+    "ja_name": "条件文「只要…就…」（〜さえすれば）と「只有…才…」（〜してこそ）",
+    "en_name": "Sufficient vs. necessary conditions: 只要...就... and 只有...才...",
+    "category": "conjunction",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk3_interrogative_dou_ye_universal",
+    "level": "HSK3",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "疑问代词活用表任指（谁/什么/哪儿+都/也）",
+    "vi_name": "Đại từ nghi vấn kết hợp 都 / 也 biểu thị toàn bộ (ai cũng, cái gì cũng)",
+    "ja_name": "疑問詞＋「都／也」による全面肯定・全面否定",
+    "en_name": "Interrogative pronouns with 都/也 for 'any/every/no'",
+    "category": "question",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk3_adjective_reduplication",
+    "level": "HSK3",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "形容词重叠（AA的 / AABB）",
+    "vi_name": "Lặp lại tính từ (AA的 / AABB)",
+    "ja_name": "形容詞の重ね型（AA的／AABB）",
+    "en_name": "Adjective reduplication (AA的 and AABB)",
+    "category": "reduplication",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk3_existential_sentence",
+    "level": "HSK3",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "存现句（处所+V+着/了+NP）",
+    "vi_name": "Câu tồn hiện (Địa điểm + V + 着/了 + Danh ngữ)",
+    "ja_name": "存現文（場所＋V＋着／了＋不特定名詞）",
+    "en_name": "Existential sentences (Location + V + 着/了 + Noun)",
+    "category": "sentence_pattern",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk4_lian_dou_ye_emphasis",
+    "level": "HSK4",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“连…都/也…”强调极端情况",
+    "vi_name": "Cấu trúc nhấn mạnh 连... 都/也... (ngay cả... cũng...)",
+    "ja_name": "極端な例を挙げる「连…都／也…」（〜でさえも）",
+    "en_name": "Emphasizing extremes with 连...都/也... (even...)",
+    "category": "sentence_pattern",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk4_bu_shi_er_shi",
+    "level": "HSK4",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“不是A，而是B”并列否定与肯定",
+    "vi_name": "Cấu trúc 不是 A, 而是 B (không phải A, mà là B)",
+    "ja_name": "「不是A，而是B」（AではなくてBだ）",
+    "en_name": "Not A, but rather B with 不是...而是...",
+    "category": "conjunction",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk4_ji_shi_ye_concession",
+    "level": "HSK4",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“即使…也…”假设让步复句",
+    "vi_name": "Câu nhượng bộ giả định 即使... 也... (cho dù... cũng...)",
+    "ja_name": "仮定譲歩「即使…也…」（たとえ〜でも）",
+    "en_name": "Even if with 即使...也... (jíshǐ...yě...)",
+    "category": "conjunction",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk4_bu_guan_wu_lun_dou",
+    "level": "HSK4",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“不管/无论…都/也…”无条件复句",
+    "vi_name": "Câu vô điều kiện 不管/无论... 都/也... (bất kể... đều...)",
+    "ja_name": "無条件「不管／无论…都／也…」（〜にかかわらず）",
+    "en_name": "No matter what with 不管/无论...都...",
+    "category": "conjunction",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk4_ji_ran_jiu_causal",
+    "level": "HSK4",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“既然…就…”推论因果复句",
+    "vi_name": "Câu suy luận nhân quả 既然... 就... (đã... thì...)",
+    "ja_name": "既定事実からの推論「既然…就…」（〜である以上は）",
+    "en_name": "Since/now that with 既然...就... (jìrán...jiù...)",
+    "category": "conjunction",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk4_double_negation_fei_bu_ke",
+    "level": "HSK4",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "双重否定（非…不可 / 不得不 / 没有…不…）",
+    "vi_name": "Phủ định kép nhấn mạnh (非...不可, 不得不, 没有...不...)",
+    "ja_name": "二重否定による強調（非…不可／不得不／没有…不…）",
+    "en_name": "Double negation patterns (非...不可, 不得不, 没有...不...)",
+    "category": "negation",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk4_rhetorical_questions",
+    "level": "HSK4",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "反问句（难道…吗？/ 不是…吗？）",
+    "vi_name": "Câu hỏi tu từ 难道...吗? (lẽ nào...?) và 不是...吗? (chẳng phải... sao?)",
+    "ja_name": "反語文（难道…吗？／不是…吗？）",
+    "en_name": "Rhetorical questions with 难道...吗 and 不是...吗",
+    "category": "question",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk4_directional_complement_figurative",
+    "level": "HSK4",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "趋向补语的引申义（起来/下去/出来/过来）",
+    "vi_name": "Nghĩa bóng của bổ ngữ xu hướng (起来, 下去, 出来, 过来)",
+    "ja_name": "方向補語の派生義（起来・下去・出来・过来）",
+    "en_name": "Figurative uses of directional complements (起来, 下去, 出来, 过来)",
+    "category": "complement",
+    "difficulty": 4
+  },
+  {
+    "id": "hsk4_yi_wei_vs_ren_wei",
+    "level": "HSK4",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "心理动词“以为”与“认为”的区别",
+    "vi_name": "Phân biệt 以为 (tưởng là - thường sai) và 认为 (cho rằng)",
+    "ja_name": "「以为」（思い込む）と「认为」（考える・思う）の使い分け",
+    "en_name": "Distinguishing 以为 (mistakenly thought) vs. 认为 (consider/think)",
+    "category": "other",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk4_preposition_dui_yu_guan_yu",
+    "level": "HSK4",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "介词“对于”与“关于”的对比",
+    "vi_name": "Phân biệt giới từ 对于 (đối với) và 关于 (về việc)",
+    "ja_name": "前置詞「对于」（〜に対して）と「关于」（〜について）の対比",
+    "en_name": "Contrasting prepositions 对于 (duìyú) and 关于 (guānyú)",
+    "category": "preposition",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk4_jian_zhi_adverb",
+    "level": "HSK4",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "程度与语气副词（简直、毕竟、到底、居然、难道）",
+    "vi_name": "Phó từ ngữ khí nâng cao (简直, 毕竟, 到底, 居然)",
+    "ja_name": "評価・語気副詞（简直・毕竟・到底・居然）",
+    "en_name": "Advanced modal adverbs (简直, 毕竟, 到底, 居然)",
+    "category": "other",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk4_er_conjunction",
+    "level": "HSK4",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "书面连词“而”（并列与转折）",
+    "vi_name": "Liên từ văn viết 而 (nối song song hoặc đối lập)",
+    "ja_name": "書面語接続詞「而」（並列・対比・逆接）",
+    "en_name": "Formal conjunction 而 (ér) for coordination and contrast",
+    "category": "written_style",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk5_yu_qi_bu_ru_preference",
+    "level": "HSK5",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“与其A，不如B”取舍复句",
+    "vi_name": "Cấu trúc chọn lựa 与其 A, 不如 B (thà B còn hơn A)",
+    "ja_name": "取捨選択「与其A，不如B」（AするくらいならBした方がいい）",
+    "en_name": "Rather than A, it is better to B with 与其...不如...",
+    "category": "comparison",
+    "difficulty": 4
+  },
+  {
+    "id": "hsk5_ning_ke_ye_bu",
+    "level": "HSK5",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“宁可…也（不）…”与“宁可…也要…”",
+    "vi_name": "Cấu trúc 宁可... 也(不)... (thà... chứ không / cũng phải...)",
+    "ja_name": "「宁可…也（不）…」（いっそ〜しても…しない／する）",
+    "en_name": "Would rather with 宁可...也(不)... (nìngkě...yě...)",
+    "category": "conjunction",
+    "difficulty": 4
+  },
+  {
+    "id": "hsk5_suo_verb_de_nominalization",
+    "level": "HSK5",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "助词“所”（所+V+的+N）",
+    "vi_name": "Trợ từ văn viết 所 (所 + Động từ + 的 + Danh từ)",
+    "ja_name": "構造助詞「所」（所＋動詞＋的＋名詞）",
+    "en_name": "Formal nominalization marker 所 (suǒ)",
+    "category": "written_style",
+    "difficulty": 4
+  },
+  {
+    "id": "hsk5_zhi_suo_yi_shi_yin_wei",
+    "level": "HSK5",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“之所以…是因为…”倒装因果",
+    "vi_name": "Cấu trúc đảo nhân quả 之所以... 是因为... (sở dĩ... là vì...)",
+    "ja_name": "結果先出しの因果文「之所以…是因为…」（〜なのは…だからだ）",
+    "en_name": "The reason why... is because... (之所以...是因为...)",
+    "category": "conjunction",
+    "difficulty": 4
+  },
+  {
+    "id": "hsk5_he_kuang_let_alone",
+    "level": "HSK5",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“尚且/连…，何况…”反逼递进",
+    "vi_name": "Cấu trúc 尚且/连..., 何况... (huống hồ là...)",
+    "ja_name": "「尚且／连…，何况…」（〜でさえ…なのだから、ましてや〜はなおさらだ）",
+    "en_name": "Much less / let alone with 何况 (hékuàng)",
+    "category": "conjunction",
+    "difficulty": 4
+  },
+  {
+    "id": "hsk5_bu_jian_de_wei_bi",
+    "level": "HSK5",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "委婉否定“不见得 / 未必”",
+    "vi_name": "Phủ định uyển chuyển 不见得 / 未必 (chưa chắc đã)",
+    "ja_name": "部分否定・婉曲否定「不见得／未必」（必ずしも〜とは限らない）",
+    "en_name": "Not necessarily with 不见得 (bújiàndé) and 未必 (wèibì)",
+    "category": "negation",
+    "difficulty": 4
+  },
+  {
+    "id": "hsk5_you_built_in_prepositions",
+    "level": "HSK5",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "高级介词结构（由、凭、趁、随着、自从、朝）",
+    "vi_name": "Giới từ nâng cao (由, 凭, 趁, 随着, 自从, 朝)",
+    "ja_name": "中上級前置詞（由・凭・趁・随着・自从・朝）",
+    "en_name": "Advanced prepositions: 由, 凭, 趁, 随着, 自从, 朝",
+    "category": "preposition",
+    "difficulty": 4
+  },
+  {
+    "id": "hsk5_ba_le_particle",
+    "level": "HSK5",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "语气词“而已 / 罢了”（仅此而已）",
+    "vi_name": "Trợ từ ngữ khí 而已 / 罢了 (chỉ... mà thôi)",
+    "ja_name": "文末助詞「而已／罢了」（〜にすぎない）",
+    "en_name": "Sentence-final particles 而已 (éryǐ) and 罢了 (bàle)",
+    "category": "particle",
+    "difficulty": 4
+  },
+  {
+    "id": "hsk6_classical_zhi_qi_yi_wei",
+    "level": "HSK6",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "文言虚词残留（之、其、以、为、乃、即、则）",
+    "vi_name": "Hư từ cổ văn trong tiếng Trung hiện đại (之, 其, 以, 为, 乃, 即, 则)",
+    "ja_name": "現代語に残る文語虚詞（之・其・以・为・乃・即・则）",
+    "en_name": "Classical Chinese particles in modern formal prose (之, 其, 以, 为, 乃, 即, 则)",
+    "category": "written_style",
+    "difficulty": 5
+  },
+  {
+    "id": "hsk6_yu_postverbal_preposition",
+    "level": "HSK6",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“V/Adj+于”书面介词结构",
+    "vi_name": "Cấu trúc Động/Tính từ + 于 trong văn viết (生于, 善于, 勇于, 属于, 至于)",
+    "ja_name": "「動詞／形容詞＋于」の書面語構文",
+    "en_name": "Verb/Adjective + 于 (yú) formal complement structure",
+    "category": "written_style",
+    "difficulty": 4
+  },
+  {
+    "id": "hsk6_gu_ran_dan_concession",
+    "level": "HSK6",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“固然…，但/不过/也…”确认让步",
+    "vi_name": "Cấu trúc nhượng bộ xác nhận 固然..., 但/也... (đành rằng..., nhưng...)",
+    "ja_name": "事実承認の譲歩「固然…，但／也…」（確かに〜だが、しかし〜）",
+    "en_name": "Admittedly... but... with 固然 (gùrán)",
+    "category": "conjunction",
+    "difficulty": 5
+  },
+  {
+    "id": "hsk6_four_character_idiom_syntax",
+    "level": "HSK6",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "四字格与固定书面格式（不V自V、无A无B、忽A忽B）",
+    "vi_name": "Cấu trúc tứ tự cách cố định (不...自..., 无...无..., 忽...忽...)",
+    "ja_name": "四字句・固定フォーマット（不…自…、无…无…、忽…忽…）",
+    "en_name": "Four-character semi-fixed idioms and formal frames",
+    "category": "written_style",
+    "difficulty": 5
+  },
+  {
+    "id": "hsk6_fei_dan_bu_fan_er",
+    "level": "HSK6",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“非但/非但不…，反而…”反递句",
+    "vi_name": "Cấu trúc phản đệ tiến 非但(不)..., 反而... (không những không... mà trái lại...)",
+    "ja_name": "「非但（不）…，反而…」（〜ないばかりか、かえって〜）",
+    "en_name": "Far from..., on the contrary... with 非但...反而...",
+    "category": "conjunction",
+    "difficulty": 5
+  },
+  {
+    "id": "hsk6_yi_zhi_yu_consequence",
+    "level": "HSK6",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“以致 / 以至于”程度与结果连词",
+    "vi_name": "Phân biệt liên từ hệ quả 以致 (kết quả xấu) và 以至于 (đến mức mà)",
+    "ja_name": "結果接続詞「以致」（悪い結果）と「以至于」（〜するほどに）",
+    "en_name": "Consequence conjunctions 以致 (yǐzhì) and 以至于 (yǐzhìyú)",
+    "category": "conjunction",
+    "difficulty": 5
+  },
+  {
+    "id": "hsk789_wei_suo_passive_frame",
+    "level": "HSK7-9",
+    "standard": [
+      "HSK 3.0"
+    ],
+    "zh_name": "“为…所+V”书面被动式",
+    "vi_name": "Cấu trúc bị động trang trọng 为...所 + V (bị/được... làm cho...)",
+    "ja_name": "文語的受身構文「为…所＋V」（〜によって…される）",
+    "en_name": "Formal passive frame 为...所... (wéi...suǒ...)",
+    "category": "written_style",
+    "difficulty": 5
+  },
+  {
+    "id": "hsk789_yi_bian_vs_yi_mian_purpose",
+    "level": "HSK7-9",
+    "standard": [
+      "HSK 3.0"
+    ],
+    "zh_name": "书面目的与预防连词（以便、藉以、以免、免得、谨防）",
+    "vi_name": "Liên từ mục đích và phòng ngừa trong văn bản học thuật/hành chính (以便, 藉以, 以免, 谨防)",
+    "ja_name": "目的・予防を表す硬い表現（以便・藉以・以免・谨防）",
+    "en_name": "Academic and legal purpose/prevention connectives (以便, 藉以, 以免, 谨防)",
+    "category": "written_style",
+    "difficulty": 5
+  },
+  {
+    "id": "hsk789_yu_fou_embedded_polar",
+    "level": "HSK7-9",
+    "standard": [
+      "HSK 3.0"
+    ],
+    "zh_name": "“V/Adj+与否”书面正反嵌入结构",
+    "vi_name": "Cấu trúc Động/Tính từ + 与否 (có... hay không) trong văn phong trang trọng",
+    "ja_name": "「V／Adj＋与否」（〜か否か、〜かどうか）の書面語構造",
+    "en_name": "Formal embedded polar question marker 与否 (yǔfǒu - whether or not)",
+    "category": "written_style",
+    "difficulty": 5
+  },
+  {
+    "id": "hsk789_classical_double_negation_wu_bu",
+    "level": "HSK7-9",
+    "standard": [
+      "HSK 3.0"
+    ],
+    "zh_name": "文言全称双重否定（无不、莫不、未尝不、不无）",
+    "vi_name": "Phủ định kép cổ văn tinh tế (无不, 莫不, 未尝不, 不无)",
+    "ja_name": "文語二重否定と緩叙法（无不・莫不・未尝不・不无）",
+    "en_name": "Classical double negations and litotes (无不, 莫不, 未尝不, 不无)",
+    "category": "negation",
+    "difficulty": 5
+  },
+  {
+    "id": "hsk789_academic_framing_jiu_er_yan",
+    "level": "HSK7-9",
+    "standard": [
+      "HSK 3.0"
+    ],
+    "zh_name": "学术限定框式（就…而言 / 从…来看 / 依…之见 / 鉴于…）",
+    "vi_name": "Khung giới hạn góc độ học thuật (就...而言, 从...来看, 依...之见, 鉴于...)",
+    "ja_name": "論説・学術の視点限定フレーム（就…而言／从…来看／依…之见／鉴于…）",
+    "en_name": "Academic framing constructions (就...而言, 鉴于...)",
+    "category": "written_style",
+    "difficulty": 5
+  },
+  {
+    "id": "hsk789_subjunctive_counterfactual_yao_bu_shi",
+    "level": "HSK7-9",
+    "standard": [
+      "HSK 3.0"
+    ],
+    "zh_name": "违实虚拟句式（要不是…早就… / 若非…焉能…）",
+    "vi_name": "Giả định trái thực tế từ khẩu ngữ đến cổ văn (要不是...早就... / 若非...焉能...)",
+    "ja_name": "反事実仮想構文（要不是…早就…／若非…焉能…）",
+    "en_name": "Counterfactual conditionals from colloquial (要不是) to literary (若非)",
+    "category": "conjunction",
+    "difficulty": 5
+  }
+];
+  const samples = [
+  {
+    "id": "hsk1_shi_sentence",
+    "level": "HSK1",
+    "level_num": 1,
+    "category": "sentence_pattern",
+    "difficulty": 1,
+    "frequency": 5,
+    "register": "neutral",
+    "keywords": [
+      "是",
+      "shì",
+      "câu chữ thị",
+      "là",
+      "是構文",
+      "copula",
+      "to be"
+    ],
+    "formula": "S + 是 / 不是 + N",
+    "formula_plain": {
+      "vi": "Ai/Cái gì + là (hoặc không phải là) + Danh từ",
+      "ja": "誰／何 ＋ 是（〜です）／不是（〜ではありません） ＋ 名詞",
+      "en": "Subject + 是 (is/am/are) / 不是 (is not) + Noun"
+    },
+    "structure_blocks": [
+      {
+        "label": {
+          "vi": "Chủ ngữ (S)",
+          "ja": "主語 (S)",
+          "en": "Subject (S)"
+        },
+        "role": "subject",
+        "color": "#3B82F6"
+      },
+      {
+        "label": {
+          "vi": "Phủ định (不)",
+          "ja": "否定 (不)",
+          "en": "Negation (bú)"
+        },
+        "role": "negation",
+        "color": "#EF4444"
+      },
+      {
+        "label": {
+          "vi": "Động từ nối (是)",
+          "ja": "繋辞 (是)",
+          "en": "Copula (shì)"
+        },
+        "role": "copula",
+        "color": "#F97316"
+      },
+      {
+        "label": {
+          "vi": "Danh từ / Tân ngữ (N)",
+          "ja": "名詞・目的語 (N)",
+          "en": "Noun / Object (N)"
+        },
+        "role": "object",
+        "color": "#10B981"
+      }
+    ],
+    "related_ids": [
+      "hsk1_hen_adjective_predicate",
+      "hsk1_bu_negation",
+      "hsk2_shi_de_emphasis"
+    ],
+    "confusable_with": [
+      {
+        "id": "hsk1_hen_adjective_predicate",
+        "diff": {
+          "vi": "是 chỉ dùng để nối hai danh từ (A là B), còn trước tính từ (đẹp, bận, tốt) người Trung dùng phó từ mức độ (như 很) chứ không dùng 是.",
+          "ja": "「是」は名詞と名詞を結ぶ時だけ使い、形容詞述語文（「忙しい」「高い」など）には「是」を使わず「很」などを置きます。",
+          "en": "是 links two nouns (A = B), whereas Chinese adjectives act as verbs on their own with 很 and do not use 是 unless adding special emphasis."
+        }
+      }
+    ],
+    "localizations": {
+      "vi": {
+        "title": "Câu chữ 是 (A là B)",
+        "quick_rule_3s": "Dùng 是 (thị = là) để giới thiệu tên, nghề nghiệp, quốc tịch hoặc định danh hai danh từ.",
+        "contrastive_note": "Trong tiếng Việt, từ 'là' và 'thì' đôi khi lấn sân sang cả tính từ (ví dụ: 'Cô ấy là người rất tốt' hoặc khẩu ngữ 'Việc này là rất khó'). Trong tiếng Trung, 是 chỉ nối Danh từ với Danh từ (A = B). Tuyệt đối không ghép 是 trực tiếp trước tính từ để mô tả tính chất bình thường.",
+        "analogy": "Hãy coi chữ 是 như dấu bằng (=) nối hai danh từ: Tôi = Học sinh. Nếu vế sau là tính từ chỉ cảm xúc hay tính chất (vui, đẹp, cao), dấu bằng này sẽ bị tháo ra và thay bằng chữ 很.",
+        "mnemonic": "Danh từ gặp danh từ mới gọi tên 是, gặp tính từ thì nhường chỗ cho 很.",
+        "how_to_use": [
+          {
+            "step": 1,
+            "text": "Bước 1: Đặt người hoặc vật cần giới thiệu làm chủ ngữ (từ đứng đầu câu) ở đầu câu."
+          },
+          {
+            "step": 2,
+            "text": "Bước 2: Đặt 是 (phát âm shì) ngay sau chủ ngữ; nếu phủ định thì đặt 不 (đọc thành bú) ngay trước 是."
+          },
+          {
+            "step": 3,
+            "text": "Bước 3: Đặt danh từ chỉ tên riêng, nghề nghiệp, quốc tịch hoặc mối quan hệ ở phía sau."
+          }
+        ],
+        "self_check": [
+          "Từ đứng sau chữ 'là' có phải là một danh từ (tên người, nghề nghiệp, đồ vật, quốc tịch) không?",
+          "Nếu câu đang tả tính chất (đẹp, đắt, bận, mệt), bạn đã bỏ chữ 是 đi chưa?",
+          "Khi phủ định 'không phải là', bạn đã dùng 不是 (bú shì) thay vì 没是 chưa?"
+        ],
+        "tips": [
+          "Âm Hán-Việt của 是 là 'thị' (trong 'thị phi' = đúng sai). Khi đi với 不 (thanh 4), chữ 不 đổi giọng đọc thành thanh 2: bú shì.",
+          "Trong tiếng Việt ta nói 'không phải là', nhưng trong tiếng Trung chỉ cần nói 不是 (bú shì), không dịch thêm chữ 'phải' (对) vào giữa."
+        ],
+        "when_to_use": [
+          "Khi giới thiệu tên tuổi, nghề nghiệp, quốc tịch, thân phận (Tôi là giáo viên, anh ấy là người Nhật).",
+          "Khi xác nhận hoặc phủ định danh tính của một sự vật, sự việc (Đây là sách tiếng Trung)."
+        ],
+        "when_not_to_use": [
+          "Không dùng trước tính từ mô tả trạng thái thông thường (không nói 我是忙 mà nói 我很忙).",
+          "Không dùng để chỉ tuổi tác hay ngày tháng (nói 我二十岁, không cần 是 trừ khi nhấn mạnh)."
+        ],
+        "fatal_mistake": {
+          "wrong": "他是不老师。",
+          "correct": "他不是老师。",
+          "explanation": "Phó từ phủ định 不 phải luôn đứng TRƯỚC động từ 是 (不是 = không phải là), không bao giờ đứng sau 是.",
+          "why_learners_make_it": "Người Việt đôi khi tách cấu trúc 'là không...' hoặc ghép chữ 不 vào trước danh từ như một tiền tố phủ định."
+        },
+        "extra_mistakes": [
+          {
+            "wrong": "她是很漂亮。",
+            "correct": "她很漂亮。",
+            "explanation": "漂亮 (đẹp) là tính từ. Câu vị ngữ tính từ trong tiếng Trung dùng 很 chứ không dùng 是."
+          },
+          {
+            "wrong": "我没是学生。",
+            "correct": "我不是学生。",
+            "explanation": "Động từ 是 chỉ nhận phó từ phủ định 不 (不是), không bao giờ phủ định bằng 没."
+          }
+        ]
+      },
+      "ja": {
+        "title": "「是」構文（AはBです）",
+        "quick_rule_3s": "主語と名詞を「是」で結び、「AはBだ／です」と身分・国籍・名称を表す基本文型です。",
+        "contrastive_note": "日本語の「AはBです」では「です」が文末に来ますが（SOV型）、中国語の「是」は主語のすぐ後ろ、目的語（名詞）の前に置かれます（SVO型）。また、日本語では「高いです」「元気です」のように形容詞にも「です」を付けますが、中国語では形容詞述語文に「是」は使えません。",
+        "analogy": "「是」は主語と名詞をつなぐイコール記号（＝）の接着剤です。日本語の「〜は…です」の2つのパーツを1つにまとめて、主語の直後に挟み込むイメージです。",
+        "mnemonic": "主語のすぐ後ろに「是」、否定は前から「不是（bú shì）」。",
+        "how_to_use": [
+          {
+            "step": 1,
+            "text": "ステップ1：文頭に主語（S：私、これ、田中さんなど）を置きます（助詞「は」に当たる言葉は不要です）。"
+          },
+          {
+            "step": 2,
+            "text": "ステップ2：主語のすぐ後ろに「是」（否定なら「不是」）を置きます。"
+          },
+          {
+            "step": 3,
+            "text": "ステップ3：最後に身分・職業・物の名前などの名詞（N）を置きます。"
+          }
+        ],
+        "self_check": [
+          "後ろに来る言葉は「名詞」（学生、日本人、本など）ですか？（形容詞なら「是」は使いません）",
+          "日本語の語順に引きずられて「是」を文末に置いていませんか？",
+          "否定のとき、「不」を第2声（bú）に変化させて「不是（bú shì）」と発音していますか？"
+        ],
+        "tips": [
+          "日本語の「は」と「です」の両方の役割を、主語の後ろの「是」1文字が担います。",
+          "漢字の「是」は日本語では「是正」「是非」など硬い熟語に使いますが、中国語では毎日の会話で最もよく使う超基本語です。"
+        ],
+        "when_to_use": [
+          "名前・職業・国籍・関係を自己紹介や他己紹介するとき。",
+          "「これは何ですか？」「あれは私の本です」のように物を定義・説明するとき。"
+        ],
+        "when_not_to_use": [
+          "形容詞で状態を描写するとき（「忙しいです」を「我是忙」とは言わず、「我很忙」と言います）。",
+          "場所の存在を表すとき（「私は東京です（東京にいます）」は「我在东京」を使い、「我是东京」とは言いません）。"
+        ],
+        "fatal_mistake": {
+          "wrong": "我日本人是。",
+          "correct": "我是日本人。",
+          "explanation": "中国語はSVO（主語＋動詞＋目的語）の語順なので、「是」は必ず主語「我」と目的語「日本人」の間に置きます。",
+          "why_learners_make_it": "日本語の「私は（我）日本人（日本人）です（是）」というSOVの語順のまま単語を並べてしまうためです。"
+        },
+        "extra_mistakes": [
+          {
+            "wrong": "今天是冷。",
+            "correct": "今天很冷。",
+            "explanation": "日本語の「今日は寒いです」の「です」をそのまま「是」に訳してしまうミスです。形容詞「冷」には「很」を使います。"
+          },
+          {
+            "wrong": "我是东京。",
+            "correct": "我在东京。",
+            "explanation": "日本語のウナギ文（「私は東京です＝東京にいます／東京出身です」）を直訳すると「私は東京という都市そのものだ」という意味になってしまいます。"
+          }
+        ]
+      },
+      "en": {
+        "title": "The 是 (shì) Copula Sentence",
+        "quick_rule_3s": "Use 是 (shì) between a subject and a noun to state identity, profession, or nationality.",
+        "contrastive_note": "English uses 'am / is / are / was / were' for both nouns ('I am a teacher') and adjectives ('I am tired'), conjugating the verb for person and tense. In Chinese, 是 never changes form regardless of subject or time, and it is strictly used to link nouns (Subject = Noun), not plain adjectives.",
+        "analogy": "Think of 是 as a solid equals sign (=) that only connects two nouns. It never bends or changes spelling for 'I', 'you', 'he', or 'yesterday'.",
+        "mnemonic": "Noun equals Noun takes 是 (shì); for adjectives alone, let 是 be!",
+        "how_to_use": [
+          {
+            "step": 1,
+            "text": "Step 1: Place the Subject (person, pronoun, or demonstrative like 这 'this') at the start."
+          },
+          {
+            "step": 2,
+            "text": "Step 2: Add 是 (shì) for affirmative, or 不是 (bú shì) for negative—no conjugation needed."
+          },
+          {
+            "step": 3,
+            "text": "Step 3: Follow directly with the Noun phrase (no articles like 'a/an' required for professions)."
+          }
+        ],
+        "self_check": [
+          "Is the word after 是 a noun or noun phrase rather than a standalone adjective?",
+          "Did you drop unnecessary English indefinite articles ('a/an') when stating a general profession like 我是老师?",
+          "Did you negate with 不是 (bú shì) right before the noun?"
+        ],
+        "tips": [
+          "One form fits all: whether it is 'I am', 'you are', 'they were', it is simply 是.",
+          "When stating someone's occupation (e.g., 我是医生 'I am a doctor'), you do not need 一 (yī, 'a/one') before the noun."
+        ],
+        "when_to_use": [
+          "Identifying who someone is, their job, or their nationality.",
+          "Equating two noun phrases or clarifying what an object is."
+        ],
+        "when_not_to_use": [
+          "Before standalone predicate adjectives (say 我很累 'I am tired', never 我是累).",
+          "Before prepositional location phrases (say 我在家 'I am at home', never 我是在家 for simple location)."
+        ],
+        "fatal_mistake": {
+          "wrong": "我是很忙。",
+          "correct": "我很忙。",
+          "explanation": "In Chinese, adjectives like 忙 (busy) function as stative verbs and pair with degree adverbs like 很, not the copula 是.",
+          "why_learners_make_it": "English speakers translate 'am/is/are' in 'I am very busy' directly into 是."
+        },
+        "extra_mistakes": [
+          {
+            "wrong": "我是一个老师。",
+            "correct": "我是老师。",
+            "explanation": "While not strictly ungrammatical in all contexts, translating English 'a teacher' as 一个老师 sounds unnatural when simply stating your profession."
+          },
+          {
+            "wrong": "他是学生不？",
+            "correct": "他是学生吗？",
+            "explanation": "To turn a 是 statement into a yes-no question, add the question particle 吗 at the end (or use 是不是), not a bare 不 at the end."
+          }
+        ]
+      }
+    },
+    "fill_template": {
+      "pattern": "___ 是 ___。",
+      "slots": [
+        {
+          "vi": "Chủ ngữ (Tôi / Đây / Anh ấy)",
+          "ja": "主語（私／これ／彼）",
+          "en": "Subject (I / This / He)"
+        },
+        {
+          "vi": "Danh từ (học sinh / người Việt / sách)",
+          "ja": "名詞（学生／ベトナム人／本）",
+          "en": "Noun (student / Vietnamese / book)"
+        }
+      ],
+      "example_filled": "我是学生。"
+    },
+    "collocations": [
+      {
+        "zh": "是老师",
+        "pinyin": "shì lǎoshī",
+        "meaning": {
+          "vi": "là giáo viên",
+          "ja": "先生です",
+          "en": "is a teacher"
+        }
+      },
+      {
+        "zh": "不是我的",
+        "pinyin": "bú shì wǒ de",
+        "meaning": {
+          "vi": "không phải của tôi",
+          "ja": "私のではありません",
+          "en": "is not mine"
+        }
+      },
+      {
+        "zh": "是谁",
+        "pinyin": "shì shéi",
+        "meaning": {
+          "vi": "là ai",
+          "ja": "誰ですか",
+          "en": "who is it"
+        }
+      },
+      {
+        "zh": "是不是",
+        "pinyin": "shì bu shì",
+        "meaning": {
+          "vi": "có phải là... không",
+          "ja": "〜ですか（確認）",
+          "en": "is it or isn't it"
+        }
+      }
+    ],
+    "examples": [
+      {
+        "zh": "我是学生。",
+        "pinyin": "Wǒ shì xuésheng.",
+        "tokens": [
+          {
+            "hanzi": "我",
+            "pinyin": "wǒ",
+            "han_viet": "ngã",
+            "ja_kanji": "我",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "tôi",
+              "ja": "私",
+              "en": "I"
+            },
+            "block_role": "subject"
+          },
+          {
+            "hanzi": "是",
+            "pinyin": "shì",
+            "han_viet": "thị",
+            "ja_kanji": "是",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "là",
+              "ja": "〜です",
+              "en": "am"
+            },
+            "block_role": "copula"
+          },
+          {
+            "hanzi": "学生",
+            "pinyin": "xuésheng",
+            "han_viet": "học sinh",
+            "ja_kanji": "学生",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "học sinh, sinh viên",
+              "ja": "学生",
+              "en": "student"
+            },
+            "block_role": "object"
+          }
+        ],
+        "scenario": {
+          "vi": "tự giới thiệu bản thân",
+          "ja": "自己紹介",
+          "en": "self-introduction"
+        },
+        "translations": {
+          "vi": "Tôi là học sinh.",
+          "ja": "私は学生です。",
+          "en": "I am a student."
+        },
+        "literal_en": "I am student",
+        "tone_tip": {
+          "vi": "Chữ 生 trong 学生 khi ghép từ đọc thanh nhẹ (xuésheng), không nhấn mạnh thành shēng.",
+          "ja": "「学生（xuésheng）」の「生」は軽声で軽く短く発音します。",
+          "en": "The second syllable in 学生 (xuésheng) is pronounced in the neutral tone."
+        },
+        "word_order_diff": {
+          "vi": "",
+          "ja": "日本語は「私（我）＋は＋学生（学生）＋です（是）」ですが、中国語は「是」が「学生」の前に来ます。",
+          "en": "No indefinite article ('a') is used before 学生."
+        },
+        "note": {
+          "vi": "Khi nói nghề nghiệp hoặc thân phận, không thêm 一个 vào trước danh từ.",
+          "ja": "身分や職業を言うときは「一个（1人の）」をつけず、そのまま名詞を置きます。",
+          "en": "Omit 'a/an' when stating occupations or roles."
+        }
+      },
+      {
+        "zh": "这是中国茶。",
+        "pinyin": "Zhè shì Zhōngguó chá.",
+        "tokens": [
+          {
+            "hanzi": "这",
+            "pinyin": "zhè",
+            "han_viet": "giá",
+            "ja_kanji": "這",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "đây, cái này",
+              "ja": "これ",
+              "en": "this"
+            },
+            "block_role": "subject"
+          },
+          {
+            "hanzi": "是",
+            "pinyin": "shì",
+            "han_viet": "thị",
+            "ja_kanji": "是",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "là",
+              "ja": "〜です",
+              "en": "is"
+            },
+            "block_role": "copula"
+          },
+          {
+            "hanzi": "中国",
+            "pinyin": "Zhōngguó",
+            "han_viet": "Trung Quốc",
+            "ja_kanji": "中国",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "Trung Quốc",
+              "ja": "中国",
+              "en": "China"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "茶",
+            "pinyin": "chá",
+            "han_viet": "trà",
+            "ja_kanji": "茶",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "trà",
+              "ja": "お茶",
+              "en": "tea"
+            },
+            "block_role": "object"
+          }
+        ],
+        "scenario": {
+          "vi": "giới thiệu đồ vật",
+          "ja": "物の紹介",
+          "en": "introducing an item"
+        },
+        "translations": {
+          "vi": "Đây là trà Trung Quốc.",
+          "ja": "これは中国茶です。",
+          "en": "This is Chinese tea."
+        },
+        "literal_en": "This is China tea",
+        "tone_tip": {
+          "vi": "这 (zhè) và 是 (shì) đều là thanh 4, đọc dứt khoát từ cao xuống thấp.",
+          "ja": "「这（zhè）」と「是（shì）」はどちらも第4声なので、上から下へ強く言い切ります。",
+          "en": "Both 这 (zhè) and 是 (shì) are falling 4th tones."
+        },
+        "word_order_diff": {
+          "vi": "Tiếng Việt nói 'trà Trung Quốc' (danh từ chính đứng trước), tiếng Trung nói 中国茶 (Trung Quốc đứng trước làm định ngữ cho Trà).",
+          "ja": "",
+          "en": ""
+        },
+        "note": {
+          "vi": "Trong tiếng Trung, từ bổ nghĩa (中国) luôn đứng trước danh từ chính (茶).",
+          "ja": "「中国茶」は日本語と同じ語順でそのまま言えます。",
+          "en": "China (中国) directly modifies tea (茶) without needing 的."
+        }
+      },
+      {
+        "zh": "他不是医生。",
+        "pinyin": "Tā bú shì yīshēng.",
+        "tokens": [
+          {
+            "hanzi": "他",
+            "pinyin": "tā",
+            "han_viet": "tha",
+            "ja_kanji": "他",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "anh ấy",
+              "ja": "彼",
+              "en": "he"
+            },
+            "block_role": "subject"
+          },
+          {
+            "hanzi": "不",
+            "pinyin": "bú",
+            "han_viet": "bất",
+            "ja_kanji": "不",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "không",
+              "ja": "〜ない",
+              "en": "not"
+            },
+            "block_role": "negation"
+          },
+          {
+            "hanzi": "是",
+            "pinyin": "shì",
+            "han_viet": "thị",
+            "ja_kanji": "是",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "là",
+              "ja": "〜だ",
+              "en": "is"
+            },
+            "block_role": "copula"
+          },
+          {
+            "hanzi": "医生",
+            "pinyin": "yīshēng",
+            "han_viet": "y sinh",
+            "ja_kanji": "医生",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "bác sĩ",
+              "ja": "医者",
+              "en": "doctor"
+            },
+            "block_role": "object"
+          }
+        ],
+        "scenario": {
+          "vi": "đính chính nghề nghiệp",
+          "ja": "職業の否定・訂正",
+          "en": "correcting someone's profession"
+        },
+        "translations": {
+          "vi": "Anh ấy không phải là bác sĩ.",
+          "ja": "彼は医者ではありません。",
+          "en": "He is not a doctor."
+        },
+        "literal_en": "He not is doctor",
+        "tone_tip": {
+          "vi": "Quy tắc biến điệu: 不 (bù - thanh 4) đứng trước 是 (shì - thanh 4) phải đọc thành thanh 2 là bú shì.",
+          "ja": "変調ルール：「不（bù）」の後ろに第4声の「是（shì）」が来ると、「bú shì」と第2声に変わります。",
+          "en": "Tone sandhi: 不 (bù) changes to 2nd tone (bú) before the 4th-tone 是 (shì)."
+        },
+        "word_order_diff": {
+          "vi": "",
+          "ja": "日本語は文末で「〜ではありません」と否定しますが、中国語は動詞「是」の直前に「不」を置きます。",
+          "en": "In English 'not' comes after 'is' (is not), whereas in Chinese 不 always precedes 是 (不是)."
+        },
+        "note": {
+          "vi": "Chỉ cần nói 不是, không thêm chữ 对 vào giữa.",
+          "ja": "「医生」は日本語の「医者（医師）」にあたります。",
+          "en": "Negation 不 always goes before the verb it negates."
+        }
+      },
+      {
+        "zh": "你是老师吗？",
+        "pinyin": "Nǐ shì lǎoshī ma?",
+        "tokens": [
+          {
+            "hanzi": "你",
+            "pinyin": "nǐ",
+            "han_viet": "nhĩ",
+            "ja_kanji": "你",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "bạn",
+              "ja": "あなた",
+              "en": "you"
+            },
+            "block_role": "subject"
+          },
+          {
+            "hanzi": "是",
+            "pinyin": "shì",
+            "han_viet": "thị",
+            "ja_kanji": "是",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "là",
+              "ja": "〜ですか",
+              "en": "are"
+            },
+            "block_role": "copula"
+          },
+          {
+            "hanzi": "老师",
+            "pinyin": "lǎoshī",
+            "han_viet": "lão sư",
+            "ja_kanji": "老師",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "giáo viên",
+              "ja": "先生",
+              "en": "teacher"
+            },
+            "block_role": "object"
+          },
+          {
+            "hanzi": "吗",
+            "pinyin": "ma",
+            "han_viet": "—",
+            "ja_kanji": "嗎",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "không (trợ từ hỏi)",
+              "ja": "〜か（疑問助詞）",
+              "en": "(question particle)"
+            },
+            "block_role": "other"
+          }
+        ],
+        "scenario": {
+          "vi": "hỏi thăm lịch sự",
+          "ja": "相手への質問",
+          "en": "asking politely"
+        },
+        "translations": {
+          "vi": "Bạn là giáo viên phải không?",
+          "ja": "あなたは先生ですか？",
+          "en": "Are you a teacher?"
+        },
+        "literal_en": "You are teacher MA?",
+        "tone_tip": {
+          "vi": "Trợ từ 吗 (ma) đọc thanh nhẹ ở cuối câu.",
+          "ja": "文末の「吗（ma）」は軽声で軽く添えます。",
+          "en": "Keep 吗 (ma) light and short in the neutral tone."
+        },
+        "word_order_diff": {
+          "vi": "",
+          "ja": "",
+          "en": "Chinese does not invert the subject and verb for questions; keep statement order and add 吗 at the end."
+        },
+        "note": {
+          "vi": "Giữ nguyên trật tự câu kể và chỉ cần gắn 吗 vào cuối câu để tạo câu hỏi.",
+          "ja": "平叙文の最後に「吗」をつけるだけで疑問文になります。",
+          "en": "Statement + 吗 = Yes/No question."
+        }
+      },
+      {
+        "zh": "那不是我的书。",
+        "pinyin": "Nà bú shì wǒ de shū.",
+        "tokens": [
+          {
+            "hanzi": "那",
+            "pinyin": "nà",
+            "han_viet": "ná",
+            "ja_kanji": "那",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "đó, kia",
+              "ja": "あれ",
+              "en": "that"
+            },
+            "block_role": "subject"
+          },
+          {
+            "hanzi": "不",
+            "pinyin": "bú",
+            "han_viet": "bất",
+            "ja_kanji": "不",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "không",
+              "ja": "〜ない",
+              "en": "not"
+            },
+            "block_role": "negation"
+          },
+          {
+            "hanzi": "是",
+            "pinyin": "shì",
+            "han_viet": "thị",
+            "ja_kanji": "是",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "là",
+              "ja": "〜だ",
+              "en": "is"
+            },
+            "block_role": "copula"
+          },
+          {
+            "hanzi": "我",
+            "pinyin": "wǒ",
+            "han_viet": "ngã",
+            "ja_kanji": "我",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "tôi",
+              "ja": "私",
+              "en": "I/my"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "的",
+            "pinyin": "de",
+            "han_viet": "—",
+            "ja_kanji": "的",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "của",
+              "ja": "の",
+              "en": "'s (possessive)"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "书",
+            "pinyin": "shū",
+            "han_viet": "thư",
+            "ja_kanji": "書",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "sách",
+              "ja": "本",
+              "en": "book"
+            },
+            "block_role": "object"
+          }
+        ],
+        "scenario": {
+          "vi": "xác nhận quyền sở hữu đồ vật",
+          "ja": "持ち物の確認",
+          "en": "clarifying ownership"
+        },
+        "translations": {
+          "vi": "Đó không phải là sách của tôi.",
+          "ja": "あれは私の本ではありません。",
+          "en": "That is not my book."
+        },
+        "literal_en": "That not is I DE book",
+        "tone_tip": {
+          "vi": "不 đọc thành bú trước 是 (thanh 4).",
+          "ja": "「不是」は「bú shì」と発音します。",
+          "en": "Remember the tone change on 不: bú shì."
+        },
+        "word_order_diff": {
+          "vi": "Cụm 'sách của tôi' trong tiếng Trung viết ngược lại thành 我的书 (tôi + của + sách).",
+          "ja": "「我的书」は日本語の「私の本」と語順が同じです。",
+          "en": "我的书 matches the English possessive order 'my book'."
+        },
+        "note": {
+          "vi": "Chữ 书 (thư) trong tiếng Trung hiện đại nghĩa là 'sách', không phải 'bức thư' (bức thư là 信).",
+          "ja": "簡体字「书」は「書」の略字で、「本」という意味です。",
+          "en": "的 (de) marks possession here."
+        }
+      },
+      {
+        "zh": "她是我们的汉语老师。",
+        "pinyin": "Tā shì wǒmen de Hànyǔ lǎoshī.",
+        "tokens": [
+          {
+            "hanzi": "她",
+            "pinyin": "tā",
+            "han_viet": "tha",
+            "ja_kanji": "她",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "cô ấy",
+              "ja": "彼女",
+              "en": "she"
+            },
+            "block_role": "subject"
+          },
+          {
+            "hanzi": "是",
+            "pinyin": "shì",
+            "han_viet": "thị",
+            "ja_kanji": "是",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "là",
+              "ja": "〜です",
+              "en": "is"
+            },
+            "block_role": "copula"
+          },
+          {
+            "hanzi": "我们",
+            "pinyin": "wǒmen",
+            "han_viet": "ngã môn",
+            "ja_kanji": "我們",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "chúng tôi",
+              "ja": "私たち",
+              "en": "we/our"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "的",
+            "pinyin": "de",
+            "han_viet": "—",
+            "ja_kanji": "的",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "của",
+              "ja": "の",
+              "en": "'s"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "汉语",
+            "pinyin": "Hànyǔ",
+            "han_viet": "Hán ngữ",
+            "ja_kanji": "漢語",
+            "false_friend_ja": {
+              "ja_meaning": "漢語（日本語の中の中国語由来の語彙・字音語）",
+              "zh_meaning": "tiếng Trung / tiếng Hán (Chinese language)"
+            },
+            "gloss": {
+              "vi": "tiếng Trung",
+              "ja": "中国語",
+              "en": "Chinese language"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "老师",
+            "pinyin": "lǎoshī",
+            "han_viet": "lão sư",
+            "ja_kanji": "老師",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "giáo viên",
+              "ja": "先生",
+              "en": "teacher"
+            },
+            "block_role": "object"
+          }
+        ],
+        "scenario": {
+          "vi": "giới thiệu giáo viên ở lớp",
+          "ja": "先生の紹介",
+          "en": "introducing a teacher"
+        },
+        "translations": {
+          "vi": "Cô ấy là giáo viên tiếng Trung của chúng tôi.",
+          "ja": "彼女は私たちの中国語の先生です。",
+          "en": "She is our Chinese teacher."
+        },
+        "literal_en": "She is we DE Chinese-language teacher",
+        "tone_tip": {
+          "vi": "语 (yǔ) và 老 (lǎo) là 2 thanh 3 đi liền nhau, chữ 语 đọc lướt lên thành thanh 2 (Hànyú lǎoshī).",
+          "ja": "「语（yǔ）」と「老（lǎo）」は第3声が連続するため、「语」を第2声（yú）のように上げて発音します。",
+          "en": "3rd-tone sandhi: 语 (yǔ) + 老 (lǎo) -> pronounce 语 as a rising 2nd tone (Hànyú lǎoshī)."
+        },
+        "word_order_diff": {
+          "vi": "Tiếng Việt nói 'giáo viên tiếng Trung của chúng tôi', tiếng Trung xếp ngược từ phạm vi lớn đến danh từ chính: 我们的 (của chúng tôi) + 汉语 (tiếng Trung) + 老师 (giáo viên).",
+          "ja": "「我们的汉语老师」は日本語の「私たちの中国語の先生」と語順が一致します。",
+          "en": ""
+        },
+        "note": {
+          "vi": "Chú ý với người học tiếng Nhật: 汉语 là tiếng Trung Quốc, còn 'Hán ngữ' (漢語) trong tiếng Nhật lại chỉ từ vựng gốc Hán.",
+          "ja": "注意：「汉语（漢語）」は中国語では「中国語」そのものを指します（日本語の「漢語・和語」の漢語とは意味が異なります）。",
+          "en": "汉语 literally means the language of the Han people (Mandarin Chinese)."
+        }
+      }
+    ],
+    "dialogue": {
+      "goal": {
+        "vi": "Làm quen và hỏi quốc tịch, nghề nghiệp",
+        "ja": "初対面の挨拶と国籍・職業の確認",
+        "en": "Meeting someone and asking about nationality and job"
+      },
+      "lines": [
+        {
+          "speaker": "A",
+          "zh": "你好，你是日本人吗？",
+          "pinyin": "Nǐ hǎo, nǐ shì Rìběnrén ma?",
+          "tr": {
+            "vi": "Chào bạn, bạn là người Nhật phải không?",
+            "ja": "こんにちは、あなたは日本人ですか？",
+            "en": "Hello, are you Japanese?"
+          }
+        },
+        {
+          "speaker": "B",
+          "zh": "是的，我是日本人。你是老师吗？",
+          "pinyin": "Shì de, wǒ shì Rìběnrén. Nǐ shì lǎoshī ma?",
+          "tr": {
+            "vi": "Đúng vậy, tôi là người Nhật. Bạn là giáo viên à?",
+            "ja": "はい、私は日本人です。あなたは先生ですか？",
+            "en": "Yes, I am Japanese. Are you a teacher?"
+          }
+        },
+        {
+          "speaker": "A",
+          "zh": "我不是老师，我是学生。",
+          "pinyin": "Wǒ bú shì lǎoshī, wǒ shì xuésheng.",
+          "tr": {
+            "vi": "Tôi không phải là giáo viên, tôi là học sinh.",
+            "ja": "私は先生ではありません、学生です。",
+            "en": "I am not a teacher; I am a student."
+          }
+        }
+      ]
+    },
+    "puzzles": [
+      {
+        "scrambled_tokens": [
+          "学生",
+          "是",
+          "我"
+        ],
+        "correct_order": [
+          "我",
+          "是",
+          "学生"
+        ]
+      },
+      {
+        "scrambled_tokens": [
+          "医生",
+          "是",
+          "他",
+          "不"
+        ],
+        "correct_order": [
+          "他",
+          "不",
+          "是",
+          "医生"
+        ]
+      },
+      {
+        "scrambled_tokens": [
+          "吗",
+          "老师",
+          "是",
+          "你"
+        ],
+        "correct_order": [
+          "你",
+          "是",
+          "老师",
+          "吗"
+        ]
+      }
+    ],
+    "fill_blank": [
+      {
+        "sentence": "我___学生。",
+        "options": [
+          "是",
+          "很",
+          "在",
+          "有"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "vi",
+          "ja",
+          "en"
+        ],
+        "explanation": {
+          "vi": "Để nối chủ ngữ 我 và danh từ 学生 (Tôi là học sinh), ta dùng động từ nối 是.",
+          "ja": "主語「我」と名詞「学生」を結んで「私は学生です」と言うには「是」を使います。",
+          "en": "Use the copula 是 to link the subject 我 with the noun 学生."
+        }
+      },
+      {
+        "sentence": "他___医生，他是老师。",
+        "options": [
+          "不是",
+          "是没",
+          "没是",
+          "是不"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "vi",
+          "en"
+        ],
+        "explanation": {
+          "vi": "Phủ định của 是 luôn là 不是 (bú shì), không dùng 没是 hay 是不.",
+          "ja": "「是」の否定形は常に「不是」です。「没」は使えず、「不」を後ろに置くこともできません。",
+          "en": "The negation of 是 is always 不是 (placed before 是, never after it, and never negated with 没)."
+        }
+      },
+      {
+        "sentence": "那___我的书。",
+        "options": [
+          "是",
+          "在",
+          "有",
+          "很"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "ja"
+        ],
+        "explanation": {
+          "vi": "Xác định danh tính của đồ vật (Đó là sách của tôi) dùng 是.",
+          "ja": "「あれは私の本です」と名詞句で説明する文なので「是」が入ります。",
+          "en": "Use 是 to identify what 'that' (那) is."
+        }
+      }
+    ],
+    "error_correction": [
+      {
+        "wrong": "我学生是。",
+        "correct": "我是学生。",
+        "hint": {
+          "vi": "Hãy xem lại vị trí của động từ 是: nó phải đứng ngay sau chủ ngữ 我.",
+          "ja": "中国語はSVOの語順です。「です」にあたる「是」をどこに置くか確認しましょう。",
+          "en": "Check the word order: place the linking verb 是 between the subject and the noun."
+        }
+      },
+      {
+        "wrong": "他没是日本人。",
+        "correct": "他不是日本人。",
+        "hint": {
+          "vi": "Động từ 是 không đi với phó từ phủ định 没.",
+          "ja": "「是」を否定するときに使う副詞は「没」ではありません。",
+          "en": "Which negation word pairs with 是—没 or 不?"
+        }
+      }
+    ],
+    "quiz": [
+      {
+        "question": {
+          "vi": "Câu nào sau đây đúng ngữ pháp tự nhiên trong tiếng Trung?",
+          "ja": "次のうち、文法的に正しい中国語の文はどれですか？",
+          "en": "Which of the following sentences is grammatically correct?"
+        },
+        "options": [
+          "我是老师。",
+          "我是很忙。",
+          "我老师是。",
+          "他是不学生。"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "vi",
+          "ja",
+          "en"
+        ],
+        "explanation": {
+          "vi": "我是老师 đúng cấu trúc S + 是 + Danh từ. Câu '我是很忙' thừa 是 trước tính từ; '我老师是' sai trật tự từ kiểu Nhật; '他是不学生' đặt sai vị trí chữ 不.",
+          "ja": "「我是老师。」が正しいSVO語順の名詞述語文です。「我是很忙」は形容詞に「是」を使っており誤り、「我老师是」は日本語語順の誤りです。",
+          "en": "我是老师 correctly links a subject and a noun. 我是很忙 wrongly uses 是 with an adjective."
+        }
+      },
+      {
+        "question": {
+          "vi": "Khi muốn nói 'Đây không phải là trà của tôi', bạn chọn câu nào?",
+          "ja": "「これは私のお茶ではありません」と言いたいとき、正しいのはどれですか？",
+          "en": "How do you say 'This is not my tea'?"
+        },
+        "options": [
+          "这不是我的茶。",
+          "这没是我的茶。",
+          "这我的茶不是。",
+          "这是不我的茶。"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "vi",
+          "ja"
+        ],
+        "explanation": {
+          "vi": "Phủ định của 是 là 不是 đứng ngay sau chủ ngữ 这, và 'trà của tôi' là 我的茶.",
+          "ja": "主語「这」のすぐ後ろに否定形「不是」を置き、その後に「我的茶（私のお茶）」を続けます。",
+          "en": "Place 不是 immediately after the subject 这, followed by 我的茶."
+        }
+      },
+      {
+        "question": {
+          "vi": "Vì sao không nói '她是很漂亮' khi muốn khen 'Cô ấy rất đẹp'?",
+          "ja": "「彼女はとてもきれいです」と言うとき、「她是很漂亮」と言わないのはなぜですか？",
+          "en": "Why is '她是很漂亮' incorrect for normal statements meaning 'She is very pretty'?"
+        },
+        "options": [
+          "漂亮（đẹp）là tính từ, đi với 很 chứ không dùng 是",
+          "漂亮 phải đứng trước 她",
+          "Phải đổi 是 thành 有",
+          "Chữ 她 không đi được với 是"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "en",
+          "ja"
+        ],
+        "explanation": {
+          "vi": "Trong tiếng Trung, câu vị ngữ tính từ dùng phó từ mức độ (như 很) trực tiếp trước tính từ, không dùng động từ nối 是.",
+          "ja": "日本語の「きれいです」や英語の「is pretty」と異なり、中国語の形容詞述語文には「是」を使わず「她很漂亮」と言います。",
+          "en": "Unlike English 'is pretty', Chinese adjectives act as predicates with 很 (她很漂亮) and do not take 是."
+        }
+      }
+    ],
+    "summary_card": {
+      "one_liner": {
+        "vi": "S + 是 + Danh từ: dùng để định danh 'Ai/Cái gì là gì', phủ định bằng 不是.",
+        "ja": "主語＋是＋名詞：「AはBです」と名詞をつなぐ構文。否定は「不是」、形容詞には使わない。",
+        "en": "Subject + 是 + Noun equates two nouns; negate with 不是 and omit 是 before plain adjectives."
+      },
+      "remember": [
+        {
+          "vi": "Chỉ dùng 是 khi phía sau là Danh từ; nếu là Tính từ (bận, đẹp, tốt) hãy dùng 很.",
+          "ja": "後ろが名詞のときだけ「是」を使う（形容詞には「很」を使う）。",
+          "en": "Use 是 before nouns, not standalone adjectives."
+        },
+        {
+          "vi": "Phủ định luôn là 不是 (đọc là bú shì), tuyệt đối không dùng 没是 hay 是不.",
+          "ja": "否定は必ず「不是（bú shì）」で、主語の直後に置く。",
+          "en": "Negate with 不是 (bú shì) right before the noun."
+        },
+        {
+          "vi": "Khi giới thiệu nghề nghiệp (我是老师), không cần thêm 一个 vào trước danh từ.",
+          "ja": "職業や身分を言うときは「一个」をつけずに名詞をそのまま置く。",
+          "en": "Drop 'a/an' (一个) when stating general professions."
+        }
+      ]
+    },
+    "needs_review": false,
+    "review_note": ""
+  },
+  {
+    "id": "hsk2_bi_comparison",
+    "level": "HSK2",
+    "level_num": 2,
+    "category": "comparison",
+    "difficulty": 2,
+    "frequency": 5,
+    "register": "neutral",
+    "keywords": [
+      "比",
+      "bǐ",
+      "so sánh hơn",
+      "câu chữ tỷ",
+      "比較文",
+      "comparison",
+      "more than"
+    ],
+    "formula": "A + 比 + B + Adj (+ 得多 / 一点儿 / 具体数量)",
+    "formula_plain": {
+      "vi": "A + so với (比) + B + Tính từ (+ mức chênh lệch ở cuối)",
+      "ja": "A ＋ 比（Bより） ＋ B ＋ 形容詞（＋ 差の程度）",
+      "en": "A + 比 (compared to) + B + Adjective (+ difference amount at the end)"
+    },
+    "structure_blocks": [
+      {
+        "label": {
+          "vi": "Vế A",
+          "ja": "比較対象 A",
+          "en": "Item A"
+        },
+        "role": "subject",
+        "color": "#3B82F6"
+      },
+      {
+        "label": {
+          "vi": "Giới từ 比 (so với)",
+          "ja": "前置詞 比（〜より）",
+          "en": "Preposition 比 (than)"
+        },
+        "role": "marker",
+        "color": "#F97316"
+      },
+      {
+        "label": {
+          "vi": "Vế B (mốc so sánh)",
+          "ja": "比較基準 B",
+          "en": "Standard B"
+        },
+        "role": "object",
+        "color": "#10B981"
+      },
+      {
+        "label": {
+          "vi": "Tính từ (kết quả)",
+          "ja": "形容詞",
+          "en": "Adjective"
+        },
+        "role": "predicate",
+        "color": "#EF4444"
+      },
+      {
+        "label": {
+          "vi": "Mức chênh lệch",
+          "ja": "差の程度・数量",
+          "en": "Degree / Difference"
+        },
+        "role": "complement",
+        "color": "#8B5CF6"
+      }
+    ],
+    "related_ids": [
+      "hsk3_gen_yi_yang_comparison",
+      "hsk3_yue_lai_yue_yue_yue"
+    ],
+    "confusable_with": [
+      {
+        "id": "hsk3_gen_yi_yang_comparison",
+        "diff": {
+          "vi": "A 比 B + Adj dùng để chỉ sự chênh lệch (A hơn B), còn A 跟 B 一样 + Adj dùng để chỉ sự ngang bằng (A giống B).",
+          "ja": "「A比B…」はAとBに差がある比較（AはBより〜だ）を表し、「A跟B一样…」は同等（AはBと同じくらい〜だ）を表します。",
+          "en": "A 比 B expresses inequality ('A is more Adj than B'), while A 跟 B 一样 expresses equality ('A is as Adj as B')."
+        }
+      }
+    ],
+    "localizations": {
+      "vi": {
+        "title": "Câu so sánh hơn với chữ 比 (tỷ)",
+        "quick_rule_3s": "Đặt 比 + đối tượng B lên TRƯỚC tính từ để nói A hơn B ở điểm nào, và tuyệt đối không dùng 很 trước tính từ.",
+        "contrastive_note": "Tiếng Việt nói theo thứ tự: 'Anh ấy (A) cao (Tính từ) hơn (比) tôi (B)'. Tiếng Trung đi ngược lại: phải đưa cả cụm 'so với tôi' (比我) lên đứng TRƯỚC tính từ 'cao' (高) → 他比我高 (Anh ấy so với tôi thì cao). Ngoài ra, trong câu đã có 比 thì tính từ không được đi kèm 很, 非常, 真.",
+        "analogy": "Hãy tưởng tượng bạn phải đặt hai người A và B lên bàn cân (A 比 B) xong xuôi rồi mới đọc kết quả đo (Tính từ) ở cuối câu.",
+        "mnemonic": "A rồi 比 B đứng trước, tính từ đứng sau, cấm 很 chen vào.",
+        "how_to_use": [
+          {
+            "step": 1,
+            "text": "Bước 1: Đặt đối tượng A ở đầu câu, theo sau ngay là chữ 比 (bǐ) và đối tượng làm mốc so sánh B."
+          },
+          {
+            "step": 2,
+            "text": "Bước 2: Đặt Tính từ ở phía sau B (lưu ý bỏ hết các từ chỉ mức độ như 很, 太, 非常)."
+          },
+          {
+            "step": 3,
+            "text": "Bước 3: Nếu muốn nói 'hơn nhiều', 'hơn một chút' hoặc 'hơn bao nhiêu tuổi/tiền', đặt phần chênh lệch đó ở ngay SAU tính từ."
+          }
+        ],
+        "self_check": [
+          "Bạn đã đưa cụm '比 + B' lên đứng TRƯỚC tính từ chưa (thay vì để sau tính từ như tiếng Việt)?",
+          "Bạn đã xóa bỏ chữ 很 hoặc 非常 đứng trước tính từ chưa?",
+          "Nếu có con số chênh lệch (như 2 tuổi, 1 chút), bạn đã đặt nó ở SAU tính từ chưa?"
+        ],
+        "tips": [
+          "Âm Hán-Việt của 比 là 'tỷ' (trong 'tỷ thí', 'tỷ lệ'). Nghĩa gốc là đặt cạnh nhau để so.",
+          "Muốn nói 'A hơn B rất nhiều', không dùng 很 trước tính từ mà thêm 得多 hoặc 多了 vào SAU tính từ (ví dụ: 比我高多了 = cao hơn tôi nhiều)."
+        ],
+        "when_to_use": [
+          "Khi so sánh sự chênh lệch về tính chất, kích thước, giá cả, tuổi tác giữa hai đối tượng A và B.",
+          "Khi muốn nêu rõ mức độ chênh lệch cụ thể (hơn 3 tuổi, đắt hơn 50 tệ, nhanh hơn một chút)."
+        ],
+        "when_not_to_use": [
+          "Khi hai sự vật ngang bằng nhau (lúc đó dùng A 跟 B 一样).",
+          "Khi chỉ khen chung chung không có đối tượng so sánh (dùng 很 + Tính từ)."
+        ],
+        "fatal_mistake": {
+          "wrong": "今天高比昨天。",
+          "correct": "今天比昨天热。",
+          "explanation": "Trong tiếng Trung, cụm '比 + B' (比昨天) bắt buộc phải đứng TRƯỚC tính từ, không bao giờ đứng sau tính từ như chữ 'hơn' trong tiếng Việt.",
+          "why_learners_make_it": "Người Việt dịch từng chữ theo trật tự tiếng mẹ đẻ: 'Hôm nay (今天) nóng/cao (热/高) hơn (比) hôm qua (昨天)'."
+        },
+        "extra_mistakes": [
+          {
+            "wrong": "他比我很高。",
+            "correct": "他比我高。",
+            "explanation": "Đã dùng câu so sánh 比 thì tuyệt đối không dùng phó từ mức độ 很 trước tính từ."
+          },
+          {
+            "wrong": "哥哥比我两岁大。",
+            "correct": "哥哥比我大两岁。",
+            "explanation": "Con số chênh lệch (两岁 = 2 tuổi) là bổ ngữ số lượng nên phải đứng SAU tính từ 大 (大两岁 = lớn hơn 2 tuổi)."
+          }
+        ]
+      },
+      "ja": {
+        "title": "「比」を用いた比較文（AはBより〜だ）",
+        "quick_rule_3s": "「A 比 B ＋ 形容詞」の語順で「AはBより〜だ」を表し、形容詞の前に「很」は置きません。",
+        "contrastive_note": "日本語の「Aは Bより 形容詞」と語順の骨格はよく似ていますが、日本語は「B＋より」と助詞が後ろに付くのに対し、中国語は「比＋B」と前置詞「比」がBの前に来ます。また、日本語では「私より2歳年上（大）」と数量を形容詞の前に置きますが、中国語では「大两岁」のように必ず形容詞の後ろに差の数量を置きます。",
+        "analogy": "「比」は比較基準Bの前に立てるラベルです。「Aは［比＋B］と比べて、どうだ（形容詞）＋どれくらい（差）」の順に並べます。",
+        "mnemonic": "A 比 B ＋ 形容詞、「很」は禁止、差の数字は一番後ろ！",
+        "how_to_use": [
+          {
+            "step": 1,
+            "text": "ステップ1：主語Aの後ろに「比＋比較基準B」（Bより）を置きます。"
+          },
+          {
+            "step": 2,
+            "text": "ステップ2：その後に形容詞をそのまま置きます（普段つける「很」は外します）。"
+          },
+          {
+            "step": 3,
+            "text": "ステップ3：「ずっと（得多／多了）」「少し（一点儿）」「3歳（三岁）」などの差を表す言葉は、形容詞の後ろに置きます。"
+          }
+        ],
+        "self_check": [
+          "「B比」ではなく「比B」の順番になっていますか？",
+          "いつもの癖で形容詞の前に「很」や「非常」を入れていませんか？",
+          "差を表す数量（「2歳」「少し」など）を形容詞の後ろに置いていますか？"
+        ],
+        "tips": [
+          "「ずっと〜だ」と言いたいときは、前に「很」を置くのではなく、形容詞の後ろに「得多」や「多了」を付けます。",
+          "「少し〜だ」は形容詞の前に「一点儿」を置かず、形容詞の後ろに「一点儿」を置きます（例：贵一点儿＝少し高い）。"
+        ],
+        "when_to_use": [
+          "2つの人や物の性質・状態・程度に差があることを述べるとき。",
+          "具体的な数値（年齢差・価格差・温度差など）を含めて比較するとき。"
+        ],
+        "when_not_to_use": [
+          "同じ程度であることを表すとき（「跟…一样」を使います）。",
+          "比較対象を出さずに単に「とても〜だ」と述べるとき（「很＋形容詞」を使います）。"
+        ],
+        "fatal_mistake": {
+          "wrong": "兄は私より2歳年上です → 哥哥比我两岁大。",
+          "correct": "哥哥比我大两岁。",
+          "explanation": "差の数量「两岁（2歳）」や「一点儿（少し）」は、必ず形容詞「大」の後ろに置きます。",
+          "why_learners_make_it": "日本語の「2歳（两岁）＋大きい／年上（大）」や「少し（一点儿）＋高い（贵）」という語順のまま形容詞の前に置いてしまうためです。"
+        },
+        "extra_mistakes": [
+          {
+            "wrong": "东京我比大。",
+            "correct": "东京比我老家大。",
+            "explanation": "日本語の「〜より」の感覚で「B＋比」と後ろに置かないよう注意し、必ず「比＋B」にします。"
+          },
+          {
+            "wrong": "今天比昨天很冷。",
+            "correct": "今天比昨天冷。",
+            "explanation": "比較文では程度副詞「很」は使えません。"
+          }
+        ]
+      },
+      "en": {
+        "title": "Comparisons Using 比 (bǐ)",
+        "quick_rule_3s": "Use 'A + 比 + B + Adjective' to say A is more [Adjective] than B, placing '比 + B' BEFORE the adjective and dropping 很.",
+        "contrastive_note": "English puts the comparative adjective first and 'than B' after it ('He is taller than me'). Chinese reverses this middle section: you state the comparison target first with '比 + B' and put the plain adjective at the end ('He compared-to me tall' → 他比我高). Furthermore, Chinese adjectives do not change form (no '-er' or 'more'), and degree adverbs like 很 are strictly forbidden before the adjective.",
+        "analogy": "In Chinese, you set up both competitors on stage first (A 比 B = A next to B), and only announce the winning trait (Adjective) at the very end.",
+        "mnemonic": "A 比 B comes first in line; plain adjective last, no 很 is fine!",
+        "how_to_use": [
+          {
+            "step": 1,
+            "text": "Step 1: Start with A, then immediately place 比 followed by B (the person or thing being compared to)."
+          },
+          {
+            "step": 2,
+            "text": "Step 2: Add the bare Adjective without 很, 非常, or 真."
+          },
+          {
+            "step": 3,
+            "text": "Step 3: If specifying 'much more' (得多/多了), 'a bit more' (一点儿), or a specific amount (两岁), place it AFTER the adjective."
+          }
+        ],
+        "self_check": [
+          "Did you place '比 + B' BEFORE the adjective instead of after it?",
+          "Did you remove 很 (hěn) from in front of the adjective?",
+          "If adding 'a little' (一点儿) or 'much' (多了), did you put it AFTER the adjective?"
+        ],
+        "tips": [
+          "Never use 更 (gèng) or 很 (hěn) just to translate English '-er'—the word 比 already carries the comparative meaning.",
+          "To say 'much taller', put 多了 or 得多 after the adjective (高多了), never 很 before it."
+        ],
+        "when_to_use": [
+          "Comparing two people, items, times, or places where one has a higher degree of a quality.",
+          "Stating exact differences in age, price, size, or speed after an adjective."
+        ],
+        "when_not_to_use": [
+          "When two things are equal (use A 跟 B 一样 instead).",
+          "When making a superlative statement among three or more items (use 最 zuì instead)."
+        ],
+        "fatal_mistake": {
+          "wrong": "他高比我。",
+          "correct": "他比我高。",
+          "explanation": "Prepositional phrases like 比我 must come BEFORE the predicate adjective 高, never after it.",
+          "why_learners_make_it": "English speakers follow the English word order 'He (他) is taller (高) than me (比我)'."
+        },
+        "extra_mistakes": [
+          {
+            "wrong": "这件衣服比那件很贵。",
+            "correct": "这件衣服比那件贵。",
+            "explanation": "Do not use 很 before the adjective in a 比 sentence; if you mean 'much more expensive', say 贵多了."
+          },
+          {
+            "wrong": "今天比昨天一点儿冷。",
+            "correct": "今天比昨天冷一点儿。",
+            "explanation": "Unlike English 'a little colder', the quantifier 一点儿 must follow the adjective (冷一点儿)."
+          }
+        ]
+      }
+    },
+    "fill_template": {
+      "pattern": "___ 比 ___ ___。",
+      "slots": [
+        {
+          "vi": "Đối tượng A",
+          "ja": "対象A",
+          "en": "Item A"
+        },
+        {
+          "vi": "Đối tượng B (mốc so sánh)",
+          "ja": "基準B",
+          "en": "Standard B"
+        },
+        {
+          "vi": "Tính từ (+ mức chênh lệch)",
+          "ja": "形容詞（＋差の程度）",
+          "en": "Adjective (+ difference)"
+        }
+      ],
+      "example_filled": "今天比昨天冷。"
+    },
+    "collocations": [
+      {
+        "zh": "比…大两岁",
+        "pinyin": "bǐ … dà liǎng suì",
+        "meaning": {
+          "vi": "lớn hơn... 2 tuổi",
+          "ja": "〜より2歳年上だ",
+          "en": "two years older than..."
+        }
+      },
+      {
+        "zh": "比…贵一点儿",
+        "pinyin": "bǐ … guì yìdiǎnr",
+        "meaning": {
+          "vi": "đắt hơn... một chút",
+          "ja": "〜より少し高い",
+          "en": "a little more expensive than..."
+        }
+      },
+      {
+        "zh": "比…好多了",
+        "pinyin": "bǐ … hǎo duō le",
+        "meaning": {
+          "vi": "tốt hơn... nhiều",
+          "ja": "〜よりずっと良い",
+          "en": "much better than..."
+        }
+      },
+      {
+        "zh": "比以前",
+        "pinyin": "bǐ yǐqián",
+        "meaning": {
+          "vi": "so với trước đây",
+          "ja": "以前より",
+          "en": "compared to before"
+        }
+      }
+    ],
+    "examples": [
+      {
+        "zh": "他比我高。",
+        "pinyin": "Tā bǐ wǒ gāo.",
+        "tokens": [
+          {
+            "hanzi": "他",
+            "pinyin": "tā",
+            "han_viet": "tha",
+            "ja_kanji": "他",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "anh ấy",
+              "ja": "彼",
+              "en": "he"
+            },
+            "block_role": "subject"
+          },
+          {
+            "hanzi": "比",
+            "pinyin": "bǐ",
+            "han_viet": "tỷ",
+            "ja_kanji": "比",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "so với",
+              "ja": "〜より",
+              "en": "compared to / than"
+            },
+            "block_role": "marker"
+          },
+          {
+            "hanzi": "我",
+            "pinyin": "wǒ",
+            "han_viet": "ngã",
+            "ja_kanji": "我",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "tôi",
+              "ja": "私",
+              "en": "me"
+            },
+            "block_role": "object"
+          },
+          {
+            "hanzi": "高",
+            "pinyin": "gāo",
+            "han_viet": "cao",
+            "ja_kanji": "高",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "cao",
+              "ja": "背が高い",
+              "en": "tall"
+            },
+            "block_role": "predicate"
+          }
+        ],
+        "scenario": {
+          "vi": "so sánh chiều cao",
+          "ja": "身長の比較",
+          "en": "comparing height"
+        },
+        "translations": {
+          "vi": "Anh ấy cao hơn tôi.",
+          "ja": "彼は私より背が高いです。",
+          "en": "He is taller than me."
+        },
+        "literal_en": "He compared-to me tall",
+        "tone_tip": {
+          "vi": "比 (bǐ) và 我 (wǒ) là 2 thanh 3 đi liền nhau, đọc 比 thành thanh 2 (bí wǒ).",
+          "ja": "「比（bǐ）」と「我（wǒ）」は第3声が続くため、「bí wǒ」と発音します。",
+          "en": "Tone sandhi: 比 (bǐ) + 我 (wǒ) -> pronounce 比 in the 2nd tone (bí wǒ)."
+        },
+        "word_order_diff": {
+          "vi": "Tiếng Việt nói 'cao hơn tôi', tiếng Trung đưa '比我' (hơn tôi) lên trước '高' (cao).",
+          "ja": "日本語の「私より（我より）」に対し、中国語は「比我」と「比」が前に出ます。",
+          "en": "'Than me' (比我) comes before 'tall' (高)."
+        },
+        "note": {
+          "vi": "Tuyệt đối không thêm 很 trước 高.",
+          "ja": "「高」の前に「很」はつけません。",
+          "en": "Do not add 很 before 高."
+        }
+      },
+      {
+        "zh": "今天比昨天冷。",
+        "pinyin": "Jīntiān bǐ zuótiān lěng.",
+        "tokens": [
+          {
+            "hanzi": "今天",
+            "pinyin": "jīntiān",
+            "han_viet": "kim thiên",
+            "ja_kanji": "今天",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "hôm nay",
+              "ja": "今日",
+              "en": "today"
+            },
+            "block_role": "subject"
+          },
+          {
+            "hanzi": "比",
+            "pinyin": "bǐ",
+            "han_viet": "tỷ",
+            "ja_kanji": "比",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "so với",
+              "ja": "〜より",
+              "en": "than"
+            },
+            "block_role": "marker"
+          },
+          {
+            "hanzi": "昨天",
+            "pinyin": "zuótiān",
+            "han_viet": "tạc thiên",
+            "ja_kanji": "昨天",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "hôm qua",
+              "ja": "昨日",
+              "en": "yesterday"
+            },
+            "block_role": "object"
+          },
+          {
+            "hanzi": "冷",
+            "pinyin": "lěng",
+            "han_viet": "lãnh",
+            "ja_kanji": "冷",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "lạnh",
+              "ja": "寒い",
+              "en": "cold"
+            },
+            "block_role": "predicate"
+          }
+        ],
+        "scenario": {
+          "vi": "nhận xét thời tiết",
+          "ja": "天気の比較",
+          "en": "talking about the weather"
+        },
+        "translations": {
+          "vi": "Hôm nay lạnh hơn hôm qua.",
+          "ja": "今日は昨日より寒いです。",
+          "en": "Today is colder than yesterday."
+        },
+        "literal_en": "Today compared-to yesterday cold",
+        "tone_tip": {
+          "vi": "冷 (lěng) ở cuối câu đọc rõ âm mũi -eng và xuống giọng thanh 3.",
+          "ja": "「冷（lěng）」は口を少し開けて奥で響かせる母音（eng）です。",
+          "en": "Make sure 冷 (lěng) has the back nasal -ng sound."
+        },
+        "word_order_diff": {
+          "vi": "Cụm 比昨天 (hơn hôm qua) đứng trước tính từ 冷 (lạnh).",
+          "ja": "",
+          "en": "Compare: 'Today [than yesterday] [cold]'."
+        },
+        "note": {
+          "vi": "Hai từ chỉ thời gian 今天 và 昨天 đóng vai trò là A và B trong phép so sánh.",
+          "ja": "時間を主語にして比較するよく使う表現です。",
+          "en": "Time words can directly serve as A and B in a comparison."
+        }
+      },
+      {
+        "zh": "飞机比火车快多了。",
+        "pinyin": "Fēijī bǐ huǒchē kuài duō le.",
+        "tokens": [
+          {
+            "hanzi": "飞机",
+            "pinyin": "fēijī",
+            "han_viet": "phi cơ",
+            "ja_kanji": "飛機",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "máy bay",
+              "ja": "飛行機",
+              "en": "airplane"
+            },
+            "block_role": "subject"
+          },
+          {
+            "hanzi": "比",
+            "pinyin": "bǐ",
+            "han_viet": "tỷ",
+            "ja_kanji": "比",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "so với",
+              "ja": "〜より",
+              "en": "than"
+            },
+            "block_role": "marker"
+          },
+          {
+            "hanzi": "火车",
+            "pinyin": "huǒchē",
+            "han_viet": "hỏa xa",
+            "ja_kanji": "火車",
+            "false_friend_ja": {
+              "ja_meaning": "火の車（経済的に非常に苦しい状態・仏教の火の車）",
+              "zh_meaning": "tàu hỏa / xe lửa (train)"
+            },
+            "gloss": {
+              "vi": "tàu hỏa",
+              "ja": "列車・電車",
+              "en": "train"
+            },
+            "block_role": "object"
+          },
+          {
+            "hanzi": "快",
+            "pinyin": "kuài",
+            "han_viet": "khoái",
+            "ja_kanji": "快",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "nhanh",
+              "ja": "速い",
+              "en": "fast"
+            },
+            "block_role": "predicate"
+          },
+          {
+            "hanzi": "多了",
+            "pinyin": "duō le",
+            "han_viet": "đa liễu",
+            "ja_kanji": "多了",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "hơn nhiều",
+              "ja": "ずっと〜だ",
+              "en": "much more"
+            },
+            "block_role": "complement"
+          }
+        ],
+        "scenario": {
+          "vi": "so sánh phương tiện giao thông",
+          "ja": "交通手段の比較",
+          "en": "comparing transportation"
+        },
+        "translations": {
+          "vi": "Máy bay nhanh hơn tàu hỏa nhiều.",
+          "ja": "飛行機は列車よりずっと速いです。",
+          "en": "Airplanes are much faster than trains."
+        },
+        "literal_en": "Airplane compared-to train fast much-LE",
+        "tone_tip": {
+          "vi": "比 (bǐ) đứng trước 火 (huǒ - thanh 3) nên đọc thành bí huǒchē.",
+          "ja": "「比（bǐ）」＋「火（huǒ）」で第3声が連続するため、「bí huǒchē」と発音します。",
+          "en": "比 (bǐ) + 火 (huǒ) triggers 3rd-tone sandhi -> bí huǒchē."
+        },
+        "word_order_diff": {
+          "vi": "",
+          "ja": "日本語では「ずっと（多了）速い（快）」ですが、中国語は「快多了（速い＋ずっと）」の順になります。",
+          "en": "English puts 'much' before 'faster' ('much faster'), while Chinese puts 多了 after 快 (快多了)."
+        },
+        "note": {
+          "vi": "Dùng 多了 sau tính từ để diễn tả mức chênh lệch lớn ('hơn nhiều').",
+          "ja": "注意：「火车」は普通の「列車・鉄道」のことです（日本語の「家計が火の車」とは意味が異なります）。",
+          "en": "多了 follows the adjective to indicate a large difference ('much more')."
+        }
+      },
+      {
+        "zh": "姐姐比我大三岁。",
+        "pinyin": "Jiějie bǐ wǒ dà sān suì.",
+        "tokens": [
+          {
+            "hanzi": "姐姐",
+            "pinyin": "jiějie",
+            "han_viet": "tỷ tỷ",
+            "ja_kanji": "姐姐",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "chị gái",
+              "ja": "姉",
+              "en": "older sister"
+            },
+            "block_role": "subject"
+          },
+          {
+            "hanzi": "比",
+            "pinyin": "bǐ",
+            "han_viet": "tỷ",
+            "ja_kanji": "比",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "so với",
+              "ja": "〜より",
+              "en": "than"
+            },
+            "block_role": "marker"
+          },
+          {
+            "hanzi": "我",
+            "pinyin": "wǒ",
+            "han_viet": "ngã",
+            "ja_kanji": "我",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "tôi",
+              "ja": "私",
+              "en": "me"
+            },
+            "block_role": "object"
+          },
+          {
+            "hanzi": "大",
+            "pinyin": "dà",
+            "han_viet": "đại",
+            "ja_kanji": "大",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "lớn (tuổi)",
+              "ja": "年上だ",
+              "en": "old (in age)"
+            },
+            "block_role": "predicate"
+          },
+          {
+            "hanzi": "三岁",
+            "pinyin": "sān suì",
+            "han_viet": "tam tuế",
+            "ja_kanji": "三歳",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "ba tuổi",
+              "ja": "3歳",
+              "en": "three years old"
+            },
+            "block_role": "complement"
+          }
+        ],
+        "scenario": {
+          "vi": "nói về tuổi tác trong gia đình",
+          "ja": "家族の年齢差",
+          "en": "talking about family age difference"
+        },
+        "translations": {
+          "vi": "Chị gái lớn hơn tôi ba tuổi.",
+          "ja": "姉は私より3歳年上です。",
+          "en": "My older sister is three years older than me."
+        },
+        "literal_en": "Older-sister compared-to me big three years-old",
+        "tone_tip": {
+          "vi": "Chữ 姐 thứ hai trong 姐姐 đọc thanh nhẹ (jiějie).",
+          "ja": "「姐姐（jiějie）」の2文字目は軽声です。",
+          "en": "The second syllable of 姐姐 (jiějie) is neutral tone."
+        },
+        "word_order_diff": {
+          "vi": "",
+          "ja": "日本語は「3歳（三岁）＋年上（大）」ですが、中国語は「大（年上）＋三岁（3歳）」と数字が後ろに来ます。",
+          "en": "English says 'three years older', putting the number before the adjective; Chinese says 大三岁 ('older by three years')."
+        },
+        "note": {
+          "vi": "Khi nói hơn kém bao nhiêu tuổi, dùng tính từ 大 (lớn) hoặc 小 (nhỏ), và đặt số tuổi (三岁) ở sau tính từ.",
+          "ja": "年齢の上下には「大／小」を使い、差の年数を後ろに置きます。",
+          "en": "Use 大/小 for age comparisons and put the number of years after the adjective."
+        }
+      },
+      {
+        "zh": "这个苹果比那个大一点儿。",
+        "pinyin": "Zhège píngguǒ bǐ nàge dà yìdiǎnr.",
+        "tokens": [
+          {
+            "hanzi": "这个",
+            "pinyin": "zhège",
+            "han_viet": "giá cá",
+            "ja_kanji": "這個",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "cái này",
+              "ja": "この",
+              "en": "this"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "苹果",
+            "pinyin": "píngguǒ",
+            "han_viet": "bình quả",
+            "ja_kanji": "苹果",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "quả táo",
+              "ja": "りんご",
+              "en": "apple"
+            },
+            "block_role": "subject"
+          },
+          {
+            "hanzi": "比",
+            "pinyin": "bǐ",
+            "han_viet": "tỷ",
+            "ja_kanji": "比",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "so với",
+              "ja": "〜より",
+              "en": "than"
+            },
+            "block_role": "marker"
+          },
+          {
+            "hanzi": "那个",
+            "pinyin": "nàge",
+            "han_viet": "ná cá",
+            "ja_kanji": "那个",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "cái kia",
+              "ja": "あの（あれ）",
+              "en": "that one"
+            },
+            "block_role": "object"
+          },
+          {
+            "hanzi": "大",
+            "pinyin": "dà",
+            "han_viet": "đại",
+            "ja_kanji": "大",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "to, lớn",
+              "ja": "大きい",
+              "en": "big"
+            },
+            "block_role": "predicate"
+          },
+          {
+            "hanzi": "一点儿",
+            "pinyin": "yìdiǎnr",
+            "han_viet": "nhất điểm nhi",
+            "ja_kanji": "一点児",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "một chút",
+              "ja": "少し",
+              "en": "a little bit"
+            },
+            "block_role": "complement"
+          }
+        ],
+        "scenario": {
+          "vi": "mua hoa quả ngoài chợ",
+          "ja": "果物を買うとき",
+          "en": "buying fruit"
+        },
+        "translations": {
+          "vi": "Quả táo này to hơn quả kia một chút.",
+          "ja": "このりんごはあれより少し大きいです。",
+          "en": "This apple is a little bigger than that one."
+        },
+        "literal_en": "This-CL apple compared-to that-CL big a-little",
+        "tone_tip": {
+          "vi": "一 (yī) đứng trước 点儿 (thanh 3) biến điệu thành thanh 4: yìdiǎnr. Quả (guǒ) + 比 (bǐ) đọc nối thành guó bǐ.",
+          "ja": "「一点儿」の「一」は後ろが第3声なので第4声（yìdiǎnr）に変化します。",
+          "en": "一 (yī) changes to 4th tone (yì) before the 3rd tone 点儿 (yìdiǎnr)."
+        },
+        "word_order_diff": {
+          "vi": "",
+          "ja": "日本語の「少し大きい」と逆で、「大一点儿（大きい＋少し）」の順になります。",
+          "en": "'A little bigger' becomes 大一点儿 ('big a-little')."
+        },
+        "note": {
+          "vi": "Lượng từ 个 (cá) dùng cho quả táo; ở vế B có thể lược bỏ danh từ 苹果, chỉ cần giữ lại 那个 (quả kia).",
+          "ja": "比較基準Bの「那个苹果」は、同じ名詞「苹果」の繰り返しを避けて「那个」だけに省略できます。",
+          "en": "The second noun (苹果) can be omitted after 那个 ('that one')."
+        }
+      },
+      {
+        "zh": "汉字比发音难吗？",
+        "pinyin": "Hànzì bǐ fāyīn nán ma?",
+        "tokens": [
+          {
+            "hanzi": "汉字",
+            "pinyin": "Hànzì",
+            "han_viet": "Hán tự",
+            "ja_kanji": "漢字",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "chữ Hán",
+              "ja": "漢字",
+              "en": "Chinese characters"
+            },
+            "block_role": "subject"
+          },
+          {
+            "hanzi": "比",
+            "pinyin": "bǐ",
+            "han_viet": "tỷ",
+            "ja_kanji": "比",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "so với",
+              "ja": "〜より",
+              "en": "than"
+            },
+            "block_role": "marker"
+          },
+          {
+            "hanzi": "发音",
+            "pinyin": "fāyīn",
+            "han_viet": "phát âm",
+            "ja_kanji": "発音",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "phát âm",
+              "ja": "発音",
+              "en": "pronunciation"
+            },
+            "block_role": "object"
+          },
+          {
+            "hanzi": "难",
+            "pinyin": "nán",
+            "han_viet": "nan",
+            "ja_kanji": "難",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "khó",
+              "ja": "難しい",
+              "en": "difficult"
+            },
+            "block_role": "predicate"
+          },
+          {
+            "hanzi": "吗",
+            "pinyin": "ma",
+            "han_viet": "—",
+            "ja_kanji": "嗎",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "không (trợ từ hỏi)",
+              "ja": "〜か",
+              "en": "(question particle)"
+            },
+            "block_role": "other"
+          }
+        ],
+        "scenario": {
+          "vi": "thảo luận việc học tiếng Trung",
+          "ja": "中国語学習についての会話",
+          "en": "discussing learning Chinese"
+        },
+        "translations": {
+          "vi": "Chữ Hán có khó hơn phát âm không?",
+          "ja": "漢字は発音より難しいですか？",
+          "en": "Are Chinese characters more difficult than pronunciation?"
+        },
+        "literal_en": "Chinese-characters compared-to pronunciation difficult MA?",
+        "tone_tip": {
+          "vi": "发 (fā) và 音 (yīn) đều là thanh 1, giữ độ cao đều và ngang.",
+          "ja": "「发音（fāyīn）」は両方とも第1声なので、高く平らに保ちます。",
+          "en": "Both syllables of 发音 (fāyīn) are high, flat 1st tones."
+        },
+        "word_order_diff": {
+          "vi": "",
+          "ja": "",
+          "en": "Add 吗 at the end of the 比 comparison to form a yes-no question."
+        },
+        "note": {
+          "vi": "Để hỏi câu so sánh Có-Không, chỉ cần thêm 吗 vào cuối câu.",
+          "ja": "比較文の疑問形も、文末に「吗」を置くだけで作れます。",
+          "en": "Questions keep the exact same A + 比 + B + Adj structure and add 吗."
+        }
+      }
+    ],
+    "dialogue": {
+      "goal": {
+        "vi": "So sánh giá cả và chất lượng hai chiếc điện thoại",
+        "ja": "2つのスマホの価格と良さを比較する",
+        "en": "Comparing two phones while shopping"
+      },
+      "lines": [
+        {
+          "speaker": "A",
+          "zh": "这个手机比那个贵吗？",
+          "pinyin": "Zhège shǒujī bǐ nàge guì ma?",
+          "tr": {
+            "vi": "Chiếc điện thoại này có đắt hơn chiếc kia không?",
+            "ja": "このスマホはあれより高いですか？",
+            "en": "Is this phone more expensive than that one?"
+          }
+        },
+        {
+          "speaker": "B",
+          "zh": "比那个贵一点儿，但是比那个好多了。",
+          "pinyin": "Bǐ nàge guì yìdiǎnr, dànshì bǐ nàge hǎo duō le.",
+          "tr": {
+            "vi": "Đắt hơn chiếc kia một chút, nhưng tốt hơn chiếc kia nhiều.",
+            "ja": "あれより少し高いですが、あれよりずっと良いですよ。",
+            "en": "It's a little more expensive than that one, but much better."
+          }
+        }
+      ]
+    },
+    "puzzles": [
+      {
+        "scrambled_tokens": [
+          "高",
+          "我",
+          "他",
+          "比"
+        ],
+        "correct_order": [
+          "他",
+          "比",
+          "我",
+          "高"
+        ]
+      },
+      {
+        "scrambled_tokens": [
+          "冷",
+          "昨天",
+          "比",
+          "今天"
+        ],
+        "correct_order": [
+          "今天",
+          "比",
+          "昨天",
+          "冷"
+        ]
+      },
+      {
+        "scrambled_tokens": [
+          "三岁",
+          "大",
+          "我",
+          "比",
+          "姐姐"
+        ],
+        "correct_order": [
+          "姐姐",
+          "比",
+          "我",
+          "大",
+          "三岁"
+        ]
+      }
+    ],
+    "fill_blank": [
+      {
+        "sentence": "今天___昨天热。",
+        "options": [
+          "比",
+          "跟",
+          "很",
+          "是"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "vi",
+          "en"
+        ],
+        "explanation": {
+          "vi": "So sánh hơn kém giữa 今天 (hôm nay) và 昨天 (hôm qua) dùng giới từ 比.",
+          "ja": "「今日は昨日より暑い」と2つを比較する文なので「比」が入ります。",
+          "en": "Use 比 to compare 'today' (今天) with 'yesterday' (昨天)."
+        }
+      },
+      {
+        "sentence": "哥哥比我___。",
+        "options": [
+          "高一点儿",
+          "很矮",
+          "一点儿高",
+          "非常高"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "ja",
+          "en"
+        ],
+        "explanation": {
+          "vi": "Trong câu chữ 比 không dùng 很/非常, và cụm chỉ mức độ 一点儿 phải đứng SAU tính từ 高 (高一点儿).",
+          "ja": "比較文では「很／非常」は使えず、「少し（一点儿）」は形容詞の後ろに置いて「高一点儿」とします。",
+          "en": "Do not use 很/非常 in a 比 sentence, and place 一点儿 after the adjective (高一点儿)."
+        }
+      },
+      {
+        "sentence": "坐飞机比坐火车___。",
+        "options": [
+          "快多了",
+          "多快了",
+          "很快",
+          "真快"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "vi",
+          "ja",
+          "en"
+        ],
+        "explanation": {
+          "vi": "Cụm 多了 (hơn nhiều) phải đứng ngay sau tính từ 快 → 快多了.",
+          "ja": "「ずっと速い」は形容詞「快」の後ろに「多了」を置いて「快多了」と言います。",
+          "en": "To say 'much faster', place 多了 after the adjective 快."
+        }
+      }
+    ],
+    "error_correction": [
+      {
+        "wrong": "这件衣服贵比那件。",
+        "correct": "这件衣服比那件贵。",
+        "hint": {
+          "vi": "Đưa cụm '比 + đối tượng B' lên đứng trước tính từ 贵.",
+          "ja": "「比那件（あれより）」と形容詞「贵（高い）」の順番を確認しましょう。",
+          "en": "Move the comparison phrase 比那件 in front of the adjective 贵."
+        }
+      },
+      {
+        "wrong": "她的汉语比我很好。",
+        "correct": "她的汉语比我好。",
+        "hint": {
+          "vi": "Trong câu so sánh 比, hãy bỏ phó từ mức độ đứng trước tính từ 好.",
+          "ja": "「比」を使った比較文では、形容詞の前に置けない副詞があります。",
+          "en": "Remove the degree adverb that clashes with the 比 comparison."
+        }
+      }
+    ],
+    "quiz": [
+      {
+        "question": {
+          "vi": "Muốn nói 'Hôm nay nóng hơn hôm qua một chút', câu nào đúng?",
+          "ja": "「今日は昨日より少し暑いです」を正しく表している文はどれですか？",
+          "en": "Which sentence correctly says 'Today is a little hotter than yesterday'?"
+        },
+        "options": [
+          "今天比昨天热一点儿。",
+          "今天热一点儿比昨天。",
+          "今天比昨天一点儿热。",
+          "今天比昨天很热。"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "vi",
+          "ja",
+          "en"
+        ],
+        "explanation": {
+          "vi": "Đúng cấu trúc: A (今天) + 比 + B (昨天) + Tính từ (热) + Mức chênh lệch (一点儿). Câu 2 sai kiểu tiếng Việt/Anh, câu 3 sai kiểu tiếng Nhật/Anh, câu 4 thừa 很.",
+          "ja": "「A＋比＋B＋形容詞＋一点儿」の順になる「今天比昨天热一点儿。」が正解です。「一点儿」を形容詞の前に置くのは誤りです。",
+          "en": "Follow 'A + 比 + B + Adj + 一点儿': 今天比昨天热一点儿."
+        }
+      },
+      {
+        "question": {
+          "vi": "Câu nào dịch đúng 'Em trai nhỏ hơn tôi 3 tuổi'?",
+          "ja": "「弟は私より3歳年下です」の正しい中国語はどれですか？",
+          "en": "How do you say 'My younger brother is 3 years younger than me'?"
+        },
+        "options": [
+          "弟弟比我小三岁。",
+          "弟弟比我三岁小。",
+          "弟弟小三岁比我。",
+          "弟弟比我很小三岁。"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "ja",
+          "en"
+        ],
+        "explanation": {
+          "vi": "Số tuổi chênh lệch (三岁) phải đứng sau tính từ 小 (nhỏ) → 弟弟比我小三岁.",
+          "ja": "差を表す「三岁（3歳）」は形容詞「小」の後ろに置くので「弟弟比我小三岁。」が正解です。",
+          "en": "The difference amount 三岁 goes after the adjective 小: 弟弟比我小三岁."
+        }
+      },
+      {
+        "question": {
+          "vi": "Từ nào KHÔNG được đứng ngay trước tính từ trong câu so sánh chữ 比?",
+          "ja": "「比」の比較文で、形容詞の直前に置くことができない語はどれですか？",
+          "en": "Which word CANNOT be placed directly before the adjective in a 比 sentence?"
+        },
+        "options": [
+          "很",
+          "更",
+          "还",
+          "也"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "vi",
+          "ja",
+          "en"
+        ],
+        "explanation": {
+          "vi": "很 (rất) không dùng trước tính từ trong câu chữ 比 (nhưng 更 và 还 thì có thể dùng để nói 'còn... hơn').",
+          "ja": "「很」は比較文の形容詞の前には置けません（「更」や「还」は「さらに〜だ」という意味で使えます）。",
+          "en": "很 cannot precede the adjective in a 比 comparison (though 更 and 还 can be used to mean 'even more')."
+        }
+      }
+    ],
+    "summary_card": {
+      "one_liner": {
+        "vi": "A + 比 + B + Tính từ (+ chênh lệch): đặt 比 B trước tính từ, bỏ 很, đặt số lượng chênh lệch ở cuối.",
+        "ja": "「A＋比＋B＋形容詞（＋差）」で比較を表し、「很」は使わず、差の数量は形容詞の後ろに置く。",
+        "en": "Use 'A + 比 + B + Adj (+ difference)' for comparisons—put 比 B before the adjective, drop 很, and put amounts last."
+      },
+      "remember": [
+        {
+          "vi": "Đưa cả cụm '比 + B' lên đứng TRƯỚC tính từ (ngược với tiếng Việt).",
+          "ja": "「比＋B」を形容詞の前に置く。",
+          "en": "Always place '比 + B' before the adjective."
+        },
+        {
+          "vi": "Bỏ 很, 非常, 真 trước tính từ; muốn nói 'hơn nhiều' thì thêm 多了 / 得多 vào sau tính từ.",
+          "ja": "形容詞の前に「很」は置かない。「ずっと〜」は後ろに「多了／得多」をつける。",
+          "en": "Never use 很 before the adjective; use 多了 after it for 'much more'."
+        },
+        {
+          "vi": "Mức chênh lệch (一点儿, 两岁) luôn đứng SAU tính từ.",
+          "ja": "「一点儿（少し）」や「三岁（3歳）」などの差は形容詞の後ろに置く。",
+          "en": "Put quantifiers like 一点儿 or 两岁 after the adjective."
+        }
+      ]
+    },
+    "needs_review": false,
+    "review_note": ""
+  },
+  {
+    "id": "hsk3_ba_construction",
+    "level": "HSK3",
+    "level_num": 3,
+    "category": "sentence_pattern",
+    "difficulty": 3,
+    "frequency": 5,
+    "register": "neutral",
+    "keywords": [
+      "把",
+      "bǎ",
+      "câu chữ bả",
+      "câu xử lý",
+      "把構文",
+      "処置文",
+      "ba construction",
+      "disposal"
+    ],
+    "formula": "S + (不/没) + 把 + O + V + 结果/趋向/处所/了",
+    "formula_plain": {
+      "vi": "Ai + đem (把) + cái gì (đã xác định) + tác động (Động từ) + ra kết quả/vị trí mới",
+      "ja": "誰が ＋ 把（〜を） ＋ 特定の物 ＋ 動詞 ＋ どうなったか（結果・場所・方向）",
+      "en": "Subject + 把 + specific Object + Verb + Result / New Location / Completion"
+    },
+    "structure_blocks": [
+      {
+        "label": {
+          "vi": "Chủ ngữ (S)",
+          "ja": "主語 (S)",
+          "en": "Subject (S)"
+        },
+        "role": "subject",
+        "color": "#3B82F6"
+      },
+      {
+        "label": {
+          "vi": "Giới từ 把",
+          "ja": "介詞 把（〜を）",
+          "en": "Particle 把 (bǎ)"
+        },
+        "role": "marker",
+        "color": "#F97316"
+      },
+      {
+        "label": {
+          "vi": "Tân ngữ xác định (O)",
+          "ja": "特定目的語 (O)",
+          "en": "Definite Object (O)"
+        },
+        "role": "object",
+        "color": "#10B981"
+      },
+      {
+        "label": {
+          "vi": "Động từ tác động (V)",
+          "ja": "働きかけの動詞 (V)",
+          "en": "Action Verb (V)"
+        },
+        "role": "action",
+        "color": "#EF4444"
+      },
+      {
+        "label": {
+          "vi": "Kết quả / Vị trí mới",
+          "ja": "結果・到達点・その他",
+          "en": "Result / New state"
+        },
+        "role": "result",
+        "color": "#8B5CF6"
+      }
+    ],
+    "related_ids": [
+      "hsk3_bei_passive",
+      "hsk2_resultative_complement_basic",
+      "hsk3_compound_directional_complement"
+    ],
+    "confusable_with": [
+      {
+        "id": "hsk3_bei_passive",
+        "diff": {
+          "vi": "Câu chữ 把 là câu chủ động nhấn mạnh chủ ngữ xử lý tân ngữ (A đem B làm sao), còn câu chữ 被 là câu bị động nhấn mạnh chủ ngữ chịu tác động (B bị A làm sao).",
+          "ja": "「把」は主語が目的語をどう処置したかを表す能動文（AがBを〜する）で、「被」は主語が被害や影響を受ける受身文（BがAに〜される）です。",
+          "en": "把 highlights how the subject actively disposes of or changes the object (A does something to B), while 被 is passive and focuses on what happens to the receiver (B is acted upon by A)."
+        }
+      }
+    ],
+    "localizations": {
+      "vi": {
+        "title": "Câu chữ 把 (câu xử lý)",
+        "quick_rule_3s": "Dùng 把 để kéo tân ngữ (người/vật chịu tác động) đã xác định lên trước động từ nhằm nhấn mạnh hành động đã làm vật đó thay đổi trạng thái hoặc vị trí.",
+        "contrastive_note": "Trong tiếng Việt, ta nói theo trật tự Động từ + Tân ngữ + Kết quả: 'Đặt (V) cuốn sách (O) lên bàn (Kết quả)'. Nhưng trong tiếng Trung, một động từ không thích vừa mang tân ngữ vừa mang đuôi chỉ kết quả/địa điểm dài ở phía sau. Vì vậy, người Trung dùng chữ 把 (dịch nôm na là 'đem/lấy') để kéo 'cuốn sách' lên TRƯỚC động từ: 把书放在桌子上 (Đem sách đặt ở trên bàn). Lưu ý: Không dịch máy mọi câu có chữ 'đem' sang 把 nếu động từ không tạo ra kết quả/thay đổi.",
+        "analogy": "Hãy hình dung chữ 把 như bàn tay cầm lấy món đồ (Tân ngữ) giơ ra trước mặt, rồi mới dùng hành động (Động từ) biến đổi nó hoặc đặt nó sang chỗ khác (Kết quả).",
+        "mnemonic": "Có 把 kéo vật lên đầu, động từ đứng trơ một mình là sai (phải có đuôi kết quả)!",
+        "how_to_use": [
+          {
+            "step": 1,
+            "text": "Bước 1: Kiểm tra món đồ (tân ngữ) đã xác định chưa (cả người nói và người nghe đều biết đó là cái nào)."
+          },
+          {
+            "step": 2,
+            "text": "Bước 2: Đặt 把 + Tân ngữ lên TRƯỚC động từ (nếu có 不, 没, 想, 要 thì phải đặt trước chữ 把)."
+          },
+          {
+            "step": 3,
+            "text": "Bước 3: Đặt Động từ kèm theo thành phần kết quả ở sau (như 完, 好, 上, 在..., 到..., 给..., hoặc 了)."
+          }
+        ],
+        "self_check": [
+          "Sau hành động, món đồ/sự việc có bị thay đổi trạng thái, hết đi, hoặc chuyển sang vị trí mới không?",
+          "Món đồ đứng sau 把 đã là vật xác định (đã biết rõ) chưa?",
+          "Sau động từ đã có 'đuôi' kết quả (完, 好, 在..., 了...) chưa, hay động từ đang đứng trơ trọi một mình?"
+        ],
+        "tips": [
+          "Động từ trong câu chữ 把 KHÔNG BAO GIỜ đứng trơ trọi một mình ở cuối câu (ví dụ nói 我把饭吃 là sai, phải là 我把饭吃了 hoặc 我把饭吃完).",
+          "Các động từ chỉ cảm xúc, nhận thức hoặc không làm biến đổi sự vật (như 喜欢 thích, 知道 biết, 看见 nhìn thấy, 有 có, 是 là, 在 ở) không dùng được với 把."
+        ],
+        "when_to_use": [
+          "Khi hành động làm một vật xác định thay đổi trạng thái, hoàn tất hoặc biến mất (ăn hết cơm, làm xong bài tập, đóng cửa lại).",
+          "Khi di chuyển một vật tới vị trí mới hoặc giao cho ai đó (bắt buộc dùng 把 với các mẫu: 把...放在..., 把...拿到..., 把...送给...)."
+        ],
+        "when_not_to_use": [
+          "Không dùng với động từ chỉ cảm xúc, tri giác, tồn tại (喜欢, 爱, 觉得, 知道, 看见, 听见, 有, 在).",
+          "Không dùng khi tân ngữ là vật bất định chưa rõ là cái nào (như 'một quyển sách nào đó' mà người nghe chưa biết)."
+        ],
+        "fatal_mistake": {
+          "wrong": "我把作业做。",
+          "correct": "我把作业做完了。",
+          "explanation": "Động từ 做 (làm) trong câu chữ 把 không được đứng trơ trọi một mình mà bắt buộc phải có bổ ngữ kết quả (như 完 = xong) hoặc trợ từ 了 ở phía sau.",
+          "why_learners_make_it": "Người Việt chỉ nhớ công thức đảo tân ngữ lên trước động từ (把 + O + V) mà quên mất linh hồn của câu chữ 把 là phần 'kết quả xử lý' ở sau động từ."
+        },
+        "extra_mistakes": [
+          {
+            "wrong": "我把水没喝完。",
+            "correct": "我没把水喝完。",
+            "explanation": "Phó từ phủ định (没, 不, 别) và động từ năng nguyện (想, 要, 能) phải đứng TRƯỚC chữ 把, không đứng sau tân ngữ."
+          },
+          {
+            "wrong": "我把她很喜欢。",
+            "correct": "我很喜欢她。",
+            "explanation": "喜欢 (thích) là động từ tâm lý, không tác động làm thay đổi hay dịch chuyển đối tượng nên không dùng câu chữ 把."
+          }
+        ]
+      },
+      "ja": {
+        "title": "「把」構文（処置文）",
+        "quick_rule_3s": "特定の目的語を「把＋目的語」で動詞の前に出し、その物に働きかけて「どう変化・移動したか」の結果までセットで述べる構文です。",
+        "contrastive_note": "日本語の「Sは Oを Vする」と語順が似て見えるため、日本人学習者は「把＝助詞の『を』」と単純に同一視しがちです。しかし、中国語で普通の「本を読む（看书）」「彼女が好きだ（喜欢她）」はSVOで表し、「把」は使いません。「把」を使うのは「特定の物をどう処置して、どんな結果になったか（〜てしまう、〜ておく、どこそこへ移す）」を強調するときだけであり、動詞の後ろには必ず結果補語や場所などの成分が必要です。",
+        "analogy": "「把」は本来「手でしっかり握る」という意味です。目の前の特定の物をガッとつかんで（把＋O）、それに手を加えて別の状態や場所に変える（V＋結果）イメージです。",
+        "mnemonic": "「把」はただの「を」じゃない！特定の名詞＋動詞＋結果のしっぽが必須！",
+        "how_to_use": [
+          {
+            "step": 1,
+            "text": "ステップ1：目的語が「話し手も聞き手もわかっている特定の物（この本、宿題、そのドアなど）」か確認します。"
+          },
+          {
+            "step": 2,
+            "text": "ステップ2：主語の後ろ（否定「没／别」や助動詞「想／要」がある場合はそのさらに後ろ）に「把＋目的語」を置きます。"
+          },
+          {
+            "step": 3,
+            "text": "ステップ3：動詞の後ろに必ず「結果・方向・場所・了・動詞の重ね型」などのしっぽ（その他の成分）をつけます。"
+          }
+        ],
+        "self_check": [
+          "日本語の「〜を」をすべて機械的に「把」に置き換えていませんか？（感情や知覚の動詞には使えません）",
+          "動詞が裸（1文字だけ）で文末に終わっていませんか？（後ろに「完」「好」「在…」「了」などがありますか？）",
+          "否定語（没・不・别）や助動詞（想・要）を「把」の前に置いていますか？"
+        ],
+        "tips": [
+          "日本語の「〜てしまった」「〜ておいた」「AをBに置いた／渡した」という文脈は、「把」構文と相性が抜群です。",
+          "「把」の後ろにすでに目的語が出ているので、動詞の後ろにもう一度同じ目的語を置かないよう注意しましょう。"
+        ],
+        "when_to_use": [
+          "働きかけによって物の状態が変わったり、なくなったり、完了したりするとき（宿題をやり終える、ご飯を食べてしまう）。",
+          "物を別の場所へ移動させたり、誰かに渡したりするとき（「把 A 放在 B」「把 A 交给 B」などでは「把」がほぼ必須）。"
+        ],
+        "when_not_to_use": [
+          "感情・認知・知覚・所有を表す動詞（「喜欢（好き）」「知道（知る）」「看见（見える）」「有（ある）」など）には使えません。",
+          "「可能補語（V得/不＋結果）」と一緒に使うことはできません。"
+        ],
+        "fatal_mistake": {
+          "wrong": "我把这本书看。",
+          "correct": "我把这本书看完了。",
+          "explanation": "「把」構文では、動詞「看」だけを裸で文末に置くことはできません。どうなったかを表す「完了」や「了一下」などが後ろに必要です。",
+          "why_learners_make_it": "日本語の「私は（我）この本を（把这本书）読む（看）」の「を」＝「把」と考えて、動詞の後ろの結果成分を忘れてしまうためです。"
+        },
+        "extra_mistakes": [
+          {
+            "wrong": "我把日本料理喜欢。",
+            "correct": "我喜欢日本料理。",
+            "explanation": "「喜欢（好きだ）」は対象を変化・処置する動詞ではないため、「把」構文は使えません。"
+          },
+          {
+            "wrong": "我把钥匙没带。",
+            "correct": "我没把钥匙带来。",
+            "explanation": "否定の「没」は必ず「把」の前に置き、動詞「带」の後ろには方向補語「来」などを伴います。"
+          }
+        ]
+      },
+      "en": {
+        "title": "The 把 (bǎ) Disposal Construction",
+        "quick_rule_3s": "Use 把 to move a known, specific object BEFORE the verb to highlight how the action changes, moves, or finishes dealing with that object.",
+        "contrastive_note": "English strictly keeps the Object after the Verb ('Put the book on the table', 'Finish your homework'). In Chinese, when a verb has a heavy result or location phrase attached to it (like 放在桌子上 'put on the table'), the language dislikes squeezing the object in the middle. Instead, Chinese uses 把 to front the object before the verb (S + 把 + O + V + Result), shifting focus to the final result or new state of that object.",
+        "analogy": "Think of 把 (originally meaning 'to grasp/hold') as grabbing the object first ('Take the door...') and then applying an action with a clear outcome ('...and close it shut').",
+        "mnemonic": "Grab the known object with 把 first, then act on it with a clear result!",
+        "how_to_use": [
+          {
+            "step": 1,
+            "text": "Step 1: Make sure the object is known/specific (e.g., 'the door', 'my homework', not 'any random book')."
+          },
+          {
+            "step": 2,
+            "text": "Step 2: Place 把 + Object before the verb (any negation like 没/别 or modal like 要/想 goes BEFORE 把)."
+          },
+          {
+            "step": 3,
+            "text": "Step 3: Follow the verb with a required result/complement (e.g., 完, 好, 上, 在 + place, 给 + person, or 了)."
+          }
+        ],
+        "self_check": [
+          "Does the action actually affect, move, or change the state of the object?",
+          "Is the object specific or known to the listener?",
+          "Is there an extra element (result complement, prepositional phrase, or 了) after the verb so the verb isn't left bare?"
+        ],
+        "tips": [
+          "Never leave a bare monosyllabic verb at the end of a 把 sentence—always attach what happened to the object (e.g., 做完, 放在..., 吃了).",
+          "When translating English 'put/place/move [Object] to/on/in [Place]', almost always use '把 + Object + V + 在/到 + Place'."
+        ],
+        "when_to_use": [
+          "When an action disposes of, finishes, or changes the state of a specific object (eating up food, finishing homework, breaking a cup).",
+          "When moving an object to a new location or transferring it to someone (把...放在..., 把...拿出来, 把...送给...)."
+        ],
+        "when_not_to_use": [
+          "With stative, mental, or perception verbs that don't affect the object (喜欢, 知道, 看见, 听见, 有, 是).",
+          "With potential complements like 看得懂 or 做不完 (potential complements cannot co-occur with 把)."
+        ],
+        "fatal_mistake": {
+          "wrong": "我放书在桌子上。",
+          "correct": "我把书放在桌子上。",
+          "explanation": "In Chinese, when specifying where an object is placed with 放在..., you must use 把 to move the object 书 before the verb 放.",
+          "why_learners_make_it": "English speakers follow the exact English word order: 'I (我) put (放) the book (书) on the table (在桌子上)'."
+        },
+        "extra_mistakes": [
+          {
+            "wrong": "请把门关。",
+            "correct": "请把门关上。",
+            "explanation": "The verb 关 (close) cannot stand bare at the end of a 把 sentence; it needs a result complement like 上 (shut) or 了."
+          },
+          {
+            "wrong": "我不把作业做完了。",
+            "correct": "我没把作业做完。",
+            "explanation": "Completed or uncompleted past/actual actions with 把 are negated with 没 (placed before 把) and drop the final 了."
+          }
+        ]
+      }
+    },
+    "fill_template": {
+      "pattern": "___ 把 ___ ___ ___。",
+      "slots": [
+        {
+          "vi": "Chủ ngữ (+ 没/别/请)",
+          "ja": "主語（＋没／别／请）",
+          "en": "Subject (+ 没/别/请)"
+        },
+        {
+          "vi": "Tân ngữ xác định (cửa, bài tập, sách)",
+          "ja": "特定の目的語（ドア、宿題、本）",
+          "en": "Definite Object (door, homework, book)"
+        },
+        {
+          "vi": "Động từ tác động (đóng, làm, đặt)",
+          "ja": "働きかけの動詞（閉める、する、置く）",
+          "en": "Action Verb (close, do, put)"
+        },
+        {
+          "vi": "Kết quả / Vị trí mới (上, 完了, 在桌子上)",
+          "ja": "結果・場所（上、完了、在桌子上）",
+          "en": "Result / Location (上, 完了, 在桌子上)"
+        }
+      ],
+      "example_filled": "我把作业做完了。"
+    },
+    "collocations": [
+      {
+        "zh": "把…放在…",
+        "pinyin": "bǎ … fàng zài …",
+        "meaning": {
+          "vi": "đặt/để cái gì ở đâu",
+          "ja": "…を〜に置く",
+          "en": "put ... at/on/in ..."
+        }
+      },
+      {
+        "zh": "把…做完",
+        "pinyin": "bǎ … zuò wán",
+        "meaning": {
+          "vi": "làm xong cái gì",
+          "ja": "…をやり終える",
+          "en": "finish doing ..."
+        }
+      },
+      {
+        "zh": "把…拿出来",
+        "pinyin": "bǎ … ná chūlái",
+        "meaning": {
+          "vi": "lấy cái gì ra",
+          "ja": "…を取り出す",
+          "en": "take ... out"
+        }
+      },
+      {
+        "zh": "把…送给…",
+        "pinyin": "bǎ … sòng gěi …",
+        "meaning": {
+          "vi": "tặng cái gì cho ai",
+          "ja": "…を〜に贈る（プレゼントする）",
+          "en": "give/present ... to ..."
+        }
+      }
+    ],
+    "examples": [
+      {
+        "zh": "请把门关上。",
+        "pinyin": "Qǐng bǎ mén guān shàng.",
+        "tokens": [
+          {
+            "hanzi": "请",
+            "pinyin": "qǐng",
+            "han_viet": "thỉnh",
+            "ja_kanji": "請",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "xin, làm ơn",
+              "ja": "どうぞ〜してください",
+              "en": "please"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "把",
+            "pinyin": "bǎ",
+            "han_viet": "bả",
+            "ja_kanji": "把",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "đem (trợ từ)",
+              "ja": "〜を（処置介詞）",
+              "en": "(disposal marker)"
+            },
+            "block_role": "marker"
+          },
+          {
+            "hanzi": "门",
+            "pinyin": "mén",
+            "han_viet": "môn",
+            "ja_kanji": "門",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "cửa",
+              "ja": "ドア",
+              "en": "door"
+            },
+            "block_role": "object"
+          },
+          {
+            "hanzi": "关",
+            "pinyin": "guān",
+            "han_viet": "quan",
+            "ja_kanji": "関",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "đóng",
+              "ja": "閉める",
+              "en": "close"
+            },
+            "block_role": "action"
+          },
+          {
+            "hanzi": "上",
+            "pinyin": "shàng",
+            "han_viet": "thượng",
+            "ja_kanji": "上",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "lại, khép vào",
+              "ja": "（閉まり切る結果）",
+              "en": "shut / up"
+            },
+            "block_role": "result"
+          }
+        ],
+        "scenario": {
+          "vi": "yêu cầu lịch sự trong phòng",
+          "ja": "丁寧な依頼",
+          "en": "polite request"
+        },
+        "translations": {
+          "vi": "Làm ơn đóng cửa lại.",
+          "ja": "ドアを閉めてください。",
+          "en": "Please close the door."
+        },
+        "literal_en": "Please BA door close shut",
+        "tone_tip": {
+          "vi": "请 (qǐng) và 把 (bǎ) là hai thanh 3 đi liền nhau, đọc 请 thành thanh 2 (qíng bǎ).",
+          "ja": "「请（qǐng）」と「把（bǎ）」は第3声が続くため、「qíng bǎ」と発音します。",
+          "en": "3rd-tone sandhi: 请 (qǐng) + 把 (bǎ) -> pronounce 请 in the 2nd tone (qíng bǎ)."
+        },
+        "word_order_diff": {
+          "vi": "Tiếng Việt nói 'đóng cửa lại', tiếng Trung đưa '门' (cửa) lên trước '关上' (đóng lại).",
+          "ja": "「门（ドア）＋を（把）＋閉める（关上）」となり、日本語と語順の感覚が近いです。",
+          "en": "The object 门 (door) is moved before the verb 关上 (close shut)."
+        },
+        "note": {
+          "vi": "上 ở đây là bổ ngữ kết quả chỉ hai mép cửa khép sát vào nhau.",
+          "ja": "「上」はドアが閉まってくっつく結果を表す結果補語です。",
+          "en": "上 functions as a resultative complement indicating the door is closed shut."
+        }
+      },
+      {
+        "zh": "我把作业做完了。",
+        "pinyin": "Wǒ bǎ zuòyè zuò wán le.",
+        "tokens": [
+          {
+            "hanzi": "我",
+            "pinyin": "wǒ",
+            "han_viet": "ngã",
+            "ja_kanji": "我",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "tôi",
+              "ja": "私",
+              "en": "I"
+            },
+            "block_role": "subject"
+          },
+          {
+            "hanzi": "把",
+            "pinyin": "bǎ",
+            "han_viet": "bả",
+            "ja_kanji": "把",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "đem",
+              "ja": "〜を",
+              "en": "(BA)"
+            },
+            "block_role": "marker"
+          },
+          {
+            "hanzi": "作业",
+            "pinyin": "zuòyè",
+            "han_viet": "tác nghiệp",
+            "ja_kanji": "作業",
+            "false_friend_ja": {
+              "ja_meaning": "作業（仕事・ワーク・実務作業）",
+              "zh_meaning": "bài tập về nhà (homework / school assignment)"
+            },
+            "gloss": {
+              "vi": "bài tập về nhà",
+              "ja": "宿題",
+              "en": "homework"
+            },
+            "block_role": "object"
+          },
+          {
+            "hanzi": "做",
+            "pinyin": "zuò",
+            "han_viet": "tố",
+            "ja_kanji": "做",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "làm",
+              "ja": "する",
+              "en": "do"
+            },
+            "block_role": "action"
+          },
+          {
+            "hanzi": "完",
+            "pinyin": "wán",
+            "han_viet": "hoàn",
+            "ja_kanji": "完",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "xong",
+              "ja": "終える",
+              "en": "finish"
+            },
+            "block_role": "result"
+          },
+          {
+            "hanzi": "了",
+            "pinyin": "le",
+            "han_viet": "—",
+            "ja_kanji": "了",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "rồi",
+              "ja": "〜た",
+              "en": "(completed)"
+            },
+            "block_role": "result"
+          }
+        ],
+        "scenario": {
+          "vi": "báo cáo đã làm xong bài tập",
+          "ja": "宿題が終わったことを伝える",
+          "en": "reporting finished homework"
+        },
+        "translations": {
+          "vi": "Tôi làm xong bài tập rồi.",
+          "ja": "私は宿題をやり終えました。",
+          "en": "I have finished doing my homework."
+        },
+        "literal_en": "I BA homework do finish LE",
+        "tone_tip": {
+          "vi": "我 (wǒ) và 把 (bǎ) đều là thanh 3, đọc thành wó bǎ.",
+          "ja": "「我（wǒ）」＋「把（bǎ）」は「wó bǎ」と変調します。",
+          "en": "我 (wǒ) + 把 (bǎ) -> wó bǎ."
+        },
+        "word_order_diff": {
+          "vi": "Tiếng Việt nói 'làm xong bài tập', tiếng Trung đưa '作业' (bài tập) lên trước '做完' (làm xong).",
+          "ja": "",
+          "en": "Homework (作业) comes before 'do-finish' (做完)."
+        },
+        "note": {
+          "vi": "Chú ý với người học tiếng Nhật: 作业 trong tiếng Trung thường là 'bài tập về nhà', không phải 'công việc lao động' nói chung.",
+          "ja": "注意：「作业（作業）」は中国語では主に学校の「宿題」を意味します。",
+          "en": "完 (finish) + 了 provides the required resultative ending after 做."
+        }
+      },
+      {
+        "zh": "他把书放在桌子上了。",
+        "pinyin": "Tā bǎ shū fàng zài zhuōzi shàng le.",
+        "tokens": [
+          {
+            "hanzi": "他",
+            "pinyin": "tā",
+            "han_viet": "tha",
+            "ja_kanji": "他",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "anh ấy",
+              "ja": "彼",
+              "en": "he"
+            },
+            "block_role": "subject"
+          },
+          {
+            "hanzi": "把",
+            "pinyin": "bǎ",
+            "han_viet": "bả",
+            "ja_kanji": "把",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "đem",
+              "ja": "〜を",
+              "en": "(BA)"
+            },
+            "block_role": "marker"
+          },
+          {
+            "hanzi": "书",
+            "pinyin": "shū",
+            "han_viet": "thư",
+            "ja_kanji": "書",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "sách",
+              "ja": "本",
+              "en": "book"
+            },
+            "block_role": "object"
+          },
+          {
+            "hanzi": "放",
+            "pinyin": "fàng",
+            "han_viet": "phóng",
+            "ja_kanji": "放",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "đặt, để",
+              "ja": "置く",
+              "en": "put"
+            },
+            "block_role": "action"
+          },
+          {
+            "hanzi": "在",
+            "pinyin": "zài",
+            "han_viet": "tại",
+            "ja_kanji": "在",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "ở",
+              "ja": "〜に",
+              "en": "at/on"
+            },
+            "block_role": "result"
+          },
+          {
+            "hanzi": "桌子",
+            "pinyin": "zhuōzi",
+            "han_viet": "trác tử",
+            "ja_kanji": "卓子",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "cái bàn",
+              "ja": "机・テーブル",
+              "en": "table"
+            },
+            "block_role": "result"
+          },
+          {
+            "hanzi": "上",
+            "pinyin": "shàng",
+            "han_viet": "thượng",
+            "ja_kanji": "上",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "trên",
+              "ja": "上",
+              "en": "on top"
+            },
+            "block_role": "result"
+          },
+          {
+            "hanzi": "了",
+            "pinyin": "le",
+            "han_viet": "—",
+            "ja_kanji": "了",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "rồi",
+              "ja": "〜た",
+              "en": "(completed)"
+            },
+            "block_role": "result"
+          }
+        ],
+        "scenario": {
+          "vi": "mô tả vị trí cất đồ vật",
+          "ja": "物を置いた場所を伝える",
+          "en": "describing where an item was placed"
+        },
+        "translations": {
+          "vi": "Anh ấy để quyển sách ở trên bàn rồi.",
+          "ja": "彼は本を机の上に置きました。",
+          "en": "He put the book on the table."
+        },
+        "literal_en": "He BA book put at table top LE",
+        "tone_tip": {
+          "vi": "Chữ 子 trong 桌子 đọc thanh nhẹ (zhuōzi).",
+          "ja": "「桌子（zhuōzi）」の「子」は軽声です。",
+          "en": "The second syllable of 桌子 (zhuōzi) is neutral tone."
+        },
+        "word_order_diff": {
+          "vi": "Tiếng Việt nói 'để sách ở trên bàn', tiếng Trung bắt buộc dùng 把 đưa '书' lên trước '放在桌子上'.",
+          "ja": "日本語では「机の上に（在桌子上）置いた（放）」ですが、中国語では到達点の「在桌子上」が動詞「放」の後ろに来ます。",
+          "en": "Matches the mandatory Chinese pattern for 'put X on Y': 把 X 放在 Y."
+        },
+        "note": {
+          "vi": "Khi dùng 放在... (đặt ở đâu), bắt buộc phải dùng câu chữ 把, không nói 他放书在桌子上.",
+          "ja": "重要：日本語の語順につられて「他把书在桌子上放了」と場所を動詞の前に置かないよう注意してください。移動先の「在…」は動詞の後ろです。",
+          "en": "With 'put [something] on/in [somewhere]', 把 is obligatory in Chinese."
+        }
+      },
+      {
+        "zh": "我没把这件事告诉他。",
+        "pinyin": "Wǒ méi bǎ zhè jiàn shì gàosu tā.",
+        "tokens": [
+          {
+            "hanzi": "我",
+            "pinyin": "wǒ",
+            "han_viet": "ngã",
+            "ja_kanji": "我",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "tôi",
+              "ja": "私",
+              "en": "I"
+            },
+            "block_role": "subject"
+          },
+          {
+            "hanzi": "没",
+            "pinyin": "méi",
+            "han_viet": "một",
+            "ja_kanji": "没",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "chưa, đã không",
+              "ja": "〜なかった",
+              "en": "did not"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "把",
+            "pinyin": "bǎ",
+            "han_viet": "bả",
+            "ja_kanji": "把",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "đem",
+              "ja": "〜を",
+              "en": "(BA)"
+            },
+            "block_role": "marker"
+          },
+          {
+            "hanzi": "这",
+            "pinyin": "zhè",
+            "han_viet": "giá",
+            "ja_kanji": "這",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "này",
+              "ja": "この",
+              "en": "this"
+            },
+            "block_role": "object"
+          },
+          {
+            "hanzi": "件",
+            "pinyin": "jiàn",
+            "han_viet": "kiện",
+            "ja_kanji": "件",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "vụ, việc (lượng từ)",
+              "ja": "件（量詞）",
+              "en": "(measure word for matters)"
+            },
+            "block_role": "object"
+          },
+          {
+            "hanzi": "事",
+            "pinyin": "shì",
+            "han_viet": "sự",
+            "ja_kanji": "事",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "chuyện, sự việc",
+              "ja": "こと・件",
+              "en": "matter"
+            },
+            "block_role": "object"
+          },
+          {
+            "hanzi": "告诉",
+            "pinyin": "gàosu",
+            "han_viet": "cáo tố",
+            "ja_kanji": "告訴",
+            "false_friend_ja": {
+              "ja_meaning": "告訴（犯罪被害を捜査機関に届け出て処罰を求めること）",
+              "zh_meaning": "nói cho biết, bảo cho biết (to tell / inform)"
+            },
+            "gloss": {
+              "vi": "nói cho biết, kể",
+              "ja": "教える・伝える",
+              "en": "tell"
+            },
+            "block_role": "action"
+          },
+          {
+            "hanzi": "他",
+            "pinyin": "tā",
+            "han_viet": "tha",
+            "ja_kanji": "他",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "anh ấy",
+              "ja": "彼",
+              "en": "him"
+            },
+            "block_role": "result"
+          }
+        ],
+        "scenario": {
+          "vi": "giữ bí mật chưa kể cho người khác",
+          "ja": "秘密をまだ話していないと伝える",
+          "en": "keeping a secret"
+        },
+        "translations": {
+          "vi": "Tôi đã không nói chuyện này cho anh ấy biết.",
+          "ja": "私はこの件を彼に伝えませんでした。",
+          "en": "I didn't tell him about this matter."
+        },
+        "literal_en": "I did-not BA this CL matter tell him",
+        "tone_tip": {
+          "vi": "Chữ 诉 trong 告诉 đọc thanh nhẹ (gàosu).",
+          "ja": "「告诉（gàosu）」の「诉」は軽声で軽く発音します。",
+          "en": "The second syllable in 告诉 (gàosu) is neutral tone."
+        },
+        "word_order_diff": {
+          "vi": "Phó từ 没 phải đứng trước chữ 把 (没把...), không đứng trước động từ 告诉.",
+          "ja": "日本語は文末で「伝えませんでした」と否定しますが、中国語は「把」の前に「没」を置きます。",
+          "en": "Negation 没 goes before 把, not right before the verb 告诉."
+        },
+        "note": {
+          "vi": "Lượng từ 件 (kiện) dùng cho 事 (sự việc, chuyện) và quần áo. 告诉 trong tiếng Trung chỉ là 'nói cho biết', còn trong tiếng Nhật 告訴 là 'khởi tố hình sự'.",
+          "ja": "超重要：「告诉」は中国語では日常会話の「伝える・教える」という意味です（日本語の法律用語「告訴する」ではありません）。",
+          "en": "件 (jiàn) is the measure word for 事 (matters/affairs) and clothing."
+        }
+      },
+      {
+        "zh": "别把手机忘在出租车上。",
+        "pinyin": "Bié bǎ shǒujī wàng zài chūzūchē shàng.",
+        "tokens": [
+          {
+            "hanzi": "别",
+            "pinyin": "bié",
+            "han_viet": "biệt",
+            "ja_kanji": "別",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "đừng",
+              "ja": "〜しないで",
+              "en": "don't"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "把",
+            "pinyin": "bǎ",
+            "han_viet": "bả",
+            "ja_kanji": "把",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "đem",
+              "ja": "〜を",
+              "en": "(BA)"
+            },
+            "block_role": "marker"
+          },
+          {
+            "hanzi": "手机",
+            "pinyin": "shǒujī",
+            "han_viet": "thủ cơ",
+            "ja_kanji": "手機",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "điện thoại di động",
+              "ja": "携帯電話・スマホ",
+              "en": "mobile phone"
+            },
+            "block_role": "object"
+          },
+          {
+            "hanzi": "忘",
+            "pinyin": "wàng",
+            "han_viet": "vọng",
+            "ja_kanji": "忘",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "quên",
+              "ja": "忘れる",
+              "en": "forget / leave behind"
+            },
+            "block_role": "action"
+          },
+          {
+            "hanzi": "在",
+            "pinyin": "zài",
+            "han_viet": "tại",
+            "ja_kanji": "在",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "ở",
+              "ja": "〜に",
+              "en": "in/on"
+            },
+            "block_role": "result"
+          },
+          {
+            "hanzi": "出租车",
+            "pinyin": "chūzūchē",
+            "han_viet": "xuất tô xa",
+            "ja_kanji": "出租車",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "xe taxi",
+              "ja": "タクシー",
+              "en": "taxi"
+            },
+            "block_role": "result"
+          },
+          {
+            "hanzi": "上",
+            "pinyin": "shàng",
+            "han_viet": "thượng",
+            "ja_kanji": "上",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "trên",
+              "ja": "車内（上）",
+              "en": "on/in"
+            },
+            "block_role": "result"
+          }
+        ],
+        "scenario": {
+          "vi": "nhắc nhở bạn bè khi xuống xe taxi",
+          "ja": "タクシーを降りるときの注意",
+          "en": "reminding a friend when getting out of a taxi"
+        },
+        "translations": {
+          "vi": "Đừng để quên điện thoại trên xe taxi nhé.",
+          "ja": "スマホをタクシーに忘れないでね。",
+          "en": "Don't leave your phone behind in the taxi."
+        },
+        "literal_en": "Don't BA mobile-phone forget at taxi on",
+        "tone_tip": {
+          "vi": "把 (bǎ) đứng trước 手 (shǒu - thanh 3) nên đọc thành bá shǒujī.",
+          "ja": "「把（bǎ）」＋「手（shǒu）」で「bá shǒujī」と変調します。",
+          "en": "把 (bǎ) + 手 (shǒu) -> bá shǒujī."
+        },
+        "word_order_diff": {
+          "vi": "",
+          "ja": "「タクシーに忘れる」の「タクシーに（在出租车上）」は動詞「忘」の後ろに置きます。",
+          "en": ""
+        },
+        "note": {
+          "vi": "Từ cầu khiến phủ định 别 (đừng) cũng luôn đứng trước chữ 把 (别把...).",
+          "ja": "禁止の「别（〜しないで）」も「把」の前に置きます。「忘在＋場所」で「〜に置き忘れる」という意味になります。",
+          "en": "忘在 + location means 'to accidentally leave [something] at [a place]'."
+        }
+      },
+      {
+        "zh": "你把护照拿出来了吗？",
+        "pinyin": "Nǐ bǎ hùzhào ná chūlái le ma?",
+        "tokens": [
+          {
+            "hanzi": "你",
+            "pinyin": "nǐ",
+            "han_viet": "nhĩ",
+            "ja_kanji": "你",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "bạn",
+              "ja": "あなた",
+              "en": "you"
+            },
+            "block_role": "subject"
+          },
+          {
+            "hanzi": "把",
+            "pinyin": "bǎ",
+            "han_viet": "bả",
+            "ja_kanji": "把",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "đem",
+              "ja": "〜を",
+              "en": "(BA)"
+            },
+            "block_role": "marker"
+          },
+          {
+            "hanzi": "护照",
+            "pinyin": "hùzhào",
+            "han_viet": "hộ chiếu",
+            "ja_kanji": "護照",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "hộ chiếu",
+              "ja": "パスポート",
+              "en": "passport"
+            },
+            "block_role": "object"
+          },
+          {
+            "hanzi": "拿",
+            "pinyin": "ná",
+            "han_viet": "nã",
+            "ja_kanji": "拿",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "cầm, lấy",
+              "ja": "持つ・取る",
+              "en": "take"
+            },
+            "block_role": "action"
+          },
+          {
+            "hanzi": "出来",
+            "pinyin": "chūlái",
+            "han_viet": "xuất lai",
+            "ja_kanji": "出来",
+            "false_friend_ja": {
+              "ja_meaning": "出来（できばえ・完了・できること）",
+              "zh_meaning": "ra đây (bổ ngữ xu hướng: từ trong ra ngoài hướng về người nói)"
+            },
+            "gloss": {
+              "vi": "ra (ngoài)",
+              "ja": "（中から外へ）出す",
+              "en": "out (toward speaker)"
+            },
+            "block_role": "result"
+          },
+          {
+            "hanzi": "了",
+            "pinyin": "le",
+            "han_viet": "—",
+            "ja_kanji": "了",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "rồi",
+              "ja": "〜た",
+              "en": "(completed)"
+            },
+            "block_role": "result"
+          },
+          {
+            "hanzi": "吗",
+            "pinyin": "ma",
+            "han_viet": "—",
+            "ja_kanji": "嗎",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "chưa / không",
+              "ja": "〜か",
+              "en": "(question)"
+            },
+            "block_role": "other"
+          }
+        ],
+        "scenario": {
+          "vi": "làm thủ tục ở sân bay",
+          "ja": "空港でのチェックイン前",
+          "en": "at the airport check-in counter"
+        },
+        "translations": {
+          "vi": "Bạn đã lấy hộ chiếu ra chưa?",
+          "ja": "パスポートを取り出しましたか？",
+          "en": "Have you taken out your passport?"
+        },
+        "literal_en": "You BA passport take come-out LE MA?",
+        "tone_tip": {
+          "vi": "你 (nǐ) và 把 (bǎ) là 2 thanh 3 liên tiếp, đọc thành ní bǎ.",
+          "ja": "「你（nǐ）」と「把（bǎ）」は第3声が連続するため、「ní bǎ」と発音します。",
+          "en": "你 (nǐ) + 把 (bǎ) -> ní bǎ."
+        },
+        "word_order_diff": {
+          "vi": "Tiếng Việt nói 'lấy hộ chiếu ra', tiếng Trung dùng 把 đưa '护照' lên trước '拿出来'.",
+          "ja": "",
+          "en": "Instead of splitting 'take...out' around the noun, 把 fronts 护照 so 拿出来 stays together."
+        },
+        "note": {
+          "vi": "出来 là bổ ngữ xu hướng kép (ra đây). Khi dùng 把, cả cụm 拿出来 đứng liền nhau rất gọn gàng.",
+          "ja": "注意：「出来（chūlái）」は中国語では「中から外へ出てくる／取り出す」という方向補語です（日本語の「出来る＝可能」とは異なります）。",
+          "en": "Using 把 keeps the verb and compound directional complement (拿出来) intact."
+        }
+      }
+    ],
+    "dialogue": {
+      "goal": {
+        "vi": "Tìm đồ vật trong nhà và nhắc cất gọn gàng",
+        "ja": "部屋で探し物をして片付けを頼む",
+        "en": "Looking for an item at home and tidying up"
+      },
+      "lines": [
+        {
+          "speaker": "A",
+          "zh": "你把我的雨伞放在哪儿了？",
+          "pinyin": "Nǐ bǎ wǒ de yǔsǎn fàng zài nǎr le?",
+          "tr": {
+            "vi": "Bạn để cái ô của tôi ở đâu rồi?",
+            "ja": "私の傘をどこに置きましたか？",
+            "en": "Where did you put my umbrella?"
+          }
+        },
+        {
+          "speaker": "B",
+          "zh": "我把雨伞放在门口了。你用完以后，别把它忘在外面。",
+          "pinyin": "Wǒ bǎ yǔsǎn fàng zài ménkǒu le. Nǐ yòng wán yǐhòu, bié bǎ tā wàng zài wàimiàn.",
+          "tr": {
+            "vi": "Tôi để ô ở ngay cửa ra vào rồi. Bạn dùng xong đừng để quên nó ở bên ngoài nhé.",
+            "ja": "傘は入り口に置きましたよ。使い終わったら、外に忘れないでね。",
+            "en": "I put the umbrella by the doorway. After you finish using it, don't leave it outside."
+          }
+        }
+      ]
+    },
+    "puzzles": [
+      {
+        "scrambled_tokens": [
+          "上",
+          "关",
+          "把",
+          "请",
+          "门"
+        ],
+        "correct_order": [
+          "请",
+          "把",
+          "门",
+          "关",
+          "上"
+        ]
+      },
+      {
+        "scrambled_tokens": [
+          "完",
+          "了",
+          "做",
+          "作业",
+          "把",
+          "我"
+        ],
+        "correct_order": [
+          "我",
+          "把",
+          "作业",
+          "做",
+          "完",
+          "了"
+        ]
+      },
+      {
+        "scrambled_tokens": [
+          "他",
+          "告诉",
+          "事",
+          "件",
+          "这",
+          "把",
+          "没",
+          "我"
+        ],
+        "correct_order": [
+          "我",
+          "没",
+          "把",
+          "这",
+          "件",
+          "事",
+          "告诉",
+          "他"
+        ]
+      }
+    ],
+    "fill_blank": [
+      {
+        "sentence": "我___作业做完了。",
+        "options": [
+          "把",
+          "被",
+          "给",
+          "对"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "vi",
+          "ja",
+          "en"
+        ],
+        "explanation": {
+          "vi": "Chủ ngữ 我 chủ động xử lý xong bài tập (作业) nên dùng giới từ 把.",
+          "ja": "主語「我」が「宿題（作业）」をやり終えたという能動の処置を表すため「把」を使います。",
+          "en": "Use 把 because the subject 我 actively completed the object 作业."
+        }
+      },
+      {
+        "sentence": "请把那本书___。",
+        "options": [
+          "放在桌子上",
+          "放",
+          "看",
+          "喜欢"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "vi",
+          "ja",
+          "en"
+        ],
+        "explanation": {
+          "vi": "Động từ trong câu chữ 把 không được đứng trơ trọi (loại 放, 看) và không dùng động từ tâm lý (loại 喜欢). Phải có bổ ngữ chỉ vị trí 放在桌子上.",
+          "ja": "「把」構文の動詞は単独では使えず（放・看は不可）、感情動詞（喜欢）も使えません。結果の場所まで示す「放在桌子上」が正解です。",
+          "en": "A 把 sentence requires a verb plus a result/location complement (放在桌子上), never a bare verb (放/看) or stative verb (喜欢)."
+        }
+      },
+      {
+        "sentence": "他___咖啡喝完。",
+        "options": [
+          "没把",
+          "把没",
+          "不把",
+          "把不"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "vi",
+          "ja"
+        ],
+        "explanation": {
+          "vi": "Phó từ phủ định 没 phải đứng TRƯỚC chữ 把 (没把 = đã không đem...).",
+          "ja": "否定の「没」は必ず「把」の前に置きます（「没把…」）。",
+          "en": "Negation for an uncompleted action (没) must be placed BEFORE 把 (没把)."
+        }
+      }
+    ],
+    "error_correction": [
+      {
+        "wrong": "我把房间打扫。",
+        "correct": "我把房间打扫干净了。",
+        "hint": {
+          "vi": "Động từ 打扫 (dọn dẹp) đang đứng trơ trọi cuối câu, hãy thêm kết quả (như 干净了 = sạch sẽ rồi) vào sau nó.",
+          "ja": "動詞「打扫（掃除する）」の後ろに、掃除した結果どうなったか（干净了＝きれいになった、など）を補いましょう。",
+          "en": "Don't leave the verb 打扫 bare at the end—add a result complement like 干净了 (clean)."
+        }
+      },
+      {
+        "wrong": "他把书在桌子上放了。",
+        "correct": "他把书放在桌子上了。",
+        "hint": {
+          "vi": "Cụm chỉ vị trí đích đến 在桌子上 phải đứng SAU động từ 放.",
+          "ja": "日本語の「机の上に置いた」につられています。到達場所の「在桌子上」は動詞「放」の後ろに置きましょう。",
+          "en": "Place the destination phrase 在桌子上 immediately AFTER the verb 放."
+        }
+      }
+    ],
+    "quiz": [
+      {
+        "question": {
+          "vi": "Câu nào sau đây dùng ĐÚNG cấu trúc chữ 把?",
+          "ja": "次のうち、「把」構文として正しい文はどれですか？",
+          "en": "Which sentence uses the 把 construction correctly?"
+        },
+        "options": [
+          "我把那杯茶喝完了。",
+          "我把那个人认识。",
+          "我把苹果吃。",
+          "我把衣服没洗好。"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "vi",
+          "ja",
+          "en"
+        ],
+        "explanation": {
+          "vi": "我把那杯茶喝完了 hội tụ đủ: tân ngữ xác định (那杯茶), động từ tác động (喝) và kết quả (完了). 认识 là động từ nhận thức không dùng 把; 吃 đứng trơ trọi là sai; 没 phải đứng trước 把.",
+          "ja": "「我把那杯茶喝完了。」が正解です。「认识（知っている）」は処置動詞ではないため不可、「吃」単独は結果成分がなく不可、「没」は「把」の前に置く必要があります。",
+          "en": "我把那杯茶喝完了 has a definite object, an action verb, and a result complement (完了)."
+        }
+      },
+      {
+        "question": {
+          "vi": "Khi muốn nói 'Làm ơn đặt chiếc cặp sách lên ghế', bạn chọn câu nào?",
+          "ja": "「かばんを椅子の上に置いてください」を正しく表す中国語はどれですか？",
+          "en": "How do you say 'Please put the bag on the chair'?"
+        },
+        "options": [
+          "请把书包放在椅子上。",
+          "请放书包在椅子上。",
+          "请把书包在椅子上放。",
+          "请书包把放在椅子上。"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "vi",
+          "ja",
+          "en"
+        ],
+        "explanation": {
+          "vi": "Với động từ 放 kèm vị trí 在..., bắt buộc dùng mẫu: 把 + Vật (书包) + 放在 + Vị trí (椅子上). Câu 2 là bẫy dịch từng chữ của người Việt và Anh; câu 3 là bẫy SOV của người Nhật.",
+          "ja": "移動先を表す「在椅子上」は動詞「放」の後ろに置くため、「请把书包放在椅子上。」が正解です。「在椅子上放」は日本語語順の誤りです。",
+          "en": "Use '请 + 把 + Object + 放在 + Location': 请把书包放在椅子上."
+        }
+      },
+      {
+        "question": {
+          "vi": "Câu nào sau đây KHÔNG THỂ chuyển sang câu chữ 把?",
+          "ja": "次のうち、「把」構文に書き換えることができない文はどれですか？",
+          "en": "Which of the following ideas CANNOT be expressed using a 把 sentence?"
+        },
+        "options": [
+          "我非常喜欢这首歌。",
+          "他喝完了那瓶牛奶。",
+          "妹妹打碎了杯子。",
+          "我写好了那封信。"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "ja",
+          "en"
+        ],
+        "explanation": {
+          "vi": "喜欢 (thích) là động từ chỉ cảm xúc tâm lý, không làm biến đổi hay di chuyển bài hát nên không thể dùng 把.",
+          "ja": "「喜欢（好きだ）」は感情を表す動詞であり、対象に働きかけて変化させる動作ではないため「把」は使えません。",
+          "en": "喜欢 (like) is a mental/emotional verb that does not alter or dispose of the object, so it cannot take 把."
+        }
+      }
+    ],
+    "summary_card": {
+      "one_liner": {
+        "vi": "S + 把 + Tân ngữ xác định + Động từ + Kết quả: kéo vật lên trước động từ để nhấn mạnh vật đó bị xử lý ra sao.",
+        "ja": "「主語＋把＋特定目的語＋動詞＋結果」：特定の物に働きかけてどう変化・移動させたかを表す。",
+        "en": "Subject + 把 + Definite Object + Verb + Result fronts a known object to show how the action changes or moves it."
+      },
+      "remember": [
+        {
+          "vi": "Động từ trong câu chữ 把 không bao giờ đứng trơ trọi một mình—luôn phải có đuôi kết quả (完, 好, 上, 在..., 了).",
+          "ja": "動詞の後ろには必ず結果補語・方向補語・場所（在…）・「了」などの成分が必要。",
+          "en": "Never leave the verb bare—always attach a result, direction, location, or 了 after the verb."
+        },
+        {
+          "vi": "Phủ định (没, 不, 别) và động từ năng nguyện (想, 要, 能) luôn đứng TRƯỚC chữ 把.",
+          "ja": "否定語（没・別）や助動詞（想・要）はすべて「把」の前に置く。",
+          "en": "Put negation (没, 别) and modal verbs (想, 要) BEFORE 把."
+        },
+        {
+          "vi": "Không dùng 把 với động từ cảm xúc, nhận thức, tồn tại (喜欢, 知道, 看见, 有).",
+          "ja": "感情や知覚の動詞（喜欢・知道・看见・有など）には「把」を使わない。",
+          "en": "Do not use 把 with mental, emotional, or perception verbs like 喜欢, 知道, or 看见."
+        }
+      ]
+    },
+    "needs_review": false,
+    "review_note": ""
+  },
+  {
+    "id": "hsk4_lian_dou_ye_emphasis",
+    "level": "HSK4",
+    "level_num": 4,
+    "category": "sentence_pattern",
+    "difficulty": 3,
+    "frequency": 5,
+    "register": "neutral",
+    "keywords": [
+      "连",
+      "都",
+      "也",
+      "lián",
+      "dōu",
+      "ngay cả... cũng...",
+      "〜でさえも",
+      "even"
+    ],
+    "formula": "连 + A + 都 / 也 + (不/没) + V/Adj",
+    "formula_plain": {
+      "vi": "Ngay cả (连) + trường hợp cực đoan A + cũng/đều (都/也) + Động từ/Tính từ",
+      "ja": "连（〜でさえ） ＋ 極端な例A ＋ 都／也（〜も） ＋ 動詞／形容詞",
+      "en": "连 (even) + Extreme Example A + 都/也 + Verb/Adjective"
+    },
+    "structure_blocks": [
+      {
+        "label": {
+          "vi": "Giới từ nhấn mạnh 连 (ngay cả)",
+          "ja": "強調マーカー 连（〜でさえ）",
+          "en": "Marker 连 (even)"
+        },
+        "role": "marker",
+        "color": "#F97316"
+      },
+      {
+        "label": {
+          "vi": "Thành phần được nhấn mạnh (A)",
+          "ja": "強調される極端な例 (A)",
+          "en": "Focused extreme item (A)"
+        },
+        "role": "focus",
+        "color": "#10B981"
+      },
+      {
+        "label": {
+          "vi": "Phó từ hô ứng 都 / 也 (cũng)",
+          "ja": "呼応副詞 都／也（〜も）",
+          "en": "Correlative 都 / 也"
+        },
+        "role": "correlative",
+        "color": "#3B82F6"
+      },
+      {
+        "label": {
+          "vi": "Vị ngữ (Động từ / Tính từ)",
+          "ja": "述語（動詞／形容詞）",
+          "en": "Predicate (V / Adj)"
+        },
+        "role": "predicate",
+        "color": "#EF4444"
+      }
+    ],
+    "related_ids": [
+      "hsk3_interrogative_dou_ye_universal",
+      "hsk5_he_kuang_let_alone"
+    ],
+    "confusable_with": [
+      {
+        "id": "hsk5_he_kuang_let_alone",
+        "diff": {
+          "vi": "连…都/也… nêu một ví dụ cực đoan đơn lẻ ('Ngay cả A cũng...'), còn 连 A 都…，何况 B dùng để suy ra vế thứ hai mạnh hơn ('Ngay cả A còn thế, huống hồ là B').",
+          "ja": "「连…都／也…」は単一文で「Aでさえ〜だ」と強調し、「连A都…，何况B」はさらに「ましてやBはなおさらだ」と後ろに続けます。",
+          "en": "连...都/也... states a single extreme case ('Even A...'), whereas 何况 extends it into a two-clause comparison ('Even A..., let alone B')."
+        }
+      }
+    ],
+    "localizations": {
+      "vi": {
+        "title": "Cấu trúc nhấn mạnh 连…都/也… (Ngay cả... cũng...)",
+        "quick_rule_3s": "Dùng cặp khung 连 + A + 都/也 + V để nêu một ví dụ cực đoan ('ngay cả A cũng...'), qua đó ngầm khẳng định những trường hợp khác thì càng đương nhiên.",
+        "contrastive_note": "Cấu trúc này rất khớp với 'Ngay cả A cũng...' trong tiếng Việt (连 = ngay cả/đến cả, 都/也 = đều/cũng). Tuy nhiên, người Việt có 2 cái bẫy lớn: (1) khi nhấn mạnh tân ngữ, người Việt vẫn hay để tân ngữ ở sau động từ hoặc quên đưa cả cụm '连 + Tân ngữ' lên trước 都/也; (2) người Việt hay quên mất chữ 都 hoặc 也 ở phía sau vì trong khẩu ngữ tiếng Việt đôi khi chỉ nói 'Đến anh ấy không biết' (thiếu chữ 'cũng'). Trong tiếng Trung, đã có 连 ở trước thì BẮT BUỘC phải có 都 hoặc 也 ở sau.",
+        "analogy": "Giống như khi muốn chứng minh một bài toán cực dễ, bạn lấy ví dụ: 'Ngay cả đứa bé 5 tuổi (连 A) cũng giải được (都 V)'—không cần nói thêm ai cũng hiểu người lớn chắc chắn giải được.",
+        "mnemonic": "Đầu có 连 (ngay cả), giữa kẹp A, sau bắt buộc có 都 hoặc 也!",
+        "how_to_use": [
+          {
+            "step": 1,
+            "text": "Bước 1: Chọn đối tượng/sự việc cực đoan nhất (A) mà bạn muốn nhấn mạnh và đặt chữ 连 ngay trước nó."
+          },
+          {
+            "step": 2,
+            "text": "Bước 2: Đưa cả cụm '连 + A' lên đứng TRƯỚC động từ."
+          },
+          {
+            "step": 3,
+            "text": "Bước 3: Đặt 都 (thường dùng cho cả câu khẳng định và phủ định) hoặc 也 (thường dùng trong câu phủ định) ngay trước động từ (và trước cả 不/没)."
+          }
+        ],
+        "self_check": [
+          "Đã có chữ 连 ở đầu thì phía sau đã có chữ 都 hoặc 也 đi kèm chưa?",
+          "Nếu A là tân ngữ (ví dụ: một chữ Hán, một ngụm nước), bạn đã kéo cả cụm '连 + Tân ngữ' lên đứng TRƯỚC 都/也 + Động từ chưa?",
+          "Nếu câu phủ định, bạn đã đặt 不 / 没 ở SAU chữ 都/也 (都不知道, 也不能) chưa?"
+        ],
+        "tips": [
+          "Khẳng định thường dùng 连…都…; phủ định dùng được cả 连…都… và 连…也… (như 连一口水也没喝 = ngay cả một ngụm nước cũng chưa uống).",
+          "Thứ tự cố định khi có phủ định: 连 + A + 都/也 + 不/没 + Động từ (chữ 都/也 luôn đứng TRƯỚC 不/没)."
+        ],
+        "when_to_use": [
+          "Khi muốn nhấn mạnh một trường hợp bất ngờ hoặc cực đoan nhất (dễ nhất mà không làm được, hoặc khó nhất mà cũng làm được).",
+          "Khi nhấn mạnh con số tối thiểu (连一分钱也没有 = ngay cả một xu cũng không có)."
+        ],
+        "when_not_to_use": [
+          "Khi chỉ liệt kê bổ sung bình thường ('A cũng đi, B cũng đi') mà không mang sắc thái cực đoan hay bất ngờ.",
+          "Không để tân ngữ đã có 连 ở phía sau động từ."
+        ],
+        "fatal_mistake": {
+          "wrong": "他不吃连一口饭。",
+          "correct": "他连一口饭也不吃。",
+          "explanation": "Cụm '连 + Tân ngữ' (连一口饭) bắt buộc phải được đảo lên đứng TRƯỚC '都/也 + Động từ', không bao giờ đứng sau động từ.",
+          "why_learners_make_it": "Người Việt đôi khi nói xuôi theo trật tự Động từ + Tân ngữ: 'Anh ấy không ăn (不吃) đến cả một miếng cơm (连一口饭)'."
+        },
+        "extra_mistakes": [
+          {
+            "wrong": "连小孩子知道这件事。",
+            "correct": "连小孩子都知道这件事。",
+            "explanation": "Trong tiếng Trung, 连 không đứng một mình mà bắt buộc phải có 都 hoặc 也 hô ứng ở phía sau."
+          },
+          {
+            "wrong": "他连我的名字不都记得。",
+            "correct": "他连我的名字都不记得。",
+            "explanation": "Trong cấu trúc 连…都…, chữ 都 phải đứng TRƯỚC chữ 不 (都不记得 = đều/cũng không nhớ), không đặt 不 trước 都."
+          }
+        ]
+      },
+      "ja": {
+        "title": "極端な例を挙げる「连…都／也…」（〜でさえも）",
+        "quick_rule_3s": "「连＋A＋都／也＋動詞」のペアで「Aでさえも〜だ（ましてや他は当然だ）」と極端な例を強調します。",
+        "contrastive_note": "日本語では「子供でさえ知っている」「水1杯さえ飲まない」のように、名詞の後ろに助詞「〜でさえ（も）」「〜すら」を1つ付けるだけで成立します。一方、中国語では強調したい要素Aの「前」に「连」を置き、さらに「後ろ」に必ず「都」または「也」を置いて前後から挟み込む（サンドイッチ構造にする）必要があります。また、目的語を強調する場合も、「连＋目的語」を動詞の前（都／也の前）へ移動させます。",
+        "analogy": "「连」と「都／也」は強調したい言葉を左右から挟むカッコ『【连】 A 【都】』のようなペアパーツです。片方だけでは機能しません。",
+        "mnemonic": "前から「连」、後ろから「都／也」でサンドイッチ！否定の「不・没」は「都／也」の後ろ！",
+        "how_to_use": [
+          {
+            "step": 1,
+            "text": "ステップ1：強調したい極端な例（子供、1元、一番簡単な問題など）の前に「连」をつけます。"
+          },
+          {
+            "step": 2,
+            "text": "ステップ2：「连＋A」のカタマリを述語（動詞・形容詞）の前に置きます。"
+          },
+          {
+            "step": 3,
+            "text": "ステップ3：その直後に必ず「都」または「也」を置き、続けて（否定語「不／没」＋）動詞・形容詞を置きます。"
+          }
+        ],
+        "self_check": [
+          "「连」だけ書いて、後ろの「都」または「也」を書き忘れていませんか？",
+          "目的語を強調するとき、動詞の後ろではなく「连＋目的語＋都／也＋動詞」と前に出していますか？",
+          "否定のとき、「不／没」を「都／也」の後ろ（例：都不知道／也没吃）に置いていますか？"
+        ],
+        "tips": [
+          "肯定文では主に「连…都…」を使い、否定文では「连…都…」「连…也…」のどちらもよく使われます。",
+          "「1つも〜ない」は「连＋一＋量詞＋名詞＋都／也＋不／没＋動詞」（例：连一个字也不认识＝1文字さえも読めない）で表します。"
+        ],
+        "when_to_use": [
+          "最も極端な例を出して「〜でさえも…だ（だから他は言うまでもない）」と強調したいとき。",
+          "最小の数量（「一分钱（1銭）」「一口水（一口の水）」など）を挙げて完全否定を強調するとき。"
+        ],
+        "when_not_to_use": [
+          "極端な例ではなく、単に「AもBも」と並べるだけのとき。",
+          "「都／也」を伴わずに「连」単独で使うこと（日常の現代中国語では必ずセットで使います）。"
+        ],
+        "fatal_mistake": {
+          "wrong": "连小学生知道这个问题。",
+          "correct": "连小学生都知道这个问题。",
+          "explanation": "「连」を使ったら、述語の前に必ず「都」または「也」を呼応させなければなりません。",
+          "why_learners_make_it": "日本語の「小学生でさえ（连小学生）この問題を知っている（知道这个问题）」では「でさえ」が1箇所しか現れないため、後ろの「都」を落としてしまいます。"
+        },
+        "extra_mistakes": [
+          {
+            "wrong": "我连汉字一个也不认识。",
+            "correct": "我连一个汉字也不认识。",
+            "explanation": "日本語では「漢字を1つも知らない」と言いますが、中国語では「一＋量詞＋名詞（一个汉字）」の語順で「连」の後ろに置きます。"
+          },
+          {
+            "wrong": "他连早饭没都吃。",
+            "correct": "他连早饭都没吃。",
+            "explanation": "否定の「没／不」は必ず「都／也」の後ろ（「都没吃」「也不去」）に置きます。"
+          }
+        ]
+      },
+      "en": {
+        "title": "Emphasizing Extremes with 连…都/也… (even...)",
+        "quick_rule_3s": "Frame an extreme example between 连 and 都/也 ('连 + A + 都/也 + Verb') to mean 'even A [does/is]...' and place any emphasized object before the verb.",
+        "contrastive_note": "English uses the single word 'even' before the focused item ('Even a child knows this', 'He didn't even drink a drop of water'). Chinese requires a two-part bracket: 连 goes right before the focused item A, and 都 (or 也) MUST appear right after A before the verb. Additionally, if A is the object of the verb, the entire '连 + Object' phrase must be fronted before '都/也 + Verb'.",
+        "analogy": "Think of 连 and 都/也 as a pair of spotlight brackets — [连 A 都] — that lock onto the most extreme example and pull it to the front of the action.",
+        "mnemonic": "Pair 连 in front with 都/也 behind; pull objects forward every time!",
+        "how_to_use": [
+          {
+            "step": 1,
+            "text": "Step 1: Put 连 directly in front of the extreme noun, person, or minimum quantity (A) you want to highlight."
+          },
+          {
+            "step": 2,
+            "text": "Step 2: Ensure the '连 + A' phrase sits BEFORE the verb (even if A is the object)."
+          },
+          {
+            "step": 3,
+            "text": "Step 3: Follow A immediately with 都 or 也, then (不/没 +) the Verb."
+          }
+        ],
+        "self_check": [
+          "Did you include BOTH 连 before A and 都/也 after A?",
+          "If emphasizing an object, did you move '连 + Object' in front of '都/也 + Verb'?",
+          "In negative sentences, did you place 不 or 没 AFTER 都/也 (e.g., 都不知道, 也没喝)?"
+        ],
+        "tips": [
+          "Affirmative sentences strongly prefer 连…都…, while negative sentences freely use either 连…都… or 连…也….",
+          "Watch the negation order: '都 + 不 + V' inside a 连 frame means 'even A does NOT V' (not partial negation)."
+        ],
+        "when_to_use": [
+          "Highlighting an extreme or surprising example to imply that everything else is even more obvious.",
+          "Emphasizing 'not even one [bit/cent/word]' with '连 + 一 + Measure Word + Noun + 都/也 + 不/没 + V'."
+        ],
+        "when_not_to_use": [
+          "When 'even' modifies a comparative adjective ('even better' is 更好, never 连好).",
+          "Without the closing particle 都 or 也."
+        ],
+        "fatal_mistake": {
+          "wrong": "他没喝连一口水。",
+          "correct": "他连一口水也没喝。",
+          "explanation": "When emphasizing an object with 连, the phrase '连 + Object' (连一口水) must be fronted before '也/都 + Verb'.",
+          "why_learners_make_it": "English speakers follow the English word order 'He didn't drink (他没喝) even a mouthful of water (连一口水)'."
+        },
+        "extra_mistakes": [
+          {
+            "wrong": "连他知道这件事。",
+            "correct": "连他都知道这件事。",
+            "explanation": "连 cannot be used alone like English 'even'; it must be paired with 都 or 也 before the verb."
+          },
+          {
+            "wrong": "今天比昨天连冷。",
+            "correct": "今天比昨天更冷。",
+            "explanation": "English 'even colder' uses the degree adverb 更 (gèng), whereas 连...都... only frames nouns, pronouns, or verb phrases."
+          }
+        ]
+      }
+    },
+    "fill_template": {
+      "pattern": "___ 连 ___ 都/也 ___。",
+      "slots": [
+        {
+          "vi": "Chủ ngữ (có thể ẩn nếu nhấn mạnh chủ ngữ)",
+          "ja": "主語（主語自身を強調する場合は省略）",
+          "en": "Subject (optional if focusing on subject)"
+        },
+        {
+          "vi": "Ví dụ cực đoan A (một chữ, trẻ con, chủ nhật)",
+          "ja": "極端な例A（1文字、子供、日曜日）",
+          "en": "Extreme item A (one word, a child, Sunday)"
+        },
+        {
+          "vi": "(不/没 +) Động từ / Tính từ",
+          "ja": "（不／没＋）動詞／形容詞",
+          "en": "(不/没 +) Verb / Adjective"
+        }
+      ],
+      "example_filled": "他连一个汉字也不认识。"
+    },
+    "collocations": [
+      {
+        "zh": "连…都知道",
+        "pinyin": "lián … dōu zhīdào",
+        "meaning": {
+          "vi": "ngay cả... cũng biết",
+          "ja": "〜でさえも知っている",
+          "en": "even ... knows"
+        }
+      },
+      {
+        "zh": "连一句话也不说",
+        "pinyin": "lián yí jù huà yě bù shuō",
+        "meaning": {
+          "vi": "đến một câu cũng không nói",
+          "ja": "一言も話さない",
+          "en": "doesn't even say a single word"
+        }
+      },
+      {
+        "zh": "连饭都没吃",
+        "pinyin": "lián fàn dōu méi chī",
+        "meaning": {
+          "vi": "đến cơm cũng chưa ăn",
+          "ja": "ご飯さえも食べていない",
+          "en": "hasn't even eaten a meal"
+        }
+      },
+      {
+        "zh": "连周末也工作",
+        "pinyin": "lián zhōumò yě gōngzuò",
+        "meaning": {
+          "vi": "ngay cả cuối tuần cũng làm việc",
+          "ja": "週末でさえも働く",
+          "en": "works even on weekends"
+        }
+      }
+    ],
+    "examples": [
+      {
+        "zh": "这个问题连孩子都知道。",
+        "pinyin": "Zhège wèntí lián háizi dōu zhīdào.",
+        "tokens": [
+          {
+            "hanzi": "这个",
+            "pinyin": "zhège",
+            "han_viet": "giá cá",
+            "ja_kanji": "這個",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "cái này",
+              "ja": "この",
+              "en": "this"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "问题",
+            "pinyin": "wèntí",
+            "han_viet": "vấn đề",
+            "ja_kanji": "問題",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "câu hỏi, vấn đề",
+              "ja": "問題・質問",
+              "en": "question"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "连",
+            "pinyin": "lián",
+            "han_viet": "liên",
+            "ja_kanji": "連",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "ngay cả",
+              "ja": "〜でさえ",
+              "en": "even"
+            },
+            "block_role": "marker"
+          },
+          {
+            "hanzi": "孩子",
+            "pinyin": "háizi",
+            "han_viet": "hài tử",
+            "ja_kanji": "孩子",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "trẻ con",
+              "ja": "子供",
+              "en": "child"
+            },
+            "block_role": "focus"
+          },
+          {
+            "hanzi": "都",
+            "pinyin": "dōu",
+            "han_viet": "đô",
+            "ja_kanji": "都",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "cũng, đều",
+              "ja": "〜も",
+              "en": "all / also"
+            },
+            "block_role": "correlative"
+          },
+          {
+            "hanzi": "知道",
+            "pinyin": "zhīdào",
+            "han_viet": "tri đạo",
+            "ja_kanji": "知道",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "biết",
+              "ja": "知っている",
+              "en": "know"
+            },
+            "block_role": "predicate"
+          }
+        ],
+        "scenario": {
+          "vi": "nhấn mạnh một câu hỏi quá dễ",
+          "ja": "問題がとても簡単だと強調する",
+          "en": "emphasizing how easy a question is"
+        },
+        "translations": {
+          "vi": "Câu hỏi này ngay cả trẻ con cũng biết.",
+          "ja": "この質問は子供でさえ知っています。",
+          "en": "Even a child knows the answer to this question."
+        },
+        "literal_en": "This-CL question even child DOU know",
+        "tone_tip": {
+          "vi": "连 (lián) và 孩 (hái) đều là thanh 2 đi lên.",
+          "ja": "「连（lián）」と「孩（hái）」はどちらも第2声で下から上へ上げます。",
+          "en": "Both 连 (lián) and 孩 (hái) are rising 2nd tones."
+        },
+        "word_order_diff": {
+          "vi": "这个问题 (Câu hỏi này) được đưa lên đầu làm chủ đề (Topic) của câu.",
+          "ja": "",
+          "en": "这个问题 (this question) is placed at the start as the topic."
+        },
+        "note": {
+          "vi": "Nhấn mạnh chủ ngữ 孩子 bằng cặp 连…都….",
+          "ja": "主語「孩子」を「连…都…」で挟んで強調しています。",
+          "en": "连 and 都 bracket the subject 孩子."
+        }
+      },
+      {
+        "zh": "他太忙了，连早饭也没吃。",
+        "pinyin": "Tā tài máng le, lián zǎofàn yě méi chī.",
+        "tokens": [
+          {
+            "hanzi": "他",
+            "pinyin": "tā",
+            "han_viet": "tha",
+            "ja_kanji": "他",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "anh ấy",
+              "ja": "彼",
+              "en": "he"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "太",
+            "pinyin": "tài",
+            "han_viet": "thái",
+            "ja_kanji": "太",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "quá",
+              "ja": "とても〜すぎる",
+              "en": "too"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "忙",
+            "pinyin": "máng",
+            "han_viet": "mang",
+            "ja_kanji": "忙",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "bận",
+              "ja": "忙しい",
+              "en": "busy"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "了",
+            "pinyin": "le",
+            "han_viet": "—",
+            "ja_kanji": "了",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "rồi",
+              "ja": "〜だ",
+              "en": "(exclamation)"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "连",
+            "pinyin": "lián",
+            "han_viet": "liên",
+            "ja_kanji": "連",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "ngay cả",
+              "ja": "〜さえ",
+              "en": "even"
+            },
+            "block_role": "marker"
+          },
+          {
+            "hanzi": "早饭",
+            "pinyin": "zǎofàn",
+            "han_viet": "tảo phạn",
+            "ja_kanji": "早飯",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "bữa sáng",
+              "ja": "朝ご飯",
+              "en": "breakfast"
+            },
+            "block_role": "focus"
+          },
+          {
+            "hanzi": "也",
+            "pinyin": "yě",
+            "han_viet": "dã",
+            "ja_kanji": "也",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "cũng",
+              "ja": "〜も",
+              "en": "also / even"
+            },
+            "block_role": "correlative"
+          },
+          {
+            "hanzi": "没",
+            "pinyin": "méi",
+            "han_viet": "một",
+            "ja_kanji": "没",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "chưa",
+              "ja": "〜なかった",
+              "en": "did not"
+            },
+            "block_role": "predicate"
+          },
+          {
+            "hanzi": "吃",
+            "pinyin": "chī",
+            "han_viet": "ngật",
+            "ja_kanji": "吃",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "ăn",
+              "ja": "食べる",
+              "en": "eat"
+            },
+            "block_role": "predicate"
+          }
+        ],
+        "scenario": {
+          "vi": "kể về lịch làm việc bận rộn",
+          "ja": "忙しさを説明する",
+          "en": "describing a busy morning"
+        },
+        "translations": {
+          "vi": "Anh ấy bận quá, đến bữa sáng cũng chưa ăn.",
+          "ja": "彼は忙しすぎて、朝ご飯さえも食べませんでした。",
+          "en": "He was so busy that he didn't even eat breakfast."
+        },
+        "literal_en": "He too busy LE, even breakfast YE did-not eat",
+        "tone_tip": {
+          "vi": "",
+          "ja": "",
+          "en": ""
+        },
+        "word_order_diff": {
+          "vi": "",
+          "ja": "",
+          "en": "The object 早饭 (breakfast) is moved before 也没吃 ('didn't even eat')."
+        },
+        "note": {
+          "vi": "Tân ngữ 早饭 được đảo lên trước 也没吃.",
+          "ja": "目的語「早饭」が動詞「吃」の前に出ています。",
+          "en": "In negative sentences, 也 and 都 are interchangeable here."
+        }
+      },
+      {
+        "zh": "我连一个汉字也不会写。",
+        "pinyin": "Wǒ lián yí ge Hànzì yě bú huì xiě.",
+        "tokens": [
+          {
+            "hanzi": "我",
+            "pinyin": "wǒ",
+            "han_viet": "ngã",
+            "ja_kanji": "我",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "tôi",
+              "ja": "私",
+              "en": "I"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "连",
+            "pinyin": "lián",
+            "han_viet": "liên",
+            "ja_kanji": "連",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "ngay cả",
+              "ja": "〜さえ",
+              "en": "even"
+            },
+            "block_role": "marker"
+          },
+          {
+            "hanzi": "一个",
+            "pinyin": "yí ge",
+            "han_viet": "nhất cá",
+            "ja_kanji": "一個",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "một (cái)",
+              "ja": "1つの",
+              "en": "a single / one"
+            },
+            "block_role": "focus"
+          },
+          {
+            "hanzi": "汉字",
+            "pinyin": "Hànzì",
+            "han_viet": "Hán tự",
+            "ja_kanji": "漢字",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "chữ Hán",
+              "ja": "漢字",
+              "en": "Chinese character"
+            },
+            "block_role": "focus"
+          },
+          {
+            "hanzi": "也",
+            "pinyin": "yě",
+            "han_viet": "dã",
+            "ja_kanji": "也",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "cũng",
+              "ja": "〜も",
+              "en": "even"
+            },
+            "block_role": "correlative"
+          },
+          {
+            "hanzi": "不",
+            "pinyin": "bú",
+            "han_viet": "bất",
+            "ja_kanji": "不",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "không",
+              "ja": "〜ない",
+              "en": "not"
+            },
+            "block_role": "predicate"
+          },
+          {
+            "hanzi": "会",
+            "pinyin": "huì",
+            "han_viet": "hội",
+            "ja_kanji": "会",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "biết (kỹ năng)",
+              "ja": "〜できる",
+              "en": "know how to"
+            },
+            "block_role": "predicate"
+          },
+          {
+            "hanzi": "写",
+            "pinyin": "xiě",
+            "han_viet": "tả",
+            "ja_kanji": "写",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "viết",
+              "ja": "書く",
+              "en": "write"
+            },
+            "block_role": "predicate"
+          }
+        ],
+        "scenario": {
+          "vi": "khi mới bắt đầu học tiếng Trung",
+          "ja": "中国語を学び始めた頃の思い出",
+          "en": "talking about being a complete beginner"
+        },
+        "translations": {
+          "vi": "Tôi ngay cả một chữ Hán cũng không biết viết.",
+          "ja": "私は漢字を1つさえも書けません。",
+          "en": "I don't even know how to write a single Chinese character."
+        },
+        "literal_en": "I even one-CL Chinese-character YE not can write",
+        "tone_tip": {
+          "vi": "一 trong 一个 đọc thành thanh 2 (yí ge); 不 trước 会 (thanh 4) đọc thành thanh 2 (bú huì).",
+          "ja": "「一个」は「yí ge」、「不会」は「bú huì」とどちらも第2声に変調します。",
+          "en": "Tone sandhi: yí ge and bú huì."
+        },
+        "word_order_diff": {
+          "vi": "",
+          "ja": "日本語の「漢字を1つも」ではなく「一个汉字（1つの漢字）」の語順にします。",
+          "en": "'Even a single character' (连一个汉字) precedes the verb phrase 也不会写."
+        },
+        "note": {
+          "vi": "Cấu trúc '连 + 一 + Lượng từ + Danh từ + 也/都 + 不/没 + V' dùng để nhấn mạnh 'đến một... cũng không'.",
+          "ja": "「连＋一＋量詞＋名詞＋也／都＋不／没」で「1つも〜ない」を強調する定番パターンです。",
+          "en": "Use '连 + 一 + Measure Word + Noun + 也/都 + 不/没' for 'not even a single...'."
+        }
+      },
+      {
+        "zh": "他连周末都在公司加班。",
+        "pinyin": "Tā lián zhōumò dōu zài gōngsī jiābān.",
+        "tokens": [
+          {
+            "hanzi": "他",
+            "pinyin": "tā",
+            "han_viet": "tha",
+            "ja_kanji": "他",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "anh ấy",
+              "ja": "彼",
+              "en": "he"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "连",
+            "pinyin": "lián",
+            "han_viet": "liên",
+            "ja_kanji": "連",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "ngay cả",
+              "ja": "〜でさえ",
+              "en": "even"
+            },
+            "block_role": "marker"
+          },
+          {
+            "hanzi": "周末",
+            "pinyin": "zhōumò",
+            "han_viet": "chu mạt",
+            "ja_kanji": "週末",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "cuối tuần",
+              "ja": "週末",
+              "en": "weekend"
+            },
+            "block_role": "focus"
+          },
+          {
+            "hanzi": "都",
+            "pinyin": "dōu",
+            "han_viet": "đô",
+            "ja_kanji": "都",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "cũng, đều",
+              "ja": "〜も",
+              "en": "even"
+            },
+            "block_role": "correlative"
+          },
+          {
+            "hanzi": "在",
+            "pinyin": "zài",
+            "han_viet": "tại",
+            "ja_kanji": "在",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "ở",
+              "ja": "〜で",
+              "en": "at"
+            },
+            "block_role": "predicate"
+          },
+          {
+            "hanzi": "公司",
+            "pinyin": "gōngsī",
+            "han_viet": "công ty",
+            "ja_kanji": "公司",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "công ty",
+              "ja": "会社",
+              "en": "company / office"
+            },
+            "block_role": "predicate"
+          },
+          {
+            "hanzi": "加班",
+            "pinyin": "jiābān",
+            "han_viet": "gia ban",
+            "ja_kanji": "加班",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "tăng ca, làm thêm giờ",
+              "ja": "残業する",
+              "en": "work overtime"
+            },
+            "block_role": "predicate"
+          }
+        ],
+        "scenario": {
+          "vi": "nói về đồng nghiệp làm việc vất vả",
+          "ja": "同僚の働きぶりについて話す",
+          "en": "talking about a hardworking colleague"
+        },
+        "translations": {
+          "vi": "Anh ấy ngay cả cuối tuần cũng tăng ca ở công ty.",
+          "ja": "彼は週末でさえも会社で残業しています。",
+          "en": "He works overtime at the office even on weekends."
+        },
+        "literal_en": "He even weekend DOU at company work-overtime",
+        "tone_tip": {
+          "vi": "",
+          "ja": "",
+          "en": ""
+        },
+        "word_order_diff": {
+          "vi": "Cụm chỉ địa điểm 在公司 đứng trước động từ 加班.",
+          "ja": "",
+          "en": "'Even on weekends' (连周末都) comes before location (在公司) and verb (加班)."
+        },
+        "note": {
+          "vi": "Có thể đặt trạng ngữ chỉ thời gian (周末) vào giữa 连…都… để nhấn mạnh thời điểm.",
+          "ja": "時間を表す語（周末）も「连…都…」で挟んで強調できます。",
+          "en": "Time words like 周末 can also be framed by 连...都...."
+        }
+      },
+      {
+        "zh": "你怎么连我的名字都忘了？",
+        "pinyin": "Nǐ zěnme lián wǒ de míngzi dōu wàng le?",
+        "tokens": [
+          {
+            "hanzi": "你",
+            "pinyin": "nǐ",
+            "han_viet": "nhĩ",
+            "ja_kanji": "你",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "bạn",
+              "ja": "あなた",
+              "en": "you"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "怎么",
+            "pinyin": "zěnme",
+            "han_viet": "chẩm ma",
+            "ja_kanji": "怎麼",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "sao lại",
+              "ja": "どうして",
+              "en": "how come"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "连",
+            "pinyin": "lián",
+            "han_viet": "liên",
+            "ja_kanji": "連",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "ngay cả",
+              "ja": "〜さえ",
+              "en": "even"
+            },
+            "block_role": "marker"
+          },
+          {
+            "hanzi": "我",
+            "pinyin": "wǒ",
+            "han_viet": "ngã",
+            "ja_kanji": "我",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "tôi",
+              "ja": "私",
+              "en": "my"
+            },
+            "block_role": "focus"
+          },
+          {
+            "hanzi": "的",
+            "pinyin": "de",
+            "han_viet": "—",
+            "ja_kanji": "的",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "của",
+              "ja": "の",
+              "en": "'s"
+            },
+            "block_role": "focus"
+          },
+          {
+            "hanzi": "名字",
+            "pinyin": "míngzi",
+            "han_viet": "danh tự",
+            "ja_kanji": "名字",
+            "false_friend_ja": {
+              "ja_meaning": "名字（苗字・姓・ファミリーネーム）",
+              "zh_meaning": "tên (gồm cả họ và tên hoặc tên gọi nói chung - full name / given name)"
+            },
+            "gloss": {
+              "vi": "tên",
+              "ja": "名前",
+              "en": "name"
+            },
+            "block_role": "focus"
+          },
+          {
+            "hanzi": "都",
+            "pinyin": "dōu",
+            "han_viet": "đô",
+            "ja_kanji": "都",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "cũng",
+              "ja": "〜も",
+              "en": "even"
+            },
+            "block_role": "correlative"
+          },
+          {
+            "hanzi": "忘",
+            "pinyin": "wàng",
+            "han_viet": "vọng",
+            "ja_kanji": "忘",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "quên",
+              "ja": "忘れる",
+              "en": "forget"
+            },
+            "block_role": "predicate"
+          },
+          {
+            "hanzi": "了",
+            "pinyin": "le",
+            "han_viet": "—",
+            "ja_kanji": "了",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "rồi",
+              "ja": "〜た",
+              "en": "(completed)"
+            },
+            "block_role": "predicate"
+          }
+        ],
+        "scenario": {
+          "vi": "trách vui bạn bè khi bị quên tên",
+          "ja": "名前を忘れられて冗談めかして驚く",
+          "en": "teasing a friend who forgot your name"
+        },
+        "translations": {
+          "vi": "Sao bạn ngay cả tên của tôi cũng quên mất rồi?",
+          "ja": "どうして私の名前さえも忘れてしまったの？",
+          "en": "How could you forget even my name?"
+        },
+        "literal_en": "You how-come even I DE name DOU forget LE?",
+        "tone_tip": {
+          "vi": "你 (nǐ) và 怎 (zěn) là 2 thanh 3 liên tiếp, đọc thành ní zěnme.",
+          "ja": "「你（nǐ）」＋「怎（zěn）」は「ní zěnme」と変調します。",
+          "en": "你 (nǐ) + 怎么 (zěnme) -> ní zěnme."
+        },
+        "word_order_diff": {
+          "vi": "",
+          "ja": "",
+          "en": "连我的名字 (even my name) is placed before 都忘了 (forgot)."
+        },
+        "note": {
+          "vi": "Chú ý với người học tiếng Nhật: 名字 trong tiếng Trung là 'tên' nói chung, còn 名字 trong tiếng Nhật chỉ có nghĩa là 'họ' (tương đương 姓 trong tiếng Trung).",
+          "ja": "注意：「名字」は中国語では「名前（フルネームまたは下の名前）」を指します（日本語の「苗字＝姓」だけではありません）。",
+          "en": "怎么 + 连…都… expresses surprise ('How come even...')."
+        }
+      },
+      {
+        "zh": "他连去机场的时间都没有。",
+        "pinyin": "Tā lián qù jīchǎng de shíjiān dōu méiyǒu.",
+        "tokens": [
+          {
+            "hanzi": "他",
+            "pinyin": "tā",
+            "han_viet": "tha",
+            "ja_kanji": "他",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "anh ấy",
+              "ja": "彼",
+              "en": "he"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "连",
+            "pinyin": "lián",
+            "han_viet": "liên",
+            "ja_kanji": "連",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "ngay cả",
+              "ja": "〜さえ",
+              "en": "even"
+            },
+            "block_role": "marker"
+          },
+          {
+            "hanzi": "去",
+            "pinyin": "qù",
+            "han_viet": "khứ",
+            "ja_kanji": "去",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "đi",
+              "ja": "行く",
+              "en": "go to"
+            },
+            "block_role": "focus"
+          },
+          {
+            "hanzi": "机场",
+            "pinyin": "jīchǎng",
+            "han_viet": "cơ trường",
+            "ja_kanji": "機場",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "sân bay",
+              "ja": "空港",
+              "en": "airport"
+            },
+            "block_role": "focus"
+          },
+          {
+            "hanzi": "的",
+            "pinyin": "de",
+            "han_viet": "—",
+            "ja_kanji": "的",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "để / của",
+              "ja": "〜の",
+              "en": "to / of"
+            },
+            "block_role": "focus"
+          },
+          {
+            "hanzi": "时间",
+            "pinyin": "shíjiān",
+            "han_viet": "thời gian",
+            "ja_kanji": "時間",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "thời gian",
+              "ja": "時間",
+              "en": "time"
+            },
+            "block_role": "focus"
+          },
+          {
+            "hanzi": "都",
+            "pinyin": "dōu",
+            "han_viet": "đô",
+            "ja_kanji": "都",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "cũng",
+              "ja": "〜も",
+              "en": "even"
+            },
+            "block_role": "correlative"
+          },
+          {
+            "hanzi": "没有",
+            "pinyin": "méiyǒu",
+            "han_viet": "một hữu",
+            "ja_kanji": "没有",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "không có",
+              "ja": "ない",
+              "en": "do not have"
+            },
+            "block_role": "predicate"
+          }
+        ],
+        "scenario": {
+          "vi": "nói về lịch trình gấp gáp",
+          "ja": "時間が全くない状況",
+          "en": "having a tight schedule"
+        },
+        "translations": {
+          "vi": "Anh ấy ngay cả thời gian đi ra sân bay cũng không có.",
+          "ja": "彼は空港へ行く時間さえもありません。",
+          "en": "He doesn't even have time to go to the airport."
+        },
+        "literal_en": "He even go airport DE time DOU not-have",
+        "tone_tip": {
+          "vi": "",
+          "ja": "",
+          "en": ""
+        },
+        "word_order_diff": {
+          "vi": "Cụm danh ngữ 'thời gian đi sân bay' trong tiếng Trung xếp định ngữ lên trước: 去机场的时间.",
+          "ja": "「去机场的时间（空港へ行く時間）」がそのまま「连…都…」に挟まれています。",
+          "en": "'Time to go to the airport' is structured as 去机场的时间 and placed inside 连...都...."
+        },
+        "note": {
+          "vi": "Mẫu '连 + V 的时间 / 机会 + 都没有' rất hay dùng để nói 'đến thời gian/cơ hội làm gì cũng không có'.",
+          "ja": "「连＋V的时间／机会＋都没有（〜する時間／機会さえもない）」は非常に頻出の表現です。",
+          "en": "'连 + [V 的时间] + 都没有' is a common idiomatic frame for 'don't even have time to V'."
+        }
+      }
+    ],
+    "dialogue": {
+      "goal": {
+        "vi": "Hỏi thăm bạn bị ốm không ăn uống được gì",
+        "ja": "体調が悪くて食欲がない友人を気遣う",
+        "en": "Checking on a sick friend who has no appetite"
+      },
+      "lines": [
+        {
+          "speaker": "A",
+          "zh": "你今天身体怎么样？吃午饭了吗？",
+          "pinyin": "Nǐ jīntiān shēntǐ zěnmeyàng? Chī wǔfàn le ma?",
+          "tr": {
+            "vi": "Hôm nay trong người bạn thế nào? Đã ăn trưa chưa?",
+            "ja": "今日の体調はどう？昼ご飯は食べた？",
+            "en": "How are you feeling today? Did you eat lunch?"
+          }
+        },
+        {
+          "speaker": "B",
+          "zh": "我一点儿胃口也没有，连一口水都不想喝。",
+          "pinyin": "Wǒ yìdiǎnr wèikǒu yě méiyǒu, lián yì kǒu shuǐ dōu bù xiǎng hē.",
+          "tr": {
+            "vi": "Tôi chẳng có chút khẩu vị nào cả, ngay cả một ngụm nước cũng không muốn uống.",
+            "ja": "食欲がまったくなくて、水一口さえも飲みたくないんだ。",
+            "en": "I have no appetite at all; I don't even want to drink a sip of water."
+          }
+        }
+      ]
+    },
+    "puzzles": [
+      {
+        "scrambled_tokens": [
+          "知道",
+          "都",
+          "孩子",
+          "连",
+          "问题",
+          "这个"
+        ],
+        "correct_order": [
+          "这个",
+          "问题",
+          "连",
+          "孩子",
+          "都",
+          "知道"
+        ]
+      },
+      {
+        "scrambled_tokens": [
+          "写",
+          "会",
+          "不",
+          "也",
+          "汉字",
+          "一个",
+          "连",
+          "我"
+        ],
+        "correct_order": [
+          "我",
+          "连",
+          "一个",
+          "汉字",
+          "也",
+          "不",
+          "会",
+          "写"
+        ]
+      },
+      {
+        "scrambled_tokens": [
+          "了",
+          "忘",
+          "都",
+          "名字",
+          "的",
+          "我",
+          "连",
+          "怎么",
+          "你"
+        ],
+        "correct_order": [
+          "你",
+          "怎么",
+          "连",
+          "我",
+          "的",
+          "名字",
+          "都",
+          "忘",
+          "了"
+        ]
+      }
+    ],
+    "fill_blank": [
+      {
+        "sentence": "这么简单的字，___小学生都认识。",
+        "options": [
+          "连",
+          "比",
+          "把",
+          "被"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "vi",
+          "ja",
+          "en"
+        ],
+        "explanation": {
+          "vi": "Phía sau có 都认识, phía trước nêu ví dụ cực đoan 小学生 (học sinh tiểu học) nên điền 连 (连…都… = ngay cả... cũng...).",
+          "ja": "後ろに「都」があり、「小学生でさえ知っている」と極端な例を挙げているので「连」が入ります。",
+          "en": "Pairs with 都 to form 连…都… ('even elementary school students know it')."
+        }
+      },
+      {
+        "sentence": "他今天太忙了，连午饭___。",
+        "options": [
+          "都没吃",
+          "没都吃",
+          "没吃",
+          "吃都没"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "vi",
+          "ja",
+          "en"
+        ],
+        "explanation": {
+          "vi": "Đã có 连 ở trước thì phải có 都/也 ở sau, và 都 phải đứng TRƯỚC 没 → 都没吃.",
+          "ja": "「连」には「都／也」の呼応が必須で、否定の「没」は「都」の後ろに置くため「都没吃」が正解です。",
+          "en": "连 requires 都/也, and 都 must precede the negation 没 (都没吃)."
+        }
+      },
+      {
+        "sentence": "这里太安静了，___一点儿声音也没有。",
+        "options": [
+          "连",
+          "从",
+          "对",
+          "向"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "ja",
+          "en"
+        ],
+        "explanation": {
+          "vi": "Khung '连 + 一点儿 + N + 也没有' nghĩa là 'ngay cả một chút... cũng không có'.",
+          "ja": "「连一点儿声音也没有」で「物音ひとつさえしない」という意味になります。",
+          "en": "Forms '连一点儿...也没有' ('not even the slightest sound')."
+        }
+      }
+    ],
+    "error_correction": [
+      {
+        "wrong": "他不知道连这件事。",
+        "correct": "他连这件事都不知道。",
+        "hint": {
+          "vi": "Đưa cụm '连 + Tân ngữ' (连这件事) lên trước động từ và thêm chữ 都 trước 不知道.",
+          "ja": "「连这件事」を動詞の前に移動させ、呼応する副詞「都」を補いましょう。",
+          "en": "Move 连这件事 before the verb and add the required correlative 都 before 不知道."
+        }
+      },
+      {
+        "wrong": "连我妈妈会用这个软件。",
+        "correct": "连我妈妈都会用这个软件。",
+        "hint": {
+          "vi": "Cấu trúc nhấn mạnh với 连 ở đầu câu đang thiếu từ hô ứng đi kèm trước 会用.",
+          "ja": "「连」とペアになって後ろから挟み込む副詞が抜けています。",
+          "en": "Add the required partner word after 我妈妈 to complete the 连...都... frame."
+        }
+      }
+    ],
+    "quiz": [
+      {
+        "question": {
+          "vi": "Muốn nói 'Anh ấy ngay cả một xu cũng không có', câu nào đúng?",
+          "ja": "「彼は1銭（少しのお金）さえも持っていない」を表す正しい文はどれですか？",
+          "en": "Which sentence correctly translates 'He doesn't even have a single cent'?"
+        },
+        "options": [
+          "他连一分钱也没有。",
+          "他没有连一分钱。",
+          "他连一分钱没有。",
+          "他连钱一分也没有。"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "vi",
+          "ja",
+          "en"
+        ],
+        "explanation": {
+          "vi": "他连一分钱也没有 đúng chuẩn: 连 + 一分钱 (đảo lên trước) + 也 + 没有. Câu 2 sai kiểu tiếng Anh/Việt; câu 3 thiếu 也/都; câu 4 sai trật tự số lượng kiểu tiếng Nhật.",
+          "ja": "「他连一分钱也没有。」が正解です。目的語を前に出し、「一＋量詞＋名詞」の順にして「也」で受けます。",
+          "en": "Front the object inside 连...也... before 没有: 他连一分钱也没有."
+        }
+      },
+      {
+        "question": {
+          "vi": "Vị trí đúng của phó từ phủ định 不 trong cấu trúc 连…都… là gì?",
+          "ja": "「连…都…」構文で否定の「不」を入れる場合、正しい語順はどれですか？",
+          "en": "Where does the negation word 不 go in a 连...都... sentence?"
+        },
+        "options": [
+          "连 + A + 都 + 不 + V",
+          "连 + A + 不 + 都 + V",
+          "不 + 连 + A + 都 + V",
+          "连 + A + 都 + V + 不"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "vi",
+          "en"
+        ],
+        "explanation": {
+          "vi": "Trong khung 连…都…, chữ 都 luôn đứng ngay sau A và đứng TRƯỚC 不/没 (连 A 都不 V).",
+          "ja": "否定の「不／没」は必ず「都／也」の後ろに置きます（连＋A＋都＋不＋V）。",
+          "en": "都/也 always comes before the negation 不/没 in the 连...都/也... construction."
+        }
+      },
+      {
+        "question": {
+          "vi": "Khi muốn nói 'Hôm nay còn lạnh hơn cả hôm qua' (even colder), ta dùng từ nào?",
+          "ja": "「今日は昨日よりさらに（いっそう）寒い」と言いたいとき、適切な文はどれですか？",
+          "en": "How do you express 'even colder' in 'Today is even colder than yesterday'?"
+        },
+        "options": [
+          "今天比昨天更冷。",
+          "今天比昨天连冷。",
+          "今天连昨天都冷。",
+          "今天比昨天都冷。"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "en"
+        ],
+        "explanation": {
+          "vi": "Chữ 'even' đứng trước tính từ so sánh hơn trong tiếng Anh ('even colder') tương ứng với phó từ 更 (càng/hơn nữa), không dùng 连.",
+          "ja": "比較文で「さらに〜だ」と言うときは副詞「更（gèng）」を使います。「连」は形容詞の直前には使えません。",
+          "en": "English 'even' before a comparative ('even colder') translates to 更 (gèng), not 连."
+        }
+      }
+    ],
+    "summary_card": {
+      "one_liner": {
+        "vi": "连 + A + 都/也 + (不/没) + V: kẹp ví dụ cực đoan A vào giữa 连 và 都/也 để nhấn mạnh 'ngay cả A cũng...'.",
+        "ja": "「连＋A＋都／也＋（不／没＋）V」で極端な例Aを前後から挟み、「Aでさえも〜だ」と強調する。",
+        "en": "Bracket an extreme example with '连 + A + 都/也 + (不/没) + V' to express 'even A...'."
+      },
+      "remember": [
+        {
+          "vi": "Đã có 连 ở trước thì bắt buộc phải có 都 hoặc 也 ở phía sau.",
+          "ja": "「连」単独では使わず、後ろに必ず「都」または「也」をセットで置く。",
+          "en": "Never use 连 without its closing partner 都 or 也."
+        },
+        {
+          "vi": "Khi nhấn mạnh tân ngữ, phải kéo cả cụm '连 + Tân ngữ' lên đứng trước '都/也 + Động từ'.",
+          "ja": "目的語を強調する場合も、「连＋目的語」を「都／也＋動詞」の前に出す。",
+          "en": "Always front '连 + Object' before '都/也 + Verb'."
+        },
+        {
+          "vi": "Phó từ phủ định 不 / 没 luôn đứng SAU chữ 都 / 也 (都不..., 也没...).",
+          "ja": "否定の「不／没」は「都／也」の後ろに置く（都不…／也没…）。",
+          "en": "Place negation 不/没 AFTER 都/也 (都不..., 也没...)."
+        }
+      ]
+    },
+    "needs_review": false,
+    "review_note": ""
+  },
+  {
+    "id": "hsk5_yu_qi_bu_ru_preference",
+    "level": "HSK5",
+    "level_num": 5,
+    "category": "comparison",
+    "difficulty": 4,
+    "frequency": 4,
+    "register": "neutral",
+    "keywords": [
+      "与其",
+      "不如",
+      "yǔqí",
+      "bùrú",
+      "thà... còn hơn...",
+      "〜するくらいなら…した方がいい",
+      "rather than"
+    ],
+    "formula": "与其 + A，(还)不如 + B",
+    "formula_plain": {
+      "vi": "Thay vì làm phương án dở A (与其 A), thà chọn làm phương án tốt hơn B (不如 B)",
+      "ja": "与其＋A（Aするくらいなら）、不如＋B（いっそBした方がいい）",
+      "en": "与其 + Option A (Rather than A), 不如 + Option B (it is better to do B)"
+    },
+    "structure_blocks": [
+      {
+        "label": {
+          "vi": "Liên từ 与其 (thay vì)",
+          "ja": "接続詞 与其（〜するくらいなら）",
+          "en": "Conjunction 与其 (rather than)"
+        },
+        "role": "marker_discard",
+        "color": "#EF4444"
+      },
+      {
+        "label": {
+          "vi": "Phương án bị loại bỏ (A)",
+          "ja": "退ける選択肢 (A)",
+          "en": "Rejected option (A)"
+        },
+        "role": "rejected_option",
+        "color": "#F97316"
+      },
+      {
+        "label": {
+          "vi": "Liên từ 不如 (thà / chi bằng)",
+          "ja": "接続詞 不如（〜した方がいい）",
+          "en": "Conjunction 不如 (better to)"
+        },
+        "role": "marker_prefer",
+        "color": "#3B82F6"
+      },
+      {
+        "label": {
+          "vi": "Phương án được chọn (B)",
+          "ja": "選ぶ選択肢 (B)",
+          "en": "Preferred option (B)"
+        },
+        "role": "preferred_option",
+        "color": "#10B981"
+      }
+    ],
+    "related_ids": [
+      "hsk5_ning_ke_ye_bu",
+      "hsk2_bi_comparison"
+    ],
+    "confusable_with": [
+      {
+        "id": "hsk5_ning_ke_ye_bu",
+        "diff": {
+          "vi": "与其 A，不如 B đặt cái BỎ (A) ở trước và cái CHỌN (B) ở sau ('Thay vì A, chi bằng B'); ngược lại, 宁可 B，也不 A đặt cái CHỌN (B) ở trước và cái BỎ (A) ở sau ('Thà B chứ không A').",
+          "ja": "「与其A，不如B」は前半Aを捨てて後半Bを選ぶ（AするくらいならBした方がいい）のに対し、「宁可B，也不A」は前半Bを選んで後半Aを拒否する（いっそBしてもAしない）という逆の配置になります。",
+          "en": "与其 A，不如 B puts the rejected choice FIRST and the preferred choice SECOND ('Rather than A, better B'), whereas 宁可 B，也不 A puts the preferred choice FIRST ('Would rather B than A')."
+        }
+      }
+    ],
+    "localizations": {
+      "vi": {
+        "title": "Cấu trúc chọn lựa 与其 A，不如 B (Thay vì A, thà B còn hơn)",
+        "quick_rule_3s": "Dùng khi cân nhắc hai lựa chọn: vế đầu 与其 A nêu phương án bị loại bỏ, vế sau 不如 B nêu phương án khôn ngoan hơn được chọn.",
+        "contrastive_note": "Bẫy lớn nhất của người Việt là cách dịch chữ 'thà': trong tiếng Việt ta hay nói 'Thà ở nhà (chọn) còn hơn đi xem phim dở (bỏ)'. Nếu dịch xuôi câu đó sang 与其...不如... bạn sẽ đặt ngược vị trí! Hãy dịch 与其 là 'Thay vì (làm việc dở A)' và 不如 là 'chi bằng / thà (làm việc tốt B)' để không bao giờ bị lộn đầu đuôi giữa phương án bỏ và phương án chọn.",
+        "analogy": "Giống như hai đĩa thức ăn trên bàn: tay trái (与其 A) gạt đĩa không ngon ra xa, tay phải (不如 B) kéo đĩa ngon hơn về phía mình.",
+        "mnemonic": "与其 (thay vì) gạt A đi, 不如 (chi bằng) chọn lấy B!",
+        "how_to_use": [
+          {
+            "step": 1,
+            "text": "Bước 1: Đặt phương án kém hiệu quả mà bạn KHÔNG muốn làm (A) vào sau chữ 与其."
+          },
+          {
+            "step": 2,
+            "text": "Bước 2: Đặt dấu phẩy, rồi viết 不如 (hoặc 还不如 để nhấn mạnh) ở đầu vế thứ hai."
+          },
+          {
+            "step": 3,
+            "text": "Bước 3: Đặt phương án tốt hơn mà bạn CHỌN làm (B) vào sau 不如."
+          }
+        ],
+        "self_check": [
+          "Phương án bạn định BỎ (không làm) đã nằm ở vế đầu sau 与其 chưa?",
+          "Phương án bạn CHỌN làm đã nằm ở vế hai sau 不如 chưa?",
+          "Bạn có đang nhầm thứ tự với cấu trúc 宁可 (đặt cái chọn lên trước) không?"
+        ],
+        "tips": [
+          "Âm Hán-Việt: 与其 (dữ kỳ) — 不如 (bất như: A không bằng B, nên chọn B). Có thể thêm chữ 还 trước 不如 (还不如) để câu tự nhiên và nhấn mạnh hơn.",
+          "Nếu hai vế có cùng một chủ ngữ, chủ ngữ có thể đứng đầu câu (trước 与其) hoặc đứng sau 与其."
+        ],
+        "when_to_use": [
+          "Khi khuyên nhủ hoặc tự cân nhắc lợi hại giữa hai hành động và quyết định chọn phương án B hợp lý hơn.",
+          "Khi nhận định cách gọi tên hoặc đánh giá bản chất sự việc (与其说是...，不如说是... = Thay vì nói là A, chi bằng nói là B thì đúng hơn)."
+        ],
+        "when_not_to_use": [
+          "Khi muốn thể hiện sự hy sinh cam chịu quyết liệt bất chấp thiệt hại (lúc đó dùng 宁可...也不...).",
+          "Khi chỉ so sánh tính chất hơn kém đơn thuần giữa hai đồ vật mà không có sự lựa chọn hành động (dùng 比)."
+        ],
+        "fatal_mistake": {
+          "wrong": "与其在家休息，不如去排队受罪。",
+          "correct": "与其去排队受罪，不如在家休息。",
+          "explanation": "Trong câu 与其 A，不如 B, vế A là cái bị từ bỏ ('đi xếp hàng chịu khổ') và vế B là cái được chọn ('ở nhà nghỉ ngơi'). Đặt ngược sẽ biến câu thành 'Thay vì ở nhà nghỉ ngơi, thà đi xếp hàng chịu khổ'.",
+          "why_learners_make_it": "Người Việt quen cấu trúc tiếng Việt 'Thà [ở nhà nghỉ ngơi] còn hơn [đi xếp hàng chịu khổ]' nên bê nguyên thứ tự đó vào 与其...不如...."
+        },
+        "extra_mistakes": [
+          {
+            "wrong": "与其买那件贵的，也不买这件便宜的。",
+            "correct": "与其买那件贵的，不如买这件便宜的。",
+            "explanation": "Đi cặp với 与其 phải là 不如 (hoặc 还不如), không ghép râu ông nọ cắm cằm bà kia với 也不 (vốn là cặp của 宁可)."
+          }
+        ]
+      },
+      "ja": {
+        "title": "取捨選択「与其A，不如B」（AするくらいならBした方がいい）",
+        "quick_rule_3s": "2つの選択肢を比べ、「Aするくらいなら（与其A）、むしろBした方がいい（不如B）」と前半を捨てて後半を選ぶ構文です。",
+        "contrastive_note": "日本語の「Aするくらいなら、むしろBした方がいい」と論理の順番（前半A＝不採用、後半B＝採用）が完全に一致するため、日本人学習者には理解しやすい構文です。ただし、日本語では「Aする【くらいなら】」と文末（節末）に助詞が来るのに対し、中国語では節の先頭に「与其」と「不如」を置きます。また、字面が「不如（如かず＝及ばない）」なので「BはAに及ばない（Aの方がいい）」と漢文訓読の逆方向に取り違えないよう注意が必要です。",
+        "analogy": "天秤の左皿（与其A）を「イマイチ」と却下し、右皿（不如B）を「こっちの方がマシ・賢明だ」と採用する比較天秤です。",
+        "mnemonic": "前半「与其A」は捨てる案、後半「不如B」が選ぶ案！",
+        "how_to_use": [
+          {
+            "step": 1,
+            "text": "ステップ1：前半の先頭に「与其」を置き、その後ろに「あまり良くない・避けたい選択肢A」を続けます。"
+          },
+          {
+            "step": 2,
+            "text": "ステップ2：読点（，）を打ち、後半の先頭に「不如」（または強調の「还不如」）を置きます。"
+          },
+          {
+            "step": 3,
+            "text": "ステップ3：「不如」の後ろに「より賢明な・選びたい選択肢B」を置きます。"
+          }
+        ],
+        "self_check": [
+          "「与其」の後ろに「やめておく方（A）」、「不如」の後ろに「選ぶ方（B）」を置いていますか？",
+          "「不如」の字面に惑わされて、Bを「劣っている方」だと誤解していませんか？（選ぶのはBです！）",
+          "類似構文の「宁可…也不…（Aを選ぶ／Bを捨てる）」とパーツを混ぜていませんか？"
+        ],
+        "tips": [
+          "「不如」はもともと「（AはBに）及ばない→Bの方がいい」という意味なので、後ろに来るBが「良い選択肢」になります。",
+          "「与其说是A，不如说是B（AというよりはむしろBだ）」という定型表現は論説文でも会話でも非常に重宝します。"
+        ],
+        "when_to_use": [
+          "2つの行動を比較して「AするよりBする方が得策だ」と提案・判断するとき。",
+          "物事の性質を言い換えて「Aというよりは、むしろBと言った方が的確だ」と述べるとき。"
+        ],
+        "when_not_to_use": [
+          "損を覚悟で強い決意を示すとき（「たとえ〜しても絶対に…しない」は「宁可…也不…」を使います）。",
+          "単なる名詞同士の比較（例：「犬より猫がいい」を動詞なしで「与其狗不如猫」とは言わず、「买狗不如买猫」のように動詞句にします）。"
+        ],
+        "fatal_mistake": {
+          "wrong": "与其在家做饭，不如在外面吃太贵了。",
+          "correct": "与其在外面吃那么贵的，不如在家做饭。",
+          "explanation": "「不如」の後ろには「自分が選ぶ良い案（家で料理する）」を置き、後ろに否定的な理由（高すぎる）を続けてはいけません。",
+          "why_learners_make_it": "漢文の「Bに如かず」と現代語の「不如（Bの方がいい）」の主客関係が頭の中で混乱し、どちらが採用案かわからなくなるためです。"
+        },
+        "extra_mistakes": [
+          {
+            "wrong": "与其等公交车，不如打车比较好。",
+            "correct": "与其等公交车，不如打车。",
+            "explanation": "「不如」自体にすでに「〜した方がいい」という意味が含まれているため、文末に「比较好」を重ねると重複になります。"
+          }
+        ]
+      },
+      "en": {
+        "title": "Expressing Preference with 与其 A，不如 B (Rather than A, better to B)",
+        "quick_rule_3s": "Use '与其 A，不如 B' to weigh two options, rejecting the worse option A first and choosing the wiser option B second.",
+        "contrastive_note": "In English, 'I would rather X than Y' puts the PREFERRED action X first and the REJECTED action Y second. However, Chinese 与其 A，不如 B follows the order of 'Rather than doing A (rejected), it is better to do B (preferred)'. If you translate English 'would rather X than Y' directly without flipping the two clauses, you will state the exact opposite of what you mean!",
+        "analogy": "Imagine pushing away Option A with your left hand (与其 A = 'Instead of wasting time on A...') and pointing to Option B with your right hand (不如 B = '...it beats it to do B').",
+        "mnemonic": "与其 drops A first; 不如 picks B last!",
+        "how_to_use": [
+          {
+            "step": 1,
+            "text": "Step 1: Start the first clause with 与其 followed by the undesirable or less effective action (A)."
+          },
+          {
+            "step": 2,
+            "text": "Step 2: Start the second clause with 不如 (or 还不如 for extra emphasis)."
+          },
+          {
+            "step": 3,
+            "text": "Step 3: Follow 不如 with the preferred, better action (B)."
+          }
+        ],
+        "self_check": [
+          "Did you put the REJECTED option after 与其 and the PREFERRED option after 不如?",
+          "Did you avoid flipping the clauses the way English 'would rather [Preferred] than [Rejected]' does?",
+          "Are both A and B verb phrases or clauses rather than bare nouns?"
+        ],
+        "tips": [
+          "Think of 与其...不如... as 'Instead of A, it's better to B' (never 'would rather A than B') so the clause order stays crystal clear.",
+          "Use the fixed frame '与其说是 A，不如说是 B' to say 'It is more B than A' / 'Rather than calling it A, it's more accurate to call it B'."
+        ],
+        "when_to_use": [
+          "Making a rational, practical choice between two courses of action.",
+          "Reframing a description more accurately with 与其说是 A，不如说是 B."
+        ],
+        "when_not_to_use": [
+          "When expressing a dramatic, stubborn sacrifice ('I'd rather go hungry than beg' uses 宁可...也不...).",
+          "With bare nouns without a verb."
+        ],
+        "fatal_mistake": {
+          "wrong": "与其自己做饭，不如点外卖太慢了。",
+          "correct": "与其点外卖等那么久，不如自己做饭。",
+          "explanation": "与其 introduces the rejected option (waiting forever for delivery), and 不如 introduces the chosen option (cooking at home).",
+          "why_learners_make_it": "English speakers map 'would rather [cook at home] than [order takeout]' directly onto 与其...不如..., reversing the intended meaning."
+        },
+        "extra_mistakes": [
+          {
+            "wrong": "与其看电视，也不去散步。",
+            "correct": "与其看电视，不如去散步。",
+            "explanation": "与其 must pair with 不如 (or 还不如), not 也不 (which pairs with 宁可)."
+          }
+        ]
+      }
+    },
+    "fill_template": {
+      "pattern": "与其 ___，不如 ___。",
+      "slots": [
+        {
+          "vi": "Hành động A (phương án dở / bỏ)",
+          "ja": "選択肢A（やめておく行動）",
+          "en": "Action A (rejected option)"
+        },
+        {
+          "vi": "Hành động B (phương án tốt / chọn)",
+          "ja": "選択肢B（選ぶより良い行動）",
+          "en": "Action B (preferred option)"
+        }
+      ],
+      "example_filled": "与其在家里看电视，不如出去散步。"
+    },
+    "collocations": [
+      {
+        "zh": "与其…，还不如…",
+        "pinyin": "yǔqí …, hái bùrú …",
+        "meaning": {
+          "vi": "thay vì..., thà... còn hơn",
+          "ja": "〜するくらいなら、いっそ…した方がいい",
+          "en": "rather than ..., it would be even better to ..."
+        }
+      },
+      {
+        "zh": "与其说是…，不如说是…",
+        "pinyin": "yǔqí shuō shì …, bùrú shuō shì …",
+        "meaning": {
+          "vi": "thay vì nói là..., chi bằng nói là...",
+          "ja": "〜というよりは、むしろ…だ",
+          "en": "rather than calling it ..., it's more accurate to say ..."
+        }
+      },
+      {
+        "zh": "与其浪费时间，不如…",
+        "pinyin": "yǔqí làngfèi shíjiān, bùrú …",
+        "meaning": {
+          "vi": "thay vì lãng phí thời gian, chi bằng...",
+          "ja": "時間を無駄にするくらいなら、むしろ…",
+          "en": "rather than wasting time, it's better to ..."
+        }
+      }
+    ],
+    "examples": [
+      {
+        "zh": "与其在家里看电视，不如出去散步。",
+        "pinyin": "Yǔqí zài jiālǐ kàn diànshì, bùrú chūqù sànbù.",
+        "tokens": [
+          {
+            "hanzi": "与其",
+            "pinyin": "yǔqí",
+            "han_viet": "dữ kỳ",
+            "ja_kanji": "与其",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "thay vì",
+              "ja": "〜するくらいなら",
+              "en": "rather than"
+            },
+            "block_role": "marker_discard"
+          },
+          {
+            "hanzi": "在",
+            "pinyin": "zài",
+            "han_viet": "tại",
+            "ja_kanji": "在",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "ở",
+              "ja": "〜で",
+              "en": "at"
+            },
+            "block_role": "rejected_option"
+          },
+          {
+            "hanzi": "家里",
+            "pinyin": "jiālǐ",
+            "han_viet": "gia lý",
+            "ja_kanji": "家裏",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "trong nhà",
+              "ja": "家の中",
+              "en": "home"
+            },
+            "block_role": "rejected_option"
+          },
+          {
+            "hanzi": "看",
+            "pinyin": "kàn",
+            "han_viet": "khán",
+            "ja_kanji": "看",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "xem",
+              "ja": "見る",
+              "en": "watch"
+            },
+            "block_role": "rejected_option"
+          },
+          {
+            "hanzi": "电视",
+            "pinyin": "diànshì",
+            "han_viet": "điện thị",
+            "ja_kanji": "電視",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "tivi",
+              "ja": "テレビ",
+              "en": "TV"
+            },
+            "block_role": "rejected_option"
+          },
+          {
+            "hanzi": "不如",
+            "pinyin": "bùrú",
+            "han_viet": "bất như",
+            "ja_kanji": "不如",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "chi bằng, thà",
+              "ja": "〜した方がいい",
+              "en": "better to"
+            },
+            "block_role": "marker_prefer"
+          },
+          {
+            "hanzi": "出去",
+            "pinyin": "chūqù",
+            "han_viet": "xuất khứ",
+            "ja_kanji": "出去",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "đi ra ngoài",
+              "ja": "外へ出る",
+              "en": "go out"
+            },
+            "block_role": "preferred_option"
+          },
+          {
+            "hanzi": "散步",
+            "pinyin": "sànbù",
+            "han_viet": "tản bộ",
+            "ja_kanji": "散歩",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "đi dạo",
+              "ja": "散歩する",
+              "en": "take a walk"
+            },
+            "block_role": "preferred_option"
+          }
+        ],
+        "scenario": {
+          "vi": "rủ bạn ra ngoài cuối tuần",
+          "ja": "週末に外出を提案する",
+          "en": "suggesting going outside on the weekend"
+        },
+        "translations": {
+          "vi": "Thay vì ở nhà xem tivi, chi bằng ra ngoài đi dạo.",
+          "ja": "家でテレビを見るくらいなら、外へ出て散歩した方がいい。",
+          "en": "Rather than watching TV at home, it's better to go out for a walk."
+        },
+        "literal_en": "Rather-than at home watch TV, not-equal-to go-out take-walk",
+        "tone_tip": {
+          "vi": "不 trong 不如 đứng trước thanh 2 (rú) nên giữ nguyên thanh 4: bùrú.",
+          "ja": "「不如（bùrú）」の「不」は後ろが第2声なので本来の第4声で発音します。",
+          "en": "不 stays 4th tone before the 2nd tone 如: bùrú."
+        },
+        "word_order_diff": {
+          "vi": "",
+          "ja": "",
+          "en": ""
+        },
+        "note": {
+          "vi": "Vế 1 (xem tivi ở nhà) bị loại bỏ, vế 2 (ra ngoài đi dạo) được chọn.",
+          "ja": "前半の「家でテレビを見る」をやめて、後半の「散歩に出る」を選んでいます。",
+          "en": "Option A (watch TV) is rejected in favor of Option B (take a walk)."
+        }
+      },
+      {
+        "zh": "与其坐公交车堵在路上，还不如坐地铁去。",
+        "pinyin": "Yǔqí zuò gōngjiāochē dǔ zài lùshàng, hái bùrú zuò dìtiě qù.",
+        "tokens": [
+          {
+            "hanzi": "与其",
+            "pinyin": "yǔqí",
+            "han_viet": "dữ kỳ",
+            "ja_kanji": "与其",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "thay vì",
+              "ja": "〜するくらいなら",
+              "en": "rather than"
+            },
+            "block_role": "marker_discard"
+          },
+          {
+            "hanzi": "坐",
+            "pinyin": "zuò",
+            "han_viet": "tọa",
+            "ja_kanji": "坐",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "ngồi, đi (xe)",
+              "ja": "乗る",
+              "en": "take (by vehicle)"
+            },
+            "block_role": "rejected_option"
+          },
+          {
+            "hanzi": "公交车",
+            "pinyin": "gōngjiāochē",
+            "han_viet": "công giao xa",
+            "ja_kanji": "公交車",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "xe buýt",
+              "ja": "バス",
+              "en": "bus"
+            },
+            "block_role": "rejected_option"
+          },
+          {
+            "hanzi": "堵",
+            "pinyin": "dǔ",
+            "han_viet": "đổ",
+            "ja_kanji": "堵",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "tắc nghẽn",
+              "ja": "渋滞する",
+              "en": "be stuck in traffic"
+            },
+            "block_role": "rejected_option"
+          },
+          {
+            "hanzi": "在",
+            "pinyin": "zài",
+            "han_viet": "tại",
+            "ja_kanji": "在",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "ở",
+              "ja": "〜で",
+              "en": "on"
+            },
+            "block_role": "rejected_option"
+          },
+          {
+            "hanzi": "路上",
+            "pinyin": "lùshàng",
+            "han_viet": "lộ thượng",
+            "ja_kanji": "路上",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "trên đường",
+              "ja": "道・道路",
+              "en": "the road"
+            },
+            "block_role": "rejected_option"
+          },
+          {
+            "hanzi": "还",
+            "pinyin": "hái",
+            "han_viet": "hoàn",
+            "ja_kanji": "還",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "còn",
+              "ja": "いっそ・むしろ",
+              "en": "still / even"
+            },
+            "block_role": "marker_prefer"
+          },
+          {
+            "hanzi": "不如",
+            "pinyin": "bùrú",
+            "han_viet": "bất như",
+            "ja_kanji": "不如",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "thà, chi bằng",
+              "ja": "〜した方がいい",
+              "en": "better to"
+            },
+            "block_role": "marker_prefer"
+          },
+          {
+            "hanzi": "坐",
+            "pinyin": "zuò",
+            "han_viet": "tọa",
+            "ja_kanji": "坐",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "đi (tàu)",
+              "ja": "乗る",
+              "en": "take"
+            },
+            "block_role": "preferred_option"
+          },
+          {
+            "hanzi": "地铁",
+            "pinyin": "dìtiě",
+            "han_viet": "địa thiết",
+            "ja_kanji": "地鉄",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "tàu điện ngầm",
+              "ja": "地下鉄",
+              "en": "subway"
+            },
+            "block_role": "preferred_option"
+          },
+          {
+            "hanzi": "去",
+            "pinyin": "qù",
+            "han_viet": "khứ",
+            "ja_kanji": "去",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "đi",
+              "ja": "行く",
+              "en": "go"
+            },
+            "block_role": "preferred_option"
+          }
+        ],
+        "scenario": {
+          "vi": "chọn phương tiện giờ cao điểm",
+          "ja": "ラッシュアワーの移動手段を選ぶ",
+          "en": "choosing rush-hour transport"
+        },
+        "translations": {
+          "vi": "Thay vì đi xe buýt bị kẹt trên đường, thà đi tàu điện ngầm còn hơn.",
+          "ja": "バスに乗って道で渋滞に巻き込まれるくらいなら、いっそ地下鉄で行った方がいい。",
+          "en": "Rather than taking the bus and getting stuck on the road, it's better to take the subway."
+        },
+        "literal_en": "Rather-than sit bus堵 at road-on, still not-equal-to sit subway go",
+        "tone_tip": {
+          "vi": "",
+          "ja": "",
+          "en": ""
+        },
+        "word_order_diff": {
+          "vi": "",
+          "ja": "",
+          "en": ""
+        },
+        "note": {
+          "vi": "Thêm 还 trước 不如 (还不如) giúp ngữ khí khẩu ngữ tự nhiên và dứt khoát hơn.",
+          "ja": "「还不如」と「还」を添えることで、「いっそ〜した方がずっとマシだ」というニュアンスが強まります。",
+          "en": "Adding 还 before 不如 (还不如) makes the preference sound more emphatic and natural."
+        }
+      },
+      {
+        "zh": "与其求人，不如求己。",
+        "pinyin": "Yǔqí qiú rén, bùrú qiú jǐ.",
+        "tokens": [
+          {
+            "hanzi": "与其",
+            "pinyin": "yǔqí",
+            "han_viet": "dữ kỳ",
+            "ja_kanji": "与其",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "thay vì",
+              "ja": "〜するくらいなら",
+              "en": "rather than"
+            },
+            "block_role": "marker_discard"
+          },
+          {
+            "hanzi": "求",
+            "pinyin": "qiú",
+            "han_viet": "cầu",
+            "ja_kanji": "求",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "nhờ vả, cầu cạnh",
+              "ja": "頼る・求める",
+              "en": "rely on / beg"
+            },
+            "block_role": "rejected_option"
+          },
+          {
+            "hanzi": "人",
+            "pinyin": "rén",
+            "han_viet": "nhân",
+            "ja_kanji": "人",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "người khác",
+              "ja": "他人",
+              "en": "others"
+            },
+            "block_role": "rejected_option"
+          },
+          {
+            "hanzi": "不如",
+            "pinyin": "bùrú",
+            "han_viet": "bất như",
+            "ja_kanji": "不如",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "chi bằng",
+              "ja": "〜した方がいい",
+              "en": "better to"
+            },
+            "block_role": "marker_prefer"
+          },
+          {
+            "hanzi": "求",
+            "pinyin": "qiú",
+            "han_viet": "cầu",
+            "ja_kanji": "求",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "dựa vào",
+              "ja": "頼る",
+              "en": "rely on"
+            },
+            "block_role": "preferred_option"
+          },
+          {
+            "hanzi": "己",
+            "pinyin": "jǐ",
+            "han_viet": "kỷ",
+            "ja_kanji": "己",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "chính mình",
+              "ja": "自分自身",
+              "en": "oneself"
+            },
+            "block_role": "preferred_option"
+          }
+        ],
+        "scenario": {
+          "vi": "châm ngôn tự lực cánh sinh",
+          "ja": "自立を促すことわざ的表現",
+          "en": "proverbial advice on self-reliance"
+        },
+        "translations": {
+          "vi": "Thay vì nhờ vả người khác, chi bằng tự dựa vào chính mình.",
+          "ja": "他人に頼るくらいなら、自分自身を頼りにした方がいい。",
+          "en": "Rather than relying on others, it is better to rely on oneself."
+        },
+        "literal_en": "Rather-than beg others, not-equal-to beg self",
+        "tone_tip": {
+          "vi": "",
+          "ja": "",
+          "en": ""
+        },
+        "word_order_diff": {
+          "vi": "",
+          "ja": "",
+          "en": ""
+        },
+        "note": {
+          "vi": "Một câu tục ngữ đối xứng rất nổi tiếng giúp nhớ ngay thứ tự của 与其...不如....",
+          "ja": "「与其…不如…」の構造を覚えるのに最適な、対句になった有名な成句です。",
+          "en": "A classic, concise saying that makes the order of 与其...不如... easy to memorize."
+        }
+      },
+      {
+        "zh": "与其买这么多便宜衣服，不如买一件质量好的。",
+        "pinyin": "Yǔqí mǎi zhème duō piányi yīfu, bùrú mǎi yí jiàn zhìliàng hǎo de.",
+        "tokens": [
+          {
+            "hanzi": "与其",
+            "pinyin": "yǔqí",
+            "han_viet": "dữ kỳ",
+            "ja_kanji": "与其",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "thay vì",
+              "ja": "〜するくらいなら",
+              "en": "rather than"
+            },
+            "block_role": "marker_discard"
+          },
+          {
+            "hanzi": "买",
+            "pinyin": "mǎi",
+            "han_viet": "mãi",
+            "ja_kanji": "買",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "mua",
+              "ja": "買う",
+              "en": "buy"
+            },
+            "block_role": "rejected_option"
+          },
+          {
+            "hanzi": "这么",
+            "pinyin": "zhème",
+            "han_viet": "giá ma",
+            "ja_kanji": "這麽",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "nhiều thế này",
+              "ja": "こんなに",
+              "en": "so"
+            },
+            "block_role": "rejected_option"
+          },
+          {
+            "hanzi": "多",
+            "pinyin": "duō",
+            "han_viet": "đa",
+            "ja_kanji": "多",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "nhiều",
+              "ja": "多くの",
+              "en": "many"
+            },
+            "block_role": "rejected_option"
+          },
+          {
+            "hanzi": "便宜",
+            "pinyin": "piányi",
+            "han_viet": "tiện nghi",
+            "ja_kanji": "便宜",
+            "false_friend_ja": {
+              "ja_meaning": "便宜（べんぎ：都合・便利・便宜を図る）",
+              "zh_meaning": "rẻ (cheap / inexpensive)"
+            },
+            "gloss": {
+              "vi": "rẻ",
+              "ja": "安い",
+              "en": "cheap"
+            },
+            "block_role": "rejected_option"
+          },
+          {
+            "hanzi": "衣服",
+            "pinyin": "yīfu",
+            "han_viet": "y phục",
+            "ja_kanji": "衣服",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "quần áo",
+              "ja": "服",
+              "en": "clothes"
+            },
+            "block_role": "rejected_option"
+          },
+          {
+            "hanzi": "不如",
+            "pinyin": "bùrú",
+            "han_viet": "bất như",
+            "ja_kanji": "不如",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "chi bằng",
+              "ja": "〜した方がいい",
+              "en": "better to"
+            },
+            "block_role": "marker_prefer"
+          },
+          {
+            "hanzi": "买",
+            "pinyin": "mǎi",
+            "han_viet": "mãi",
+            "ja_kanji": "買",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "mua",
+              "ja": "買う",
+              "en": "buy"
+            },
+            "block_role": "preferred_option"
+          },
+          {
+            "hanzi": "一件",
+            "pinyin": "yí jiàn",
+            "han_viet": "nhất kiện",
+            "ja_kanji": "一件",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "một chiếc",
+              "ja": "1着",
+              "en": "one piece"
+            },
+            "block_role": "preferred_option"
+          },
+          {
+            "hanzi": "质量",
+            "pinyin": "zhìliàng",
+            "han_viet": "chất lượng",
+            "ja_kanji": "質量",
+            "false_friend_ja": {
+              "ja_meaning": "質量（物理の質量・重さ・マス）",
+              "zh_meaning": "chất lượng (quality, bên cạnh nghĩa khối lượng vật lý)"
+            },
+            "gloss": {
+              "vi": "chất lượng",
+              "ja": "品質",
+              "en": "quality"
+            },
+            "block_role": "preferred_option"
+          },
+          {
+            "hanzi": "好",
+            "pinyin": "hǎo",
+            "han_viet": "hảo",
+            "ja_kanji": "好",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "tốt",
+              "ja": "良い",
+              "en": "good"
+            },
+            "block_role": "preferred_option"
+          },
+          {
+            "hanzi": "的",
+            "pinyin": "de",
+            "han_viet": "—",
+            "ja_kanji": "的",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "loại/chiếc mà",
+              "ja": "〜なもの",
+              "en": "one"
+            },
+            "block_role": "preferred_option"
+          }
+        ],
+        "scenario": {
+          "vi": "khuyên bạn khi đi mua sắm",
+          "ja": "買い物のアドバイス",
+          "en": "giving shopping advice"
+        },
+        "translations": {
+          "vi": "Thay vì mua nhiều quần áo rẻ thế này, chi bằng mua một chiếc có chất lượng tốt.",
+          "ja": "こんなにたくさん安い服を買うくらいなら、品質の良いものを1着買った方がいい。",
+          "en": "Rather than buying so many cheap clothes, it's better to buy one piece of good quality."
+        },
+        "literal_en": "Rather-than buy so many cheap clothes, not-equal-to buy one-CL quality good DE",
+        "tone_tip": {
+          "vi": "一 trong 一件 đọc thành thanh 2 (yí jiàn); 便宜 đọc là piányi (thanh nhẹ ở âm thứ hai).",
+          "ja": "「便宜（piányi＝安い）」は「biànyí」ではなく「piányi」と読みます。",
+          "en": "Pronounce 便宜 as piányi (not biànyí) when it means 'cheap'."
+        },
+        "word_order_diff": {
+          "vi": "",
+          "ja": "",
+          "en": ""
+        },
+        "note": {
+          "vi": "Chú ý bẫy Hán-Việt và Kanji: 便宜 (tiện nghi) trong tiếng Trung nghĩa là 'rẻ'; 质量 (chất lượng) trong tiếng Nhật (質量) chỉ mang nghĩa 'khối lượng vật lý'.",
+          "ja": "注意：「便宜」は「安い」、「质量」は「品質（クオリティ）」という意味です（日本語の「便宜を図る」「物理の質量」とは日常の意味が異なります）。",
+          "en": "件 (jiàn) is the measure word for tops, coats, and dresses."
+        }
+      },
+      {
+        "zh": "他与其说是老师，不如说是我们的朋友。",
+        "pinyin": "Tā yǔqí shuō shì lǎoshī, bùrú shuō shì wǒmen de péngyou.",
+        "tokens": [
+          {
+            "hanzi": "他",
+            "pinyin": "tā",
+            "han_viet": "tha",
+            "ja_kanji": "他",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "anh ấy",
+              "ja": "彼",
+              "en": "he"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "与其",
+            "pinyin": "yǔqí",
+            "han_viet": "dữ kỳ",
+            "ja_kanji": "与其",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "thay vì",
+              "ja": "〜というよりは",
+              "en": "rather than"
+            },
+            "block_role": "marker_discard"
+          },
+          {
+            "hanzi": "说",
+            "pinyin": "shuō",
+            "han_viet": "thuyết",
+            "ja_kanji": "説",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "nói",
+              "ja": "言う",
+              "en": "say"
+            },
+            "block_role": "rejected_option"
+          },
+          {
+            "hanzi": "是",
+            "pinyin": "shì",
+            "han_viet": "thị",
+            "ja_kanji": "是",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "là",
+              "ja": "〜だ",
+              "en": "is"
+            },
+            "block_role": "rejected_option"
+          },
+          {
+            "hanzi": "老师",
+            "pinyin": "lǎoshī",
+            "han_viet": "lão sư",
+            "ja_kanji": "老師",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "giáo viên",
+              "ja": "先生",
+              "en": "teacher"
+            },
+            "block_role": "rejected_option"
+          },
+          {
+            "hanzi": "不如",
+            "pinyin": "bùrú",
+            "han_viet": "bất như",
+            "ja_kanji": "不如",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "chi bằng",
+              "ja": "むしろ〜だ",
+              "en": "better to"
+            },
+            "block_role": "marker_prefer"
+          },
+          {
+            "hanzi": "说",
+            "pinyin": "shuō",
+            "han_viet": "thuyết",
+            "ja_kanji": "説",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "nói",
+              "ja": "言う",
+              "en": "say"
+            },
+            "block_role": "preferred_option"
+          },
+          {
+            "hanzi": "是",
+            "pinyin": "shì",
+            "han_viet": "thị",
+            "ja_kanji": "是",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "là",
+              "ja": "〜だ",
+              "en": "is"
+            },
+            "block_role": "preferred_option"
+          },
+          {
+            "hanzi": "我们",
+            "pinyin": "wǒmen",
+            "han_viet": "ngã môn",
+            "ja_kanji": "我們",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "chúng tôi",
+              "ja": "私たち",
+              "en": "our"
+            },
+            "block_role": "preferred_option"
+          },
+          {
+            "hanzi": "的",
+            "pinyin": "de",
+            "han_viet": "—",
+            "ja_kanji": "的",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "của",
+              "ja": "の",
+              "en": "'s"
+            },
+            "block_role": "preferred_option"
+          },
+          {
+            "hanzi": "朋友",
+            "pinyin": "péngyou",
+            "han_viet": "bằng hữu",
+            "ja_kanji": "朋友",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "người bạn",
+              "ja": "友人",
+              "en": "friend"
+            },
+            "block_role": "preferred_option"
+          }
+        ],
+        "scenario": {
+          "vi": "miêu tả người thầy gần gũi",
+          "ja": "親しみやすい先生を表現する",
+          "en": "describing an approachable teacher"
+        },
+        "translations": {
+          "vi": "Anh ấy thay vì nói là giáo viên, chi bằng nói là người bạn của chúng tôi thì đúng hơn.",
+          "ja": "彼は先生というよりは、むしろ私たちの友人だと言った方がいい。",
+          "en": "He is more of a friend to us than a teacher."
+        },
+        "literal_en": "He rather-than say is teacher, not-equal-to say is we DE friend",
+        "tone_tip": {
+          "vi": "",
+          "ja": "",
+          "en": ""
+        },
+        "word_order_diff": {
+          "vi": "",
+          "ja": "",
+          "en": "English often says 'more B than A' ('more of a friend than a teacher'), which is the reverse order of 与其说是 A，不如说是 B."
+        },
+        "note": {
+          "vi": "Mẫu cố định '与其说是 A，不如说是 B' cực kỳ phổ biến trong bài thi đọc và viết HSK 5-6.",
+          "ja": "「与其说是A，不如说是B（AというよりはむしろBだ）」はHSK5〜6級の読解・作文で頻出の重要表現です。",
+          "en": "Watch the reversal when translating English 'more [B] than [A]' into '与其说是 [A]，不如说是 [B]'."
+        }
+      },
+      {
+        "zh": "与其在这里干等着，不如先去喝杯咖啡吧？",
+        "pinyin": "Yǔqí zài zhèlǐ gān děng zhe, bùrú xiān qù hē bēi kāfēi ba?",
+        "tokens": [
+          {
+            "hanzi": "与其",
+            "pinyin": "yǔqí",
+            "han_viet": "dữ kỳ",
+            "ja_kanji": "与其",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "thay vì",
+              "ja": "〜するくらいなら",
+              "en": "rather than"
+            },
+            "block_role": "marker_discard"
+          },
+          {
+            "hanzi": "在",
+            "pinyin": "zài",
+            "han_viet": "tại",
+            "ja_kanji": "在",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "ở",
+              "ja": "〜で",
+              "en": "at"
+            },
+            "block_role": "rejected_option"
+          },
+          {
+            "hanzi": "这里",
+            "pinyin": "zhèlǐ",
+            "han_viet": "giá lý",
+            "ja_kanji": "這裏",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "đây",
+              "ja": "ここ",
+              "en": "here"
+            },
+            "block_role": "rejected_option"
+          },
+          {
+            "hanzi": "干",
+            "pinyin": "gān",
+            "han_viet": "can",
+            "ja_kanji": "乾",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "suông, không làm gì",
+              "ja": "むなしく・ただ〜だけ",
+              "en": "idly / in vain"
+            },
+            "block_role": "rejected_option"
+          },
+          {
+            "hanzi": "等着",
+            "pinyin": "děng zhe",
+            "han_viet": "đẳng trước",
+            "ja_kanji": "等着",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "đợi mãi",
+              "ja": "待っている",
+              "en": "waiting"
+            },
+            "block_role": "rejected_option"
+          },
+          {
+            "hanzi": "不如",
+            "pinyin": "bùrú",
+            "han_viet": "bất như",
+            "ja_kanji": "不如",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "chi bằng",
+              "ja": "〜した方がいい",
+              "en": "better to"
+            },
+            "block_role": "marker_prefer"
+          },
+          {
+            "hanzi": "先",
+            "pinyin": "xiān",
+            "han_viet": "tiên",
+            "ja_kanji": "先",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "trước",
+              "ja": "先に・まず",
+              "en": "first"
+            },
+            "block_role": "preferred_option"
+          },
+          {
+            "hanzi": "去",
+            "pinyin": "qù",
+            "han_viet": "khứ",
+            "ja_kanji": "去",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "đi",
+              "ja": "行く",
+              "en": "go"
+            },
+            "block_role": "preferred_option"
+          },
+          {
+            "hanzi": "喝",
+            "pinyin": "hē",
+            "han_viet": "hát",
+            "ja_kanji": "喝",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "uống",
+              "ja": "飲む",
+              "en": "drink"
+            },
+            "block_role": "preferred_option"
+          },
+          {
+            "hanzi": "杯",
+            "pinyin": "bēi",
+            "han_viet": "bôi",
+            "ja_kanji": "杯",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "cốc, tách (lượng từ)",
+              "ja": "杯（量詞）",
+              "en": "cup of"
+            },
+            "block_role": "preferred_option"
+          },
+          {
+            "hanzi": "咖啡",
+            "pinyin": "kāfēi",
+            "han_viet": "ca phê",
+            "ja_kanji": "珈琲",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "cà phê",
+              "ja": "コーヒー",
+              "en": "coffee"
+            },
+            "block_role": "preferred_option"
+          },
+          {
+            "hanzi": "吧",
+            "pinyin": "ba",
+            "han_viet": "—",
+            "ja_kanji": "吧",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "nhé (gợi ý)",
+              "ja": "〜しようか",
+              "en": "(suggestion particle)"
+            },
+            "block_role": "other"
+          }
+        ],
+        "scenario": {
+          "vi": "đề xuất đi uống cà phê trong lúc chờ đợi",
+          "ja": "待ち時間にカフェへ誘う",
+          "en": "suggesting grabbing coffee while waiting"
+        },
+        "translations": {
+          "vi": "Thay vì ngồi đợi suông ở đây, chi bằng đi uống cốc cà phê trước nhé?",
+          "ja": "ここでただ待っているくらいなら、先にコーヒーでも飲みに行かない？",
+          "en": "Rather than just sitting here waiting idly, how about we go grab a cup of coffee first?"
+        },
+        "literal_en": "Rather-than at here idly wait-ZHE, not-equal-to first go drink cup coffee BA?",
+        "tone_tip": {
+          "vi": "干 trong 干等着 đọc thanh 1 (gān = khô, suông), không đọc thanh 4 (gàn = làm).",
+          "ja": "「干等着（ただ待っている）」の「干」は第1声（gān）と発音します。",
+          "en": "Pronounce 干 in 干等着 in the 1st tone (gān, 'idly/in vain')."
+        },
+        "word_order_diff": {
+          "vi": "",
+          "ja": "",
+          "en": ""
+        },
+        "note": {
+          "vi": "Lượng từ 杯 (cốc) đứng trước 咖啡 đã lược bỏ số từ 一 (喝一杯咖啡 → 喝杯咖啡).",
+          "ja": "「喝杯咖啡」は「喝一杯咖啡」の「一」が省略された自然な口語表現です。",
+          "en": "喝杯咖啡 omits 一 before the measure word 杯."
+        }
+      }
+    ],
+    "dialogue": {
+      "goal": {
+        "vi": "Bàn tính nên sửa máy tính cũ hay mua máy mới",
+        "ja": "古いパソコンを修理するか買い替えるか相談する",
+        "en": "Deciding whether to repair an old laptop or buy a new one"
+      },
+      "lines": [
+        {
+          "speaker": "A",
+          "zh": "我的旧电脑又坏了，修一下要两千块钱。",
+          "pinyin": "Wǒ de jiù diànnǎo yòu huài le, xiū yíxià yào liǎng qiān kuài qián.",
+          "tr": {
+            "vi": "Chiếc máy tính cũ của tôi lại hỏng rồi, sửa một chút mất tận hai nghìn tệ.",
+            "ja": "私の古いパソコンがまた壊れて、修理するのに2000元もかかるんだ。",
+            "en": "My old computer broke again, and repairing it costs 2,000 yuan."
+          }
+        },
+        {
+          "speaker": "B",
+          "zh": "与其花那么多钱修旧电脑，还不如买一台新的。",
+          "pinyin": "Yǔqí huā nàme duō qián xiū jiù diànnǎo, hái bùrú mǎi yì tái xīn de.",
+          "tr": {
+            "vi": "Thay vì tốn ngần ấy tiền sửa máy cũ, thà mua luôn một chiếc mới còn hơn.",
+            "ja": "そんなにお金をかけて古いパソコンを修理するくらいなら、いっそ新しいのを1台買った方がいいよ。",
+            "en": "Rather than spending that much money repairing an old computer, you'd be better off buying a new one."
+          }
+        }
+      ]
+    },
+    "puzzles": [
+      {
+        "scrambled_tokens": [
+          "己",
+          "求",
+          "不如",
+          "人",
+          "求",
+          "与其"
+        ],
+        "correct_order": [
+          "与其",
+          "求",
+          "人",
+          "不如",
+          "求",
+          "己"
+        ]
+      },
+      {
+        "scrambled_tokens": [
+          "散步",
+          "出去",
+          "不如",
+          "电视",
+          "看",
+          "家里",
+          "在",
+          "与其"
+        ],
+        "correct_order": [
+          "与其",
+          "在",
+          "家里",
+          "看",
+          "电视",
+          "不如",
+          "出去",
+          "散步"
+        ]
+      },
+      {
+        "scrambled_tokens": [
+          "朋友",
+          "的",
+          "我们",
+          "是",
+          "说",
+          "不如",
+          "老师",
+          "是",
+          "说",
+          "与其",
+          "他"
+        ],
+        "correct_order": [
+          "他",
+          "与其",
+          "说",
+          "是",
+          "老师",
+          "不如",
+          "说",
+          "是",
+          "我们",
+          "的",
+          "朋友"
+        ]
+      }
+    ],
+    "fill_blank": [
+      {
+        "sentence": "与其在家里发愁，___出去找朋友聊聊。",
+        "options": [
+          "不如",
+          "也不",
+          "而且",
+          "尽管"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "vi",
+          "ja",
+          "en"
+        ],
+        "explanation": {
+          "vi": "Đi cặp với 与其 ở vế đầu bắt buộc là 不如 (hoặc 还不如) ở vế sau.",
+          "ja": "前半の「与其」と呼応するのは「不如（〜した方がいい）」です。",
+          "en": "与其 always pairs with 不如 in the second clause."
+        }
+      },
+      {
+        "sentence": "___天天熬夜学习，不如提高白天的学习效率。",
+        "options": [
+          "与其",
+          "宁可",
+          "既然",
+          "即使"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "vi",
+          "en"
+        ],
+        "explanation": {
+          "vi": "Phía sau có 不如 nên phía trước dùng 与其 để loại bỏ phương án 'thức khuya học bài mỗi ngày'.",
+          "ja": "後半に「不如」があり、前半の「毎日徹夜で勉強する」を退けているので「与其」が入ります。",
+          "en": "Use 与其 to introduce the rejected option paired with 不如."
+        }
+      },
+      {
+        "sentence": "这道菜与其说是辣，___说是麻。",
+        "options": [
+          "不如",
+          "比",
+          "宁愿",
+          "反而"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "ja",
+          "en"
+        ],
+        "explanation": {
+          "vi": "Cấu trúc cố định 与其说是 A，不如说是 B (thay vì nói là cay, chi bằng nói là tê).",
+          "ja": "「与其说是A，不如说是B（AというよりはむしろBだ）」の定型表現です。",
+          "en": "Completes the fixed frame 与其说是 A，不如说是 B ('more B than A')."
+        }
+      }
+    ],
+    "error_correction": [
+      {
+        "wrong": "与其买质量好的，不如买便宜容易坏的。",
+        "correct": "与其买便宜容易坏的，不如买质量好的。",
+        "hint": {
+          "vi": "Bạn đang đặt ngược vị trí giữa phương án bị loại bỏ và phương án được chọn.",
+          "ja": "「与其」の後ろに退ける案、「不如」の後ろに選ぶ良い案が来るように入れ替えましょう。",
+          "en": "Swap the two clauses so the undesirable option follows 与其 and the better option follows 不如."
+        }
+      },
+      {
+        "wrong": "与其坐出租车去，也不坐地铁去。",
+        "correct": "与其坐出租车去，不如坐地铁去。",
+        "hint": {
+          "vi": "Hãy sửa từ nối ở vế thứ hai cho khớp với cặp 与其...",
+          "ja": "「与其」とペアになる後半の接続詞が「宁可…也不…」のものと混ざっています。",
+          "en": "Replace 也不 with the proper correlative partner for 与其."
+        }
+      }
+    ],
+    "quiz": [
+      {
+        "question": {
+          "vi": "Câu '与其等他来帮我们，不如我们自己做' có ý nghĩa là gì?",
+          "ja": "「与其等他来帮我们，不如我们自己做。」の意味として正しいものはどれですか？",
+          "en": "What does '与其等他来帮我们，不如我们自己做' mean?"
+        },
+        "options": [
+          "Chúng ta tự làm tốt hơn là ngồi đợi anh ấy đến giúp.",
+          "Chúng ta thà đợi anh ấy đến giúp chứ không tự làm.",
+          "Vì anh ấy đến giúp nên chúng ta không cần tự làm.",
+          "Đợi anh ấy đến giúp cũng tốt như chúng ta tự làm."
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "vi",
+          "ja",
+          "en"
+        ],
+        "explanation": {
+          "vi": "与其 A (đợi anh ấy đến giúp) là phương án bị bỏ; 不如 B (chúng ta tự làm) là phương án được chọn.",
+          "ja": "前半の「彼が手伝いに来るのを待つ」をやめて、後半の「自分たちでやる」を選んでいます。",
+          "en": "The clause after 与其 (waiting for him) is rejected, and the clause after 不如 (doing it ourselves) is preferred."
+        }
+      },
+      {
+        "question": {
+          "vi": "Khi muốn dịch câu tiếng Anh 'This book is more of a novel than a history book' sang tiếng Trung, câu nào đúng?",
+          "ja": "「この本は歴史書というよりは、むしろ小説だ」を正しく表す中国語はどれですか？",
+          "en": "How do you translate 'This book is more of a novel than a history book'?"
+        },
+        "options": [
+          "这本书与其说是历史书，不如说是小说。",
+          "这本书与其说是小说，不如说是历史书。",
+          "这本书不如说是历史书，与其说是小说。",
+          "这本书与其历史书，不如小说。"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "en",
+          "vi"
+        ],
+        "explanation": {
+          "vi": "Trong tiếng Anh 'more of a novel (B) than a history book (A)' đặt cái đúng hơn (novel) lên trước. Khi chuyển sang 与其说是 A，不如说是 B phải đưa 历史书 (A) vào sau 与其说是 và 小说 (B) vào sau 不如说是.",
+          "ja": "「歴史書というよりは（与其说是历史书）、むしろ小説だ（不如说是小说）」の順になります。",
+          "en": "English 'more [Novel] than [History]' reverses the order of Chinese '与其说是 [History]，不如说是 [Novel]'."
+        }
+      },
+      {
+        "question": {
+          "vi": "Câu nào đồng nghĩa với '与其去那家太贵的餐厅，不如在家做饭'?",
+          "ja": "「与其去那家太贵的餐厅，不如在家做饭。」と最も近い意味の文はどれですか？",
+          "en": "Which sentence has the same meaning as '与其去那家太贵的餐厅，不如在家做饭'?"
+        },
+        "options": [
+          "我宁可在家做饭，也不去那家太贵的餐厅。",
+          "我宁可去那家太贵的餐厅，也不在家做饭。",
+          "在家做饭不如去那家太贵的餐厅。",
+          "不但去那家太贵的餐厅，而且在家做饭。"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "vi",
+          "ja",
+          "en"
+        ],
+        "explanation": {
+          "vi": "Cả hai câu đều chọn 'ở nhà nấu cơm' (在家做饭) và bỏ 'đi nhà hàng đắt đỏ' (去那家太贵的餐厅): 宁可 đặt cái chọn ở trước, còn 与其 đặt cái bỏ ở trước.",
+          "ja": "「与其A，不如B（AよりBを選ぶ）」を「宁可…也不…」で言い換えると、順序が逆になり「宁可B，也不A（BしてもAしない）」となります。",
+          "en": "'与其 A，不如 B' corresponds to '宁可 B，也不 A' (both choose B 'cooking at home' and reject A 'going to the expensive restaurant')."
+        }
+      }
+    ],
+    "summary_card": {
+      "one_liner": {
+        "vi": "与其 A，(还)不如 B: Thay vì làm phương án dở A (bỏ), chi bằng làm phương án tốt hơn B (chọn).",
+        "ja": "「与其A，（还）不如B」：Aするくらいなら（不採用）、いっそBした方がいい（採用）。",
+        "en": "'与其 A，(还)不如 B' rejects the worse option A first and chooses the better option B second."
+      },
+      "remember": [
+        {
+          "vi": "Sau 与其 luôn là phương án BỊ LOẠI BỎ; sau 不如 luôn là phương án ĐƯỢC CHỌN.",
+          "ja": "「与其」の後ろが捨てる案（A）、「不如」の後ろが選ぶ案（B）。",
+          "en": "Put the REJECTED option after 与其 and the PREFERRED option after 不如."
+        },
+        {
+          "vi": "Cẩn thận ngược thứ tự với tiếng Việt 'Thà [Chọn] còn hơn [Bỏ]' và tiếng Anh 'would rather [Chosen] than [Rejected]'.",
+          "ja": "「宁可B，也不A（Bを選んでAを捨てる）」とはA・Bの配置が逆になる。",
+          "en": "Flip the clause order when translating from English 'would rather B than A' or 'more B than A'."
+        },
+        {
+          "vi": "Nhớ mẫu cố định '与其说是 A，不如说是 B' (Thay vì nói là A, chi bằng nói là B).",
+          "ja": "「与其说是A，不如说是B（AというよりはむしろBだ）」を定型フレーズとして覚える。",
+          "en": "Use '与其说是 A，不如说是 B' for 'It is more B than A'."
+        }
+      ]
+    },
+    "needs_review": false,
+    "review_note": ""
+  },
+  {
+    "id": "hsk6_fei_dan_bu_fan_er",
+    "level": "HSK6",
+    "level_num": 6,
+    "category": "conjunction",
+    "difficulty": 5,
+    "frequency": 4,
+    "register": "written",
+    "keywords": [
+      "非但",
+      "反而",
+      "fēidàn",
+      "fǎn'ér",
+      "không những không... mà trái lại...",
+      "〜ないばかりか、かえって〜",
+      "far from, on the contrary"
+    ],
+    "formula": "S + 非但 + (不/没) + V1，反而 + V2",
+    "formula_plain": {
+      "vi": "Chủ ngữ + không những không (非但不/没) + xảy ra điều dự kiến V1, mà trái lại (反而) + xảy ra kết quả ngược hẳn V2",
+      "ja": "主語 ＋ 非但（不／没）＋ 予想V1（〜ないばかりか），反而 ＋ 逆の結果V2（かえって〜だ）",
+      "en": "Subject + 非但(不/没) + Expected V1 (Far from V1), 反而 + Opposite Result V2 (on the contrary, V2)"
+    },
+    "structure_blocks": [
+      {
+        "label": {
+          "vi": "Liên từ 非但 (chẳng những)",
+          "ja": "接続詞 非但（〜だけでなく）",
+          "en": "Conjunction 非但 (not only)"
+        },
+        "role": "marker_first",
+        "color": "#F97316"
+      },
+      {
+        "label": {
+          "vi": "Phủ định điều mong đợi (不/没 + V1)",
+          "ja": "予想の否定 (不／没＋V1)",
+          "en": "Negated expectation (不/没 + V1)"
+        },
+        "role": "negated_expectation",
+        "color": "#EF4444"
+      },
+      {
+        "label": {
+          "vi": "Phó từ 反而 (mà trái lại)",
+          "ja": "副詞 反而（かえって）",
+          "en": "Adverb 反而 (on the contrary)"
+        },
+        "role": "marker_reverse",
+        "color": "#3B82F6"
+      },
+      {
+        "label": {
+          "vi": "Kết quả ngược chiều (V2)",
+          "ja": "逆方向の結果 (V2)",
+          "en": "Opposite outcome (V2)"
+        },
+        "role": "opposite_outcome",
+        "color": "#8B5CF6"
+      }
+    ],
+    "related_ids": [
+      "hsk3_bu_dan_er_qie",
+      "hsk4_bu_shi_er_shi"
+    ],
+    "confusable_with": [
+      {
+        "id": "hsk3_bu_dan_er_qie",
+        "diff": {
+          "vi": "不但…而且… là tăng tiến cùng chiều (tốt + tốt hơn, hoặc xấu + xấu hơn), còn 非但不…，反而… là đảo ngược chiều so với kỳ vọng (mong là giảm nhưng chẳng những không giảm mà trái lại còn tăng).",
+          "ja": "「不但…而且…」は同じ方向への累加（良い＋さらに良い）ですが、「非但不…，反而…」は予想と正反対の方向へ進む逆転（減るどころか、かえって増えた）を表します。",
+          "en": "不但...而且... adds two points in the same direction ('not only... but also...'), while 非但不...反而... expresses a reversal contrary to expectation ('not only did X not happen, on the contrary, the opposite Y happened')."
+        }
+      }
+    ],
+    "localizations": {
+      "vi": {
+        "title": "Cấu trúc phản đệ tiến 非但(不)…，反而… (Chẳng những không... mà trái lại...)",
+        "quick_rule_3s": "Dùng trong văn viết và nghị luận để nhấn mạnh sự việc không diễn ra theo chiều hướng dự kiến (非但不/没 V1) mà lại bật ngược sang chiều đối lập (反而 V2).",
+        "contrastive_note": "Trong chữ 非但 có chữ 非 (phi = không phải), nên rất nhiều người Việt tưởng bản thân chữ 非但 đã mang nghĩa phủ định 'không những không' và bỏ quên chữ 不 hoặc 没 ở phía sau! Thực chất, 非但 chỉ bằng với 不但 / 不仅 (chẳng những / không những) ở văn phong trang trọng; muốn nói 'chẳng những KHÔNG...' bạn bắt buộc phải thêm 不, 没 hoặc 无 vào sau 非但 (非但不 / 非但没有).",
+        "analogy": "Giống như khi bạn đạp phanh xe: kỳ vọng xe sẽ dừng lại, nhưng xe 'chẳng những không dừng (非但没停), mà trái lại còn lao nhanh hơn (反而更快了)'.",
+        "mnemonic": "非但 mới chỉ là 'chẳng những', phải thêm 不/没 mới ra 'chẳng những không', vế sau bật ngược bằng 反而!",
+        "how_to_use": [
+          {
+            "step": 1,
+            "text": "Bước 1: Đặt chủ ngữ ở đầu câu (hoặc sau 非但 nếu hai vế khác chủ ngữ), tiếp theo là 非但 + 不/没/没有 + điều lẽ ra phải xảy ra (V1)."
+          },
+          {
+            "step": 2,
+            "text": "Bước 2: Đặt dấu phẩy, mở đầu vế hai bằng phó từ 反而 (hoặc 反倒)."
+          },
+          {
+            "step": 3,
+            "text": "Bước 3: Nêu kết quả thực tế xảy ra ngược hẳn với V1 ở sau 反而."
+          }
+        ],
+        "self_check": [
+          "Bạn đã nhớ thêm 不 hoặc 没/没有 vào sau chữ 非但 (khi muốn nói 'chẳng những không') chưa?",
+          "Vế sau 反而 đã thực sự là kết quả NGƯỢC CHIỀU với điều mong đợi ở vế đầu chưa?",
+          "Nếu vế hai có chủ ngữ riêng, bạn đã đặt 反而 ở SAU chủ ngữ (vì 反而 là phó từ) chưa?"
+        ],
+        "tips": [
+          "Cẩn thận bẫy chữ 非: 非但 = 不但 (chẳng những), KHÔNG PHẢI = 不但不 (chẳng những không). Luôn kiểm tra chữ 不/没 sau 非但.",
+          "反而 là phó từ (không phải liên từ nối đầu câu như 'On the contrary' trong tiếng Anh), nên nếu vế 2 có chủ ngữ thì chủ ngữ phải đứng TRƯỚC 反而."
+        ],
+        "when_to_use": [
+          "Khi mô tả tác dụng ngược của một giải pháp, chính sách hoặc hành động (uống thuốc không đỡ mà nặng hơn).",
+          "Khi lập luận trong bài viết HSK 6 để bác bỏ một kỳ vọng thông thường và chỉ ra hệ quả trái ngược."
+        ],
+        "when_not_to_use": [
+          "Khi chỉ liệt kê hai sự thật đối lập đơn giản dạng 'Không phải A mà là B' (dùng 不是 A，而是 B).",
+          "Không đặt 反而 đứng trước chủ ngữ của vế thứ hai."
+        ],
+        "fatal_mistake": {
+          "wrong": "吃药以后，他的病非但好了，反而更严重了。",
+          "correct": "吃药以后，他的病非但没好，反而更严重了。",
+          "explanation": "Bản thân 非但 chỉ có nghĩa là 'chẳng những' (tương đương 不但). Để nói 'chẳng những không khỏi', bắt buộc phải có chữ 没 (非但没好).",
+          "why_learners_make_it": "Người Việt thấy chữ 非 (phi = không) trong 非但 nên tưởng 非但 đã bao gồm nghĩa phủ định 'không những không' và bỏ sót chữ 不/没."
+        },
+        "extra_mistakes": [
+          {
+            "wrong": "我帮了他，反而他怪我。",
+            "correct": "我帮了他，他反而怪我。",
+            "explanation": "反而 là phó từ nên phải đứng SAU chủ ngữ 他 và đứng trước động từ 怪 (他反而怪我)."
+          }
+        ]
+      },
+      "ja": {
+        "title": "逆方向への累加「非但（不）…，反而…」（〜ないばかりか、かえって〜）",
+        "quick_rule_3s": "「非但＋不／没＋V1，反而＋V2」で、期待されたV1が起きないばかりか、かえって逆のV2になったことを表す書面語構文です。",
+        "contrastive_note": "日本人学習者が最も陥りやすい罠は、「非但」という漢字の見た目です。日本語では「非」が否定を表すため、「非但」の2文字だけで「〜ないばかりか（否定）」という意味だと錯覚して後ろの「不／没」を落としてしまいます。しかし中国語の「非但」は「不但（〜だけでなく）」の硬い表現にすぎず、否定の意味は含まれません。「〜ないばかりか」と言うには必ず「非但不…」「非但没有…」と否定語を続ける必要があります。",
+        "analogy": "火に水をかけたつもり（期待：火が消える）が、実は油で「消えないばかりか（非但没灭）、かえって燃え広がった（反而更大了）」という逆効果の構図です。",
+        "mnemonic": "「非但」に否定の意味はなし！「非但不／没」＋「反而」で逆転現象！",
+        "how_to_use": [
+          {
+            "step": 1,
+            "text": "ステップ1：前半に「非但＋不／没有＋本来期待されたこと（V1）」を置きます。"
+          },
+          {
+            "step": 2,
+            "text": "ステップ2：後半に副詞「反而（かえって）」を置きます（後半に主語がある場合は「主語＋反而」の順）。"
+          },
+          {
+            "step": 3,
+            "text": "ステップ3：「反而」の後ろに、期待とは正反対の実際の結果（V2）を述べます。"
+          }
+        ],
+        "self_check": [
+          "「非但」の漢字に騙されて、後ろの「不」や「没／没有」を書き忘れていませんか？",
+          "後半の「反而」を主語の後ろ（述語の前）に置いていますか？",
+          "前半と後半が「予想の否定→かえって逆の結果」という逆転関係になっていますか？"
+        ],
+        "tips": [
+          "「非但＝不但（書面語）」と暗記し、「〜ないばかりか」は必ず4文字セットで「非但不…／非但没有…」と覚えましょう。",
+          "なお、肯定の「非但A，而且B（Aであるばかりか、さらにBだ）」として使うことも可能です。"
+        ],
+        "when_to_use": [
+          "対策や行動が裏目に出て、予想と逆の結果を招いたことを論述・説明するとき。",
+          "厳しい状況の中で「落ち込まないばかりか、かえって意欲が高まった」のように意外な反応を強調するとき。"
+        ],
+        "when_not_to_use": [
+          "単なる「AではなくBだ（不是A，而是B）」という選択否定のとき。",
+          "「反而」を文頭（主語の前）に接続詞のように置くこと。"
+        ],
+        "fatal_mistake": {
+          "wrong": "雨非但停，反而下得更大了。",
+          "correct": "雨非但没停，反而下得更大了。",
+          "explanation": "「非但」自体には「〜ない」という否定の意味はありません。「雨が止まないばかりか」と言うには「非但没停」と「没」が必要です。",
+          "why_learners_make_it": "漢字の「非（あらず・非ず）」を見て、「非但」だけで否定が含まれていると思い込んでしまうためです。"
+        },
+        "extra_mistakes": [
+          {
+            "wrong": "这样做非但没有解决问题，反而问题更复杂了。",
+            "correct": "这样做非但没有解决问题，问题反而更复杂了。",
+            "explanation": "「反而」は副詞なので、後半の主語「问题」の後ろ（「问题反而…」）に置きます。"
+          }
+        ]
+      },
+      "en": {
+        "title": "Contrary Progression with 非但(不)…，反而… (Far from..., on the contrary...)",
+        "quick_rule_3s": "Use '非但 + 不/没 + V1，反而 + V2' in formal contexts to state that not only did the expected V1 fail to happen, on the contrary, the opposite V2 occurred.",
+        "contrastive_note": "English learners face two major traps here: (1) Despite containing the character 非 ('non-'), the word 非但 simply means 'not only' (like 不但)—it does NOT contain a negative meaning on its own, so you must explicitly add 不 or 没 after it (非但不 / 非但没有) to mean 'not only did it NOT...'; (2) English 'On the contrary' is a sentence-initial phrase placed before the subject ('On the contrary, he got angry'), whereas Chinese 反而 is an ADVERB that must be placed AFTER the subject of the second clause (他反而生气了).",
+        "analogy": "Imagine trying to calm a fire with a bucket of liquid, only to realize it's gasoline: the fire 'not only didn't go out (非但没灭), on the contrary, it flared up even higher (反而更大了)'.",
+        "mnemonic": "非但 needs 不/没 to negate; put adverb 反而 after the subject's place!",
+        "how_to_use": [
+          {
+            "step": 1,
+            "text": "Step 1: In the first clause, place 非但 + 不/没/没有 + the expected outcome (V1)."
+          },
+          {
+            "step": 2,
+            "text": "Step 2: In the second clause, place the adverb 反而 (after the second subject if a new subject appears)."
+          },
+          {
+            "step": 3,
+            "text": "Step 3: Follow 反而 with the unexpected opposite outcome (V2)."
+          }
+        ],
+        "self_check": [
+          "Did you include 不 or 没/没有 after 非但 when negating the first clause?",
+          "If the second clause has an explicit subject, did you place 反而 AFTER that subject?",
+          "Are you expressing a backfiring/contrary progression rather than a simple 'Not A, but B' (不是 A，而是 B)?"
+        ],
+        "tips": [
+          "Never use 反而 to translate 'On the contrary, [Correction]' after a simple false statement—use 不是 A，而是 B for direct corrections, and save 非但不...反而... for when an action produces the opposite effect.",
+          "Remember: Subject + 反而 + Verb (never 反而 + Subject + Verb)."
+        ],
+        "when_to_use": [
+          "Describing an action, policy, or treatment that backfires and produces the opposite of the intended result.",
+          "Highlighting a surprising reaction that goes in the opposite direction of normal expectations."
+        ],
+        "when_not_to_use": [
+          "Simple factual corrections ('He isn't a student; on the contrary, he's the principal' -> use 他不是学生，而是校长).",
+          "Placing 反而 before the subject."
+        ],
+        "fatal_mistake": {
+          "wrong": "我向他道歉了，反而他更生气了。",
+          "correct": "我向他道歉了，他反而更生气了。",
+          "explanation": "Because 反而 is an adverb rather than a conjunction, it must stand AFTER the subject 他 and before the predicate 更生气了.",
+          "why_learners_make_it": "English speakers treat 反而 like the sentence-initial phrase 'On the contrary, he...' and place it before the subject."
+        },
+        "extra_mistakes": [
+          {
+            "wrong": "这种做法非但节省时间，反而浪费了很多精力。",
+            "correct": "这种做法非但没有节省时间，反而浪费了很多精力。",
+            "explanation": "非但 alone means 'not only'; you must add 没有 (非但没有节省时间) to say 'not only did it NOT save time'."
+          }
+        ]
+      }
+    },
+    "fill_template": {
+      "pattern": "___ 非但没有 ___，反而 ___。",
+      "slots": [
+        {
+          "vi": "Chủ ngữ / Sự việc",
+          "ja": "主語・事柄",
+          "en": "Subject / Action"
+        },
+        {
+          "vi": "Kết quả mong đợi V1 (giảm bớt, giải quyết)",
+          "ja": "期待された結果V1（減る、解決する）",
+          "en": "Expected outcome V1 (decrease, solve)"
+        },
+        {
+          "vi": "Kết quả trái ngược V2 (tăng lên, phức tạp hơn)",
+          "ja": "逆の結果V2（増える、さらに複雑になる）",
+          "en": "Opposite outcome V2 (increase, worsen)"
+        }
+      ],
+      "example_filled": "房价非但没有下降，反而上涨了。"
+    },
+    "collocations": [
+      {
+        "zh": "非但没有…，反而…",
+        "pinyin": "fēidàn méiyǒu …, fǎn'ér …",
+        "meaning": {
+          "vi": "chẳng những đã không..., mà trái lại...",
+          "ja": "〜しなかったばかりか、かえって…",
+          "en": "not only did not ..., on the contrary ..."
+        }
+      },
+      {
+        "zh": "非但不…，反而…",
+        "pinyin": "fēidàn bù …, fǎn'ér …",
+        "meaning": {
+          "vi": "không những không..., mà ngược lại còn...",
+          "ja": "〜ないばかりか、かえって…",
+          "en": "far from ..., on the contrary ..."
+        }
+      },
+      {
+        "zh": "非但无济于事，反而…",
+        "pinyin": "fēidàn wújìyúshì, fǎn'ér …",
+        "meaning": {
+          "vi": "chẳng những không giúp ích được gì, mà trái lại...",
+          "ja": "何の役にも立たないばかりか、かえって…",
+          "en": "not only is it of no help, on the contrary ..."
+        }
+      }
+    ],
+    "examples": [
+      {
+        "zh": "雨非但没停，反而下得更大了。",
+        "pinyin": "Yǔ fēidàn méi tíng, fǎn'ér xià de gèng dà le.",
+        "tokens": [
+          {
+            "hanzi": "雨",
+            "pinyin": "yǔ",
+            "han_viet": "vũ",
+            "ja_kanji": "雨",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "mưa",
+              "ja": "雨",
+              "en": "rain"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "非但",
+            "pinyin": "fēidàn",
+            "han_viet": "phi đãn",
+            "ja_kanji": "非但",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "chẳng những",
+              "ja": "〜ばかりか",
+              "en": "not only"
+            },
+            "block_role": "marker_first"
+          },
+          {
+            "hanzi": "没",
+            "pinyin": "méi",
+            "han_viet": "một",
+            "ja_kanji": "没",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "không, chưa",
+              "ja": "〜ない",
+              "en": "did not"
+            },
+            "block_role": "negated_expectation"
+          },
+          {
+            "hanzi": "停",
+            "pinyin": "tíng",
+            "han_viet": "đình",
+            "ja_kanji": "停",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "tạnh, dừng",
+              "ja": "止む・止まる",
+              "en": "stop"
+            },
+            "block_role": "negated_expectation"
+          },
+          {
+            "hanzi": "反而",
+            "pinyin": "fǎn'ér",
+            "han_viet": "phản nhi",
+            "ja_kanji": "反而",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "mà trái lại",
+              "ja": "かえって",
+              "en": "on the contrary"
+            },
+            "block_role": "marker_reverse"
+          },
+          {
+            "hanzi": "下",
+            "pinyin": "xià",
+            "han_viet": "hạ",
+            "ja_kanji": "下",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "rơi, mưa",
+              "ja": "降る",
+              "en": "fall"
+            },
+            "block_role": "opposite_outcome"
+          },
+          {
+            "hanzi": "得",
+            "pinyin": "de",
+            "han_viet": "đắc",
+            "ja_kanji": "得",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "(trợ từ bổ ngữ)",
+              "ja": "（様態補語マーカー）",
+              "en": "(degree marker)"
+            },
+            "block_role": "opposite_outcome"
+          },
+          {
+            "hanzi": "更",
+            "pinyin": "gèng",
+            "han_viet": "canh",
+            "ja_kanji": "更",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "càng, hơn",
+              "ja": "さらに",
+              "en": "even more"
+            },
+            "block_role": "opposite_outcome"
+          },
+          {
+            "hanzi": "大",
+            "pinyin": "dà",
+            "han_viet": "đại",
+            "ja_kanji": "大",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "to, lớn",
+              "ja": "激しい・強い",
+              "en": "heavy"
+            },
+            "block_role": "opposite_outcome"
+          },
+          {
+            "hanzi": "了",
+            "pinyin": "le",
+            "han_viet": "—",
+            "ja_kanji": "了",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "rồi",
+              "ja": "〜なった",
+              "en": "(change of state)"
+            },
+            "block_role": "opposite_outcome"
+          }
+        ],
+        "scenario": {
+          "vi": "mô tả thời tiết xấu đi trái dự đoán",
+          "ja": "予想に反して雨が強まった状況",
+          "en": "weather worsening contrary to expectation"
+        },
+        "translations": {
+          "vi": "Mưa chẳng những không tạnh, mà trái lại còn rơi to hơn.",
+          "ja": "雨は止まないばかりか、かえってさらに激しく降ってきた。",
+          "en": "Far from stopping, the rain actually fell even harder."
+        },
+        "literal_en": "Rain not-only did-not stop, on-the-contrary fall DE even big LE",
+        "tone_tip": {
+          "vi": "反而 có vần 'er' bắt đầu bằng nguyên âm nên khi viết pinyin có dấu cách âm: fǎn'ér.",
+          "ja": "「反而（fǎn'ér）」は第3声から第2声へ滑らかに上げます。",
+          "en": "Note the apostrophe in fǎn'ér separating the two syllables."
+        },
+        "word_order_diff": {
+          "vi": "",
+          "ja": "",
+          "en": ""
+        },
+        "note": {
+          "vi": "Bắt buộc có 没 sau 非但 để tạo nghĩa 'chẳng những không tạnh'.",
+          "ja": "「非但」の後ろに「没」を置くことで「止まないばかりか」となります。",
+          "en": "没 is required after 非但 to negate 停 (stop)."
+        }
+      },
+      {
+        "zh": "他的病非但没有减轻，反而加重了。",
+        "pinyin": "Tā de bìng fēidàn méiyǒu jiǎnqīng, fǎn'ér jiāzhòng le.",
+        "tokens": [
+          {
+            "hanzi": "他",
+            "pinyin": "tā",
+            "han_viet": "tha",
+            "ja_kanji": "他",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "anh ấy",
+              "ja": "彼",
+              "en": "his"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "的",
+            "pinyin": "de",
+            "han_viet": "—",
+            "ja_kanji": "的",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "của",
+              "ja": "の",
+              "en": "'s"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "病",
+            "pinyin": "bìng",
+            "han_viet": "bệnh",
+            "ja_kanji": "病",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "bệnh",
+              "ja": "病気",
+              "en": "illness"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "非但",
+            "pinyin": "fēidàn",
+            "han_viet": "phi đãn",
+            "ja_kanji": "非但",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "chẳng những",
+              "ja": "〜ばかりか",
+              "en": "not only"
+            },
+            "block_role": "marker_first"
+          },
+          {
+            "hanzi": "没有",
+            "pinyin": "méiyǒu",
+            "han_viet": "một hữu",
+            "ja_kanji": "没有",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "không",
+              "ja": "〜なかった",
+              "en": "did not"
+            },
+            "block_role": "negated_expectation"
+          },
+          {
+            "hanzi": "减轻",
+            "pinyin": "jiǎnqīng",
+            "han_viet": "giảm khinh",
+            "ja_kanji": "軽減",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "thuyên giảm",
+              "ja": "軽くなる・軽減する",
+              "en": "ease / lessen"
+            },
+            "block_role": "negated_expectation"
+          },
+          {
+            "hanzi": "反而",
+            "pinyin": "fǎn'ér",
+            "han_viet": "phản nhi",
+            "ja_kanji": "反而",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "mà trái lại",
+              "ja": "かえって",
+              "en": "on the contrary"
+            },
+            "block_role": "marker_reverse"
+          },
+          {
+            "hanzi": "加重",
+            "pinyin": "jiāzhòng",
+            "han_viet": "gia trọng",
+            "ja_kanji": "加重",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "trở nặng thêm",
+              "ja": "悪化する・重くなる",
+              "en": "worsen / become heavier"
+            },
+            "block_role": "opposite_outcome"
+          },
+          {
+            "hanzi": "了",
+            "pinyin": "le",
+            "han_viet": "—",
+            "ja_kanji": "了",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "rồi",
+              "ja": "〜た",
+              "en": "(change of state)"
+            },
+            "block_role": "opposite_outcome"
+          }
+        ],
+        "scenario": {
+          "vi": "nói về tình trạng bệnh lý",
+          "ja": "病状の悪化を説明する",
+          "en": "describing a worsening medical condition"
+        },
+        "translations": {
+          "vi": "Bệnh của anh ấy chẳng những không thuyên giảm, mà trái lại còn nặng thêm.",
+          "ja": "彼の病気は軽くならなかったばかりか、かえって悪化した。",
+          "en": "Far from easing, his illness actually worsened."
+        },
+        "literal_en": "He DE illness not-only did-not lighten, on-the-contrary add-heavy LE",
+        "tone_tip": {
+          "vi": "重 ở đây mang nghĩa 'nặng' nên đọc là zhòng (thanh 4), không đọc là chóng (lặp lại).",
+          "ja": "「加重」の「重」は「重い」の意味なので第4声（zhòng）と読みます。",
+          "en": "Pronounce 重 as zhòng (4th tone, 'heavy/severe'), not chóng."
+        },
+        "word_order_diff": {
+          "vi": "",
+          "ja": "「减轻（軽くなる）」は日本語の「軽減（けいげん）」と漢字の順序が逆です。",
+          "en": ""
+        },
+        "note": {
+          "vi": "Cặp từ trái nghĩa 减轻 (giảm nhẹ) và 加重 (tăng nặng) rất hay đi cùng cấu trúc này.",
+          "ja": "日本語の「軽減」は中国語では「减轻」と字順が逆になる点にも注目しましょう。",
+          "en": "减轻 (lessen) and 加重 (aggravate) form a natural antonym pair in this pattern."
+        }
+      },
+      {
+        "zh": "面对困难，她非但不退缩，反而更加坚强。",
+        "pinyin": "Miànduì kùnnan, tā fēidàn bú tuìsuō, fǎn'ér gèngjiā jiānqiáng.",
+        "tokens": [
+          {
+            "hanzi": "面对",
+            "pinyin": "miànduì",
+            "han_viet": "diện đối",
+            "ja_kanji": "面対",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "đối mặt với",
+              "ja": "〜に直面して",
+              "en": "facing"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "困难",
+            "pinyin": "kùnnan",
+            "han_viet": "khốn nạn",
+            "ja_kanji": "困難",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "khó khăn",
+              "ja": "困難",
+              "en": "difficulty"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "她",
+            "pinyin": "tā",
+            "han_viet": "tha",
+            "ja_kanji": "她",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "cô ấy",
+              "ja": "彼女",
+              "en": "she"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "非但",
+            "pinyin": "fēidàn",
+            "han_viet": "phi đãn",
+            "ja_kanji": "非但",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "chẳng những",
+              "ja": "〜ばかりか",
+              "en": "not only"
+            },
+            "block_role": "marker_first"
+          },
+          {
+            "hanzi": "不",
+            "pinyin": "bú",
+            "han_viet": "bất",
+            "ja_kanji": "不",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "không",
+              "ja": "〜ない",
+              "en": "does not"
+            },
+            "block_role": "negated_expectation"
+          },
+          {
+            "hanzi": "退缩",
+            "pinyin": "tuìsuō",
+            "han_viet": "thoái súc",
+            "ja_kanji": "退縮",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "chùn bước",
+              "ja": "尻込みする・引き下がる",
+              "en": "flinch / shrink back"
+            },
+            "block_role": "negated_expectation"
+          },
+          {
+            "hanzi": "反而",
+            "pinyin": "fǎn'ér",
+            "han_viet": "phản nhi",
+            "ja_kanji": "反而",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "mà trái lại",
+              "ja": "かえって",
+              "en": "on the contrary"
+            },
+            "block_role": "marker_reverse"
+          },
+          {
+            "hanzi": "更加",
+            "pinyin": "gèngjiā",
+            "han_viet": "canh gia",
+            "ja_kanji": "更加",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "càng thêm",
+              "ja": "いっそう",
+              "en": "even more"
+            },
+            "block_role": "opposite_outcome"
+          },
+          {
+            "hanzi": "坚强",
+            "pinyin": "jiānqiáng",
+            "han_viet": "kiên cường",
+            "ja_kanji": "堅強",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "kiên cường",
+              "ja": "強い・たくましい",
+              "en": "strong / resolute"
+            },
+            "block_role": "opposite_outcome"
+          }
+        ],
+        "scenario": {
+          "vi": "ca ngợi nghị lực vượt khó",
+          "ja": "逆境に負けない強さを称える",
+          "en": "praising resilience in the face of adversity"
+        },
+        "translations": {
+          "vi": "Đối mặt với khó khăn, cô ấy chẳng những không chùn bước, mà trái lại càng kiên cường hơn.",
+          "ja": "困難に直面して、彼女は尻込みしないばかりか、かえっていっそうたくましくなった。",
+          "en": "Facing difficulties, far from shrinking back, she became even stronger."
+        },
+        "literal_en": "Face difficulty, she not-only not shrink-back, on-the-contrary even-more strong",
+        "tone_tip": {
+          "vi": "不 đứng trước 退 (tuì - thanh 4) đọc thành thanh 2: bú tuìsuō.",
+          "ja": "「不退缩」は「退（tuì）」が第4声なので「bú tuìsuō」と変調します。",
+          "en": "不 changes to 2nd tone before 退 (tuì): bú tuìsuō."
+        },
+        "word_order_diff": {
+          "vi": "",
+          "ja": "",
+          "en": ""
+        },
+        "note": {
+          "vi": "Bẫy âm Hán-Việt: 困难 có âm Hán-Việt là 'khốn nạn', nhưng nghĩa trong tiếng Trung là 'khó khăn' (difficulty), hoàn toàn trang trọng, không phải từ chửi mắng như tiếng Việt!",
+          "ja": "書面語やスピーチで人物を評価する際によく使われる美しい文型です。",
+          "en": "更加 (even more) often pairs with 反而 to reinforce the contrary degree."
+        }
+      },
+      {
+        "zh": "这样做非但不能解决问题，反而会引起误会。",
+        "pinyin": "Zhèyàng zuò fēidàn bù néng jiějué wèntí, fǎn'ér huì yǐnqǐ wùhuì.",
+        "tokens": [
+          {
+            "hanzi": "这样",
+            "pinyin": "zhèyàng",
+            "han_viet": "giá dạng",
+            "ja_kanji": "這様",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "như thế này",
+              "ja": "このように",
+              "en": "like this"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "做",
+            "pinyin": "zuò",
+            "han_viet": "tố",
+            "ja_kanji": "做",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "làm",
+              "ja": "する",
+              "en": "do"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "非但",
+            "pinyin": "fēidàn",
+            "han_viet": "phi đãn",
+            "ja_kanji": "非但",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "chẳng những",
+              "ja": "〜ばかりか",
+              "en": "not only"
+            },
+            "block_role": "marker_first"
+          },
+          {
+            "hanzi": "不能",
+            "pinyin": "bù néng",
+            "han_viet": "bất năng",
+            "ja_kanji": "不能",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "không thể",
+              "ja": "〜できない",
+              "en": "cannot"
+            },
+            "block_role": "negated_expectation"
+          },
+          {
+            "hanzi": "解决",
+            "pinyin": "jiějué",
+            "han_viet": "giải quyết",
+            "ja_kanji": "解決",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "giải quyết",
+              "ja": "解決する",
+              "en": "solve"
+            },
+            "block_role": "negated_expectation"
+          },
+          {
+            "hanzi": "问题",
+            "pinyin": "wèntí",
+            "han_viet": "vấn đề",
+            "ja_kanji": "問題",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "vấn đề",
+              "ja": "問題",
+              "en": "problem"
+            },
+            "block_role": "negated_expectation"
+          },
+          {
+            "hanzi": "反而",
+            "pinyin": "fǎn'ér",
+            "han_viet": "phản nhi",
+            "ja_kanji": "反而",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "mà trái lại",
+              "ja": "かえって",
+              "en": "on the contrary"
+            },
+            "block_role": "marker_reverse"
+          },
+          {
+            "hanzi": "会",
+            "pinyin": "huì",
+            "han_viet": "hội",
+            "ja_kanji": "会",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "sẽ",
+              "ja": "〜だろう",
+              "en": "will"
+            },
+            "block_role": "opposite_outcome"
+          },
+          {
+            "hanzi": "引起",
+            "pinyin": "yǐnqǐ",
+            "han_viet": "dẫn khởi",
+            "ja_kanji": "引起",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "gây ra",
+              "ja": "引き起こす",
+              "en": "cause / trigger"
+            },
+            "block_role": "opposite_outcome"
+          },
+          {
+            "hanzi": "误会",
+            "pinyin": "wùhuì",
+            "han_viet": "ngộ hội",
+            "ja_kanji": "誤会",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "hiểu lầm",
+              "ja": "誤解",
+              "en": "misunderstanding"
+            },
+            "block_role": "opposite_outcome"
+          }
+        ],
+        "scenario": {
+          "vi": "phân tích cách xử lý trong công việc",
+          "ja": "仕事の対処法に対する忠告",
+          "en": "evaluating a workplace approach"
+        },
+        "translations": {
+          "vi": "Làm như vậy chẳng những không thể giải quyết vấn đề, mà trái lại còn gây ra hiểu lầm.",
+          "ja": "このようにしても問題を解決できないばかりか、かえって誤解を招いてしまう。",
+          "en": "Doing it this way will not only fail to solve the problem, on the contrary, it will cause misunderstandings."
+        },
+        "literal_en": "This-way do not-only cannot solve problem, on-the-contrary will cause misunderstanding",
+        "tone_tip": {
+          "vi": "引 (yǐn) và 起 (qǐ) là 2 thanh 3 liên tiếp, đọc thành yínqǐ.",
+          "ja": "「引起（yǐnqǐ）」は第3声が続くため、「yínqǐ」と発音します。",
+          "en": "引 (yǐn) + 起 (qǐ) -> yínqǐ."
+        },
+        "word_order_diff": {
+          "vi": "Cụm '这样做' (Làm như vậy) trong tiếng Trung đặt '这样' (như vậy) trước động từ '做' (làm).",
+          "ja": "",
+          "en": "这样做 puts the manner demonstrative 这样 before the verb 做."
+        },
+        "note": {
+          "vi": "",
+          "ja": "",
+          "en": ""
+        }
+      },
+      {
+        "zh": "我好心提醒他，他非但不感谢，反而冲我发脾气。",
+        "pinyin": "Wǒ hǎoxīn tíxǐng tā, tā fēidàn bù gǎnxiè, fǎn'ér chòng wǒ fā píqi.",
+        "tokens": [
+          {
+            "hanzi": "我",
+            "pinyin": "wǒ",
+            "han_viet": "ngã",
+            "ja_kanji": "我",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "tôi",
+              "ja": "私",
+              "en": "I"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "好心",
+            "pinyin": "hǎoxīn",
+            "han_viet": "hảo tâm",
+            "ja_kanji": "好心",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "có lòng tốt",
+              "ja": "親切心で",
+              "en": "with good intentions"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "提醒",
+            "pinyin": "tíxǐng",
+            "han_viet": "đề tỉnh",
+            "ja_kanji": "提醒",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "nhắc nhở",
+              "ja": "注意を促す・教える",
+              "en": "remind"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "他",
+            "pinyin": "tā",
+            "han_viet": "tha",
+            "ja_kanji": "他",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "anh ấy",
+              "ja": "彼",
+              "en": "him"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "他",
+            "pinyin": "tā",
+            "han_viet": "tha",
+            "ja_kanji": "他",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "anh ấy",
+              "ja": "彼",
+              "en": "he"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "非但",
+            "pinyin": "fēidàn",
+            "han_viet": "phi đãn",
+            "ja_kanji": "非但",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "chẳng những",
+              "ja": "〜ばかりか",
+              "en": "not only"
+            },
+            "block_role": "marker_first"
+          },
+          {
+            "hanzi": "不",
+            "pinyin": "bù",
+            "han_viet": "bất",
+            "ja_kanji": "不",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "không",
+              "ja": "〜ない",
+              "en": "does not"
+            },
+            "block_role": "negated_expectation"
+          },
+          {
+            "hanzi": "感谢",
+            "pinyin": "gǎnxiè",
+            "han_viet": "cảm tạ",
+            "ja_kanji": "感謝",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "cảm ơn",
+              "ja": "感謝する",
+              "en": "thank"
+            },
+            "block_role": "negated_expectation"
+          },
+          {
+            "hanzi": "反而",
+            "pinyin": "fǎn'ér",
+            "han_viet": "phản nhi",
+            "ja_kanji": "反而",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "mà trái lại",
+              "ja": "かえって",
+              "en": "on the contrary"
+            },
+            "block_role": "marker_reverse"
+          },
+          {
+            "hanzi": "冲",
+            "pinyin": "chòng",
+            "han_viet": "xung",
+            "ja_kanji": "衝",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "nhằm vào, hướng về",
+              "ja": "〜に向かって",
+              "en": "toward / at"
+            },
+            "block_role": "opposite_outcome"
+          },
+          {
+            "hanzi": "我",
+            "pinyin": "wǒ",
+            "han_viet": "ngã",
+            "ja_kanji": "我",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "tôi",
+              "ja": "私",
+              "en": "me"
+            },
+            "block_role": "opposite_outcome"
+          },
+          {
+            "hanzi": "发脾气",
+            "pinyin": "fā píqi",
+            "han_viet": "phát tỳ khí",
+            "ja_kanji": "発脾気",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "nổi cáu",
+              "ja": "かんしゃくを起こす・怒る",
+              "en": "lose one's temper"
+            },
+            "block_role": "opposite_outcome"
+          }
+        ],
+        "scenario": {
+          "vi": "kể chuyện làm ơn mắc oán",
+          "ja": "親切で言ったのに逆ギレされた話",
+          "en": "complaining about an ungrateful reaction"
+        },
+        "translations": {
+          "vi": "Tôi có lòng tốt nhắc nhở anh ấy, anh ấy chẳng những không cảm ơn, mà trái lại còn nổi cáu với tôi.",
+          "ja": "私は親切心で彼に注意してあげたのに、彼は感謝しないばかりか、かえって私に向かって怒り出した。",
+          "en": "I reminded him out of kindness, yet far from thanking me, he actually lost his temper at me."
+        },
+        "literal_en": "I kind-heart remind him, he not-only not thank, on-the-contrary toward me發 temper",
+        "tone_tip": {
+          "vi": "冲 khi là giới từ ('nhằm vào ai') đọc thanh 4 (chòng), không đọc thanh 1 (chōng).",
+          "ja": "前置詞の「冲（〜に向かって）」は第4声（chòng）と発音します。",
+          "en": "As a preposition meaning 'toward/at', 冲 is pronounced in the 4th tone (chòng)."
+        },
+        "word_order_diff": {
+          "vi": "Trong tiếng Trung, 'nổi cáu với tôi' phải đưa giới từ + tân ngữ (冲我) lên trước động từ 发脾气.",
+          "ja": "",
+          "en": "冲我 ('at me') precedes the verb phrase 发脾气 ('lose temper')."
+        },
+        "note": {
+          "vi": "",
+          "ja": "",
+          "en": ""
+        }
+      },
+      {
+        "zh": "那家企业的丑闻曝光后，股价非但没跌，反而逆势上涨。",
+        "pinyin": "Nà jiā qǐyè de chǒuwén bàoguāng hòu, gǔjià fēidàn méi diē, fǎn'ér nìshì shàngzhǎng.",
+        "tokens": [
+          {
+            "hanzi": "那",
+            "pinyin": "nà",
+            "han_viet": "ná",
+            "ja_kanji": "那",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "đó",
+              "ja": "その",
+              "en": "that"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "家",
+            "pinyin": "jiā",
+            "han_viet": "gia",
+            "ja_kanji": "家",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "(lượng từ cho công ty)",
+              "ja": "社（量詞）",
+              "en": "(measure word for companies)"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "企业",
+            "pinyin": "qǐyè",
+            "han_viet": "xí nghiệp",
+            "ja_kanji": "企業",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "doanh nghiệp",
+              "ja": "企業",
+              "en": "enterprise"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "的",
+            "pinyin": "de",
+            "han_viet": "—",
+            "ja_kanji": "的",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "của",
+              "ja": "の",
+              "en": "'s"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "丑闻",
+            "pinyin": "chǒuwén",
+            "han_viet": "xú văn",
+            "ja_kanji": "醜聞",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "bê bối",
+              "ja": "スキャンダル・不祥事",
+              "en": "scandal"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "曝光",
+            "pinyin": "bàoguāng",
+            "han_viet": "bạo quang",
+            "ja_kanji": "曝光",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "bị phanh phui",
+              "ja": "発覚する・明るみに出る",
+              "en": "be exposed"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "后",
+            "pinyin": "hòu",
+            "han_viet": "hậu",
+            "ja_kanji": "後",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "sau khi",
+              "ja": "〜の後",
+              "en": "after"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "股价",
+            "pinyin": "gǔjià",
+            "han_viet": "cổ giá",
+            "ja_kanji": "株価",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "giá cổ phiếu",
+              "ja": "株価",
+              "en": "stock price"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "非但",
+            "pinyin": "fēidàn",
+            "han_viet": "phi đãn",
+            "ja_kanji": "非但",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "chẳng những",
+              "ja": "〜ばかりか",
+              "en": "not only"
+            },
+            "block_role": "marker_first"
+          },
+          {
+            "hanzi": "没",
+            "pinyin": "méi",
+            "han_viet": "một",
+            "ja_kanji": "没",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "đã không",
+              "ja": "〜なかった",
+              "en": "did not"
+            },
+            "block_role": "negated_expectation"
+          },
+          {
+            "hanzi": "跌",
+            "pinyin": "diē",
+            "han_viet": "điệt",
+            "ja_kanji": "跌",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "sụt giảm",
+              "ja": "下落する",
+              "en": "drop"
+            },
+            "block_role": "negated_expectation"
+          },
+          {
+            "hanzi": "反而",
+            "pinyin": "fǎn'ér",
+            "han_viet": "phản nhi",
+            "ja_kanji": "反而",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "mà trái lại",
+              "ja": "かえって",
+              "en": "on the contrary"
+            },
+            "block_role": "marker_reverse"
+          },
+          {
+            "hanzi": "逆势",
+            "pinyin": "nìshì",
+            "han_viet": "nghịch thế",
+            "ja_kanji": "逆勢",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "ngược dòng",
+              "ja": "逆풍に逆らって",
+              "en": "against the trend"
+            },
+            "block_role": "opposite_outcome"
+          },
+          {
+            "hanzi": "上涨",
+            "pinyin": "shàngzhǎng",
+            "han_viet": "thượng trướng",
+            "ja_kanji": "上漲",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "tăng lên",
+              "ja": "上昇した",
+              "en": "rose"
+            },
+            "block_role": "opposite_outcome"
+          }
+        ],
+        "scenario": {
+          "vi": "bản tin kinh tế tài chính",
+          "ja": "経済ニュースの報道",
+          "en": "financial news report"
+        },
+        "translations": {
+          "vi": "Sau khi bê bối của doanh nghiệp đó bị phanh phui, giá cổ phiếu chẳng những không giảm, mà trái lại còn tăng ngược dòng.",
+          "ja": "その企業の不祥事が発覚した後、株価は下落しなかったばかりか、かえって逆行高となった。",
+          "en": "After that company's scandal was exposed, its stock price, far from dropping, actually rose against the trend."
+        },
+        "literal_en": "That CL enterprise DE scandal expose after, stock-price not-only did-not drop, on-the-contrary against-trend rise",
+        "tone_tip": {
+          "vi": "Chữ 曝 trong 曝光 (phanh phui) đọc là bào (bàoguāng), còn trong 暴露 đọc là pù.",
+          "ja": "「曝光（明るみに出る）」は「bàoguāng」と発音します。",
+          "en": "Pronounce 曝光 as bàoguāng."
+        },
+        "word_order_diff": {
+          "vi": "Trong tiếng Trung, từ '后' (sau khi) đứng ở CUỐI mệnh đề thời gian (丑闻曝光后).",
+          "ja": "",
+          "en": "后 ('after') is placed at the end of the time clause (丑闻曝光后)."
+        },
+        "note": {
+          "vi": "Lượng từ 家 (gia) dùng cho công ty, doanh nghiệp, cửa hàng, nhà hàng, ngân hàng.",
+          "ja": "量詞「家」は企業・会社・店舗・銀行などを数えるときに使います。",
+          "en": "家 (jiā) is the standard measure word for companies, shops, and institutions."
+        }
+      }
+    ],
+    "dialogue": {
+      "goal": {
+        "vi": "Đánh giá hiệu quả của chiến dịch giảm giá",
+        "ja": "値下げキャンペーンの逆効果について話し合う",
+        "en": "Discussing a discount campaign that backfired"
+      },
+      "lines": [
+        {
+          "speaker": "A",
+          "zh": "听说你们店上个月大幅降价了，销量一定提高了不少吧？",
+          "pinyin": "Tīngshuō nǐmen diàn shàng ge yuè dàfú jiàngjià le, xiāoliàng yídìng tígāo le bù shǎo ba?",
+          "tr": {
+            "vi": "Nghe nói tháng trước cửa hàng các bạn giảm giá mạnh, doanh số chắc hẳn đã tăng lên không ít nhỉ?",
+            "ja": "先月、お宅の店で大幅な値下げをしたそうですが、売上はきっとかなり上がったでしょう？",
+            "en": "I heard your store slashed prices last month; sales must have increased quite a bit, right?"
+          }
+        },
+        {
+          "speaker": "B",
+          "zh": "别提了！降价非但没有吸引新顾客，反而让老顾客怀疑我们的产品质量。",
+          "pinyin": "Bié tí le! Jiàngjià fēidàn méiyǒu xīyǐn xīn gùkè, fǎn'ér ràng lǎo gùkè huáiyí wǒmen de chǎnpǐn zhìliàng.",
+          "tr": {
+            "vi": "Đừng nhắc nữa! Giảm giá chẳng những không thu hút được khách hàng mới, mà trái lại còn khiến khách quen nghi ngờ chất lượng sản phẩm của chúng tôi.",
+            "ja": "言わないでくださいよ！値下げは新規客を引きつけなかったばかりか、かえって常連客に商品の品質を疑わせてしまいました。",
+            "en": "Don't even bring it up! Lowering prices not only failed to attract new customers, on the contrary, it made regular customers doubt our product quality."
+          }
+        }
+      ]
+    },
+    "puzzles": [
+      {
+        "scrambled_tokens": [
+          "了",
+          "大",
+          "更",
+          "得",
+          "下",
+          "反而",
+          "停",
+          "没",
+          "非但",
+          "雨"
+        ],
+        "correct_order": [
+          "雨",
+          "非但",
+          "没",
+          "停",
+          "反而",
+          "下",
+          "得",
+          "更",
+          "大",
+          "了"
+        ]
+      },
+      {
+        "scrambled_tokens": [
+          "了",
+          "加重",
+          "反而",
+          "减轻",
+          "没有",
+          "非但",
+          "病",
+          "的",
+          "他"
+        ],
+        "correct_order": [
+          "他",
+          "的",
+          "病",
+          "非但",
+          "没有",
+          "减轻",
+          "反而",
+          "加重",
+          "了"
+        ]
+      },
+      {
+        "scrambled_tokens": [
+          "坚强",
+          "更加",
+          "反而",
+          "退缩",
+          "不",
+          "非但",
+          "她",
+          "困难",
+          "面对"
+        ],
+        "correct_order": [
+          "面对",
+          "困难",
+          "她",
+          "非但",
+          "不",
+          "退缩",
+          "反而",
+          "更加",
+          "坚强"
+        ]
+      }
+    ],
+    "fill_blank": [
+      {
+        "sentence": "吃了这种药，他的症状非但没有好转，___更加严重了。",
+        "options": [
+          "反而",
+          "而且",
+          "从而",
+          "进而"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "vi",
+          "ja",
+          "en"
+        ],
+        "explanation": {
+          "vi": "Vế trước là 'chẳng những không thuyên giảm' (非但没有好转), vế sau đảo ngược sang 'nặng thêm' nên dùng 反而.",
+          "ja": "「好転しなかったばかりか、かえって深刻になった」と逆方向の結果を表すため「反而」が入ります。",
+          "en": "Use 反而 to mark the opposite, backfiring outcome after 非但没有."
+        }
+      },
+      {
+        "sentence": "这种做法___不能省钱，反而会造成更大的浪费。",
+        "options": [
+          "非但",
+          "与其",
+          "宁可",
+          "固然"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "vi",
+          "ja"
+        ],
+        "explanation": {
+          "vi": "Đi cặp với 不能... 反而... là 非但 (非但不能... 反而... = chẳng những không thể..., mà trái lại...).",
+          "ja": "後半の「反而」と呼応して「節約できないばかりか、かえって無駄を生む」を作るのは「非但」です。",
+          "en": "非但 pairs with 不能...反而... to mean 'not only cannot..., on the contrary...'."
+        }
+      },
+      {
+        "sentence": "我好心帮他，___怪我多管闲事。",
+        "options": [
+          "他反而",
+          "反而他",
+          "而是他",
+          "他而且"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "en",
+          "vi"
+        ],
+        "explanation": {
+          "vi": "反而 là phó từ nên bắt buộc phải đứng SAU chủ ngữ 他 (他反而怪我).",
+          "ja": "「反而」は副詞なので主語「他」の後ろに置き、「他反而…」とします。",
+          "en": "Because 反而 is an adverb, it must follow the subject 他 (他反而)."
+        }
+      }
+    ],
+    "error_correction": [
+      {
+        "wrong": "这道题非但简单，反而非常复杂。",
+        "correct": "这道题非但不简单，反而非常复杂。",
+        "hint": {
+          "vi": "Chữ 非但 chưa có nghĩa phủ định 'không', hãy thêm phó từ phủ định trước 简单.",
+          "ja": "「非但」だけでは否定になりません。「簡単ではないばかりか」にするための1文字を補いましょう。",
+          "en": "非但 means 'not only', not 'not only not'—add the missing negation word before 简单."
+        }
+      },
+      {
+        "wrong": "我向他解释了半天，反而他更不相信了。",
+        "correct": "我向他解释了半天，他反而更不相信了。",
+        "hint": {
+          "vi": "Xem lại vị trí giữa chủ ngữ 他 và phó từ 反而 ở vế thứ hai.",
+          "ja": "副詞「反而」と主語「他」の語順が逆になっています。",
+          "en": "Check the word order of the subject 他 and the adverb 反而."
+        }
+      }
+    ],
+    "quiz": [
+      {
+        "question": {
+          "vi": "Vì sao câu '喝了咖啡以后，我非但困，反而更精神了' lại SAI ngữ pháp?",
+          "ja": "「喝了咖啡以后，我非但困，反而更精神了。」が誤りである理由はどれですか？",
+          "en": "Why is '喝了咖啡以后，我非但困，反而更精神了' ungrammatical?"
+        },
+        "options": [
+          "Thiếu chữ 不 sau 非但 (phải là 非但不困)",
+          "Phải đổi 反而 thành 而且",
+          "Phải đặt 非但 ở cuối câu",
+          "Chữ 精神 không đi được với 更"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "vi",
+          "ja",
+          "en"
+        ],
+        "explanation": {
+          "vi": "Bản thân 非但 không mang nghĩa phủ định. Muốn nói 'chẳng những không buồn ngủ' phải viết là 非但不困.",
+          "ja": "「非但」には否定の意味がないため、「眠くないばかりか」と言うには「非但不困」と「不」を入れる必要があります。",
+          "en": "非但 does not negate 困 on its own; you must write 非但不困 ('not only not sleepy')."
+        }
+      },
+      {
+        "question": {
+          "vi": "Chọn câu đúng để diễn tả: 'Tôi giúp anh ấy, thế mà ngược lại anh ấy còn trách tôi'.",
+          "ja": "「私が彼を助けたのに、彼はかえって私を責めた」を正しく表す文はどれですか？",
+          "en": "Which sentence correctly says 'I helped him, yet on the contrary he blamed me'?"
+        },
+        "options": [
+          "我帮了他，他反而怪我。",
+          "我帮了他，反而他怪我。",
+          "我帮了他，而是他怪我。",
+          "我非但帮了他，反而他怪我。"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "en",
+          "vi"
+        ],
+        "explanation": {
+          "vi": "反而 là phó từ nên phải đứng sau chủ ngữ 他 (他反而怪我).",
+          "ja": "副詞「反而」は主語「他」の後ろに置くため、「我帮了他，他反而怪我。」が正解です。",
+          "en": "The adverb 反而 must be placed after the subject 他: 他反而怪我."
+        }
+      },
+      {
+        "question": {
+          "vi": "Khi muốn nói 'Anh ấy không phải là nhân viên, mà là giám đốc', ta chọn câu nào?",
+          "ja": "「彼は社員ではなく、社長だ」と言いたいとき、正しい中国語はどれですか？",
+          "en": "How do you say 'He is not an employee; on the contrary, he is the director'?"
+        },
+        "options": [
+          "他不是职员，而是经理。",
+          "他非但不是职员，反而是经理。",
+          "他不是职员，反而是经理。",
+          "他非但是职员，而是经理。"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "en"
+        ],
+        "explanation": {
+          "vi": "Khi đính chính thông tin 'Không phải A mà là B', dùng 不是 A，而是 B (không dùng 反而 dù tiếng Anh có thể dịch là 'on the contrary').",
+          "ja": "単なる事実の訂正「AではなくBだ」には「不是A，而是B」を使います。",
+          "en": "For direct factual corrections ('not A, but B'), use 不是 A，而是 B rather than 反而."
+        }
+      }
+    ],
+    "summary_card": {
+      "one_liner": {
+        "vi": "S + 非但 + 不/没 + V1，反而 + V2: Chẳng những không đạt được kỳ vọng V1, mà trái lại còn dẫn tới kết quả ngược V2.",
+        "ja": "「非但＋不／没＋V1，反而＋V2」：予想V1にならないばかりか、かえって逆の結果V2になる。",
+        "en": "'非但 + 不/没 + V1，反而 + V2' states that far from V1 happening, on the contrary, the opposite V2 occurred."
+      },
+      "remember": [
+        {
+          "vi": "非但 chỉ nghĩa là 'chẳng những' (= 不但), bắt buộc phải thêm 不 / 没 vào sau để có nghĩa 'chẳng những không'.",
+          "ja": "「非但」自体に否定の意味はないため、必ず「非但不…／非但没有…」と否定語を伴う。",
+          "en": "Always add 不 or 没/没有 after 非但 when negating the first clause."
+        },
+        {
+          "vi": "反而 là phó từ nên luôn đứng SAU chủ ngữ của vế thứ hai (S + 反而 + V).",
+          "ja": "「反而」は副詞なので、第2節に主語がある場合は「主語＋反而＋動詞」の語順にする。",
+          "en": "Place the adverb 反而 AFTER the subject of the second clause."
+        },
+        {
+          "vi": "Phân biệt với 不是 A，而是 B (đính chính 'không phải A mà là B').",
+          "ja": "単なる訂正「AではなくBだ」には「不是A，而是B」を使う。",
+          "en": "Use 不是 A，而是 B for simple 'not A, but B' corrections."
+        }
+      ]
+    },
+    "needs_review": false,
+    "review_note": ""
+  },
+  {
+    "id": "hsk789_wei_suo_passive_frame",
+    "level": "HSK7-9",
+    "level_num": 7,
+    "category": "written_style",
+    "difficulty": 5,
+    "frequency": 4,
+    "register": "formal",
+    "keywords": [
+      "为…所…",
+      "被…所…",
+      "wéi",
+      "suǒ",
+      "vi... sở...",
+      "câu bị động cổ văn",
+      "文語受身",
+      "formal passive"
+    ],
+    "formula": "S + 为 / 被 + Agent + 所 + V",
+    "formula_plain": {
+      "vi": "Chủ ngữ + bị/được (为/被) + Tác nhân + làm cho (所 + Động từ 2 âm tiết)",
+      "ja": "主語 ＋ 为／被（〜によって） ＋ 動作主 ＋ 所 ＋ 動詞（…される）",
+      "en": "Subject + 为/被 (by) + Agent + 所 + Verb (formal passive)"
+    },
+    "structure_blocks": [
+      {
+        "label": {
+          "vi": "Chủ ngữ chịu tác động (S)",
+          "ja": "受身主語 (S)",
+          "en": "Passive Subject (S)"
+        },
+        "role": "subject",
+        "color": "#3B82F6"
+      },
+      {
+        "label": {
+          "vi": "Giới từ bị động 为 / 被",
+          "ja": "受身介詞 为／被（〜に）",
+          "en": "Passive marker 为 / 被"
+        },
+        "role": "marker_passive",
+        "color": "#F97316"
+      },
+      {
+        "label": {
+          "vi": "Tác nhân (Agent)",
+          "ja": "動作主 (Agent)",
+          "en": "Agent"
+        },
+        "role": "agent",
+        "color": "#10B981"
+      },
+      {
+        "label": {
+          "vi": "Trợ từ kết cấu 所",
+          "ja": "構造助詞 所",
+          "en": "Particle 所 (suǒ)"
+        },
+        "role": "marker_suo",
+        "color": "#8B5CF6"
+      },
+      {
+        "label": {
+          "vi": "Động từ (không kèm đuôi)",
+          "ja": "動詞（裸の2音節動詞など）",
+          "en": "Bare Verb (usually disyllabic)"
+        },
+        "role": "action",
+        "color": "#EF4444"
+      }
+    ],
+    "related_ids": [
+      "hsk3_bei_passive",
+      "hsk5_suo_verb_de_nominalization"
+    ],
+    "confusable_with": [
+      {
+        "id": "hsk3_bei_passive",
+        "diff": {
+          "vi": "Câu bị động 被 thông thường (HSK 3) dùng trong khẩu ngữ và bắt buộc phải có thành phần kết quả/trạng thái sau động từ (như 被他拿走了); còn 为…所 + V dùng trong văn viết trang trọng (HSK 7-9), chữ 为 đọc thanh 2 (wéi), và động từ đứng sau 所 thường là động từ 2 âm tiết KHÔNG kèm bổ ngữ hay 了.",
+          "ja": "日常の「被」受身文は動詞の後ろに結果補語や「了」が必須ですが、書面語の「为…所＋V」は格調高い論説・報道向きで、「所」の後ろの動詞には「了」や補語をつけず、2音節動詞をそのまま置きます。",
+          "en": "Standard 被 sentences are conversational and require a complement or 了 after the verb, whereas 为...所 + V is an elevated literary passive where 为 is pronounced wéi (2nd tone) and the verb after 所 stands bare without 了 or complements."
+        }
+      }
+    ],
+    "localizations": {
+      "vi": {
+        "title": "Cấu trúc bị động trang trọng 为…所… (Bị/Được... làm cho...)",
+        "quick_rule_3s": "Dùng khung '为 (hoặc 被) + Tác nhân + 所 + Động từ' trong văn viết trang trọng để diễn tả sự cảm hóa, thừa nhận hoặc chi phối mà không cần thêm bổ ngữ hay 了 sau động từ.",
+        "contrastive_note": "Người Việt có lợi thế lớn nhờ âm Hán-Việt 'vi... sở...' (ví dụ: 'vi nhân sở tri' = 为人所知 = được mọi người biết đến). Tuy nhiên có 2 điểm cực kỳ dễ sai: (1) Chữ 为 ở đây mang nghĩa bị động ('bị/được bởi...') nên bắt buộc phải đọc thanh 2 (wéi), không đọc thanh 4 (wèi = vì); (2) Ngược hẳn với câu chữ 被 ở HSK 3 (động từ phải có đuôi kết quả/了), động từ đứng sau chữ 所 trong cấu trúc 为…所… lại KHÔNG ĐƯỢC gắn thêm 了, 过 hay bổ ngữ kết quả ở phía sau.",
+        "analogy": "Nếu câu chữ 被 thông thường là bộ đồ mặc hàng ngày cần thắt lưng (đuôi kết quả/了), thì 为…所… là bộ lễ phục cổ điển đã được đóng khung sẵn bằng hai trụ 为 và 所—động từ đứng sau 所 cứ thế đứng trang nghiêm, không gắn thêm đuôi rườm rà.",
+        "mnemonic": "为 đọc thanh 2 (wéi), kẹp Tác nhân + 所, động từ phía sau đứng gọn không 了!",
+        "how_to_use": [
+          {
+            "step": 1,
+            "text": "Bước 1: Đặt đối tượng chịu tác động làm chủ ngữ ở đầu câu."
+          },
+          {
+            "step": 2,
+            "text": "Bước 2: Đặt 为 (đọc là wéi - thanh 2, hoặc dùng 被) + Tác nhân gây ra hành động + chữ 所."
+          },
+          {
+            "step": 3,
+            "text": "Bước 3: Đặt động từ (thường là động từ 2 âm tiết chỉ tâm lý, nhận thức, sự chi phối như 感动, 吸引, 接受, 利用) ở ngay sau 所, không thêm 了."
+          }
+        ],
+        "self_check": [
+          "Bạn đã đọc chữ 为 ở thanh 2 (wéi) thay vì thanh 4 (wèi) chưa?",
+          "Bạn đã bỏ hết các đuôi 了, 过 hoặc bổ ngữ kết quả ở sau động từ đứng sau 所 chưa?",
+          "Ngữ cảnh câu có đủ trang trọng (báo chí, văn học, nghị luận, thành ngữ) để dùng 为…所… không?"
+        ],
+        "tips": [
+          "Trong tiếng Trung hiện đại, người bản ngữ cũng rất hay kết hợp cả hai thành '被 + Tác nhân + 所 + Động từ' (ví dụ: 被大家所接受 = được mọi người chấp nhận) vừa rõ nghĩa vừa trang trọng.",
+          "Khi phủ định, đặt 不 hoặc 未 (vị = chưa/không) ngay TRƯỚC chữ 为: 不为…所动 (không bị... làm lay động)."
+        ],
+        "when_to_use": [
+          "Trong văn bản báo chí, học thuật, bình luận văn học hoặc bài thi viết/nói cấp cao (HSK 7-9).",
+          "Khi nói về sự cảm kích, thu hút, thuyết phục, chấp nhận, biết đến hoặc lợi dụng (为…所感动 / 吸引 / 折服 / 接受 / 利用)."
+        ],
+        "when_not_to_use": [
+          "Trong hội thoại đời thường vụn vặt (như 'Cốc nước bị em trai làm vỡ rồi' chỉ dùng 被弟弟打破了, không dùng 为弟弟所打破).",
+          "Không gắn thêm 了 hoặc bổ ngữ kết quả vào sau động từ của 为…所…."
+        ],
+        "fatal_mistake": {
+          "wrong": "观众们都为他的精神所感动了。",
+          "correct": "观众们都为他的精神所感动。",
+          "explanation": "Trong cấu trúc cổ văn trang trọng 为…所 + V, bản thân khung 为…所 đã hoàn chỉnh mặt ngữ pháp nên không thêm trợ từ 了 vào cuối động từ hai âm tiết.",
+          "why_learners_make_it": "Người học áp dụng thói quen của câu chữ 被 ở HSK 3 (bắt buộc phải có 了 hoặc bổ ngữ sau động từ) sang cấu trúc 为…所…."
+        },
+        "extra_mistakes": [
+          {
+            "wrong": "他不被金钱所诱惑着。",
+            "correct": "他不为金钱所诱惑。",
+            "explanation": "Động từ sau 所 không mang trợ từ động thái 着/了/过."
+          }
+        ]
+      },
+      "ja": {
+        "title": "文語的受身構文「为…所＋V」（〜によって…される）",
+        "quick_rule_3s": "「为（または被）＋動作主＋所＋動詞」の形で、精神的な感銘・認知・支配などを格調高く表す書面語の受身構文です。",
+        "contrastive_note": "高校の漢文で習う受身の再読文字・句法「為 A 所 B（AのBする所と為る＝AにBされる）」が現代中国語の書面語にそのまま残ったものです。漢文の知識がある日本人学習者には構造が理解しやすい一方、2つの注意点があります：(1) 「为」の発音は第4声（wèi＝〜のために）ではなく第2声（wéi）であること、(2) HSK3級の口語受身「被」とは逆に、「所」の後ろの動詞には「了」や結果補語を一切つけず、2音節動詞を裸のまま置くことです。",
+        "analogy": "漢文の伝統を受け継ぐ「フォーマルな額縁（为…所）」です。額縁自体が完成しているため、後ろの動詞に口語のしっぽ（了など）を付け足す必要がありません。",
+        "mnemonic": "漢文由来の「为（wéi）…所＋動詞」、後ろに「了」はつけない！",
+        "how_to_use": [
+          {
+            "step": 1,
+            "text": "ステップ1：影響を受ける主語を文頭に置きます。"
+          },
+          {
+            "step": 2,
+            "text": "ステップ2：「为（wéi、または被）＋動作主＋所」を置きます（否定は「不为…所…」または「未被…所…」）。"
+          },
+          {
+            "step": 3,
+            "text": "ステップ3：「所」の直後に感情・認知・影響を表す2音節動詞（感动・吸引・理解・利用など）を裸のまま置きます。"
+          }
+        ],
+        "self_check": [
+          "「为」を第2声（wéi）で発音していますか？（第4声のwèiではありません）",
+          "「所＋動詞」の後ろに余計な「了」や補語をつけていませんか？",
+          "日常のささいな物理的被害（コップが割れた等）ではなく、抽象的・精神的な文脈で使っていますか？"
+        ],
+        "tips": [
+          "現代語では「为」を「被」に変えたハイブリッド型「被＋A＋所＋V（例：被人们所熟知）」もニュースや論文で非常に広く使われます。",
+          "4字成句の「为人所知（人に知られる）」「不为所动（少しも動じない）」はそのまま丸暗記しておくとHSK7-9級で強力な武器になります。"
+        ],
+        "when_to_use": [
+          "ニュース、論文、スピーチ、文学作品などで「〜に感銘を受ける」「〜に魅了される」「〜に受け入れられる」と格調高く述べるとき。",
+          "「不为…所动（〜に動かされない）」のように強い信念や客観的事実を述べるとき。"
+        ],
+        "when_not_to_use": [
+          "「財布が盗まれた」「ケーキが食べられた」のような日常の具体的な物理的受身（通常の「被」構文を使います）。",
+          "動詞の後ろに「了」「着」「过」や方向補語を伴う文。"
+        ],
+        "fatal_mistake": {
+          "wrong": "我被他的诚意所打动了。",
+          "correct": "我为他的诚意所打动。",
+          "explanation": "「为／被…所＋V」の構文では、文末の2音節動詞「打动」の後ろに「了」を付けません。",
+          "why_learners_make_it": "日本語の過去形「心を動かされた（〜た）」を訳そうとして、通常の「被」構文と同じように「了」を付けてしまうためです。"
+        },
+        "extra_mistakes": [
+          {
+            "wrong": "我的自行车为小偷所偷走了。",
+            "correct": "我的自行车被小偷抢走了。",
+            "explanation": "日常の具体的な盗難・破損などの物理的被害には、格調高い「为…所…」ではなく通常の「被＋V＋補語＋了」を使います。"
+          }
+        ]
+      },
+      "en": {
+        "title": "Formal Passive Frame 为…所… (wéi...suǒ...)",
+        "quick_rule_3s": "Use '为 (or 被) + Agent + 所 + Verb' in formal writing to express passive states like being moved, attracted, or accepted, leaving the verb bare without 了.",
+        "contrastive_note": "In English, passive voice always uses 'be + past participle (+ by Agent)' regardless of formality. In Chinese, while everyday passive sentences use 被 and require a result complement or 了 after the verb, high-register written Chinese uses the classical frame '为 (wéi) + Agent + 所 + Verb' (or its modern hybrid '被 + Agent + 所 + Verb'). Crucially, the verb after 所 is typically a bare two-syllable psychological or cognitive verb (like 感动, 吸引, 接受) with NO trailing 了 or complement.",
+        "analogy": "If standard 被 is casual everyday passive that needs a tail (了/complement) to stand up, 为…所… is a tuxedo passive where the classical frame itself completes the grammar—no tail allowed.",
+        "mnemonic": "Pronounce 为 as wéi, pair with 所 + bare verb, and leave off 了!",
+        "how_to_use": [
+          {
+            "step": 1,
+            "text": "Step 1: Place the recipient of the action/feeling as the Subject."
+          },
+          {
+            "step": 2,
+            "text": "Step 2: Add 为 (pronounced wéi, 2nd tone—or 被) + the Agent + 所."
+          },
+          {
+            "step": 3,
+            "text": "Step 3: End with a bare disyllabic verb (such as 感动, 吸引, 理解, 接受, 利用) without adding 了."
+          }
+        ],
+        "self_check": [
+          "Did you pronounce 为 in the 2nd tone (wéi) rather than the 4th tone (wèi)?",
+          "Did you keep the verb after 所 bare (no 了, 过, or resultative complements)?",
+          "Is the context formal or abstract (admiration, acceptance, influence) rather than a mundane physical accident?"
+        ],
+        "tips": [
+          "The hybrid form '被 + Agent + 所 + Verb' (e.g., 被大众所接受 'accepted by the public') is extremely common in modern journalism and academic prose.",
+          "To negate, place 不 or 未 before 为/被 (e.g., 不为表面现象所迷惑 'not be misled by surface appearances')."
+        ],
+        "when_to_use": [
+          "Formal essays, news broadcasts, academic writing, and literary descriptions (HSK 6 and HSK 7-9).",
+          "With verbs of emotion, cognition, or abstract influence (感动, 吸引, 折服, 熟知, 接受, 束缚)."
+        ],
+        "when_not_to_use": [
+          "Everyday physical mishaps like 'My cup was broken by the cat' (use standard 被).",
+          "With trailing aspect particles (了/着/过) after the verb."
+        ],
+        "fatal_mistake": {
+          "wrong": "这种观点已经为大家所接受了。",
+          "correct": "这种观点已经为大家所接受。",
+          "explanation": "In the '为/被…所 + Verb' construction, the disyllabic verb after 所 stands bare without a final 了.",
+          "why_learners_make_it": "English speakers translate the past participle ('has been accepted') by adding 了, following the rule of basic 被 sentences."
+        },
+        "extra_mistakes": [
+          {
+            "wrong": "他的手机为小偷所拿走了。",
+            "correct": "他的手机被小偷拿走了。",
+            "explanation": "Mundane physical actions with directional/result complements (拿走了) must use standard 被, not the literary 为…所 frame."
+          }
+        ]
+      }
+    },
+    "fill_template": {
+      "pattern": "___ 为 ___ 所 ___。",
+      "slots": [
+        {
+          "vi": "Chủ ngữ (Khán giả / Quan điểm này)",
+          "ja": "主語（観客／この観点）",
+          "en": "Subject (The audience / This view)"
+        },
+        {
+          "vi": "Tác nhân (tinh thần của ông / công chúng)",
+          "ja": "動作主（彼の精神／大衆）",
+          "en": "Agent (his spirit / the public)"
+        },
+        {
+          "vi": "Động từ 2 âm tiết không kèm 了 (感动 / 接受)",
+          "ja": "2音節動詞（感动／接受）",
+          "en": "Bare disyllabic verb (感动 / 接受)"
+        }
+      ],
+      "example_filled": "观众们都为他的精神所感动。"
+    },
+    "collocations": [
+      {
+        "zh": "为人所知",
+        "pinyin": "wéi rén suǒ zhī",
+        "meaning": {
+          "vi": "được mọi người biết đến",
+          "ja": "人々に知られる",
+          "en": "be known to people"
+        }
+      },
+      {
+        "zh": "为…所感动",
+        "pinyin": "wéi … suǒ gǎndòng",
+        "meaning": {
+          "vi": "bị/được... làm cho cảm động",
+          "ja": "〜に感動させられる（感銘を受ける）",
+          "en": "be moved by ..."
+        }
+      },
+      {
+        "zh": "为…所吸引",
+        "pinyin": "wéi … suǒ xīyǐn",
+        "meaning": {
+          "vi": "bị... thu hút / cuốn hút",
+          "ja": "〜に魅了される（引きつけられる）",
+          "en": "be attracted/drawn by ..."
+        }
+      },
+      {
+        "zh": "不为…所动",
+        "pinyin": "bù wéi … suǒ dòng",
+        "meaning": {
+          "vi": "không bị... làm lay động",
+          "ja": "〜に少しも動じない（惑わされない）",
+          "en": "remain unmoved/unswayed by ..."
+        }
+      }
+    ],
+    "examples": [
+      {
+        "zh": "观众们都为他的精神所感动。",
+        "pinyin": "Guānzhòngmen dōu wéi tā de jīngshén suǒ gǎndòng.",
+        "tokens": [
+          {
+            "hanzi": "观众们",
+            "pinyin": "guānzhòngmen",
+            "han_viet": "quan chúng môn",
+            "ja_kanji": "観衆們",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "các khán giả",
+              "ja": "観客たち",
+              "en": "the audience"
+            },
+            "block_role": "subject"
+          },
+          {
+            "hanzi": "都",
+            "pinyin": "dōu",
+            "han_viet": "đô",
+            "ja_kanji": "都",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "đều",
+              "ja": "みな",
+              "en": "all"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "为",
+            "pinyin": "wéi",
+            "han_viet": "vi",
+            "ja_kanji": "為",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "bởi, được",
+              "ja": "〜によって",
+              "en": "by"
+            },
+            "block_role": "marker_passive"
+          },
+          {
+            "hanzi": "他",
+            "pinyin": "tā",
+            "han_viet": "tha",
+            "ja_kanji": "他",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "anh ấy",
+              "ja": "彼",
+              "en": "his"
+            },
+            "block_role": "agent"
+          },
+          {
+            "hanzi": "的",
+            "pinyin": "de",
+            "han_viet": "—",
+            "ja_kanji": "的",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "của",
+              "ja": "の",
+              "en": "'s"
+            },
+            "block_role": "agent"
+          },
+          {
+            "hanzi": "精神",
+            "pinyin": "jīngshén",
+            "han_viet": "tinh thần",
+            "ja_kanji": "精神",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "tinh thần",
+              "ja": "精神・スピリット",
+              "en": "spirit"
+            },
+            "block_role": "agent"
+          },
+          {
+            "hanzi": "所",
+            "pinyin": "suǒ",
+            "han_viet": "sở",
+            "ja_kanji": "所",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "(trợ từ bị động)",
+              "ja": "（受身助詞）",
+              "en": "(passive particle)"
+            },
+            "block_role": "marker_suo"
+          },
+          {
+            "hanzi": "感动",
+            "pinyin": "gǎndòng",
+            "han_viet": "cảm động",
+            "ja_kanji": "感動",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "làm cảm động",
+              "ja": "感動させられる",
+              "en": "move / touch"
+            },
+            "block_role": "action"
+          }
+        ],
+        "scenario": {
+          "vi": "bình luận về một màn trình diễn giàu nghị lực",
+          "ja": "感動的なスピーチや演技への評価",
+          "en": "commenting on an inspiring performance"
+        },
+        "translations": {
+          "vi": "Khán giả đều bị tinh thần của anh ấy làm cho cảm động.",
+          "ja": "観客たちは皆、彼の精神に心を動かされた。",
+          "en": "The audience was deeply moved by his spirit."
+        },
+        "literal_en": "Audience-MEN all WEI he DE spirit SUO move",
+        "tone_tip": {
+          "vi": "Chữ 为 trong câu bị động bắt buộc đọc thanh 2 (wéi). 所 (suǒ) + 感 (gǎn) đọc thành suó gǎndòng.",
+          "ja": "受身の「为」は必ず第2声（wéi）で発音します。「所（suǒ）」＋「感（gǎn）」は「suó gǎndòng」と変調します。",
+          "en": "Pronounce 为 in the 2nd tone (wéi); 所 (suǒ) + 感 (gǎn) -> suó gǎndòng."
+        },
+        "word_order_diff": {
+          "vi": "",
+          "ja": "",
+          "en": "The agent (他的精神) sits between 为 and 所 before the verb 感动."
+        },
+        "note": {
+          "vi": "Không thêm 了 sau 感动.",
+          "ja": "文末の「感动」の後ろに「了」はつけません。",
+          "en": "No 了 is used after 感动."
+        }
+      },
+      {
+        "zh": "许多游客为这里的自然风光所吸引。",
+        "pinyin": "Xǔduō yóukè wéi zhèlǐ de zìrán fēngguāng suǒ xīyǐn.",
+        "tokens": [
+          {
+            "hanzi": "许多",
+            "pinyin": "xǔduō",
+            "han_viet": "hứa đa",
+            "ja_kanji": "許多",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "rất nhiều",
+              "ja": "多くの",
+              "en": "many"
+            },
+            "block_role": "subject"
+          },
+          {
+            "hanzi": "游客",
+            "pinyin": "yóukè",
+            "han_viet": "du khách",
+            "ja_kanji": "遊客",
+            "false_friend_ja": {
+              "ja_meaning": "遊客（ゆうかく：遊郭で遊ぶ客・遊び人）",
+              "zh_meaning": "du khách, khách du lịch (tourist / sightseer)"
+            },
+            "gloss": {
+              "vi": "du khách",
+              "ja": "観光客",
+              "en": "tourists"
+            },
+            "block_role": "subject"
+          },
+          {
+            "hanzi": "为",
+            "pinyin": "wéi",
+            "han_viet": "vi",
+            "ja_kanji": "為",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "bị, được",
+              "ja": "〜に",
+              "en": "by"
+            },
+            "block_role": "marker_passive"
+          },
+          {
+            "hanzi": "这里",
+            "pinyin": "zhèlǐ",
+            "han_viet": "giá lý",
+            "ja_kanji": "這裏",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "nơi đây",
+              "ja": "ここ",
+              "en": "here"
+            },
+            "block_role": "agent"
+          },
+          {
+            "hanzi": "的",
+            "pinyin": "de",
+            "han_viet": "—",
+            "ja_kanji": "的",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "của",
+              "ja": "の",
+              "en": "'s"
+            },
+            "block_role": "agent"
+          },
+          {
+            "hanzi": "自然",
+            "pinyin": "zìrán",
+            "han_viet": "tự nhiên",
+            "ja_kanji": "自然",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "tự nhiên",
+              "ja": "自然",
+              "en": "natural"
+            },
+            "block_role": "agent"
+          },
+          {
+            "hanzi": "风光",
+            "pinyin": "fēngguāng",
+            "han_viet": "phong quang",
+            "ja_kanji": "風光",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "phong cảnh",
+              "ja": "風景・景色",
+              "en": "scenery"
+            },
+            "block_role": "agent"
+          },
+          {
+            "hanzi": "所",
+            "pinyin": "suǒ",
+            "han_viet": "sở",
+            "ja_kanji": "所",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "(trợ từ)",
+              "ja": "（助詞）",
+              "en": "(particle)"
+            },
+            "block_role": "marker_suo"
+          },
+          {
+            "hanzi": "吸引",
+            "pinyin": "xīyǐn",
+            "han_viet": "hấp dẫn",
+            "ja_kanji": "吸引",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "thu hút",
+              "ja": "魅了される・引きつけられる",
+              "en": "attract"
+            },
+            "block_role": "action"
+          }
+        ],
+        "scenario": {
+          "vi": "giới thiệu điểm du lịch trong bài viết",
+          "ja": "観光地の紹介文",
+          "en": "travel writing describing a scenic spot"
+        },
+        "translations": {
+          "vi": "Rất nhiều du khách bị phong cảnh thiên nhiên nơi đây cuốn hút.",
+          "ja": "多くの観光客がここの自然の風景に魅了されている。",
+          "en": "Many tourists are drawn by the natural scenery here."
+        },
+        "literal_en": "Many tourist WEI here DE natural scenery SUO attract",
+        "tone_tip": {
+          "vi": "",
+          "ja": "",
+          "en": ""
+        },
+        "word_order_diff": {
+          "vi": "",
+          "ja": "",
+          "en": ""
+        },
+        "note": {
+          "vi": "Chú ý với người học tiếng Nhật: 游客 (du khách) trong tiếng Trung là 'khách du lịch' hoàn toàn trong sáng, khác với nghĩa cổ 遊客 trong tiếng Nhật.",
+          "ja": "超重要：「游客（遊客）」は中国語では普通の「観光客・旅行者」という意味です（日本語の古語「遊郭の遊び客」という意味は全くありません）。",
+          "en": "为…所吸引 is a classic collocation for 'be attracted/fascinated by...'."
+        }
+      },
+      {
+        "zh": "这个鲜为人知的小镇如今已远近闻名。",
+        "pinyin": "Zhège xiǎn wéi rén zhī de xiǎozhèn rújīn yǐ yuǎnjìn wénmíng.",
+        "tokens": [
+          {
+            "hanzi": "这个",
+            "pinyin": "zhège",
+            "han_viet": "giá cá",
+            "ja_kanji": "這個",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "cái này",
+              "ja": "この",
+              "en": "this"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "鲜",
+            "pinyin": "xiǎn",
+            "han_viet": "tiển",
+            "ja_kanji": "鮮",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "hiếm, ít",
+              "ja": "まれにしか〜ない（少ない）",
+              "en": "rarely / few"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "为",
+            "pinyin": "wéi",
+            "han_viet": "vi",
+            "ja_kanji": "為",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "được",
+              "ja": "〜に",
+              "en": "by"
+            },
+            "block_role": "marker_passive"
+          },
+          {
+            "hanzi": "人",
+            "pinyin": "rén",
+            "han_viet": "nhân",
+            "ja_kanji": "人",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "người ta",
+              "ja": "人々",
+              "en": "people"
+            },
+            "block_role": "agent"
+          },
+          {
+            "hanzi": "知",
+            "pinyin": "zhī",
+            "han_viet": "tri",
+            "ja_kanji": "知",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "biết đến",
+              "ja": "知られる",
+              "en": "know"
+            },
+            "block_role": "action"
+          },
+          {
+            "hanzi": "的",
+            "pinyin": "de",
+            "han_viet": "—",
+            "ja_kanji": "的",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "mà",
+              "ja": "〜な",
+              "en": "(attributive)"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "小镇",
+            "pinyin": "xiǎozhèn",
+            "han_viet": "tiểu trấn",
+            "ja_kanji": "小鎮",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "thị trấn nhỏ",
+              "ja": "小さな町",
+              "en": "small town"
+            },
+            "block_role": "subject"
+          },
+          {
+            "hanzi": "如今",
+            "pinyin": "rújīn",
+            "han_viet": "như kim",
+            "ja_kanji": "如今",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "ngày nay",
+              "ja": "今では",
+              "en": "nowadays"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "已",
+            "pinyin": "yǐ",
+            "han_viet": "dĩ",
+            "ja_kanji": "已",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "đã",
+              "ja": "すでに",
+              "en": "already"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "远近闻名",
+            "pinyin": "yuǎnjìn wénmíng",
+            "han_viet": "viễn cận văn danh",
+            "ja_kanji": "遠近聞名",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "nổi tiếng gần xa",
+              "ja": "遠近に名が知れ渡っている",
+              "en": "famous far and wide"
+            },
+            "block_role": "other"
+          }
+        ],
+        "scenario": {
+          "vi": "văn phong báo chí / văn học HSK 7-9",
+          "ja": "エッセイ・記事の洗練された表現",
+          "en": "literary/journalistic prose"
+        },
+        "translations": {
+          "vi": "Thị trấn nhỏ ít người biết đến này ngày nay đã nổi tiếng gần xa.",
+          "ja": "ほとんど人に知られていなかったこの小さな町は、今ではすっかり有名になっている。",
+          "en": "This once little-known small town is now famous far and wide."
+        },
+        "literal_en": "This-CL rarely WEI people know DE small-town nowadays already far-near famous",
+        "tone_tip": {
+          "vi": "Chữ 鲜 khi mang nghĩa 'hiếm/ít' bắt buộc đọc thanh 3 (xiǎn - âm Hán-Việt: tiển), không đọc thanh 1 (xiān = tươi).",
+          "ja": "「鮮（まれ・少ない）」は第3声（xiǎn）と読みます（新鮮のxiānではありません）。",
+          "en": "When 鲜 means 'rarely/few', it is pronounced xiǎn (3rd tone), not xiān."
+        },
+        "word_order_diff": {
+          "vi": "",
+          "ja": "",
+          "en": ""
+        },
+        "note": {
+          "vi": "Thành ngữ 鲜为人知 (tiển vi nhân tri = ít được người đời biết đến) là dạng cô đọng 4 chữ từ 鲜为人所知.",
+          "ja": "漢文の「鮮（すくな）し」と同じ用法で、「鲜为人知（人に知られることが少ない＝あまり知られていない）」という超頻出四字成句です。",
+          "en": "鲜为人知 ('rarely known to people') is a compact four-character idiom derived from 为人所知."
+        }
+      },
+      {
+        "zh": "真正有实力的人，绝不为外界的流言蜚语所动。",
+        "pinyin": "Zhēnzhèng yǒu shílì de rén, jué bù wéi wàijiè de liúyán-fēiyǔ suǒ dòng.",
+        "tokens": [
+          {
+            "hanzi": "真正",
+            "pinyin": "zhēnzhèng",
+            "han_viet": "chân chính",
+            "ja_kanji": "真正",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "thực sự",
+              "ja": "真に・本当に",
+              "en": "truly"
+            },
+            "block_role": "subject"
+          },
+          {
+            "hanzi": "有",
+            "pinyin": "yǒu",
+            "han_viet": "hữu",
+            "ja_kanji": "有",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "có",
+              "ja": "ある",
+              "en": "have"
+            },
+            "block_role": "subject"
+          },
+          {
+            "hanzi": "实力",
+            "pinyin": "shílì",
+            "han_viet": "thực lực",
+            "ja_kanji": "実力",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "thực lực",
+              "ja": "実力",
+              "en": "strength / capability"
+            },
+            "block_role": "subject"
+          },
+          {
+            "hanzi": "的",
+            "pinyin": "de",
+            "han_viet": "—",
+            "ja_kanji": "的",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "mà",
+              "ja": "の",
+              "en": "(attributive)"
+            },
+            "block_role": "subject"
+          },
+          {
+            "hanzi": "人",
+            "pinyin": "rén",
+            "han_viet": "nhân",
+            "ja_kanji": "人",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "người",
+              "ja": "人",
+              "en": "person"
+            },
+            "block_role": "subject"
+          },
+          {
+            "hanzi": "绝",
+            "pinyin": "jué",
+            "han_viet": "tuyệt",
+            "ja_kanji": "絶",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "tuyệt đối",
+              "ja": "決して",
+              "en": "absolutely"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "不",
+            "pinyin": "bù",
+            "han_viet": "bất",
+            "ja_kanji": "不",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "không",
+              "ja": "〜ない",
+              "en": "not"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "为",
+            "pinyin": "wéi",
+            "han_viet": "vi",
+            "ja_kanji": "為",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "bị",
+              "ja": "〜によって",
+              "en": "by"
+            },
+            "block_role": "marker_passive"
+          },
+          {
+            "hanzi": "外界",
+            "pinyin": "wàijiè",
+            "han_viet": "ngoại giới",
+            "ja_kanji": "外界",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "bên ngoài",
+              "ja": "外部・世間",
+              "en": "outside world"
+            },
+            "block_role": "agent"
+          },
+          {
+            "hanzi": "的",
+            "pinyin": "de",
+            "han_viet": "—",
+            "ja_kanji": "的",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "của",
+              "ja": "の",
+              "en": "'s"
+            },
+            "block_role": "agent"
+          },
+          {
+            "hanzi": "流言蜚语",
+            "pinyin": "liúyán-fēiyǔ",
+            "han_viet": "lưu ngôn phi ngữ",
+            "ja_kanji": "流言飛語",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "tin đồn thất thiệt",
+              "ja": "流言飛語・デマや陰口",
+              "en": "rumors and slander"
+            },
+            "block_role": "agent"
+          },
+          {
+            "hanzi": "所",
+            "pinyin": "suǒ",
+            "han_viet": "sở",
+            "ja_kanji": "所",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "(trợ từ)",
+              "ja": "（助詞）",
+              "en": "(particle)"
+            },
+            "block_role": "marker_suo"
+          },
+          {
+            "hanzi": "动",
+            "pinyin": "dòng",
+            "han_viet": "động",
+            "ja_kanji": "動",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "lay động",
+              "ja": "動揺させられる",
+              "en": "move / sway"
+            },
+            "block_role": "action"
+          }
+        ],
+        "scenario": {
+          "vi": "nghị luận về bản lĩnh cá nhân",
+          "ja": "信念や精神力についての論説",
+          "en": "essay on personal fortitude"
+        },
+        "translations": {
+          "vi": "Người thực sự có thực lực tuyệt đối không bị những lời đồn đại bên ngoài làm lay động.",
+          "ja": "本当に実力のある人は、世間の流言飛語によって決して動揺したりしない。",
+          "en": "People of true capability are never swayed by outside rumors and gossip."
+        },
+        "literal_en": "Truly have strength DE person, absolutely not WEI outside-world DE rumors SUO move",
+        "tone_tip": {
+          "vi": "不 đứng trước 为 (wéi - thanh 2) nên giữ nguyên thanh 4: bù wéi.",
+          "ja": "「为（wéi）」は第2声なので、直前の「不（bù）」は変調せず第4声のまま読みます。",
+          "en": "Since 为 is 2nd tone (wéi), 不 remains 4th tone (bù wéi)."
+        },
+        "word_order_diff": {
+          "vi": "",
+          "ja": "",
+          "en": ""
+        },
+        "note": {
+          "vi": "Khung '不为 + N + 所动' (không bị N làm lay động) là cấu trúc cố định rất hay dùng.",
+          "ja": "「不为…所动（〜に動かされない）」では、1音節動詞「动」がそのまま文末に置かれます。",
+          "en": "不为…所动 is a fixed literary frame where the monosyllabic verb 动 stands at the end."
+        }
+      },
+      {
+        "zh": "这种新型环保材料已经为众多车企所采用。",
+        "pinyin": "Zhè zhǒng xīnxíng huánbǎo cáiliào yǐjīng wéi zhòngduō chēqǐ suǒ cǎiyòng.",
+        "tokens": [
+          {
+            "hanzi": "这",
+            "pinyin": "zhè",
+            "han_viet": "giá",
+            "ja_kanji": "這",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "này",
+              "ja": "この",
+              "en": "this"
+            },
+            "block_role": "subject"
+          },
+          {
+            "hanzi": "种",
+            "pinyin": "zhǒng",
+            "han_viet": "chủng",
+            "ja_kanji": "種",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "loại",
+              "ja": "種類の",
+              "en": "kind of"
+            },
+            "block_role": "subject"
+          },
+          {
+            "hanzi": "新型",
+            "pinyin": "xīnxíng",
+            "han_viet": "tân hình",
+            "ja_kanji": "新型",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "kiểu mới",
+              "ja": "新型の",
+              "en": "new-type"
+            },
+            "block_role": "subject"
+          },
+          {
+            "hanzi": "环保",
+            "pinyin": "huánbǎo",
+            "han_viet": "hoàn bảo",
+            "ja_kanji": "環保",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "bảo vệ môi trường",
+              "ja": "環境保護・エコ",
+              "en": "eco-friendly"
+            },
+            "block_role": "subject"
+          },
+          {
+            "hanzi": "材料",
+            "pinyin": "cáiliào",
+            "han_viet": "tài liệu",
+            "ja_kanji": "材料",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "vật liệu",
+              "ja": "材料・素材",
+              "en": "material"
+            },
+            "block_role": "subject"
+          },
+          {
+            "hanzi": "已经",
+            "pinyin": "yǐjīng",
+            "han_viet": "dĩ kinh",
+            "ja_kanji": "已經",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "đã",
+              "ja": "すでに",
+              "en": "already"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "为",
+            "pinyin": "wéi",
+            "han_viet": "vi",
+            "ja_kanji": "為",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "được",
+              "ja": "〜によって",
+              "en": "by"
+            },
+            "block_role": "marker_passive"
+          },
+          {
+            "hanzi": "众多",
+            "pinyin": "zhòngduō",
+            "han_viet": "chúng đa",
+            "ja_kanji": "衆多",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "nhiều",
+              "ja": "多くの",
+              "en": "numerous"
+            },
+            "block_role": "agent"
+          },
+          {
+            "hanzi": "车企",
+            "pinyin": "chēqǐ",
+            "han_viet": "xa xí",
+            "ja_kanji": "車企",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "hãng xe",
+              "ja": "自動車メーカー",
+              "en": "automakers"
+            },
+            "block_role": "agent"
+          },
+          {
+            "hanzi": "所",
+            "pinyin": "suǒ",
+            "han_viet": "sở",
+            "ja_kanji": "所",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "(trợ từ)",
+              "ja": "（助詞）",
+              "en": "(particle)"
+            },
+            "block_role": "marker_suo"
+          },
+          {
+            "hanzi": "采用",
+            "pinyin": "cǎiyòng",
+            "han_viet": "thái dụng",
+            "ja_kanji": "採用",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "áp dụng, sử dụng",
+              "ja": "採用される",
+              "en": "adopt"
+            },
+            "block_role": "action"
+          }
+        ],
+        "scenario": {
+          "vi": "báo cáo công nghiệp / công nghệ",
+          "ja": "産業・技術レポート",
+          "en": "industry and technology report"
+        },
+        "translations": {
+          "vi": "Loại vật liệu thân thiện với môi trường kiểu mới này đã được nhiều hãng xe áp dụng.",
+          "ja": "この新型エコ素材は、すでに多くの自動車メーカーによって採用されている。",
+          "en": "This new type of eco-friendly material has already been adopted by numerous automakers."
+        },
+        "literal_en": "This kind new-type eco-friendly material already WEI numerous car-enterprises SUO adopt",
+        "tone_tip": {
+          "vi": "所 (suǒ) + 采 (cǎi) là 2 thanh 3 liên tiếp → đọc thành suó cǎiyòng.",
+          "ja": "「所（suǒ）」＋「采（cǎi）」は第3声が続くため「suó cǎiyòng」と発音します。",
+          "en": "所 (suǒ) + 采 (cǎi) -> suó cǎiyòng."
+        },
+        "word_order_diff": {
+          "vi": "",
+          "ja": "",
+          "en": ""
+        },
+        "note": {
+          "vi": "Bẫy Hán-Việt: 材料 (tài liệu) trong tiếng Trung là 'vật liệu / nguyên liệu' (material), còn 'tài liệu học tập/văn kiện' là 资料 / 文件.",
+          "ja": "「车企」は「汽车企业（自動車メーカー）」の略称としてニュースで頻出します。",
+          "en": "Even with 已经 ('already'), no 了 is added after 采用."
+        }
+      },
+      {
+        "zh": "人工智能的发展速度之快，已深深为世人所瞩目。",
+        "pinyin": "Réngōng zhìnéng de fāzhǎn sùdù zhī kuài, yǐ shēnshēn wéi shìrén suǒ zhǔmù.",
+        "tokens": [
+          {
+            "hanzi": "人工智能",
+            "pinyin": "réngōng zhìnéng",
+            "han_viet": "nhân công trí năng",
+            "ja_kanji": "人工知能",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "trí tuệ nhân tạo (AI)",
+              "ja": "人工知能 (AI)",
+              "en": "artificial intelligence"
+            },
+            "block_role": "subject"
+          },
+          {
+            "hanzi": "的",
+            "pinyin": "de",
+            "han_viet": "—",
+            "ja_kanji": "的",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "của",
+              "ja": "の",
+              "en": "'s"
+            },
+            "block_role": "subject"
+          },
+          {
+            "hanzi": "发展",
+            "pinyin": "fāzhǎn",
+            "han_viet": "phát triển",
+            "ja_kanji": "発展",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "phát triển",
+              "ja": "発展",
+              "en": "development"
+            },
+            "block_role": "subject"
+          },
+          {
+            "hanzi": "速度",
+            "pinyin": "sùdù",
+            "han_viet": "tốc độ",
+            "ja_kanji": "速度",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "tốc độ",
+              "ja": "速度・スピード",
+              "en": "speed"
+            },
+            "block_role": "subject"
+          },
+          {
+            "hanzi": "之",
+            "pinyin": "zhī",
+            "han_viet": "chi",
+            "ja_kanji": "之",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "mức độ (nhấn mạnh)",
+              "ja": "〜のほど（強調）",
+              "en": "(literary modifier)"
+            },
+            "block_role": "subject"
+          },
+          {
+            "hanzi": "快",
+            "pinyin": "kuài",
+            "han_viet": "khoái",
+            "ja_kanji": "快",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "nhanh",
+              "ja": "速さ",
+              "en": "fastness"
+            },
+            "block_role": "subject"
+          },
+          {
+            "hanzi": "已",
+            "pinyin": "yǐ",
+            "han_viet": "dĩ",
+            "ja_kanji": "已",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "đã",
+              "ja": "すでに",
+              "en": "already"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "深深",
+            "pinyin": "shēnshēn",
+            "han_viet": "thâm thâm",
+            "ja_kanji": "深深",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "sâu sắc",
+              "ja": "深く",
+              "en": "deeply"
+            },
+            "block_role": "other"
+          },
+          {
+            "hanzi": "为",
+            "pinyin": "wéi",
+            "han_viet": "vi",
+            "ja_kanji": "為",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "được",
+              "ja": "〜によって",
+              "en": "by"
+            },
+            "block_role": "marker_passive"
+          },
+          {
+            "hanzi": "世人",
+            "pinyin": "shìrén",
+            "han_viet": "thế nhân",
+            "ja_kanji": "世人",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "người đời, thế giới",
+              "ja": "世間の人々・世界の人々",
+              "en": "people of the world"
+            },
+            "block_role": "agent"
+          },
+          {
+            "hanzi": "所",
+            "pinyin": "suǒ",
+            "han_viet": "sở",
+            "ja_kanji": "所",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "(trợ từ)",
+              "ja": "（助詞）",
+              "en": "(particle)"
+            },
+            "block_role": "marker_suo"
+          },
+          {
+            "hanzi": "瞩目",
+            "pinyin": "zhǔmù",
+            "han_viet": "chúc mục",
+            "ja_kanji": "矚目",
+            "false_friend_ja": null,
+            "gloss": {
+              "vi": "chú ý, dõi theo",
+              "ja": "注目される",
+              "en": "focus attention on"
+            },
+            "block_role": "action"
+          }
+        ],
+        "scenario": {
+          "vi": "bài luận học thuật HSK 7-9",
+          "ja": "HSK7-9級レベルの学術・論説文",
+          "en": "HSK 7-9 academic commentary"
+        },
+        "translations": {
+          "vi": "Tốc độ phát triển nhanh chóng của trí tuệ nhân tạo đã được người đời hết sức chú ý.",
+          "ja": "人工知能の発展スピードの速さは、すでに世界中の人々から深く注目されている。",
+          "en": "The rapid pace of artificial intelligence development has drawn close attention from people around the world."
+        },
+        "literal_en": "AI DE development speed ZHI fast, already deeply WEI world-people SUO gaze-upon",
+        "tone_tip": {
+          "vi": "所 (suǒ) + 瞩 (zhǔ) là 2 thanh 3 liên tiếp → đọc thành suó zhǔmù.",
+          "ja": "「所（suǒ）」＋「瞩（zhǔ）」は第3声連続で「suó zhǔmù」と変調します。",
+          "en": "所 (suǒ) + 瞩 (zhǔ) -> suó zhǔmù."
+        },
+        "word_order_diff": {
+          "vi": "",
+          "ja": "",
+          "en": ""
+        },
+        "note": {
+          "vi": "为世人所瞩目 (được người đời chú mục/dõi theo) là cụm C1-C2 rất đắt giá khi viết mở bài nghị luận.",
+          "ja": "「为世人所瞩目（世界中の人々から注目される）」は論説文の導入に非常に使える高級表現です。",
+          "en": "为世人所瞩目 is an elevated C1/C2 phrase ideal for essay introductions."
+        }
+      }
+    ],
+    "dialogue": {
+      "goal": {
+        "vi": "Thảo luận về giá trị của một tác phẩm văn học kinh điển",
+        "ja": "古典文学作品の価値について語り合う",
+        "en": "Discussing the enduring value of a literary classic"
+      },
+      "lines": [
+        {
+          "speaker": "A",
+          "zh": "这部小说出版的时候鲜为人知，为什么现在这么受欢迎？",
+          "pinyin": "Zhè bù xiǎoshuō chūbǎn de shíhou xiǎn wéi rén zhī, wèishénme xiànzài zhème shòu huānyíng?",
+          "tr": {
+            "vi": "Bộ tiểu thuyết này lúc mới xuất bản rất ít người biết đến, sao bây giờ lại được yêu thích đến vậy?",
+            "ja": "この小説は出版された当時はあまり知られていなかったのに、なぜ今こんなに人気があるのでしょうか？",
+            "en": "This novel was little known when it was first published; why is it so popular now?"
+          }
+        },
+        {
+          "speaker": "B",
+          "zh": "因为作者独立思考，不为当时的潮流所左右，所以作品的价值最终被后人所认可。",
+          "pinyin": "Yīnwèi zuòzhě dúlì sīkǎo, bù wéi dāngshí de cháoliú suǒ zuǒyòu, suǒyǐ zuòpǐn de jiàzhí zuìzhōng bèi hòurén suǒ rènkě.",
+          "tr": {
+            "vi": "Bởi vì tác giả suy nghĩ độc lập, không bị trào lưu đương thời chi phối, nên giá trị của tác phẩm cuối cùng đã được hậu thế công nhận.",
+            "ja": "著者が独自に思考し、当時の潮流に左右されなかったからこそ、作品の価値が最終的に後世の人々に認められたのです。",
+            "en": "Because the author thought independently and was not swayed by the trends of the time, the work's value was ultimately recognized by later generations."
+          }
+        }
+      ]
+    },
+    "puzzles": [
+      {
+        "scrambled_tokens": [
+          "感动",
+          "所",
+          "精神",
+          "的",
+          "他",
+          "为",
+          "都",
+          "观众们"
+        ],
+        "correct_order": [
+          "观众们",
+          "都",
+          "为",
+          "他",
+          "的",
+          "精神",
+          "所",
+          "感动"
+        ]
+      },
+      {
+        "scrambled_tokens": [
+          "吸引",
+          "所",
+          "风光",
+          "自然",
+          "的",
+          "这里",
+          "为",
+          "游客",
+          "许多"
+        ],
+        "correct_order": [
+          "许多",
+          "游客",
+          "为",
+          "这里",
+          "的",
+          "自然",
+          "风光",
+          "所",
+          "吸引"
+        ]
+      },
+      {
+        "scrambled_tokens": [
+          "采用",
+          "所",
+          "车企",
+          "众多",
+          "为",
+          "已经",
+          "材料",
+          "环保",
+          "新型",
+          "种",
+          "这"
+        ],
+        "correct_order": [
+          "这",
+          "种",
+          "新型",
+          "环保",
+          "材料",
+          "已经",
+          "为",
+          "众多",
+          "车企",
+          "所",
+          "采用"
+        ]
+      }
+    ],
+    "fill_blank": [
+      {
+        "sentence": "这位科学家的贡献已经___世人所公认。",
+        "options": [
+          "为",
+          "把",
+          "向",
+          "朝"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "vi",
+          "ja",
+          "en"
+        ],
+        "explanation": {
+          "vi": "Khung bị động trang trọng 为…所… (为世人所公认 = được người đời công nhận).",
+          "ja": "後ろの「所公认」とセットになって文語受身を作る「为（〜によって）」が入ります。",
+          "en": "Pairs with 所公认 to form the formal passive frame 为…所…."
+        }
+      },
+      {
+        "sentence": "他在谈判中始终坚持原则，不为对方的威胁___。",
+        "options": [
+          "所动",
+          "动了",
+          "所动了",
+          "被所动"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "vi",
+          "ja",
+          "en"
+        ],
+        "explanation": {
+          "vi": "Cấu trúc cố định 不为…所动 (không bị... làm lay động), động từ sau 所 không thêm 了.",
+          "ja": "「不为…所动（〜に動じない）」が正しい形であり、後ろに「了」は付けません。",
+          "en": "Completes the fixed literary frame 不为…所动 without adding 了."
+        }
+      },
+      {
+        "sentence": "这种传统手艺如今已经___。",
+        "options": [
+          "鲜为人知",
+          "鲜被人知了",
+          "为鲜人所知",
+          "把人所知"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "ja",
+          "en"
+        ],
+        "explanation": {
+          "vi": "Thành ngữ 4 chữ cố định 鲜为人知 (hiếm được người ta biết đến).",
+          "ja": "「あまり人に知られていない」を表す四字成句「鲜为人知」が正解です。",
+          "en": "鲜为人知 is the standard idiom meaning 'rarely known to people'."
+        }
+      }
+    ],
+    "error_correction": [
+      {
+        "wrong": "他的演讲深深为听众所打动了。",
+        "correct": "听众深深为他的演讲所打动。",
+        "hint": {
+          "vi": "Hãy kiểm tra: (1) Ai là người bị cảm động (chủ ngữ phải là 听众), và (2) bỏ chữ 了 ở cuối cấu trúc 为…所….",
+          "ja": "「誰が何によって心を動かされたか」の主語と動作主を入れ替え、文末の「了」を取りましょう。",
+          "en": "Make 'the audience' (听众) the passive subject, put 'his speech' after 为, and remove the final 了."
+        }
+      },
+      {
+        "wrong": "我的钱包在公交车上为小偷所偷走了。",
+        "correct": "我的钱包在公交车上被小偷偷走了。",
+        "hint": {
+          "vi": "Chuyện mất ví đời thường có kèm bổ ngữ kết quả + 了 (偷走了) thì nên dùng chữ bị động thông thường nào thay cho 为…所?",
+          "ja": "日常の盗難で動詞に「走了」がつく文では、文語の「为…所」ではなく口語の受身介詞を使いましょう。",
+          "en": "Use the everyday passive marker instead of the literary 为...所 frame when there is a physical action with a result complement (偷走了)."
+        }
+      }
+    ],
+    "quiz": [
+      {
+        "question": {
+          "vi": "Trong cấu trúc bị động '为人所知', chữ '为' và trong thành ngữ '鲜为人知', chữ '鲜' được phát âm đúng là gì?",
+          "ja": "「为人所知」の「为」と、「鲜为人知」の「鲜」の正しいピンインの組み合わせはどれですか？",
+          "en": "What are the correct pronunciations of 为 in '为人所知' and 鲜 in '鲜为人知'?"
+        },
+        "options": [
+          "wéi (thanh 2) và xiǎn (thanh 3)",
+          "wèi (thanh 4) và xiān (thanh 1)",
+          "wéi (thanh 2) và xiān (thanh 1)",
+          "wèi (thanh 4) và xiǎn (thanh 3)"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "vi",
+          "ja",
+          "en"
+        ],
+        "explanation": {
+          "vi": "为 mang nghĩa bị động đọc là wéi (thanh 2); 鲜 mang nghĩa 'hiếm/ít' đọc là xiǎn (thanh 3).",
+          "ja": "受身の「为」は第2声（wéi）、「まれ・少ない」の意味の「鲜」は第3声（xiǎn）と読みます。",
+          "en": "Passive 为 is pronounced wéi (2nd tone), and 鲜 meaning 'rarely/few' is pronounced xiǎn (3rd tone)."
+        }
+      },
+      {
+        "question": {
+          "vi": "Câu nào sau đây sử dụng ĐÚNG cấu trúc 为…所…?",
+          "ja": "次のうち、「为…所…」の使い方が正しい文はどれですか？",
+          "en": "Which sentence uses the 为…所… construction correctly?"
+        },
+        "options": [
+          "这项技术已广泛为业内人士所认可。",
+          "这项技术已广泛为业内人士所认可了。",
+          "那个杯子为弟弟所打破了。",
+          "我把这本书为他所借。"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "vi",
+          "ja",
+          "en"
+        ],
+        "explanation": {
+          "vi": "Câu 1 trang trọng, dùng động từ 2 âm tiết 认可 và không thừa 了. Câu 2 thừa 了; câu 3 là việc vỡ cốc đời thường kèm 破了 không dùng 为…所; câu 4 trộn lẫn 把 và 为…所.",
+          "ja": "「这项技术已广泛为业内人士所认可。」が文体・文法ともに正しい文です。「所＋動詞」の後ろに「了」は付けません。",
+          "en": "Sentence 1 uses the formal frame properly with a bare disyllabic verb (认可) and no trailing 了."
+        }
+      },
+      {
+        "question": {
+          "vi": "Cấu trúc lai (hybrid) nào sau đây cũng được dùng phổ biến và đúng ngữ pháp trong tiếng Trung hiện đại?",
+          "ja": "現代中国語の書面語で、「为…所＋V」と同様に広く使われる正しい形はどれですか？",
+          "en": "Which hybrid passive form is also widely accepted in modern formal Chinese?"
+        },
+        "options": [
+          "被 + Tác nhân + 所 + Động từ (ví dụ: 被大家所接受)",
+          "把 + Tác nhân + 所 + Động từ",
+          "为 + Tác nhân + 被 + Động từ",
+          "所 + Tác nhân + 为 + Động từ"
+        ],
+        "answer_index": 0,
+        "trap_for": [
+          "en",
+          "vi"
+        ],
+        "explanation": {
+          "vi": "Dạng kết hợp '被 + Agent + 所 + V' (như 被大家所接受, 被世人所熟知) rất phổ biến trong báo chí và văn viết hiện đại.",
+          "ja": "「为」を「被」に置き換えた「被＋動作主＋所＋動詞（例：被大家所接受）」も現代の書面語で非常に多く使われます。",
+          "en": "'被 + Agent + 所 + Verb' (e.g., 被大家所接受) is a standard modern formal variant of '为 + Agent + 所 + Verb'."
+        }
+      }
+    ],
+    "summary_card": {
+      "one_liner": {
+        "vi": "S + 为/被 + Tác nhân + 所 + V: Câu bị động trang trọng trong văn viết (为 đọc là wéi, động từ sau 所 không thêm 了).",
+        "ja": "「主語＋为（wéi）／被＋動作主＋所＋動詞」：書面語の格調高い受身構文（動詞の後ろに「了」はつけない）。",
+        "en": "'Subject + 为 (wéi)/被 + Agent + 所 + Verb' forms a formal literary passive where the verb after 所 stands bare without 了."
+      },
+      "remember": [
+        {
+          "vi": "Chữ 为 trong cấu trúc bị động luôn đọc ở thanh 2 (wéi), không đọc thanh 4 (wèi).",
+          "ja": "受身の「为」は第2声（wéi）で発音する。",
+          "en": "Always pronounce passive 为 in the 2nd tone (wéi)."
+        },
+        {
+          "vi": "Động từ đứng sau 所 (thường là động từ 2 âm tiết như 感动, 吸引, 接受) đứng gọn, KHÔNG thêm 了 hay bổ ngữ kết quả.",
+          "ja": "「所」の後ろの動詞には「了」や結果補語をつけない。",
+          "en": "Never attach 了, 过, or result complements to the verb after 所."
+        },
+        {
+          "vi": "Phủ định đặt 不 hoặc 未 trước 为: 不为…所动 (không bị... làm lay động).",
+          "ja": "否定は「为」の前に「不／未」を置く（例：不为…所动）。",
+          "en": "Negate by placing 不 or 未 before 为 (e.g., 不为…所动)."
+        }
+      ]
+    },
+    "needs_review": false,
+    "review_note": ""
+  }
+];
+
+  if (typeof window !== 'undefined') {
+    window.HSK_GRAMMAR_CATALOG = catalog;
+    window.HSK_GRAMMAR_SAMPLES = samples;
+  }
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+      HSK_GRAMMAR_CATALOG: catalog,
+      HSK_GRAMMAR_SAMPLES: samples
+    };
+  }
+})();

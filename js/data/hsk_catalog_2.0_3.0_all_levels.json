@@ -1,0 +1,1130 @@
+[
+  {
+    "id": "hsk1_shi_sentence",
+    "level": "HSK1",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“是”字句",
+    "vi_name": "Câu chữ 是 (là)",
+    "ja_name": "「是」構文（〜は〜です）",
+    "en_name": "The 是 (shì) copula sentence",
+    "category": "sentence_pattern",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_you_possession_existence",
+    "level": "HSK1",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“有”字句（领有与存在）",
+    "vi_name": "Câu chữ 有 (sở hữu và tồn tại)",
+    "ja_name": "「有」構文（所有・存在）",
+    "en_name": "The 有 (yǒu) sentence for possession and existence",
+    "category": "sentence_pattern",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_zai_existence_location",
+    "level": "HSK1",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“在”表示位置与存在",
+    "vi_name": "Cấu trúc 在 chỉ vị trí và sự tồn tại",
+    "ja_name": "所在を表す「在」",
+    "en_name": "Expressing location with 在 (zài)",
+    "category": "preposition",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_ma_yes_no_question",
+    "level": "HSK1",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“吗”是非问句",
+    "vi_name": "Câu hỏi Có-Không với trợ từ 吗",
+    "ja_name": "語気助詞「吗」による疑問文",
+    "en_name": "Yes-no questions with 吗 (ma)",
+    "category": "question",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_ne_elliptical_question",
+    "level": "HSK1",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“呢”省略问句",
+    "vi_name": "Câu hỏi tỉnh lược với trợ từ 呢 (còn... thì sao?)",
+    "ja_name": "省略疑問文を作る「呢」（〜は？）",
+    "en_name": "Follow-up questions with 呢 (ne)",
+    "category": "question",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_interrogative_pronouns",
+    "level": "HSK1",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "特殊疑问句（什么/谁/哪儿/怎么/几/多少）",
+    "vi_name": "Câu hỏi dùng đại từ nghi vấn (什么, 谁, 哪儿, 怎么, 几, 多少)",
+    "ja_name": "疑問詞疑問文（什么・谁・哪儿・怎么・几・多少）",
+    "en_name": "Wh-questions with interrogative pronouns",
+    "category": "question",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_bu_negation",
+    "level": "HSK1",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "否定副词“不”",
+    "vi_name": "Phó từ phủ định 不",
+    "ja_name": "否定副詞「不」",
+    "en_name": "Standard negation with 不 (bù)",
+    "category": "negation",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_mei_meiyou_negation",
+    "level": "HSK1",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "否定副词“没/没有”",
+    "vi_name": "Phó từ phủ định 没 / 没有",
+    "ja_name": "所有・過去の否定「没／没有」",
+    "en_name": "Negating possession and past actions with 没/没有 (méi/méiyǒu)",
+    "category": "negation",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_de_possessive_attributive",
+    "level": "HSK1",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "结构助词“的”（定语标记）",
+    "vi_name": "Trợ từ kết cấu 的 nối định ngữ và sở hữu",
+    "ja_name": "構造助詞「的」（連体修飾・所有）",
+    "en_name": "Possession and modification with 的 (de)",
+    "category": "particle",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_hen_adjective_predicate",
+    "level": "HSK1",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "形容词谓语句与程度副词“很”",
+    "vi_name": "Câu vị ngữ tính từ và phó từ mức độ 很",
+    "ja_name": "形容詞述語文と「很」の働き",
+    "en_name": "Adjective predicate sentences with 很 (hěn)",
+    "category": "sentence_pattern",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_numeral_measure_word",
+    "level": "HSK1",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "数量名结构（数词+量词+名词）",
+    "vi_name": "Cấu trúc Số từ + Lượng từ + Danh từ (个, 本, 口, 块, 杯...)",
+    "ja_name": "数量詞構造（数詞＋量詞＋名詞）",
+    "en_name": "Numeral + Measure Word + Noun structure",
+    "category": "measure_word",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_time_word_position",
+    "level": "HSK1",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "时间词作状语的位置",
+    "vi_name": "Vị trí của từ chỉ thời gian làm trạng ngữ",
+    "ja_name": "時間詞の語順（主語の前／直後）",
+    "en_name": "Placement of time expressions before the verb",
+    "category": "sentence_pattern",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_zai_progressive",
+    "level": "HSK1",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“在/正在+V+呢”表示动作正在进行",
+    "vi_name": "Cấu trúc 在/正在 + V (+ 呢) diễn tả hành động đang diễn ra",
+    "ja_name": "進行を表す「在／正在＋V（＋呢）」",
+    "en_name": "Ongoing actions with 在/正在 (zài/zhèngzài)",
+    "category": "aspect",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_modal_hui_neng_xiang",
+    "level": "HSK1",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "能愿动词“会、能、想”",
+    "vi_name": "Động từ năng nguyện 会, 能, 想",
+    "ja_name": "助動詞「会・能・想」の使い分け",
+    "en_name": "Modal verbs 会 (huì), 能 (néng), and 想 (xiǎng)",
+    "category": "modal",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_le_modal_change",
+    "level": "HSK1",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "语气助词“了”（表示发生或变化）",
+    "vi_name": "Trợ từ ngữ khí 了 ở cuối câu (đã xảy ra / thay đổi trạng thái)",
+    "ja_name": "文末の「了」（完了・変化）",
+    "en_name": "Sentence-final particle 了 (le) for new situations",
+    "category": "particle",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk1_tai_le_exclamation",
+    "level": "HSK1",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“太+Adj+了”感叹结构",
+    "vi_name": "Cấu trúc cảm thán 太 + Tính từ + 了 (quá... rồi!)",
+    "ja_name": "感嘆を表す「太＋形容詞＋了」",
+    "en_name": "Exclamations with 太...了 (tài...le)",
+    "category": "sentence_pattern",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk2_le_completion_aspect",
+    "level": "HSK2",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "动态助词“了”（动作完成）",
+    "vi_name": "Trợ từ động thái 了 đứng sau động từ (hoàn thành hành động)",
+    "ja_name": "アスペクト助詞「了」（動作の完了）",
+    "en_name": "Aspect particle 了 (le) for completed actions",
+    "category": "aspect",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk2_guo_experiential_aspect",
+    "level": "HSK2",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "动态助词“过”（曾经经历）",
+    "vi_name": "Trợ từ động thái 过 diễn tả trải nghiệm (đã từng)",
+    "ja_name": "経験を0表すアスペクト助詞「过」（〜したことがある）",
+    "en_name": "Experiential particle 过 (guò)",
+    "category": "aspect",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk2_zhe_durative_aspect",
+    "level": "HSK2",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "动态助词“着”（状态持续）",
+    "vi_name": "Trợ từ động thái 着 diễn tả trạng thái duy trì",
+    "ja_name": "状態の持続を表す「着」（〜している／〜てある）",
+    "en_name": "Continuous state particle 着 (zhe)",
+    "category": "aspect",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk2_bi_comparison",
+    "level": "HSK2",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“比”字比较句",
+    "vi_name": "Câu so sánh hơn với chữ 比",
+    "ja_name": "「比」を用いた比較文（AはBより〜）",
+    "en_name": "Comparisons using 比 (bǐ)",
+    "category": "comparison",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk2_de_degree_complement",
+    "level": "HSK2",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "状态补语/程度补语（V+得+Adj）",
+    "vi_name": "Bổ ngữ trạng thái / mức độ dùng 得 (V + 得 + Adj)",
+    "ja_name": "様態補語・程度補語（V＋得＋形容詞）",
+    "en_name": "Complement of degree/manner with 得 (de)",
+    "category": "complement",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk2_resultative_complement_basic",
+    "level": "HSK2",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "结果补语（V+完/好/见/到/懂/错）",
+    "vi_name": "Bổ ngữ kết quả cơ bản (V + 完/好/见/到/懂/错)",
+    "ja_name": "結果補語の基本（V＋完／好／见／到／懂／错）",
+    "en_name": "Basic resultative complements (完, 好, 见, 到, 懂, 错)",
+    "category": "complement",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk2_directional_complement_simple",
+    "level": "HSK2",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "简单趋向补语（V+来/去）",
+    "vi_name": "Bổ ngữ xu hướng đơn (V + 来 / 去)",
+    "ja_name": "単純方向補語（V＋来／去）",
+    "en_name": "Simple directional complements (来 lái / 去 qù)",
+    "category": "complement",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk2_affirmative_negative_question",
+    "level": "HSK2",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "正反问句（V不V / V没V）",
+    "vi_name": "Câu hỏi chính phản (V 不 V / V 没 V)",
+    "ja_name": "反復疑問文（V不V／V没V）",
+    "en_name": "Affirmative-negative questions (V-not-V)",
+    "category": "question",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk2_haishi_alternative_question",
+    "level": "HSK2",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“还是”选择问句",
+    "vi_name": "Câu hỏi lựa chọn với 还是 (hay là)",
+    "ja_name": "選択疑問文を作る「还是」（AそれともB？）",
+    "en_name": "Alternative questions with 还是 (háishì)",
+    "category": "question",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk2_yao_le_imminent_action",
+    "level": "HSK2",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“要/快要/就要…了”表示即将发生",
+    "vi_name": "Cấu trúc 要/快要/就要...了 diễn tả việc sắp xảy ra",
+    "ja_name": "近未来を表す「要／快要／就要…了」（もうすぐ〜する）",
+    "en_name": "Imminent actions with 要/快要/就要...了",
+    "category": "aspect",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk2_yinwei_suoyi",
+    "level": "HSK2",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“因为…所以…”因果复句",
+    "vi_name": "Câu ghép nhân quả 因为... 所以... (vì... nên...)",
+    "ja_name": "因果関係「因为…所以…」（なぜなら〜だから）",
+    "en_name": "Cause and effect with 因为...所以... (because...therefore...)",
+    "category": "conjunction",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk2_suiran_danshi",
+    "level": "HSK2",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“虽然…但是…”转折复句",
+    "vi_name": "Câu ghép chuyển ngoặt 虽然... 但是... (tuy... nhưng...)",
+    "ja_name": "逆接「虽然…但是…」（〜だけれども、しかし〜）",
+    "en_name": "Concession with 虽然...但是... (although...but...)",
+    "category": "conjunction",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk2_verb_reduplication",
+    "level": "HSK2",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "动词重叠（AA / A一A）与“V一下”",
+    "vi_name": "Lặp lại động từ (AA / A一A) và V + 一下",
+    "ja_name": "動詞の重ね型（AA／A一A）と「V一下」（ちょっと〜する）",
+    "en_name": "Verb reduplication and V + 一下 (yīxià)",
+    "category": "reduplication",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk2_shi_de_emphasis",
+    "level": "HSK2",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“是…的”强调句（时间/地点/方式）",
+    "vi_name": "Cấu trúc nhấn mạnh 是...的 (thời gian, địa điểm, cách thức)",
+    "ja_name": "強調構文「是…的」（いつ・どこで・どのように）",
+    "en_name": "The 是...的 (shì...de) focus construction",
+    "category": "sentence_pattern",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk2_preposition_cong_dao_li_dui",
+    "level": "HSK2",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "常用介词（从…到…、离、对、向、往）",
+    "vi_name": "Giới từ thông dụng: 从...到..., 离, 对, 向, 往",
+    "ja_name": "頻出前置詞（从…到…、离、对、向、往）",
+    "en_name": "Common prepositions: 从...到..., 离, 对, 向, 往",
+    "category": "preposition",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk2_bie_bu_yao_imperative",
+    "level": "HSK2",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "祈使否定“别…（了）/ 不要…（了）”",
+    "vi_name": "Câu cầu khiến phủ định 别...(了) / 不要...(了) (đừng... nữa)",
+    "ja_name": "禁止を表す「别…（了）／不要…（了）」（〜しないで）",
+    "en_name": "Negative imperatives with 别 (bié) and 不要 (búyào)",
+    "category": "negation",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk3_ba_construction",
+    "level": "HSK3",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“把”字句（处置式）",
+    "vi_name": "Câu chữ 把 (câu xử lý)",
+    "ja_name": "「把」構文（処置文）",
+    "en_name": "The 把 (bǎ) disposal construction",
+    "category": "sentence_pattern",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk3_bei_passive",
+    "level": "HSK3",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“被”字句（与叫/让被动句）",
+    "vi_name": "Câu bị động với 被 (và 叫 / 让)",
+    "ja_name": "「被」（および「叫・让」）による受身文",
+    "en_name": "Passive sentences with 被 (bèi), 叫 (jiào), and 让 (ràng)",
+    "category": "sentence_pattern",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk3_compound_directional_complement",
+    "level": "HSK3",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "复合趋向补语（V+上来/下去/进来/出去/回来/过去/起来）",
+    "vi_name": "Bổ ngữ xu hướng kép (V + 上来/下去/进来/出去/回来/过去/起来)",
+    "ja_name": "複合方向補語（V＋上来／下去／进来／出去／回来／过去／起来）",
+    "en_name": "Compound directional complements",
+    "category": "complement",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk3_potential_complement",
+    "level": "HSK3",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "可能补语（V+得/不+结果/趋向）",
+    "vi_name": "Bổ ngữ khả năng (V + 得/不 + kết quả/xu hướng)",
+    "ja_name": "可能補語（V＋得／不＋結果／方向）",
+    "en_name": "Potential complements (V + 得/不 + result/direction)",
+    "category": "complement",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk3_duration_complement",
+    "level": "HSK3",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "时量补语（V+了+时间段）",
+    "vi_name": "Bổ ngữ thời lượng (V + 了 + khoảng thời gian)",
+    "ja_name": "時量補語（動作の継続時間）",
+    "en_name": "Complement of duration",
+    "category": "complement",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk3_frequency_complement",
+    "level": "HSK3",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "动量补语（V+了/过+次数/遍/趟）",
+    "vi_name": "Bổ ngữ động lượng (số lần: 次, 遍, 趟)",
+    "ja_name": "動量補語（回数：次・遍・趟）",
+    "en_name": "Complement of frequency (次, 遍, 趟)",
+    "category": "complement",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk3_yue_lai_yue_yue_yue",
+    "level": "HSK3",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“越来越…”与“越A越B”",
+    "vi_name": "Cấu trúc 越来越... (càng ngày càng...) và 越A越B (càng A càng B)",
+    "ja_name": "「越来越…」（ますます〜）と「越A越B」（AすればするほどB）",
+    "en_name": "Increasing degree with 越来越 and 越A越B",
+    "category": "comparison",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk3_gen_yi_yang_comparison",
+    "level": "HSK3",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“A跟/和B（不）一样”平比句",
+    "vi_name": "So sánh ngang bằng A 跟/和 B (不) 一样",
+    "ja_name": "同等比較「A跟／和B（不）一样」（AはBと同じ／違う）",
+    "en_name": "Expressing similarity/difference with 跟/和...(不)一样",
+    "category": "comparison",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk3_adverb_cai_vs_jiu",
+    "level": "HSK3",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "副词“才”与“就”的对比",
+    "vi_name": "Phân biệt phó từ 才 (mới) và 就 (đã/liền)",
+    "ja_name": "副詞「才」（やっと）と「就」（すぐに・もう）の対比",
+    "en_name": "Contrasting adverbs 才 (cái) and 就 (jiù)",
+    "category": "other",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk3_adverb_you_vs_zai",
+    "level": "HSK3",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "副词“又”与“再”的对比",
+    "vi_name": "Phân biệt phó từ lặp lại 又 (đã lại) và 再 (sẽ lại)",
+    "ja_name": "反復を表す副詞「又」（既実現）と「再」（未実現）",
+    "en_name": "Contrasting repetition adverbs 又 (yòu) and 再 (zài)",
+    "category": "other",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk3_yi_bian_yi_bian",
+    "level": "HSK3",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“一边…一边…”同时进行",
+    "vi_name": "Cấu trúc 一边... 一边... (vừa... vừa...)",
+    "ja_name": "同時進行「一边…一边…」（〜しながら〜する）",
+    "en_name": "Simultaneous actions with 一边...一边...",
+    "category": "conjunction",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk3_yi_jiu_sequence",
+    "level": "HSK3",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“一…就…”紧接复句",
+    "vi_name": "Cấu trúc 一... 就... (hễ/vừa... thì liền...)",
+    "ja_name": "「一…就…」（〜するとすぐに…）",
+    "en_name": "As soon as with 一...就... (yī...jiù...)",
+    "category": "conjunction",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk3_bu_dan_er_qie",
+    "level": "HSK3",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“不但/不仅…而且/还…”递进复句",
+    "vi_name": "Câu ghép tăng tiến 不但/不仅... 而且/还... (không những... mà còn...)",
+    "ja_name": "累加「不但／不仅…而且／还…」（〜だけでなく、さらに〜）",
+    "en_name": "Not only... but also... with 不但...而且...",
+    "category": "conjunction",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk3_zhi_yao_jiu_zhi_you_cai",
+    "level": "HSK3",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "条件复句“只要…就…”与“只有…才…”",
+    "vi_name": "Câu điều kiện 只要...就... (chỉ cần... là...) và 只有...才... (chỉ có... mới...)",
+    "ja_name": "条件文「只要…就…」（〜さえすれば）と「只有…才…」（〜してこそ）",
+    "en_name": "Sufficient vs. necessary conditions: 只要...就... and 只有...才...",
+    "category": "conjunction",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk3_interrogative_dou_ye_universal",
+    "level": "HSK3",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "疑问代词活用表任指（谁/什么/哪儿+都/也）",
+    "vi_name": "Đại từ nghi vấn kết hợp 都 / 也 biểu thị toàn bộ (ai cũng, cái gì cũng)",
+    "ja_name": "疑問詞＋「都／也」による全面肯定・全面否定",
+    "en_name": "Interrogative pronouns with 都/也 for 'any/every/no'",
+    "category": "question",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk3_adjective_reduplication",
+    "level": "HSK3",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "形容词重叠（AA的 / AABB）",
+    "vi_name": "Lặp lại tính từ (AA的 / AABB)",
+    "ja_name": "形容詞の重ね型（AA的／AABB）",
+    "en_name": "Adjective reduplication (AA的 and AABB)",
+    "category": "reduplication",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk3_existential_sentence",
+    "level": "HSK3",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "存现句（处所+V+着/了+NP）",
+    "vi_name": "Câu tồn hiện (Địa điểm + V + 着/了 + Danh ngữ)",
+    "ja_name": "存現文（場所＋V＋着／了＋不特定名詞）",
+    "en_name": "Existential sentences (Location + V + 着/了 + Noun)",
+    "category": "sentence_pattern",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk4_lian_dou_ye_emphasis",
+    "level": "HSK4",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“连…都/也…”强调极端情况",
+    "vi_name": "Cấu trúc nhấn mạnh 连... 都/也... (ngay cả... cũng...)",
+    "ja_name": "極端な例を挙げる「连…都／也…」（〜でさえも）",
+    "en_name": "Emphasizing extremes with 连...都/也... (even...)",
+    "category": "sentence_pattern",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk4_bu_shi_er_shi",
+    "level": "HSK4",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“不是A，而是B”并列否定与肯定",
+    "vi_name": "Cấu trúc 不是 A, 而是 B (không phải A, mà là B)",
+    "ja_name": "「不是A，而是B」（AではなくてBだ）",
+    "en_name": "Not A, but rather B with 不是...而是...",
+    "category": "conjunction",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk4_ji_shi_ye_concession",
+    "level": "HSK4",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“即使…也…”假设让步复句",
+    "vi_name": "Câu nhượng bộ giả định 即使... 也... (cho dù... cũng...)",
+    "ja_name": "仮定譲歩「即使…也…」（たとえ〜でも）",
+    "en_name": "Even if with 即使...也... (jíshǐ...yě...)",
+    "category": "conjunction",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk4_bu_guan_wu_lun_dou",
+    "level": "HSK4",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“不管/无论…都/也…”无条件复句",
+    "vi_name": "Câu vô điều kiện 不管/无论... 都/也... (bất kể... đều...)",
+    "ja_name": "無条件「不管／无论…都／也…」（〜にかかわらず）",
+    "en_name": "No matter what with 不管/无论...都...",
+    "category": "conjunction",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk4_ji_ran_jiu_causal",
+    "level": "HSK4",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“既然…就…”推论因果复句",
+    "vi_name": "Câu suy luận nhân quả 既然... 就... (đã... thì...)",
+    "ja_name": "既定事実からの推論「既然…就…」（〜である以上は）",
+    "en_name": "Since/now that with 既然...就... (jìrán...jiù...)",
+    "category": "conjunction",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk4_double_negation_fei_bu_ke",
+    "level": "HSK4",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "双重否定（非…不可 / 不得不 / 没有…不…）",
+    "vi_name": "Phủ định kép nhấn mạnh (非...不可, 不得不, 没有...不...)",
+    "ja_name": "二重否定による強調（非…不可／不得不／没有…不…）",
+    "en_name": "Double negation patterns (非...不可, 不得不, 没有...不...)",
+    "category": "negation",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk4_rhetorical_questions",
+    "level": "HSK4",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "反问句（难道…吗？/ 不是…吗？）",
+    "vi_name": "Câu hỏi tu từ 难道...吗? (lẽ nào...?) và 不是...吗? (chẳng phải... sao?)",
+    "ja_name": "反語文（难道…吗？／不是…吗？）",
+    "en_name": "Rhetorical questions with 难道...吗 and 不是...吗",
+    "category": "question",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk4_directional_complement_figurative",
+    "level": "HSK4",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "趋向补语的引申义（起来/下去/出来/过来）",
+    "vi_name": "Nghĩa bóng của bổ ngữ xu hướng (起来, 下去, 出来, 过来)",
+    "ja_name": "方向補語の派生義（起来・下去・出来・过来）",
+    "en_name": "Figurative uses of directional complements (起来, 下去, 出来, 过来)",
+    "category": "complement",
+    "difficulty": 4
+  },
+  {
+    "id": "hsk4_yi_wei_vs_ren_wei",
+    "level": "HSK4",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "心理动词“以为”与“认为”的区别",
+    "vi_name": "Phân biệt 以为 (tưởng là - thường sai) và 认为 (cho rằng)",
+    "ja_name": "「以为」（思い込む）と「认为」（考える・思う）の使い分け",
+    "en_name": "Distinguishing 以为 (mistakenly thought) vs. 认为 (consider/think)",
+    "category": "other",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk4_preposition_dui_yu_guan_yu",
+    "level": "HSK4",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "介词“对于”与“关于”的对比",
+    "vi_name": "Phân biệt giới từ 对于 (đối với) và 关于 (về việc)",
+    "ja_name": "前置詞「对于」（〜に対して）と「关于」（〜について）の対比",
+    "en_name": "Contrasting prepositions 对于 (duìyú) and 关于 (guānyú)",
+    "category": "preposition",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk4_jian_zhi_adverb",
+    "level": "HSK4",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "程度与语气副词（简直、毕竟、到底、居然、难道）",
+    "vi_name": "Phó từ ngữ khí nâng cao (简直, 毕竟, 到底, 居然)",
+    "ja_name": "評価・語気副詞（简直・毕竟・到底・居然）",
+    "en_name": "Advanced modal adverbs (简直, 毕竟, 到底, 居然)",
+    "category": "other",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk4_er_conjunction",
+    "level": "HSK4",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "书面连词“而”（并列与转折）",
+    "vi_name": "Liên từ văn viết 而 (nối song song hoặc đối lập)",
+    "ja_name": "書面語接続詞「而」（並列・対比・逆接）",
+    "en_name": "Formal conjunction 而 (ér) for coordination and contrast",
+    "category": "written_style",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk5_yu_qi_bu_ru_preference",
+    "level": "HSK5",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“与其A，不如B”取舍复句",
+    "vi_name": "Cấu trúc chọn lựa 与其 A, 不如 B (thà B còn hơn A)",
+    "ja_name": "取捨選択「与其A，不如B」（AするくらいならBした方がいい）",
+    "en_name": "Rather than A, it is better to B with 与其...不如...",
+    "category": "comparison",
+    "difficulty": 4
+  },
+  {
+    "id": "hsk5_ning_ke_ye_bu",
+    "level": "HSK5",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“宁可…也（不）…”与“宁可…也要…”",
+    "vi_name": "Cấu trúc 宁可... 也(不)... (thà... chứ không / cũng phải...)",
+    "ja_name": "「宁可…也（不）…」（いっそ〜しても…しない／する）",
+    "en_name": "Would rather with 宁可...也(不)... (nìngkě...yě...)",
+    "category": "conjunction",
+    "difficulty": 4
+  },
+  {
+    "id": "hsk5_suo_verb_de_nominalization",
+    "level": "HSK5",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "助词“所”（所+V+的+N）",
+    "vi_name": "Trợ từ văn viết 所 (所 + Động từ + 的 + Danh từ)",
+    "ja_name": "構造助詞「所」（所＋動詞＋的＋名詞）",
+    "en_name": "Formal nominalization marker 所 (suǒ)",
+    "category": "written_style",
+    "difficulty": 4
+  },
+  {
+    "id": "hsk5_zhi_suo_yi_shi_yin_wei",
+    "level": "HSK5",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“之所以…是因为…”倒装因果",
+    "vi_name": "Cấu trúc đảo nhân quả 之所以... 是因为... (sở dĩ... là vì...)",
+    "ja_name": "結果先出しの因果文「之所以…是因为…」（〜なのは…だからだ）",
+    "en_name": "The reason why... is because... (之所以...是因为...)",
+    "category": "conjunction",
+    "difficulty": 4
+  },
+  {
+    "id": "hsk5_he_kuang_let_alone",
+    "level": "HSK5",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“尚且/连…，何况…”反逼递进",
+    "vi_name": "Cấu trúc 尚且/连..., 何况... (huống hồ là...)",
+    "ja_name": "「尚且／连…，何况…」（〜でさえ…なのだから、ましてや〜はなおさらだ）",
+    "en_name": "Much less / let alone with 何况 (hékuàng)",
+    "category": "conjunction",
+    "difficulty": 4
+  },
+  {
+    "id": "hsk5_bu_jian_de_wei_bi",
+    "level": "HSK5",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "委婉否定“不见得 / 未必”",
+    "vi_name": "Phủ định uyển chuyển 不见得 / 未必 (chưa chắc đã)",
+    "ja_name": "部分否定・婉曲否定「不见得／未必」（必ずしも〜とは限らない）",
+    "en_name": "Not necessarily with 不见得 (bújiàndé) and 未必 (wèibì)",
+    "category": "negation",
+    "difficulty": 4
+  },
+  {
+    "id": "hsk5_you_built_in_prepositions",
+    "level": "HSK5",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "高级介词结构（由、凭、趁、随着、自从、朝）",
+    "vi_name": "Giới từ nâng cao (由, 凭, 趁, 随着, 自从, 朝)",
+    "ja_name": "中上級前置詞（由・凭・趁・随着・自从・朝）",
+    "en_name": "Advanced prepositions: 由, 凭, 趁, 随着, 自从, 朝",
+    "category": "preposition",
+    "difficulty": 4
+  },
+  {
+    "id": "hsk5_ba_le_particle",
+    "level": "HSK5",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "语气词“而已 / 罢了”（仅此而已）",
+    "vi_name": "Trợ từ ngữ khí 而已 / 罢了 (chỉ... mà thôi)",
+    "ja_name": "文末助詞「而已／罢了」（〜にすぎない）",
+    "en_name": "Sentence-final particles 而已 (éryǐ) and 罢了 (bàle)",
+    "category": "particle",
+    "difficulty": 4
+  },
+  {
+    "id": "hsk6_classical_zhi_qi_yi_wei",
+    "level": "HSK6",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "文言虚词残留（之、其、以、为、乃、即、则）",
+    "vi_name": "Hư từ cổ văn trong tiếng Trung hiện đại (之, 其, 以, 为, 乃, 即, 则)",
+    "ja_name": "現代語に残る文語虚詞（之・其・以・为・乃・即・则）",
+    "en_name": "Classical Chinese particles in modern formal prose (之, 其, 以, 为, 乃, 即, 则)",
+    "category": "written_style",
+    "difficulty": 5
+  },
+  {
+    "id": "hsk6_yu_postverbal_preposition",
+    "level": "HSK6",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“V/Adj+于”书面介词结构",
+    "vi_name": "Cấu trúc Động/Tính từ + 于 trong văn viết (生于, 善于, 勇于, 属于, 至于)",
+    "ja_name": "「動詞／形容詞＋于」の書面語構文",
+    "en_name": "Verb/Adjective + 于 (yú) formal complement structure",
+    "category": "written_style",
+    "difficulty": 4
+  },
+  {
+    "id": "hsk6_gu_ran_dan_concession",
+    "level": "HSK6",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“固然…，但/不过/也…”确认让步",
+    "vi_name": "Cấu trúc nhượng bộ xác nhận 固然..., 但/也... (đành rằng..., nhưng...)",
+    "ja_name": "事実承認の譲歩「固然…，但／也…」（確かに〜だが、しかし〜）",
+    "en_name": "Admittedly... but... with 固然 (gùrán)",
+    "category": "conjunction",
+    "difficulty": 5
+  },
+  {
+    "id": "hsk6_four_character_idiom_syntax",
+    "level": "HSK6",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "四字格与固定书面格式（不V自V、无A无B、忽A忽B）",
+    "vi_name": "Cấu trúc tứ tự cách cố định (不...自..., 无...无..., 忽...忽...)",
+    "ja_name": "四字句・固定フォーマット（不…自…、无…无…、忽…忽…）",
+    "en_name": "Four-character semi-fixed idioms and formal frames",
+    "category": "written_style",
+    "difficulty": 5
+  },
+  {
+    "id": "hsk6_fei_dan_bu_fan_er",
+    "level": "HSK6",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“非但/非但不…，反而…”反递句",
+    "vi_name": "Cấu trúc phản đệ tiến 非但(不)..., 反而... (không những không... mà trái lại...)",
+    "ja_name": "「非但（不）…，反而…」（〜ないばかりか、かえって〜）",
+    "en_name": "Far from..., on the contrary... with 非但...反而...",
+    "category": "conjunction",
+    "difficulty": 5
+  },
+  {
+    "id": "hsk6_yi_zhi_yu_consequence",
+    "level": "HSK6",
+    "standard": [
+      "HSK 2.0",
+      "HSK 3.0"
+    ],
+    "zh_name": "“以致 / 以至于”程度与结果连词",
+    "vi_name": "Phân biệt liên từ hệ quả 以致 (kết quả xấu) và 以至于 (đến mức mà)",
+    "ja_name": "結果接続詞「以致」（悪い結果）と「以至于」（〜するほどに）",
+    "en_name": "Consequence conjunctions 以致 (yǐzhì) and 以至于 (yǐzhìyú)",
+    "category": "conjunction",
+    "difficulty": 5
+  },
+  {
+    "id": "hsk789_wei_suo_passive_frame",
+    "level": "HSK7-9",
+    "standard": [
+      "HSK 3.0"
+    ],
+    "zh_name": "“为…所+V”书面被动式",
+    "vi_name": "Cấu trúc bị động trang trọng 为...所 + V (bị/được... làm cho...)",
+    "ja_name": "文語的受身構文「为…所＋V」（〜によって…される）",
+    "en_name": "Formal passive frame 为...所... (wéi...suǒ...)",
+    "category": "written_style",
+    "difficulty": 5
+  },
+  {
+    "id": "hsk789_yi_bian_vs_yi_mian_purpose",
+    "level": "HSK7-9",
+    "standard": [
+      "HSK 3.0"
+    ],
+    "zh_name": "书面目的与预防连词（以便、藉以、以免、免得、谨防）",
+    "vi_name": "Liên từ mục đích và phòng ngừa trong văn bản học thuật/hành chính (以便, 藉以, 以免, 谨防)",
+    "ja_name": "目的・予防を表す硬い表現（以便・藉以・以免・谨防）",
+    "en_name": "Academic and legal purpose/prevention connectives (以便, 藉以, 以免, 谨防)",
+    "category": "written_style",
+    "difficulty": 5
+  },
+  {
+    "id": "hsk789_yu_fou_embedded_polar",
+    "level": "HSK7-9",
+    "standard": [
+      "HSK 3.0"
+    ],
+    "zh_name": "“V/Adj+与否”书面正反嵌入结构",
+    "vi_name": "Cấu trúc Động/Tính từ + 与否 (có... hay không) trong văn phong trang trọng",
+    "ja_name": "「V／Adj＋与否」（〜か否か、〜かどうか）の書面語構造",
+    "en_name": "Formal embedded polar question marker 与否 (yǔfǒu - whether or not)",
+    "category": "written_style",
+    "difficulty": 5
+  },
+  {
+    "id": "hsk789_classical_double_negation_wu_bu",
+    "level": "HSK7-9",
+    "standard": [
+      "HSK 3.0"
+    ],
+    "zh_name": "文言全称双重否定（无不、莫不、未尝不、不无）",
+    "vi_name": "Phủ định kép cổ văn tinh tế (无不, 莫不, 未尝不, 不无)",
+    "ja_name": "文語二重否定と緩叙法（无不・莫不・未尝不・不无）",
+    "en_name": "Classical double negations and litotes (无不, 莫不, 未尝不, 不无)",
+    "category": "negation",
+    "difficulty": 5
+  },
+  {
+    "id": "hsk789_academic_framing_jiu_er_yan",
+    "level": "HSK7-9",
+    "standard": [
+      "HSK 3.0"
+    ],
+    "zh_name": "学术限定框式（就…而言 / 从…来看 / 依…之见 / 鉴于…）",
+    "vi_name": "Khung giới hạn góc độ học thuật (就...而言, 从...来看, 依...之见, 鉴于...)",
+    "ja_name": "論説・学術の視点限定フレーム（就…而言／从…来看／依…之见／鉴于…）",
+    "en_name": "Academic framing constructions (就...而言, 鉴于...)",
+    "category": "written_style",
+    "difficulty": 5
+  },
+  {
+    "id": "hsk789_subjunctive_counterfactual_yao_bu_shi",
+    "level": "HSK7-9",
+    "standard": [
+      "HSK 3.0"
+    ],
+    "zh_name": "违实虚拟句式（要不是…早就… / 若非…焉能…）",
+    "vi_name": "Giả định trái thực tế từ khẩu ngữ đến cổ văn (要不是...早就... / 若非...焉能...)",
+    "ja_name": "反事実仮想構文（要不是…早就…／若非…焉能…）",
+    "en_name": "Counterfactual conditionals from colloquial (要不是) to literary (若非)",
+    "category": "conjunction",
+    "difficulty": 5
+  }
+]

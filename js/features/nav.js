@@ -29,6 +29,11 @@ function renderCurrentView() {
     case 'dict':
       renderDictView();
       break;
+    case 'grammar':
+      if (typeof renderGrammarView === 'function') {
+        renderGrammarView();
+      }
+      break;
     case 'settings':
       renderSettingsView();
       break;
