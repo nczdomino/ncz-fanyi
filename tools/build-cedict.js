@@ -25,7 +25,11 @@ const https = require('https');
 const { pinyinNumberToTone } = require('../js/features/dict-search-engine.js');
 
 const SOURCE_URL = 'https://www.mdbg.net/chinese/export/cedict/cedict_1_0_ts_utf-8_mdbg.txt.gz';
-const OUT_FILE = path.join(__dirname, '..', 'js', 'data', 'cedict.json');
+const DATA_DIR = path.join(__dirname, '..', 'js', 'data');
+const OUT_FILE = path.join(DATA_DIR, 'cedict.json');
+const INDEX_FILE = path.join(DATA_DIR, 'cedict-index.json');
+const SHARD_COUNT = 16;
+const SHARD_PATTERN = 'js/data/cedict-shard-{id}.json';
 
 // Entries whose first gloss is one of these are cross-references or proper-noun stubs;
 // they add bulk without helping a learner.
@@ -110,7 +114,94 @@ function parse(text) {
   return { dict: flat, lines, kept, dropped };
 }
 
+/**
+ * Partition the flat dictionary into N shards keyed by the first code point, and build
+ * the first-character index the browser uses to pick a shard.
+ *
+ * The monolithic file stays the source of truth for reverse lookups (they need every
+ * gloss); the shards only speed up Hanzi exact/prefix searches.
+ *
+ * @param {Object<string,string>} dict
+ * @param {number} [shardCount]
+ * @returns {{index:Object, shards:Array<Object>}}
+ */
+function split(dict, shardCount) {
+  const count = shardCount || SHARD_COUNT;
+  const shards = Array.from({ length: count }, () => Object.create(null));
+  const chars = Object.create(null);
+  let entries = 0;
+
+  for (const word of Object.keys(dict)) {
+    if (!word) continue;
+    const id = word.codePointAt(0) % count;
+    shards[id][word] = dict[word];
+    chars[word.charAt(0)] = id;
+    entries += 1;
+  }
+
+  return {
+    index: {
+      version: 1,
+      count: entries,
+      shardCount: count,
+      shardPattern: SHARD_PATTERN,
+      chars,
+    },
+    shards,
+  };
+}
+
+/**
+ * Write cedict-index.json + cedict-shard-NN.json next to the monolithic file.
+ * @param {Object<string,string>} dict
+ * @param {{shardCount?:number, dir?:string, log?:boolean}} [opts]
+ */
+function writeSplit(dict, opts) {
+  const options = opts || {};
+  const dir = options.dir || DATA_DIR;
+  const count = options.shardCount || SHARD_COUNT;
+  const { index, shards } = split(dict, count);
+  fs.mkdirSync(dir, { recursive: true });
+
+  fs.writeFileSync(path.join(dir, 'cedict-index.json'), JSON.stringify(index));
+
+  const width = String(count - 1).length;
+  const sizes = [];
+  for (let id = 0; id < count; id++) {
+    const name = 'cedict-shard-' + String(id).padStart(width, '0') + '.json';
+    const json = JSON.stringify(shards[id]);
+    fs.writeFileSync(path.join(dir, name), json);
+    sizes.push(Buffer.byteLength(json));
+  }
+
+  const result = {
+    index,
+    shards,
+    files: count,
+    bytes: sizes.reduce((a, b) => a + b, 0),
+    maxBytes: Math.max.apply(null, sizes),
+  };
+  if (options.log) {
+    console.log('  index       :', path.relative(process.cwd(), path.join(dir, 'cedict-index.json')),
+      (Buffer.byteLength(JSON.stringify(index)) / 1024).toFixed(0), 'KB raw');
+    console.log('  shards      :', count, 'files,',
+      (result.bytes / 1024 / 1024).toFixed(2), 'MB raw total,',
+      'largest', (result.maxBytes / 1024).toFixed(0), 'KB');
+  }
+  return result;
+}
+
 async function main() {
+  // Fast path for regenerating the shard files from an already-built dictionary: no
+  // download, no parse, no risk of changing the data while re-partitioning it.
+  if (process.argv.includes('--split-existing')) {
+    console.log('Splitting', OUT_FILE);
+    const dict = JSON.parse(fs.readFileSync(OUT_FILE, 'utf8'));
+    const result = writeSplit(dict, { log: true });
+    console.log('  entries     :', result.index.count);
+    return;
+  }
+
   const inputFlag = process.argv.indexOf('--input');
   let text;
   if (inputFlag !== -1 && process.argv[inputFlag + 1]) {
@@ -135,6 +226,8 @@ async function main() {
   console.log('  output      :', path.relative(process.cwd(), OUT_FILE),
     (Buffer.byteLength(json) / 1024 / 1024).toFixed(2), 'MB raw,',
     (zlib.gzipSync(Buffer.from(json)).length / 1024 / 1024).toFixed(2), 'MB gzip');
+
+  writeSplit(dict, { log: true });
 }
 
 if (require.main === module) {
@@ -144,4 +237,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { parse };
+module.exports = { parse, split, writeSplit, SHARD_COUNT, SHARD_PATTERN };

@@ -1,0 +1,19 @@
+# Cloudflare Pages cache policy for generated dictionary data.
+# These files change only when tools/build-cedict.js is re-run, so letting the browser
+# reuse them for a day removes the 7 MB re-download on every dictionary miss. The
+# service worker still refreshes them in the background on the next visit.
+
+/js/data/cedict.json
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/js/data/cedict-index.json
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/js/data/cedict-shard-*.json
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/js/data/examples.js
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/js/data/examples-corpus.js
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800

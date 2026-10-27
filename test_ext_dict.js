@@ -5,6 +5,7 @@
 //   2. the ranking behaviour — curated entries always win, ext only fills gaps;
 //   3. the wiring — the dataset is lazy, licensed and actually reachable from the UI.
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 const vm = require('vm');
 const assert = require('assert');
@@ -20,7 +21,7 @@ console.log('\n🧪 Extended dictionary tests\n');
 
 // ============================================================ build pipeline
 console.log('--- Build pipeline ---');
-const { parse } = require('./tools/build-cedict.js');
+const { parse, split, writeSplit, SHARD_COUNT } = require('./tools/build-cedict.js');
 
 const SAMPLE = [
   '# comment line',
@@ -64,6 +65,56 @@ check('definitions are capped so the payload stays bounded', () => {
   const def = dict['测'].split('|')[1];
   assert.ok(def.length <= 110, 'definition too long: ' + def.length);
   assert.ok(def.split('; ').length <= 2, 'too many glosses: ' + def);
+});
+
+// --------------------------------------------------------------- shard split
+console.log('\n--- Shard split ---');
+
+check('split() puts every entry in exactly one shard', () => {
+  const dict = { '大': 'a', '大学': 'b', '中': 'c', 'A': 'd' };
+  const { index, shards } = split(dict, 4);
+  assert.strictEqual(shards.length, 4);
+  const seen = new Set();
+  shards.forEach((shard) => {
+    for (const k of Object.keys(shard)) {
+      assert.ok(!seen.has(k), 'duplicated entry: ' + k);
+      seen.add(k);
+    }
+  });
+  assert.deepStrictEqual(Array.from(seen).sort(), Object.keys(dict).sort());
+  assert.strictEqual(index.count, 4);
+  assert.strictEqual(index.shardCount, 4);
+  assert.strictEqual(index.shardPattern, 'js/data/cedict-shard-{id}.json');
+});
+
+check('the first-character index points at the shard that owns each character', () => {
+  const dict = { '大': 'a', '大学': 'b', '中': 'c' };
+  const { index, shards } = split(dict, SHARD_COUNT);
+  assert.strictEqual(index.chars['大'], '大'.codePointAt(0) % SHARD_COUNT);
+  assert.strictEqual(index.chars['中'], '中'.codePointAt(0) % SHARD_COUNT);
+  assert.ok(shards[index.chars['大']]['大'], '大 missing from its shard');
+  assert.ok(shards[index.chars['大']]['大学'], '大学 missing from 大 shard');
+  assert.ok(shards[index.chars['中']]['中'], '中 missing from its shard');
+});
+
+check('writeSplit() writes the index and all zero-padded shard files', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'cedict-split-'));
+  try {
+    const dict = { '旅行': 'lǚ xíng|to travel', '火锅': 'huǒ guō|hotpot' };
+    const result = writeSplit(dict, { dir, shardCount: 16 });
+    assert.ok(fs.existsSync(path.join(dir, 'cedict-index.json')), 'index file missing');
+    for (let i = 0; i < 16; i++) {
+      const name = 'cedict-shard-' + String(i).padStart(2, '0') + '.json';
+      assert.ok(fs.existsSync(path.join(dir, name)), name + ' missing');
+    }
+    const index = JSON.parse(fs.readFileSync(path.join(dir, 'cedict-index.json'), 'utf8'));
+    assert.strictEqual(index.count, 2);
+    assert.strictEqual(index.shardCount, 16);
+    assert.strictEqual(result.files, 16);
+    assert.ok(result.maxBytes > 0, 'no bytes written');
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
 });
 
 // ============================================================ ranking rules
@@ -183,6 +234,41 @@ check('licence attribution ships with the data', () => {
   assert.ok(/cc-cedict\.org/.test(text), 'licence text must name the source');
 });
 
+const INDEX_PATH = path.join(__dirname, 'js', 'data', 'cedict-index.json');
+
+check('the first-character index ships and matches the monolith', () => {
+  assert.ok(fs.existsSync(INDEX_PATH), 'cedict-index.json is missing (run: node tools/build-cedict.js --split-existing)');
+  const index = JSON.parse(fs.readFileSync(INDEX_PATH, 'utf8'));
+  const data = JSON.parse(fs.readFileSync(CEDICT_PATH, 'utf8'));
+  assert.strictEqual(index.count, Object.keys(data).length, 'index count differs from the monolith');
+  assert.strictEqual(index.shardCount, 16);
+  assert.strictEqual(index.shardPattern, 'js/data/cedict-shard-{id}.json');
+  const chars = Object.keys(index.chars);
+  assert.ok(chars.length > 9000, 'only ' + chars.length + ' first characters indexed');
+  const bad = chars.filter(c => index.chars[c] < 0 || index.chars[c] >= index.shardCount);
+  assert.strictEqual(bad.length, 0, 'invalid shard ids for: ' + bad.slice(0, 5).join(', '));
+});
+
+check('every shard exists and together they rebuild the monolith', () => {
+  const data = JSON.parse(fs.readFileSync(CEDICT_PATH, 'utf8'));
+  let total = 0;
+  let largest = 0;
+  for (let i = 0; i < 16; i++) {
+    const name = 'cedict-shard-' + String(i).padStart(2, '0') + '.json';
+    const file = path.join(__dirname, 'js', 'data', name);
+    assert.ok(fs.existsSync(file), name + ' is missing');
+    largest = Math.max(largest, fs.statSync(file).size);
+    const shard = JSON.parse(fs.readFileSync(file, 'utf8'));
+    for (const k of Object.keys(shard)) {
+      assert.strictEqual(k.codePointAt(0) % 16, i, 'entry stored in the wrong shard: ' + k);
+      assert.strictEqual(shard[k], data[k], 'shard value differs from the monolith for ' + k);
+      total += 1;
+    }
+  }
+  assert.strictEqual(total, Object.keys(data).length, 'shards do not cover the monolith');
+  assert.ok(largest < 1024 * 1024, 'a shard is larger than 1 MB: ' + (largest / 1024).toFixed(0) + ' KB');
+});
+
 // ============================================================ lazy wiring
 console.log('\n--- Lazy loading wiring ---');
 
@@ -203,11 +289,17 @@ check('the dataset is fetched lazily, never from index.html', () => {
   assert.ok(/ensureExtDict/.test(loader), 'ensureExtDict not exported');
 });
 
-check('dict.js triggers the loader from the no-match branch', () => {
+check('dict.js triggers the shard-aware loader from the no-match branch', () => {
   const src = fs.readFileSync(path.join(__dirname, 'js/features/dict.js'), 'utf8');
-  assert.ok(/ensureExtDict\(\)/.test(src), 'dict.js never calls ensureExtDict');
-  assert.ok(/_extDictRequested/.test(src), 'missing re-entrancy guard');
+  assert.ok(/tryExtDictForQuery\(/.test(src), 'dict.js never calls the shard-aware loader');
+  assert.ok(/ensureExtDictFor/.test(src), 'the loader is not consulted per query');
+  assert.ok(/prefetchExtDictForQuery/.test(src), 'Hanzi input does not warm its shard');
+  assert.ok(!/_extDictRequested/.test(src), 'the stale permanent guard is still present');
   assert.ok(/dict-ext-credit/.test(src), 'missing CC-CEDICT attribution in the UI');
+  const loader = fs.readFileSync(path.join(__dirname, 'js/features/ext-dict.js'), 'utf8');
+  assert.ok(/ensureExtDictShard/.test(loader), 'shard loader missing');
+  assert.ok(/canRetry/.test(loader), 'failed fetches have no cooldown/retry');
+  assert.ok(/cedict-index\.json/.test(loader), 'index URL missing');
 });
 
 check('the service worker will cache the dataset for repeat visits', () => {

@@ -387,6 +387,12 @@ function renderDictView() {
   const filterHSK = state.dictFilterHSK;
   const isBrowsingHsk = state.showHskBrowser;
 
+  // Opening the dictionary is the clearest signal that the extended dataset will be
+  // useful. The loader itself decides whether the connection can afford the full file;
+  // for Hanzi it only warms the shard for the first character.
+  if (typeof prefetchExtDict === 'function') prefetchExtDict();
+  if (query && typeof prefetchExtDictForQuery === 'function') prefetchExtDictForQuery(query);
+
   // Toggle clear button
   if (clearBtn) clearBtn.style.display = query ? 'flex' : 'none';
 
@@ -574,34 +580,28 @@ function renderDictView() {
       ? `https://dict.naver.com/linedict/zhendict/#/cnja/search?query=${encodeURIComponent(query)}`
       : `https://dict.naver.com/linedict/zhendict/#/cnen/search?query=${encodeURIComponent(query)}`;
 
-    // Nothing in the curated dictionary: pull in the extended one and retry once.
-    // This is the only place the ~7 MB dataset is ever requested.
+    // Nothing in the curated dictionary: load just enough of the extended one and retry.
+    // Hanzi only needs one shard; reverse lookups still need the full gloss index.
     const detectedLang = typeof detectSearchLanguage === 'function' ? detectSearchLanguage(query) : 'latin';
     let extLoading = false;
     const extEligible = isExtDictEligible(query);
     const afterExtDict = (ok) => {
+      // The user may have typed something else while the shard was downloading.
+      if (state.searchQuery.trim().toLowerCase() !== query) return;
       if (ok) {
         renderDictView();
         return;
       }
+      const loadEl = container.querySelector('.dict-ext-loading');
+      if (loadEl) loadEl.remove();
       // The extended dictionary missed too: now the AI is worth paying for.
-      const mode = typeof aiLookupMode === 'function' ? aiLookupMode(query, detectedLang) : 'semantic';
-      const canUseAi = typeof aiLookupEligible === 'function' && aiLookupEligible(query, mode);
-      if (canUseAi) {
-        // Re-render so the AI answer replaces the "no results" card instead of being
-        // pushed underneath it.
-        renderDictView();
-      } else if (query && typeof autoAiLookup === 'function') {
+      if (query && typeof autoAiLookup === 'function') {
         autoAiLookup(query, detectedLang);
       }
     };
-    if (extEligible && typeof ensureExtDict === 'function' && !EXT_DICT.loaded && !EXT_DICT.loading && !state._extDictRequested) {
-      state._extDictRequested = true;
+    if (extEligible && typeof tryExtDictForQuery === 'function') {
       extLoading = true;
-      ensureExtDict().then(afterExtDict);
-    } else if (extEligible && typeof EXT_DICT !== 'undefined' && EXT_DICT.loading) {
-      extLoading = true;
-      EXT_DICT.loading.then(afterExtDict);
+      tryExtDictForQuery(query).then(afterExtDict);
     }
 
     // Would the AI be allowed to answer this query? When it is, the big "no results"
@@ -628,13 +628,10 @@ function renderDictView() {
           <div id="dict-ai-fallback-container"></div>
         `}
 
-        <!-- 1. Live Multi-Dictionary API Auto Gợi ý -->
-        <div id="dict-live-results-container"></div>
-
-        <!-- 2. Bản đồ sắc thái (nếu có) -->
+        <!-- 1. Bản đồ sắc thái (nếu có) -->
         ${mindmapHtml}
 
-        <!-- 3. Tra cứu ngữ cảnh AI: pointless once the AI already answered automatically -->
+        <!-- 2. Tra cứu ngữ cảnh AI: pointless once the AI already answered automatically -->
         ${aiCanAnswer ? '' : `
         <div class="dict-semantic-action-bar" style="margin-top:14px;">
           <div>
@@ -648,7 +645,7 @@ function renderDictView() {
         <div id="dict-semantic-results-area"></div>
         `}
 
-        <!-- 4. Tra cứu nhanh trên các đại từ điển chuyên sâu -->
+        <!-- 3. Tra cứu nhanh trên các đại từ điển chuyên sâu -->
         <div class="dict-ext-section" style="margin-top:14px;">
           <div class="dict-ext-label">${t('externalDicts') || 'Tra trên từ điển chuyên sâu'}</div>
           <div class="dict-ext-chips">
@@ -662,9 +659,6 @@ function renderDictView() {
       </div>
     `;
     container.innerHTML = noMatchHtml;
-    if (query && !/[\u4e00-\u9fff]/.test(query)) {
-      triggerLiveDictSearch(query, detectedLang, seenWords);
-    }
     // Every local dictionary missed: let the AI fill the gap. The helper is debounced,
     // cached for 30 days and budget-limited, so typing does not burn tokens.
     if (aiEligible && typeof autoAiLookup === 'function') {
@@ -761,9 +755,6 @@ function renderDictView() {
     )}</div>`;
   }
 
-  // 1. Live Multi-Dictionary Online Extension Container (Khám phá thêm từ vựng liên quan)
-  html += '<div id="dict-live-results-container"></div>';
-
   // 1b. If the engine only produced "did you mean" suggestions, the word is effectively
   // missing from the dictionary. Reserve a slot for the automatic AI answer.
   const needsAiFallback = !!query && primaryCount === 0;
@@ -816,9 +807,6 @@ function renderDictView() {
 
   container.innerHTML = html;
 
-  if (query && !/[\u4e00-\u9fff]/.test(query)) {
-    triggerLiveDictSearch(query, typeof detectSearchLanguage === 'function' ? detectSearchLanguage(query) : 'latin', seenWords);
-  }
   if (needsAiFallback && typeof autoAiLookup === 'function') {
     autoAiLookup(query, typeof detectSearchLanguage === 'function' ? detectSearchLanguage(query) : 'latin');
   }
@@ -995,133 +983,118 @@ function renderSemanticResults(concept, matches) {
   `;
 }
 
-// --- Live Extended Multi-Dictionary Search Engine (0 Token, Instant) ---
-let liveDictTimer = null;
-const LIVE_DICT_CACHE = new Map();
-
-function triggerLiveDictSearch(query, lang, seenWords = new Set()) {
-  clearTimeout(liveDictTimer);
-  if (!query || query.length < 2) return;
-  if (/[\u4e00-\u9fff]/.test(query)) return; // Only for reverse search in VI, JA, EN, Romaji
-
-  const cacheKey = lang + ':' + query.trim().toLowerCase();
-  if (LIVE_DICT_CACHE.has(cacheKey)) {
-    renderLiveDictResults(LIVE_DICT_CACHE.get(cacheKey), seenWords);
-    return;
-  }
-
-  liveDictTimer = setTimeout(async () => {
-    try {
-      let sl = 'auto';
-      if (lang === 'vi' || /[àáảãạăắằẳẵặâấầẩẫậèéẻẽẹêếềểễệìíỉĩịòóỏõọôốồổỗộơớờởỡợùúủũụưứừửữựỳýỷỹỵđ]/i.test(query)) {
-        sl = 'vi';
-      } else if (lang === 'ja' || /[\u3040-\u30ff]/.test(query)) {
-        sl = 'ja';
-      } else if (lang === 'en') {
-        sl = 'en';
-      }
-
-      const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=zh-CN&dt=t&dt=bd&dt=rm&q=${encodeURIComponent(query)}`;
-      const res = await fetch(url);
-      if (!res.ok) return;
-      const data = await res.json();
-      if (!data) return;
-
-      const results = [];
-      const localSeen = new Set();
-
-      // 1. Direct translated candidate
-      if (Array.isArray(data[0]) && data[0][0] && data[0][0][0]) {
-        const directZh = data[0][0][0].trim();
-        if (/[\u4e00-\u9fff]/.test(directZh) && directZh.length <= 8) {
-          localSeen.add(directZh);
-          const py = typeof getWordPinyin === 'function' ? getWordPinyin(directZh) : '';
-          results.push({
-            word: directZh,
-            pinyin: py,
-            mean: query,
-            isDirect: true
-          });
-        }
-      }
-
-      // 2. Dictionary grouped alternatives (dt=bd)
-      if (Array.isArray(data[1])) {
-        for (const group of data[1]) {
-          const words = group[1] || [];
-          const defs = group[2] || [];
-          for (let i = 0; i < words.length && i < 8; i++) {
-            const w = words[i];
-            if (!w || localSeen.has(w) || !/[\u4e00-\u9fff]/.test(w) || w.length > 8) continue;
-            localSeen.add(w);
-            const py = typeof getWordPinyin === 'function' ? getWordPinyin(w) : '';
-            const meaningList = defs[i] && Array.isArray(defs[i]) ? defs[i].slice(0, 3).join(', ') : query;
-            results.push({
-              word: w,
-              pinyin: py,
-              mean: meaningList,
-              pos: group[0] || ''
-            });
-            if (results.length >= 12) break;
-          }
-          if (results.length >= 12) break;
-        }
-      }
-
-      if (results.length > 0) {
-        LIVE_DICT_CACHE.set(cacheKey, results);
-        renderLiveDictResults(results, seenWords);
-      }
-    } catch (err) {
-      console.warn('Live dict search error:', err);
-    }
-  }, 220);
-}
-
-function renderLiveDictResults(results, seenWords = new Set()) {
-  const container = document.getElementById('dict-live-results-container');
-  if (!container) return;
-
-  // Filter out words already shown in primary results
-  const filtered = results.filter(r => !seenWords.has(r.word));
-  if (!filtered.length) {
-    container.innerHTML = '';
-    return;
-  }
-
-  let cardsHtml = '';
-  for (const item of filtered) {
-    cardsHtml += `
-      <div class="dict-live-card" onclick="openWordSheet('${escapeQuotes(item.word)}')">
-        <div class="dict-live-top">
-          <span class="dict-live-zh">${escapeHtml(item.word)}</span>
-          <span class="dict-live-py">${escapeHtml(item.pinyin || '')}</span>
-        </div>
-        <div class="dict-live-mean" title="${escapeHtml(item.mean)}">${escapeHtml(item.mean)}</div>
-      </div>
-    `;
-  }
-
-  container.innerHTML = `
-    <div class="dict-live-section">
-      <div class="dict-live-header">
-        <span>${t('liveDictTitle') || '🌐 Gợi ý từ điển mở rộng trực tuyến'}</span>
-        <span class="badge" style="font-size:10.5px; background:rgba(37,99,235,0.12); color:#2563EB; border:1px solid rgba(37,99,235,0.25);">Live Multi-Dict API</span>
-      </div>
-      <div class="dict-live-grid">
-        ${cardsHtml}
-      </div>
-    </div>
-  `;
-}
-
+// --- Dictionary search input ---
+// Chinese characters commit instantly (an IME composition is one decision, not a burst
+// of keystrokes); Latin/Vietnamese input is still debounced because it arrives one letter
+// at a time. Every change also cancels a pending AI request for the previous query.
 let dictSearchTimer = null;
+let dictSearchLastValue = '';
+
+function dictQueryHasHanzi(value) {
+  return /[\u4e00-\u9fff]/.test(String(value == null ? '' : value));
+}
+
+function cancelStaleDictAi(value) {
+  const q = String(value == null ? '' : value);
+  if (q === dictSearchLastValue) return;
+  dictSearchLastValue = q;
+  if (typeof cancelPendingAiLookup === 'function') cancelPendingAiLookup();
+}
+
 function handleDictSearch(val) {
   clearTimeout(dictSearchTimer);
+  dictSearchTimer = null;
+  const q = String(val == null ? '' : val);
+  cancelStaleDictAi(q);
+
+  if (dictQueryHasHanzi(q)) {
+    // Hanzi is cheap to rank and typing it is deliberate: no debounce, no flicker.
+    state.searchQuery = q;
+    renderDictView();
+    if (typeof prefetchExtDictForQuery === 'function') prefetchExtDictForQuery(q);
+    return;
+  }
+
   dictSearchTimer = setTimeout(() => {
-    state.searchQuery = val;
+    dictSearchTimer = null;
+    state.searchQuery = q;
     renderDictView();
   }, 180);
+}
+
+function handleDictSearchInput(event) {
+  if (!event || event.isComposing) return;
+  handleDictSearch(event.target ? event.target.value : '');
+}
+
+// Enter is an explicit "I am done typing": skip both debounces and ask the AI now.
+function handleDictSearchEnter(val) {
+  clearTimeout(dictSearchTimer);
+  dictSearchTimer = null;
+  const q = String(val == null ? '' : val);
+  dictSearchLastValue = q;
+  state.searchQuery = q;
+  renderDictView();
+  if (dictQueryHasHanzi(q) && typeof prefetchExtDictForQuery === 'function') {
+    prefetchExtDictForQuery(q);
+  }
+  const aiBox = document.getElementById('dict-ai-fallback-container');
+  if (aiBox && typeof flushAiLookup === 'function') {
+    const lang = typeof detectSearchLanguage === 'function' ? detectSearchLanguage(q) : 'latin';
+    flushAiLookup(q, lang);
+  }
+}
+
+function handleDictSearchKeydown(event) {
+  if (!event || event.key !== 'Enter') return;
+  // Safari reports isComposing=false while an IME candidate is still open; keyCode 229
+  // is the reliable signal there.
+  if (event.isComposing || event.keyCode === 229) return;
+  event.preventDefault();
+  handleDictSearchEnter(event.target ? event.target.value : '');
+}
+
+function handleDictSearchFocus() {
+  if (typeof prefetchExtDict === 'function') prefetchExtDict();
+}
+
+/**
+ * Load just enough of the extended dictionary for one query.
+ * Hanzi only needs the shard for its first character. If that shard produced no hit
+ * (a contains match such as 国人 -> 中国人 can live under another first character),
+ * fall back to the full file once.
+ * @param {string} query
+ * @returns {Promise<boolean>}
+ */
+const _extDictAttempts = new Set();
+
+function tryExtDictForQuery(query) {
+  const key = String(query == null ? '' : query).trim().toLowerCase();
+  if (!key || _extDictAttempts.has(key)) return Promise.resolve(false);
+  if (typeof ensureExtDictFor !== 'function') return Promise.resolve(false);
+  _extDictAttempts.add(key);
+
+  return ensureExtDictFor(query).then(function (ok) {
+    if (!ok) {
+      // A network failure should be retryable after EXT_DICT's cooldown, so do not
+      // remember it as a permanent miss.
+      _extDictAttempts.delete(key);
+      return false;
+    }
+    if (typeof EXT_DICT !== 'undefined' && EXT_DICT.loaded) return true;
+    let found = false;
+    try {
+      const res = typeof searchDictionary === 'function'
+        ? searchDictionary(query, { limit: 5, includeSlang: true })
+        : null;
+      found = !!(res && res.matches && res.matches.length);
+    } catch (e) {
+      found = false;
+    }
+    if (found) return true;
+    if (typeof ensureExtDict !== 'function') return false;
+    return ensureExtDict().then(function (fullOk) { return !!fullOk; });
+  });
 }
 
 function setDictFilter(hskVal) {

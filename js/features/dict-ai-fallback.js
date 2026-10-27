@@ -18,7 +18,9 @@ var AI_LOOKUP = {
   autoWordRequested: new Set(),
   timer: null,
   pending: null,
-  debounceMs: 900,
+  abortController: null,
+  abortKey: null,
+  debounceMs: 550,
   cacheTtlMs: 30 * 86400000,
   errorTtlMs: 10 * 60 * 1000,
   minQueryLen: 2,
@@ -420,11 +422,23 @@ async function aiLookupStart(query, mode, lang, force) {
 
   renderAiFallbackLoading(q);
 
+  // Cancel the previous auto-lookup when the user has moved on. The server may still
+  // finish its Gemini call, but the browser stops waiting and the stale result cannot
+  // overwrite the new query's card.
+  if (AI_LOOKUP.abortController && AI_LOOKUP.abortKey !== key) {
+    try { AI_LOOKUP.abortController.abort(); } catch (e) {}
+  }
+  var controller = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+  AI_LOOKUP.abortController = controller;
+  AI_LOOKUP.abortKey = key;
+  var signal = controller ? controller.signal : undefined;
+
   var request;
   if (mode === 'word') {
     request = fetch('/api/translate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      signal: signal,
       body: JSON.stringify({
         text: q,
         targetLang: lang,
@@ -445,6 +459,7 @@ async function aiLookupStart(query, mode, lang, force) {
     request = fetch('/api/dict/semantic', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      signal: signal,
       body: JSON.stringify({
         query: q,
         targetLang: lang,
@@ -470,6 +485,8 @@ async function aiLookupStart(query, mode, lang, force) {
     var rec = await request;
     if (aiLookupStillWanted(q)) aiLookupRenderRecord(rec, q, mode, lang);
   } catch (err) {
+    // The user typed something else; do not cache or render an aborted request.
+    if (err && err.name === 'AbortError') return;
     var msg = (err && err.message) ? err.message : '';
     var publicMsg = /EMPTY_AI_RESPONSE/.test(msg)
       ? tx('AI không tìm thấy kết quả phù hợp.', 'AI found no suitable result.', 'AIは適切な結果を見つけられませんでした。')
@@ -478,6 +495,10 @@ async function aiLookupStart(query, mode, lang, force) {
     if (aiLookupStillWanted(q)) renderAiFallbackError(q, mode, lang, publicMsg);
   } finally {
     AI_LOOKUP.inflight.delete(key);
+    if (AI_LOOKUP.abortKey === key) {
+      AI_LOOKUP.abortController = null;
+      AI_LOOKUP.abortKey = null;
+    }
   }
 }
 
@@ -558,11 +579,45 @@ function autoAnalyzeWordWithAi(word, lang) {
   }
 }
 
+// The user changed the query: stop the debounce and abandon the in-flight request, so a
+// slow answer for the old query can never paint over the new one.
+function cancelPendingAiLookup() {
+  if (AI_LOOKUP.timer) {
+    clearTimeout(AI_LOOKUP.timer);
+    AI_LOOKUP.timer = null;
+  }
+  AI_LOOKUP.pending = null;
+  if (AI_LOOKUP.abortController) {
+    try { AI_LOOKUP.abortController.abort(); } catch (e) {}
+    AI_LOOKUP.abortController = null;
+    AI_LOOKUP.abortKey = null;
+  }
+}
+
+// Enter-to-search: skip the 550 ms debounce and ask immediately. Only meaningful when
+// the local dictionaries missed (the caller checks that the fallback slot is on screen).
+function flushAiLookup(query, detectedLang) {
+  var q = aiLookupNormalize(query);
+  if (!q) return;
+  if (AI_LOOKUP.timer) {
+    clearTimeout(AI_LOOKUP.timer);
+    AI_LOOKUP.timer = null;
+  }
+  AI_LOOKUP.pending = null;
+  var mode = aiLookupMode(q, detectedLang);
+  if (!aiLookupEligible(q, mode)) return;
+  var lang = aiLookupTargetLang();
+  AI_LOOKUP.autoRequested.add(aiLookupKey(mode, lang, q));
+  aiLookupStart(q, mode, lang, false);
+}
+
 if (typeof window !== 'undefined') {
   window.AI_LOOKUP = AI_LOOKUP;
   window.autoAiLookup = autoAiLookup;
   window.retryAutoAiLookup = retryAutoAiLookup;
   window.autoAnalyzeWordWithAi = autoAnalyzeWordWithAi;
+  window.cancelPendingAiLookup = cancelPendingAiLookup;
+  window.flushAiLookup = flushAiLookup;
   window.aiLookupKey = aiLookupKey;
   window.aiLookupGetCached = aiLookupGetCached;
   window.aiLookupEligible = aiLookupEligible;

@@ -95,6 +95,7 @@ export async function onRequestPost(context) {
           concept: cached.concept,
           matches: cached.matches,
           cached: true,
+          model: 'cache',
         }),
         { status: 200, headers: corsHeaders }
       );
@@ -174,10 +175,17 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG định dạng JSON hợp lệ theo s
       },
     };
 
-    const CANDIDATE_MODELS = isFast
-      ? ['gemini-3.5-flash-lite', 'gemini-3.5-flash', 'gemini-flash-latest']
-      : ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-flash-latest'];
+    // The automatic fallback is a retrieval task. Explicitly asking for minimal
+    // thinking avoids the 10-20s "medium" detour on Gemini 3.5 Flash.
+    if (isFast) {
+      geminiBody.generationConfig.thinkingConfig = { thinkingLevel: 'minimal' };
+    }
+
+    // Production measurement: flash-lite was slower than flash for this structured
+    // JSON prompt (24-33s vs 18s), so fast mode starts with flash.
+    const CANDIDATE_MODELS = ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-flash-latest'];
     let response = null;
+    let usedModel = '';
     let errDetails = '';
     let lastStatus = 500;
 
@@ -191,6 +199,7 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG định dạng JSON hợp lệ theo s
         });
         if (resp.ok) {
           response = resp;
+          usedModel = modelName;
           break;
         } else {
           lastStatus = resp.status;
@@ -226,6 +235,8 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG định dạng JSON hợp lệ theo s
           success: true,
           concept,
           matches,
+          model: usedModel,
+          usage: data.usageMetadata || null,
         }),
         { status: 200, headers: corsHeaders }
       );

@@ -250,7 +250,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M21 21l-5.2-5.2m1.7-4.3a7.5 7.5 0 11-15 0 7.5 7.5 0 0115 0z"/>
             </svg>
           </div>
-          <input type="text" id="dict-search-input" class="ai-search-input" data-i18n-ph="searchHint" placeholder="Nhập chữ Hán, pinyin, hoặc nghĩa..." oninput="handleDictSearch(this.value)" autocomplete="off" autocapitalize="off" spellcheck="false">
+          <input type="text" id="dict-search-input" class="ai-search-input" data-i18n-ph="searchHint" placeholder="Nhập chữ Hán, pinyin, hoặc nghĩa..." oninput="handleDictSearchInput(event)" onkeydown="handleDictSearchKeydown(event)" onfocus="handleDictSearchFocus()" autocomplete="off" autocapitalize="off" spellcheck="false">
           <button id="dict-search-handwriting" class="ai-search-clear" onclick="openHandwritingForDictSearch()" title="Vẽ chữ Hán tra từ" data-i18n-title="btnDrawSearch" style="display:flex; margin-right:4px; font-size:16px;">✍️</button>
           <button id="dict-search-clear" class="ai-search-clear" onclick="clearDictSearch()" style="display:none;" title="Xóa tìm kiếm" data-i18n-title="btnClear">✕</button>
         </div>
@@ -525,7 +525,7 @@
         </div>
         <div style="font-size:22px; font-weight:800; color:var(--text-primary); letter-spacing:-0.3px;" data-i18n="appName">Halou</div>
         <div style="font-size:13px; font-weight:500; color:var(--text-secondary); margin-top:4px; max-width:420px; margin-left:auto; margin-right:auto; line-height:1.4;" data-i18n="appSlogan">Tra từ chuẩn xác, dịch mượt ngữ cảnh, gắn Pinyin tức thì.</div>
-        <div id="app-version-badge" style="font-size:12px; font-weight:600; color:var(--accent); margin-top:4px;">Version 1.1.11 Pro</div>
+        <div id="app-version-badge" style="font-size:12px; font-weight:600; color:var(--accent); margin-top:4px;">Version 1.1.12 Pro</div>
 
         <!-- Product Core Highlights -->
         <div style="margin:18px auto 14px; max-width:420px; display:grid; grid-template-columns:1fr; gap:8px; text-align:left;">
@@ -883,7 +883,6 @@
   <script src="js/data/han-viet.js"></script>
   <script src="js/data/kanji-data.js"></script>
   <script src="js/data/ja-common.js"></script>
-  <script src="js/data/examples.js"></script>
   <script src="js/data/slang-data.js"></script>
 
   <!-- 3. Core State, Utilities & Offline Database -->
@@ -918,9 +917,9 @@
   <script src="js/features/dict.js"></script>
   <script src="js/features/word-sheet.js"></script>
   <script src="js/features/enrich.js"></script>
-  <script src="js/data/examples-corpus.js"></script>
   <script src="js/features/examples-core.js"></script>
   <script src="js/features/examples.js"></script>
+  <script src="js/features/examples-loader.js"></script>
 
   <!-- 8. App Settings, Onboarding, Share & Input Handlers -->
   <script src="js/features/settings.js"></script>

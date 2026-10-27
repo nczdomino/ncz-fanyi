@@ -432,7 +432,7 @@
     return items;
   }
 
-  function invalidateIndex() { _index = null; _slangIdx = null; _jaIdx = null; }
+  function invalidateIndex() { _index = null; _slangIdx = null; _jaIdx = null; clearSearchCache(); }
 
   // --------------------------------------------------------------- scoring
   function startsAtBoundary(text, q) {
@@ -701,22 +701,70 @@
   var _extBlob = null;
   var _extOffsets = null;
   var _extGlossMap = null;
+  var _extFirstIndex = null;
+
+  function resetExtIndexes() {
+    _extBlob = null;
+    _extOffsets = null;
+    _extGlossMap = null;
+    _extFirstIndex = null;
+    clearSearchCache();
+  }
 
   /**
-   * Register the extended dictionary.
+   * Register the extended dictionary, replacing anything already loaded.
+   * The map is copied so a later shard merge cannot mutate the caller's object.
    * @param {Object<string,string>} map  { simplified: "pinyin|definition" }
    * @returns {number} entry count
    */
   function setExtendedDictionary(map) {
     _ext = null;
     _extKeys = null;
-    _extBlob = null;
-    _extOffsets = null;
-    _extGlossMap = null;
+    resetExtIndexes();
     if (!map || typeof map !== 'object') return 0;
-    _ext = map;
-    _extKeys = Object.keys(map);
+    _ext = Object.create(null);
+    var keys = Object.keys(map);
+    for (var i = 0; i < keys.length; i++) _ext[keys[i]] = map[keys[i]];
+    _extKeys = keys;
     return _extKeys.length;
+  }
+
+  /**
+   * Merge one shard into the already-loaded dictionary. Hanzi lookups only fetch the
+   * shard for their first character, so the extended map grows incrementally.
+   * @param {Object<string,string>} map
+   * @returns {number} total entry count after the merge
+   */
+  function addExtendedDictionary(map) {
+    if (!map || typeof map !== 'object') return _extKeys ? _extKeys.length : 0;
+    if (!_ext) _ext = Object.create(null);
+    var keys = Object.keys(map);
+    var added = 0;
+    for (var i = 0; i < keys.length; i++) {
+      var key = keys[i];
+      if (Object.prototype.hasOwnProperty.call(_ext, key)) continue;
+      _ext[key] = map[key];
+      added++;
+    }
+    if (added) {
+      _extKeys = Object.keys(_ext);
+      resetExtIndexes();
+    }
+    return _extKeys ? _extKeys.length : 0;
+  }
+
+  // First character -> headwords. A 119k-entry linear scan becomes a ~1-3k scan for the
+  // common exact/prefix Hanzi path. Built lazily because most sessions never load ext.
+  function buildExtFirstIndex() {
+    if (_extFirstIndex || !_extKeys) return;
+    var map = Object.create(null);
+    for (var i = 0; i < _extKeys.length; i++) {
+      var word = _extKeys[i];
+      var first = word.charAt(0);
+      if (!map[first]) map[first] = [];
+      map[first].push(word);
+    }
+    _extFirstIndex = map;
   }
 
   // One lower-cased blob of all definitions, so English lookups cost a single indexOf
@@ -817,12 +865,24 @@
       var exact = [];
       var prefix = [];
       var contains = [];
-      for (var i = 0; i < _extKeys.length; i++) {
-        var w = _extKeys[i];
-        if (w === q) { exact.push(w); continue; }
+      buildExtFirstIndex();
+      // All exact/prefix matches share the query's first character, so only that slice
+      // of the dictionary is needed. Contains matches still require the full scan, but
+      // only when the slice did not already produce enough candidates.
+      var pool = (_extFirstIndex && _extFirstIndex[q.charAt(0)]) || _extKeys;
+      var seen = Object.create(null);
+      for (var i = 0; i < pool.length; i++) {
+        var w = pool[i];
+        if (w === q) { exact.push(w); seen[w] = 1; continue; }
         if (w.length > 6) continue;
-        if (w.indexOf(q) === 0) { prefix.push(w); continue; }
-        if (contains.length < MAX * 2 && w.indexOf(q) !== -1) contains.push(w);
+        if (w.indexOf(q) === 0) { prefix.push(w); seen[w] = 1; }
+      }
+      if (exact.length + prefix.length < MAX) {
+        for (var ci = 0; ci < _extKeys.length && contains.length < MAX * 2; ci++) {
+          var cw = _extKeys[ci];
+          if (seen[cw]) continue;
+          if (cw.indexOf(q) !== -1) contains.push(cw);
+        }
       }
       var byLen = function (a, b) { return a.length - b.length; };
       prefix.sort(byLen);
@@ -914,6 +974,32 @@
   }
 
   // ------------------------------------------------------------ public search
+  // A tiny LRU stops repeated renders (language switch, back navigation, quick tags)
+  // from redoing the whole ranking pass. 50 entries is enough for a session and small
+  // enough that it can never become a memory issue.
+  var SEARCH_CACHE_MAX = 50;
+  var _searchCache = new Map();
+
+  function clearSearchCache() {
+    _searchCache.clear();
+  }
+
+  function searchCacheKey(query, limit, opts) {
+    return query + '\u0001' + limit + '\u0001' +
+      (opts.includeSlang !== false ? '1' : '0') + '\u0001' +
+      (opts.fuzzy !== false ? '1' : '0') + '\u0001' +
+      (opts.slang ? 's' + opts.slang.length : '0');
+  }
+
+  function cloneSearchResult(result) {
+    return {
+      query: result.query,
+      detected: result.detected,
+      matches: result.matches.slice(),
+      stats: Object.assign({}, result.stats)
+    };
+  }
+
   /**
    * @param {string} rawQuery
    * @param {{limit?:number, includeSlang?:boolean, slang?:Array, fuzzy?:boolean}} [opts]
@@ -925,6 +1011,15 @@
     var query = String(rawQuery == null ? '' : rawQuery).trim();
     var result = { query: query, detected: 'all', matches: [], stats: { total: 0, primary: 0, related: 0 } };
     if (!query) return result;
+
+    var cacheKey = searchCacheKey(query, limit, opts);
+    var cached = _searchCache.get(cacheKey);
+    if (cached) {
+      // Refresh insertion order so the hottest queries survive eviction.
+      _searchCache.delete(cacheKey);
+      _searchCache.set(cacheKey, cached);
+      return cloneSearchResult(cached);
+    }
 
     var t0 = (typeof performance !== 'undefined' && performance.now) ? performance.now() : 0;
 
@@ -1313,6 +1408,11 @@
       pinyinDemoted: pinyinDemoted,
       ms: t0 ? Math.round((performance.now() - t0) * 100) / 100 : 0
     };
+    _searchCache.set(cacheKey, cloneSearchResult(result));
+    if (_searchCache.size > SEARCH_CACHE_MAX) {
+      var oldest = _searchCache.keys().next().value;
+      if (oldest !== undefined) _searchCache.delete(oldest);
+    }
     return result;
   }
 
@@ -1399,6 +1499,8 @@
     browseDictionary: browseDictionary,
     invalidateIndex: invalidateIndex,
     setExtendedDictionary: setExtendedDictionary,
+    addExtendedDictionary: addExtendedDictionary,
+    clearSearchCache: clearSearchCache,
     SC: SC,
     _internals: {
       norm: norm,
@@ -1415,6 +1517,7 @@
     window.browseDictionary = api.browseDictionary;
     window.dictSearchInvalidate = api.invalidateIndex;
     window.dictSetExtendedDictionary = api.setExtendedDictionary;
+    window.dictAddExtendedDictionary = api.addExtendedDictionary;
     window.DICT_SCORING = api;
   }
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

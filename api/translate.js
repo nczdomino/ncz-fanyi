@@ -302,16 +302,23 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG một chuỗi JSON hợp lệ với c
       }
     };
 
+    // Dictionary lookups are fact retrieval, not reasoning tasks. Gemini 3.5 Flash
+    // defaults to "medium" thinking, which added ~10-20s to a single card. "minimal"
+    // keeps the same schema/fields but skips the internal reasoning detour.
+    if (type === 'dict_lookup' || type === 'analyze_word') {
+      geminiBody.generationConfig.thinkingConfig = { thinkingLevel: 'minimal' };
+    }
+
     if (type !== 'full') {
       geminiBody.generationConfig.responseMimeType = 'application/json';
     }
 
-    // Google API: gemini-3.5-flash is the verified active model. For the high-volume
-    // automatic lookup we try the cheaper "lite" model first and fall through on error.
-    const CANDIDATE_MODELS = type === 'dict_lookup'
-      ? ['gemini-3.5-flash-lite', 'gemini-3.5-flash', 'gemini-flash-latest']
-      : ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-flash-latest'];
+    // Measured on production: flash-lite was *slower* than flash for the structured
+    // dictionary prompt (24-33s vs 18s), so the fast path starts with flash. The lite
+    // model remains as a fallback and is still used for non-lookup traffic.
+    const CANDIDATE_MODELS = ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-flash-latest'];
     let response = null;
+    let usedModel = '';
     let errDetails = '';
     let lastStatus = 500;
 
@@ -325,6 +332,7 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG một chuỗi JSON hợp lệ với c
         });
         if (resp.ok) {
           response = resp;
+          usedModel = modelName;
           break;
         } else {
           lastStatus = resp.status;
@@ -356,11 +364,19 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG một chuỗi JSON hợp lệ với c
         const cleanJson = outputText.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
         const parsed = JSON.parse(cleanJson);
         lookupCacheSet(cacheKey, parsed);
-        return res.status(200).json({ entry: parsed });
+        return res.status(200).json({
+          entry: parsed,
+          model: usedModel,
+          usage: data.usageMetadata || null
+        });
       } catch (parseErr) {
         const fallbackEntry = { word: text, primaryMeaning: outputText.trim() };
         lookupCacheSet(cacheKey, fallbackEntry);
-        return res.status(200).json({ entry: fallbackEntry });
+        return res.status(200).json({
+          entry: fallbackEntry,
+          model: usedModel,
+          usage: data.usageMetadata || null
+        });
       }
     }
 
@@ -368,13 +384,19 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG một chuỗi JSON hợp lệ với c
       try {
         const cleanJson = outputText.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
         const parsed = JSON.parse(cleanJson);
-        return res.status(200).json({ analysis: parsed });
+        return res.status(200).json({
+          analysis: parsed,
+          model: usedModel,
+          usage: data.usageMetadata || null
+        });
       } catch (parseErr) {
         return res.status(200).json({
           analysis: {
             word: text,
             primaryMeaning: outputText.trim()
-          }
+          },
+          model: usedModel,
+          usage: data.usageMetadata || null
         });
       }
     }

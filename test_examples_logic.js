@@ -333,12 +333,22 @@ check('collocations are rendered as chips and the licence ships', () => {
   assert.ok(/CC BY 2\.0 FR/.test(fs.readFileSync(licence, 'utf8')), 'licence text must name CC BY 2.0 FR');
 });
 
-check('examples-corpus.js loads before examples.js', () => {
+check('the heavy example corpora are lazy-loaded, not shipped on first paint', () => {
   const html = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
-  const corpus = html.indexOf('js/data/examples-corpus.js');
+  assert.ok(html.indexOf('js/data/examples.js') === -1,
+    'examples.js is still an eager <script> tag');
+  assert.ok(html.indexOf('js/data/examples-corpus.js') === -1,
+    'examples-corpus.js is still an eager <script> tag');
   const ex = html.indexOf('js/features/examples.js');
-  assert.ok(corpus !== -1 && ex !== -1, 'a script tag is missing');
-  assert.ok(corpus < ex, 'examples-corpus.js must load before examples.js');
+  const loader = html.indexOf('js/features/examples-loader.js');
+  assert.ok(ex !== -1 && loader !== -1, 'a script tag is missing');
+  assert.ok(ex < loader, 'examples-loader.js must load after examples.js');
+
+  const loaderSrc = fs.readFileSync(path.join(__dirname, 'js/features/examples-loader.js'), 'utf8');
+  assert.ok(/js\/data\/examples\.js/.test(loaderSrc), 'loader does not fetch examples.js');
+  assert.ok(/js\/data\/examples-corpus\.js/.test(loaderSrc), 'loader does not fetch examples-corpus.js');
+  assert.ok(/resetWordExamplesIndex/.test(loaderSrc), 'loader must invalidate the empty index');
+  assert.ok(/ensureExamplesData\(\)/.test(examplesSrc), 'renderWordExamples does not await the loader');
 });
 
 console.log(`\n${failed === 0 ? '🎉' : '❌'} ${passed} passed, ${failed} failed.\n`);

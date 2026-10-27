@@ -66,36 +66,42 @@ function exampleSegmenter() {
 
 function initWordExamplesIndex() {
   if (WORD_EXAMPLES_INDEX) return;
+  const hasCurated = typeof WORD_EXAMPLES_LIST !== 'undefined' && Array.isArray(WORD_EXAMPLES_LIST);
+  const hasCorpus = !!examplesCorpus();
+  // The corpora are lazy: before the loader finishes, an empty index would be cached
+  // forever and every word would look example-less.
+  if (!hasCurated && !hasCorpus) return;
   WORD_EXAMPLES_INDEX = {};
-  if (typeof WORD_EXAMPLES_LIST === 'undefined' || !Array.isArray(WORD_EXAMPLES_LIST)) return;
 
-  const segment = exampleSegmenter();
-  for (let i = 0; i < WORD_EXAMPLES_LIST.length; i++) {
-    const item = WORD_EXAMPLES_LIST[i];
-    if (!item || !item.zh) continue;
+  if (hasCurated) {
+    const segment = exampleSegmenter();
+    for (let i = 0; i < WORD_EXAMPLES_LIST.length; i++) {
+      const item = WORD_EXAMPLES_LIST[i];
+      if (!item || !item.zh) continue;
 
-    // Index by every Chinese token in the sentence. Without Intl.Segmenter we fall back
-    // to character windows — coarser, but the index is still built (previously the whole
-    // index stayed empty on such browsers, so only substring matching worked).
-    let tokens = null;
-    if (segment) {
-      try {
-        tokens = segment(item.zh).filter(w => /[\u4e00-\u9fff]/.test(w));
-      } catch (e) {
-        tokens = null;
+      // Index by every Chinese token in the sentence. Without Intl.Segmenter we fall back
+      // to character windows — coarser, but the index is still built (previously the whole
+      // index stayed empty on such browsers, so only substring matching worked).
+      let tokens = null;
+      if (segment) {
+        try {
+          tokens = segment(item.zh).filter(w => /[\u4e00-\u9fff]/.test(w));
+        } catch (e) {
+          tokens = null;
+        }
       }
-    }
-    if (!tokens || !tokens.length) {
-      tokens = [];
-      const chars = String(item.zh).match(/[\u4e00-\u9fff]/g) || [];
-      for (let a = 0; a < chars.length; a++) {
-        tokens.push(chars[a]);
-        if (a + 1 < chars.length) tokens.push(chars[a] + chars[a + 1]);
+      if (!tokens || !tokens.length) {
+        tokens = [];
+        const chars = String(item.zh).match(/[\u4e00-\u9fff]/g) || [];
+        for (let a = 0; a < chars.length; a++) {
+          tokens.push(chars[a]);
+          if (a + 1 < chars.length) tokens.push(chars[a] + chars[a + 1]);
+        }
       }
-    }
-    for (const w of tokens) {
-      if (!WORD_EXAMPLES_INDEX[w]) WORD_EXAMPLES_INDEX[w] = [];
-      if (!WORD_EXAMPLES_INDEX[w].includes(item)) WORD_EXAMPLES_INDEX[w].push(item);
+      for (const w of tokens) {
+        if (!WORD_EXAMPLES_INDEX[w]) WORD_EXAMPLES_INDEX[w] = [];
+        if (!WORD_EXAMPLES_INDEX[w].includes(item)) WORD_EXAMPLES_INDEX[w].push(item);
+      }
     }
   }
 
@@ -119,6 +125,12 @@ function initWordExamplesIndex() {
       }
     }
   }
+}
+
+/** Called by js/features/examples-loader.js once the lazy corpora have arrived. */
+function resetWordExamplesIndex() {
+  WORD_EXAMPLES_INDEX = null;
+  EXAMPLE_SELECTION_CACHE.clear();
 }
 
 function highlightWordInSentence(sentence, targetWord) {
@@ -425,6 +437,16 @@ function normalizeOnlineExample(item) {
   };
 }
 
+function renderExamplesCorpusLoadingState(container, countBadge) {
+  if (countBadge) countBadge.textContent = '';
+  container.innerHTML = `
+    <div class="example-loading-box">
+      <div class="loading-spinner-sm"></div>
+      <span>📚 ${tx('Đang tải kho câu ví dụ…', 'Loading example corpus…', '例文コーパスを読み込み中…')}</span>
+    </div>
+  `;
+}
+
 async function renderWordExamples(word) {
   const container = document.getElementById('sheet-examples-list');
   const countBadge = document.getElementById('sheet-examples-count');
@@ -434,6 +456,19 @@ async function renderWordExamples(word) {
     container.innerHTML = '';
     if (countBadge) countBadge.textContent = '';
     return;
+  }
+
+  // The two corpora are lazy (~790 KB combined). A cold open shows a spinner while the
+  // loader injects them; a warm open renders synchronously with no flicker.
+  if (typeof EXAMPLES_DATA !== 'undefined' && !EXAMPLES_DATA.loaded &&
+      typeof ensureExamplesData === 'function') {
+    renderExamplesCorpusLoadingState(container, countBadge);
+    const ok = await ensureExamplesData();
+    if (!state || state.activeWord !== word) return;
+    if (!ok) {
+      renderExamplesEmptyState(container, countBadge, word);
+      return;
+    }
   }
 
   const core = examplesCore();

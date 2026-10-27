@@ -71,47 +71,26 @@ assert.ok(rEnNegotiate.some(m => m.zh === '谈判'), 'Expected "negotiate" to ma
 
 console.log('✅ Extended Reverse Dictionary returns accurate matches across VI, EN, and JA');
 
-// Test 3: Multi-Dictionary Live GTx Response Parser
-console.log('\n--- Test 3: Live Multi-Dictionary API Parser Simulation ---');
-const mockGtxResponse = [
-  [["谈判", "thương lượng", null, null, 1]],
-  [
-    ["động từ", ["谈判", "协商", "交涉"], [["thương lượng", "đàm phán"], ["hiệp thương"], ["giao thiệp"]]],
-    ["danh từ", ["谈判", "会谈"], [["cuộc đàm phán"], ["hội đàm"]]]
-  ]
-];
-
-const parsedCandidates = [];
-const localSeen = new Set();
-// Direct
-if (mockGtxResponse[0] && mockGtxResponse[0][0]) {
-  const zh = mockGtxResponse[0][0][0];
-  localSeen.add(zh);
-  parsedCandidates.push(zh);
-}
-// Grouped
-if (Array.isArray(mockGtxResponse[1])) {
-  for (const group of mockGtxResponse[1]) {
-    for (const w of group[1]) {
-      if (!localSeen.has(w)) {
-        localSeen.add(w);
-        parsedCandidates.push(w);
-      }
-    }
-  }
-}
-
-assert.deepStrictEqual(parsedCandidates, ["谈判", "协商", "交涉", "会谈"]);
-console.log('✅ Live Dictionary Response Parser extracted all candidates: ' + parsedCandidates.join(', '));
+// Test 3: the Google live-dictionary call was removed in v1.1.12 (P2). It cost a
+// third-party request per keystroke, returned low-quality machine translations and
+// duplicated what the local extended dictionary + AI fallback already answer better.
+console.log('\n--- Test 3: Live Google Dictionary removed ---');
+const fs = require('fs');
+const dictSrc = fs.readFileSync('./js/features/dict.js', 'utf8');
+assert.ok(!/translate\.googleapis\.com/.test(dictSrc), 'dict.js still calls the Google live dictionary');
+assert.ok(!/triggerLiveDictSearch|renderLiveDictResults|LIVE_DICT_CACHE/.test(dictSrc), 'live dictionary code still present');
+assert.ok(!/dict-live-results-container|dict-live-section/.test(dictSrc), 'live dictionary markup still present');
+const cssSrc = fs.readFileSync('./css/dict.css', 'utf8');
+assert.ok(!/\.dict-live-/.test(cssSrc), 'live dictionary CSS still present');
+console.log('✅ Google live dictionary fully removed from JS, markup and CSS');
 
 // Test 4: i18n Completeness for HSK 7-9 & Extended Dict
 console.log('\n--- Test 4: i18n Completeness ---');
-const fs = require('fs');
 const i18nContent = fs.readFileSync('./js/data/i18n-data.js', 'utf8');
 assert.ok(i18nContent.includes('hsk789'), 'Expected i18n-data.js to have hsk789');
-assert.ok(i18nContent.includes('liveDictTitle'), 'Expected i18n-data.js to have liveDictTitle');
+assert.ok(!i18nContent.includes('liveDictTitle'), 'liveDictTitle should be gone with the live dictionary');
 assert.ok(i18nContent.includes('HSK 1 - 9'), 'Expected i18n-data.js to have HSK 1 - 9');
-console.log('✅ i18n keys for HSK 7-9 and Live Dict verified across VI, EN, and JA');
+console.log('✅ i18n keys for HSK 7-9 verified; live-dict key removed');
 
 console.log('\n🎉 ALL HSK 7-9 & EXTENDED MULTI-LINGUAL TESTS PASSED WITH 100% SUCCESS!');
 

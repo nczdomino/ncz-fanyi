@@ -16,7 +16,7 @@
 // Guarded so the file can also be required from Node in test_sw.js.
 const IS_SW = typeof self !== 'undefined' && typeof self.addEventListener === 'function';
 
-const VERSION = 'hl-v1.1.11'; // bumped: audio cache strategy added
+const VERSION = 'hl-v1.1.12'; // bumped: audio cache strategy added
 const SHELL_CACHE = VERSION + '-shell';
 const RUNTIME_CACHE = VERSION + '-runtime';
 const AUDIO_CACHE = VERSION + '-audio';

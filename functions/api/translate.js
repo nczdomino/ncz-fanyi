@@ -314,15 +314,22 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG một chuỗi JSON hợp lệ với c
       },
     };
 
+    // Dictionary lookups are fact retrieval, not reasoning tasks. Gemini 3.5 Flash
+    // defaults to "medium" thinking, which added ~10-20s to a single card. "minimal"
+    // keeps the same schema/fields but skips the internal reasoning detour.
+    if (type === 'dict_lookup' || type === 'analyze_word') {
+      geminiBody.generationConfig.thinkingConfig = { thinkingLevel: 'minimal' };
+    }
+
     if (type !== 'full') {
       geminiBody.generationConfig.responseMimeType = 'application/json';
     }
 
-    // Try the cheaper "lite" model first for the automatic, high-volume lookup path.
-    const CANDIDATE_MODELS = type === 'dict_lookup'
-      ? ['gemini-3.5-flash-lite', 'gemini-3.5-flash', 'gemini-flash-latest']
-      : ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-flash-latest'];
+    // Measured on production: flash-lite was *slower* than flash for the structured
+    // dictionary prompt (24-33s vs 18s), so the fast path starts with flash.
+    const CANDIDATE_MODELS = ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-flash-latest'];
     let response = null;
+    let usedModel = '';
     let errDetails = '';
     let lastStatus = 500;
 
@@ -336,6 +343,7 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG một chuỗi JSON hợp lệ với c
         });
         if (resp.ok) {
           response = resp;
+          usedModel = modelName;
           break;
         } else {
           lastStatus = resp.status;
@@ -374,14 +382,22 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG một chuỗi JSON hợp lệ với c
         const parsed = JSON.parse(cleanJson);
         lookupCacheSet(cacheKey, parsed);
         return new Response(
-          JSON.stringify({ entry: parsed }),
+          JSON.stringify({
+            entry: parsed,
+            model: usedModel,
+            usage: data.usageMetadata || null,
+          }),
           { status: 200, headers: corsHeaders }
         );
       } catch (parseErr) {
         const fallbackEntry = { word: text, primaryMeaning: outputText.trim() };
         lookupCacheSet(cacheKey, fallbackEntry);
         return new Response(
-          JSON.stringify({ entry: fallbackEntry }),
+          JSON.stringify({
+            entry: fallbackEntry,
+            model: usedModel,
+            usage: data.usageMetadata || null,
+          }),
           { status: 200, headers: corsHeaders }
         );
       }
@@ -392,7 +408,11 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG một chuỗi JSON hợp lệ với c
         const cleanJson = outputText.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
         const parsed = JSON.parse(cleanJson);
         return new Response(
-          JSON.stringify({ analysis: parsed }),
+          JSON.stringify({
+            analysis: parsed,
+            model: usedModel,
+            usage: data.usageMetadata || null,
+          }),
           { status: 200, headers: corsHeaders }
         );
       } catch (parseErr) {
@@ -402,6 +422,8 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG một chuỗi JSON hợp lệ với c
               word: text,
               primaryMeaning: outputText.trim(),
             },
+            model: usedModel,
+            usage: data.usageMetadata || null,
           }),
           { status: 200, headers: corsHeaders }
         );

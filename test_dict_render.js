@@ -189,13 +189,20 @@ vm.runInContext('state.selectedRadical = null; state.showHskBrowser = false; sta
 // CC-CEDICT has Chinese headwords with English glosses, so kana and accented-Vietnamese
 // queries must never trigger the download.
 let extCalls = 0;
+ctx.ensureExtDictFor = function () {
+  extCalls += 1;
+  return Promise.resolve(false);
+};
 ctx.ensureExtDict = function () {
   extCalls += 1;
   return Promise.resolve(false);
 };
+// The real prefetcher would fire background timers/fetches during the test.
+ctx.prefetchExtDict = function () {};
+ctx.prefetchExtDictForQuery = function () {};
 
 function resetExtState() {
-  vm.runInContext('state._extDictRequested = false; EXT_DICT.loaded = false; EXT_DICT.loading = null;', ctx);
+  vm.runInContext('_extDictAttempts.clear(); EXT_DICT.loaded = false; EXT_DICT.loading = null; EXT_DICT.index = null;', ctx);
 }
 
 resetExtState();
