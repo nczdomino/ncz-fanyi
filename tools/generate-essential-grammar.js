@@ -1054,3 +1054,4 @@ const jsBundleContent = `// js/data/grammar-data.js - HSK 2.0 & 3.0 Grammar Cata
 fs.writeFileSync(grammarDataJsPath, jsBundleContent, 'utf8');
 console.log(`✅ Updated offline bundle in ${grammarDataJsPath}`);
 console.log(`🎉 Expansion completed: +${addedCount} rich lessons added!`);
+
