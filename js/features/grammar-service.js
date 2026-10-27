@@ -188,29 +188,46 @@
     });
   }
 
+  const CATEGORY_META = {
+    sentence_pattern: { icon: '📐', vi: 'Mẫu câu & Cấu trúc', ja: '基本文型・構文', en: 'Sentence Patterns' },
+    preposition: { icon: '📍', vi: 'Giới từ', ja: '前置詞（介詞）', en: 'Prepositions' },
+    question: { icon: '❓', vi: 'Câu hỏi', ja: '疑問文', en: 'Questions' },
+    negation: { icon: '🚫', vi: 'Phủ định', ja: '否定表現', en: 'Negation' },
+    particle: { icon: '🪢', vi: 'Trợ từ', ja: '助詞', en: 'Particles' },
+    measure_word: { icon: '📏', vi: 'Lượng từ', ja: '量詞', en: 'Measure Words' },
+    aspect: { icon: '⏳', vi: 'Động thái & Thời thể', ja: 'アスペクト', en: 'Aspect' },
+    modal: { icon: '💡', vi: 'Động từ năng nguyện', ja: '助動詞（能願動詞）', en: 'Modal Verbs' },
+    comparison: { icon: '⚖️', vi: 'Câu so sánh', ja: '比較文', en: 'Comparison' },
+    complement: { icon: '🧩', vi: 'Bổ ngữ', ja: '補語', en: 'Complements' },
+    conjunction: { icon: '🔗', vi: 'Liên từ & Câu ghép', ja: '接続詞・複文', en: 'Conjunctions' },
+    reduplication: { icon: '🔁', vi: 'Từ trùng điệp (Lặp từ)', ja: '重ね型', en: 'Reduplication' },
+    written_style: { icon: '📜', vi: 'Văn phong học thuật / Cổ văn', ja: '書面語・文語表現', en: 'Written Style' },
+    other: { icon: '🏷️', vi: 'Khác', ja: 'その他', en: 'Other' }
+  };
+
+  /**
+   * Get localized category display label with icon
+   * @param {string} category 
+   * @param {string} [locale] 
+   * @returns {string} e.g. "📐 Mẫu câu & Cấu trúc"
+   */
+  function getCategoryName(category, locale) {
+    if (!category) return '';
+    const loc = locale || (typeof state !== 'undefined' && state.uiLang) || 'vi';
+    const meta = CATEGORY_META[category];
+    if (meta) {
+      const title = meta[loc] || meta.vi || category;
+      return `${meta.icon} ${title}`;
+    }
+    return category;
+  }
+
   /**
    * Get unique Categories with count and localized titles
    */
   function getGrammarCategories(locale) {
     const catalog = getCatalogData();
     const map = new Map();
-
-    const categoryNames = {
-      sentence_pattern: { vi: 'Mẫu câu & Cấu trúc', ja: '基本文型・構文', en: 'Sentence Patterns' },
-      preposition: { vi: 'Giới từ', ja: '前置詞（介詞）', en: 'Prepositions' },
-      question: { vi: 'Câu hỏi', ja: '疑問文', en: 'Questions' },
-      negation: { vi: 'Phủ định', ja: '否定表現', en: 'Negation' },
-      particle: { vi: 'Trợ từ', ja: '助詞', en: 'Particles' },
-      measure_word: { vi: 'Lượng từ', ja: '量詞', en: 'Measure Words' },
-      aspect: { vi: 'Động thái & Thời thể', ja: 'アスペクト', en: 'Aspect' },
-      modal: { vi: 'Động từ năng nguyện', ja: '助動詞（能願動詞）', en: 'Modal Verbs' },
-      comparison: { vi: 'Câu so sánh', ja: '比較文', en: 'Comparison' },
-      complement: { vi: 'Bổ ngữ', ja: '補語', en: 'Complements' },
-      conjunction: { vi: 'Liên từ & Câu ghép', ja: '接続詞・複文', en: 'Conjunctions' },
-      reduplication: { vi: 'Từ trùng điệp (Lặp từ)', ja: '重ね型', en: 'Reduplication' },
-      written_style: { vi: 'Văn phong học thuật / Cổ văn', ja: '書面語・文語表現', en: 'Written Style' },
-      other: { vi: 'Khác', ja: 'その他', en: 'Other' }
-    };
 
     catalog.forEach(item => {
       const cat = item.category || 'other';
@@ -219,11 +236,14 @@
 
     const result = [];
     map.forEach((count, cat) => {
-      const labelObj = categoryNames[cat] || { vi: cat, ja: cat, en: cat };
+      const meta = CATEGORY_META[cat];
+      const title = meta ? (meta[locale] || meta.vi || cat) : cat;
+      const icon = meta ? meta.icon : '🏷️';
       result.push({
         id: cat,
         count: count,
-        name: getLocalizedText(labelObj, locale)
+        icon: icon,
+        name: `${icon} ${title}`
       });
     });
 
@@ -377,6 +397,7 @@
     getJoinedGrammarList: getJoinedGrammarList,
     findGrammarPointsByWord: findGrammarPointsByWord,
     getGrammarCategories: getGrammarCategories,
+    getCategoryName: getCategoryName,
     getGrammarLevels: getGrammarLevels,
     savePracticeResult: savePracticeResult,
     getPracticeResult: getPracticeResult,
@@ -387,6 +408,7 @@
     window.getLocalizedText = getLocalizedText;
     window.grammarService = grammarService;
     window.grammarStore = grammarStore;
+    window.getGrammarCategoryName = getCategoryName;
   }
 
   if (typeof module !== 'undefined' && module.exports) {
@@ -401,6 +423,7 @@
       getCatalogData: getCatalogData,
       getSamplesData: getSamplesData,
       getGrammarCategories: getGrammarCategories,
+      getCategoryName: getCategoryName,
       getGrammarLevels: getGrammarLevels,
       savePracticeResult: savePracticeResult,
       getPracticeResult: getPracticeResult

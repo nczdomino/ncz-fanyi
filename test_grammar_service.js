@@ -85,6 +85,7 @@ const {
   getCatalogData,
   getSamplesData,
   getGrammarCategories,
+  getCategoryName,
   getGrammarLevels,
   findGrammarPointsByWord
 } = require('./js/features/grammar-service.js');
@@ -264,6 +265,10 @@ console.log(`  ✅ findGrammarPointsByWord("比") correctly matched ${hitsBi.len
 
 // 9. Categories and Levels Summary Verification
 console.log('\n--- 9. Categories and Levels Metadata ---');
+assert.strictEqual(getCategoryName('sentence_pattern', 'vi'), '📐 Mẫu câu & Cấu trúc');
+assert.strictEqual(getCategoryName('negation', 'vi'), '🚫 Phủ định');
+assert.strictEqual(getCategoryName('comparison', 'vi'), '⚖️ Câu so sánh');
+console.log('  ✅ getCategoryName translates raw keys (sentence_pattern, negation...) to human-friendly localized labels');
 const categories = getGrammarCategories('vi');
 assert(Array.isArray(categories) && categories.length > 0, 'Categories generated');
 console.log(`  ✅ Generated ${categories.length} grammar categories with counts`);

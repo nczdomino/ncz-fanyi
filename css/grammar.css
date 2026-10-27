@@ -305,7 +305,19 @@
 
 .grammar-category-badge {
   font-size: 11px;
-  color: var(--text-muted);
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--bg-muted);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 2px 7px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  max-width: 175px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .grammar-detail-badge {

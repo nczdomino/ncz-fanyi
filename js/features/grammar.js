@@ -636,6 +636,9 @@
     return list.map(item => {
       const titleLocal = currentLoc === 'ja' ? item.ja_name : (currentLoc === 'en' ? item.en_name : item.vi_name);
       const levelClass = 'grammar-level-' + item.level.toLowerCase().replace(/[^a-z0-9]/g, '');
+      const catLabel = (typeof grammarService !== 'undefined' && grammarService.getCategoryName)
+        ? grammarService.getCategoryName(item.category, currentLoc)
+        : (item.category || '');
 
       return `
         <div class="grammar-card" onclick="openGrammarDetail('${escapeQuotes(item.id)}')">
@@ -650,7 +653,7 @@
             <div class="grammar-card-name">${escapeHtml(titleLocal || item.vi_name)}</div>
           </div>
           <div class="grammar-card-bottom">
-            <span class="grammar-category-badge">${escapeHtml(item.category || '')}</span>
+            <span class="grammar-category-badge">${escapeHtml(catLabel)}</span>
             ${item.hasDetail ? `
               <span class="grammar-detail-badge">✨ ${currentLoc === 'ja' ? '詳細・練習' : (currentLoc === 'en' ? 'Practice' : 'Chi tiết & Luyện tập')}</span>
             ` : `
@@ -862,7 +865,7 @@
           <div class="grammar-detail-hero">
             <div class="grammar-detail-meta" style="margin-bottom:8px;">
               <span class="grammar-level-pill grammar-level-${detail.level.toLowerCase().replace(/[^a-z0-9]/g, '')}">${escapeHtml(detail.level)}</span>
-              <span class="grammar-standard-tag">${escapeHtml(detail.category || '')}</span>
+              <span class="grammar-standard-tag">${escapeHtml((typeof grammarService !== 'undefined' && grammarService.getCategoryName) ? grammarService.getCategoryName(detail.category, loc) : (detail.category || ''))}</span>
               <span class="grammar-standard-tag">★${detail.difficulty}/5</span>
             </div>
             <div class="grammar-detail-title-zh">${escapeHtml(detail.localizations?.zh?.title || detail.keywords?.[0] || detail.formula)}</div>
