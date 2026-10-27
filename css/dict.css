@@ -153,52 +153,6 @@
   color: var(--accent);
 }
 
-.dict-radical-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
-  gap: 6px;
-  max-height: 220px;
-  overflow-y: auto;
-  padding: 4px 2px;
-}
-.radical-item-chip {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 6px 4px;
-  background: var(--bg-surface);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.15s;
-  user-select: none;
-}
-.radical-item-chip:hover {
-  border-color: var(--accent);
-  background: var(--accent-subtle);
-}
-.radical-item-chip.active {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
-}
-.radical-item-chip.active .rad-name,
-.radical-item-chip.active .rad-char {
-  color: #fff;
-}
-.rad-char {
-  font-size: 17px;
-  font-family: var(--font-hanzi);
-  color: var(--accent);
-}
-.rad-name {
-  font-size: 11px;
-  color: var(--text-muted);
-  margin-top: 2px;
-  white-space: nowrap;
-}
-
 /* Compounds grid in Word Sheet */
 .dict-compounds-grid {
   display: grid;

@@ -203,49 +203,10 @@ function renderRecentSearches() {
   `).join('');
 }
 
-// Radical Browser in Dict View
-function toggleRadicalBrowser() {
-  state.showRadicalBrowser = !state.showRadicalBrowser;
-  renderRadicalBrowser();
-}
-
-function selectRadicalFilter(radChar) {
-  if (state.selectedRadical === radChar) {
-    state.selectedRadical = null;
-  } else {
-    state.selectedRadical = radChar;
-  }
-  renderRadicalBrowser();
-  renderDictView();
-}
-
-function renderRadicalBrowser() {
-  const content = document.getElementById('dict-radical-content');
-  const chevron = document.getElementById('dict-radical-chevron');
-  const toggleBtn = document.getElementById('dict-radical-toggle-btn');
-  const grid = document.getElementById('dict-radical-grid');
-  if (!content || !grid) return;
-
-  if (state.showRadicalBrowser) {
-    content.style.display = 'block';
-    if (chevron) chevron.style.transform = 'rotate(180deg)';
-    if (toggleBtn) toggleBtn.classList.add('expanded');
-
-    grid.innerHTML = RADICALS_DATA.map(r => {
-      const isAct = state.selectedRadical === r.r;
-      return `
-        <div class="radical-item-chip ${isAct ? 'active' : ''}" onclick="selectRadicalFilter('${escapeQuotes(r.r)}')">
-          <b class="rad-char">${escapeHtml(r.r)}</b>
-          <span class="rad-name">${escapeHtml(r.name.split(' ')[0])}</span>
-        </div>
-      `;
-    }).join('');
-  } else {
-    content.style.display = 'none';
-    if (chevron) chevron.style.transform = 'rotate(0deg)';
-    if (toggleBtn) toggleBtn.classList.remove('expanded');
-  }
-}
+// Radical Browser (removed)
+function toggleRadicalBrowser() {}
+function selectRadicalFilter() {}
+function renderRadicalBrowser() {}
 
 // --- Module: Word Sheet Modal & Hanzi Writer ---
 
@@ -460,8 +421,6 @@ function renderDictView() {
   if (query) {
     if (quickTags) quickTags.style.display = 'none';
     if (hskAccordion) hskAccordion.style.display = 'none';
-    const radAcc = document.getElementById('dict-radical-accordion');
-    if (radAcc) radAcc.style.display = 'none';
     const recBox = document.getElementById('dict-recent-box');
     if (recBox) recBox.style.display = 'none';
 
@@ -480,13 +439,10 @@ function renderDictView() {
     // No search query
     if (quickTags) quickTags.style.display = 'flex';
     if (hskAccordion) hskAccordion.style.display = 'block';
-    const radAcc = document.getElementById('dict-radical-accordion');
-    if (radAcc) radAcc.style.display = 'block';
 
     renderRecentSearches();
-    renderRadicalBrowser();
 
-    if (!isBrowsingHsk && !state.selectedRadical) {
+    if (!isBrowsingHsk) {
       container.innerHTML = '';
       return; // Do NOT dump words by default! Keep clean!
     }
@@ -502,19 +458,7 @@ function renderDictView() {
   // 1. Reverse-dictionary phrase book is handled inside searchDictionary() so that
   //    reverse hits and definition hits share one scoring scale (see dict-scoring.js).
 
-  if (state.selectedRadical && !query) {
-    const radItem = (typeof RADICALS_DATA !== 'undefined') ? RADICALS_DATA.find(r => r.r === state.selectedRadical) : null;
-    if (radItem) {
-      const charSet = new Set([...radItem.chars]);
-      for (const w of Object.keys(MINI_DICT)) {
-        if ([...w].some(c => charSet.has(c))) {
-          matches.push({ word: w, ...MINI_DICT[w] });
-          seenWords.add(w);
-          if (matches.length >= 80) break;
-        }
-      }
-    }
-  } else if (!query) {
+  if (!query) {
     // Browse mode without query
     if (filterHSK === 'slang') {
       const allSlang = (ENRICH.remote || []).concat(SLANG_BUILTIN || []);
@@ -708,20 +652,6 @@ function renderDictView() {
   }
 
   let html = '';
-  if (state.selectedRadical && !query) {
-    const radItem = (typeof RADICALS_DATA !== 'undefined') ? RADICALS_DATA.find(r => r.r === state.selectedRadical) : null;
-    const radName = radItem ? radItem.name : state.selectedRadical;
-    html += `
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding:8px 14px; background:var(--accent-subtle); border:1px solid var(--accent); border-radius:10px;">
-        <span style="font-size:13px; font-weight:600; color:var(--accent);">
-          🏮 ${tx('Đang lọc theo Bộ', 'Filtered by Radical', '部首で絞り込み')}: <b>${escapeHtml(radName)}</b> (${matches.length} ${tx('từ', 'words', '語')})
-        </span>
-        <button class="btn btn-secondary btn-sm" style="font-size:11px; padding:3px 10px; border-radius:12px;" onclick="selectRadicalFilter(null)">
-          ✕ ${tx('Bỏ lọc', 'Clear filter', '解除')}
-        </button>
-      </div>
-    `;
-  }
   // Split confident matches from loosely related words. Rendering them as two
   // groups is what stops a one-syllable query ("ăn") from looking like a wall of noise.
   const primaryItems = query ? matches.filter(m => m.tier !== 'related' && m.tier !== 'suggestion') : matches;

@@ -173,17 +173,11 @@ try {
     ? '  ✅ HSK browse mode renders'
     : '  ❌ HSK browse mode rendered nothing');
   if (hskHtml.indexOf('dict-item-card') === -1) failures++;
-
-  const radHtml = renderBrowse('state.searchQuery = ""; state.showHskBrowser = false; state.dictFilterHSK = "all"; state.selectedRadical = "亻"; renderDictView();');
-  console.log(radHtml.indexOf('dict-item-card') !== -1
-    ? '  ✅ radical browse mode renders'
-    : '  ❌ radical browse mode rendered nothing');
-  if (radHtml.indexOf('dict-item-card') === -1) failures++;
 } catch (err) {
   failures++;
   console.log('  ❌ browse mode threw: ' + err.message);
 }
-vm.runInContext('state.selectedRadical = null; state.showHskBrowser = false; state.dictFilterHSK = "all";', ctx);
+vm.runInContext('state.showHskBrowser = false; state.dictFilterHSK = "all";', ctx);
 
 // The extended dictionary (~2.8 MB) must only be fetched when it could possibly help:
 // CC-CEDICT has Chinese headwords with English glosses, so kana and accented-Vietnamese
