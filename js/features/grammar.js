@@ -614,6 +614,54 @@
     }
   };
 
+  // --- Grammar Catalog Cards HTML Builder ---
+  function buildGrammarCatalogCardsHtml(currentLoc) {
+    const activeState = grammarStore.getState();
+    const list = grammarService.getJoinedGrammarList({
+      level: activeState.level,
+      standard: activeState.standard,
+      category: activeState.category,
+      query: activeState.query,
+      hasDetailOnly: activeState.hasDetailOnly
+    });
+
+    if (!list.length) {
+      return `
+        <div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-muted);">
+          🔍 ${currentLoc === 'ja' ? '条件に一致する文法が見つかりませんでした' : (currentLoc === 'en' ? 'No matching grammar points found.' : 'Không tìm thấy điểm ngữ pháp nào phù hợp.')}
+        </div>
+      `;
+    }
+
+    return list.map(item => {
+      const titleLocal = currentLoc === 'ja' ? item.ja_name : (currentLoc === 'en' ? item.en_name : item.vi_name);
+      const levelClass = 'grammar-level-' + item.level.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+      return `
+        <div class="grammar-card" onclick="openGrammarDetail('${escapeQuotes(item.id)}')">
+          <div>
+            <div class="grammar-card-top">
+              <span class="grammar-level-pill ${levelClass}">${escapeHtml(item.level)}</span>
+              <div class="grammar-standards-tags">
+                ${(item.standard || []).map(s => `<span class="grammar-standard-tag">${escapeHtml(s)}</span>`).join('')}
+              </div>
+            </div>
+            <div class="grammar-card-zh">${escapeHtml(item.zh_name)}</div>
+            <div class="grammar-card-name">${escapeHtml(titleLocal || item.vi_name)}</div>
+          </div>
+          <div class="grammar-card-bottom">
+            <span class="grammar-category-badge">${escapeHtml(item.category || '')}</span>
+            ${item.hasDetail ? `
+              <span class="grammar-detail-badge">✨ ${currentLoc === 'ja' ? '詳細・練習' : (currentLoc === 'en' ? 'Practice' : 'Chi tiết & Luyện tập')}</span>
+            ` : `
+              <span style="font-size:11px; color:var(--text-muted);">${currentLoc === 'ja' ? '概要' : 'Mục lục'}</span>
+            `}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
   // --- Full Grammar View Renderer ---
   function renderGrammarView() {
     const container = document.getElementById('view-grammar');
@@ -669,33 +717,7 @@
       `).join('')}
     `;
 
-    const cardsHtml = joinedList.map(item => {
-      const titleLocal = loc === 'ja' ? item.ja_name : (loc === 'en' ? item.en_name : item.vi_name);
-      const levelClass = 'grammar-level-' + item.level.toLowerCase().replace(/[^a-z0-9]/g, '');
-
-      return `
-        <div class="grammar-card" onclick="openGrammarDetail('${escapeQuotes(item.id)}')">
-          <div>
-            <div class="grammar-card-top">
-              <span class="grammar-level-pill ${levelClass}">${escapeHtml(item.level)}</span>
-              <div class="grammar-standards-tags">
-                ${(item.standard || []).map(s => `<span class="grammar-standard-tag">${escapeHtml(s)}</span>`).join('')}
-              </div>
-            </div>
-            <div class="grammar-card-zh">${escapeHtml(item.zh_name)}</div>
-            <div class="grammar-card-name">${escapeHtml(titleLocal || item.vi_name)}</div>
-          </div>
-          <div class="grammar-card-bottom">
-            <span class="grammar-category-badge">${escapeHtml(item.category || '')}</span>
-            ${item.hasDetail ? `
-              <span class="grammar-detail-badge">✨ ${loc === 'ja' ? '詳細・練習' : (loc === 'en' ? 'Practice' : 'Chi tiết & Luyện tập')}</span>
-            ` : `
-              <span style="font-size:11px; color:var(--text-muted);">${loc === 'ja' ? '概要' : 'Mục lục'}</span>
-            `}
-          </div>
-        </div>
-      `;
-    }).join('');
+    const cardsHtml = buildGrammarCatalogCardsHtml(loc);
 
     container.innerHTML = `
       <div class="grammar-container">
@@ -708,33 +730,38 @@
         </div>
 
         <div class="grammar-controls">
+          <!-- Row 1: Large & Prominent Search Bar -->
           <div class="grammar-search-row">
             <div class="grammar-search-input-box">
               <span class="grammar-search-icon">🔍</span>
-              <input type="search" class="grammar-search-input" placeholder="${loc === 'ja' ? '文法名、ピンイン、キーワードで検索...' : (loc === 'en' ? 'Search grammar by name, pinyin, formula...' : 'Tìm kiếm ngữ pháp, pinyin, cấu trúc...')}" value="${escapeHtml(gState.query)}" oninput="handleGrammarSearchInput(this.value)">
+              <input type="search" id="grammar-search-input" class="grammar-search-input" placeholder="${loc === 'ja' ? '文法名、ピンイン、キーワードで検索...' : (loc === 'en' ? 'Search grammar by name, pinyin, formula...' : 'Tìm kiếm ngữ pháp, pinyin, cấu trúc...')}" value="${escapeHtml(gState.query)}" oninput="handleGrammarSearchInput(this.value)">
+              <button type="button" id="grammar-search-clear-btn" class="grammar-search-clear-btn" style="display:${gState.query ? 'flex' : 'none'};" onclick="clearGrammarSearch()" title="${loc === 'ja' ? 'クリア' : (loc === 'en' ? 'Clear' : 'Xóa')}">✕</button>
             </div>
-            <select class="grammar-select" onchange="setGrammarFilterCategory(this.value)">
+          </div>
+
+          <!-- Row 2: Category Filter Row (Placed Below Search Bar) -->
+          <div class="grammar-filters-row grammar-category-row">
+            <span class="grammar-filter-label">📂 ${loc === 'ja' ? 'カテゴリー' : (loc === 'en' ? 'Category' : 'Phân loại')}:</span>
+            <select class="grammar-select" id="grammar-category-select" onchange="setGrammarFilterCategory(this.value)">
               ${categoryOptionsHtml}
             </select>
           </div>
 
+          <!-- Row 3: Level Filter -->
           <div class="grammar-filters-row">
-            <span style="font-size:12px; font-weight:700; color:var(--text-muted);">${loc === 'ja' ? 'レベル' : 'Cấp độ'}:</span>
+            <span class="grammar-filter-label">🎯 ${loc === 'ja' ? 'レベル' : (loc === 'en' ? 'Level' : 'Cấp độ')}:</span>
             <div class="grammar-chip-group">${levelPillsHtml}</div>
           </div>
 
+          <!-- Row 4: Standard Filter -->
           <div class="grammar-filters-row">
-            <span style="font-size:12px; font-weight:700; color:var(--text-muted);">${loc === 'ja' ? '基準' : 'Chuẩn'}:</span>
+            <span class="grammar-filter-label">🏷️ ${loc === 'ja' ? '基準' : (loc === 'en' ? 'Standard' : 'Chuẩn')}:</span>
             <div class="grammar-chip-group">${standardHtml}</div>
           </div>
         </div>
 
         <div class="grammar-catalog-grid">
-          ${cardsHtml.length ? cardsHtml : `
-            <div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-muted);">
-              🔍 ${loc === 'ja' ? '条件に一致する文法が見つかりませんでした' : 'Không tìm thấy điểm ngữ pháp nào phù hợp.'}
-            </div>
-          `}
+          ${cardsHtml}
         </div>
       </div>
     `;
@@ -901,7 +928,32 @@
 
   window.handleGrammarSearchInput = function (val) {
     grammarStore.setState({ query: val });
-    renderGrammarView();
+    const grid = document.querySelector('.grammar-catalog-grid');
+    const clearBtn = document.getElementById('grammar-search-clear-btn');
+    if (clearBtn) {
+      clearBtn.style.display = val ? 'flex' : 'none';
+    }
+    if (grid) {
+      const loc = (typeof state !== 'undefined' && state.uiLang) || 'vi';
+      grid.innerHTML = buildGrammarCatalogCardsHtml(loc);
+    } else {
+      renderGrammarView();
+    }
+  };
+
+  window.clearGrammarSearch = function () {
+    grammarStore.setState({ query: '' });
+    const input = document.getElementById('grammar-search-input');
+    if (input) input.value = '';
+    const clearBtn = document.getElementById('grammar-search-clear-btn');
+    if (clearBtn) clearBtn.style.display = 'none';
+    const grid = document.querySelector('.grammar-catalog-grid');
+    if (grid) {
+      const loc = (typeof state !== 'undefined' && state.uiLang) || 'vi';
+      grid.innerHTML = buildGrammarCatalogCardsHtml(loc);
+    } else {
+      renderGrammarView();
+    }
   };
 
   window.openGrammarDetail = function (id) {

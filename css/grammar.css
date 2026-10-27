@@ -56,13 +56,13 @@
 }
 
 .grammar-search-row {
+  width: 100%;
   display: flex;
-  gap: 10px;
   align-items: center;
 }
 
 .grammar-search-input-box {
-  flex: 1;
+  width: 100%;
   position: relative;
   display: flex;
   align-items: center;
@@ -70,29 +70,59 @@
 
 .grammar-search-input {
   width: 100%;
+  height: 50px;
   background: var(--bg-muted);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 10px 14px 10px 38px;
-  font-size: 14.5px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 14px;
+  padding: 12px 44px 12px 50px;
+  font-size: 16px;
+  font-weight: 500;
   color: var(--text-primary);
   outline: none;
-  transition: all 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  transition: all 0.2s ease;
   box-sizing: border-box;
 }
 
 .grammar-search-input:focus {
   border-color: var(--accent);
   background: var(--bg-surface);
-  box-shadow: 0 0 0 3px var(--accent-subtle);
+  box-shadow: 0 0 0 3.5px var(--accent-subtle), 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .grammar-search-icon {
   position: absolute;
-  left: 12px;
+  left: 16px;
   color: var(--text-muted);
   pointer-events: none;
-  font-size: 15px;
+  font-size: 20px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.grammar-search-clear-btn {
+  position: absolute;
+  right: 12px;
+  width: 28px;
+  height: 28px;
+  background: var(--border-color);
+  border: none;
+  border-radius: 50%;
+  color: var(--text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  padding: 0;
+}
+
+.grammar-search-clear-btn:hover {
+  background: var(--text-muted);
+  color: #fff;
 }
 
 .grammar-filters-row {
@@ -100,6 +130,23 @@
   flex-wrap: wrap;
   gap: 8px;
   align-items: center;
+}
+
+.grammar-filter-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 82px;
+  flex-shrink: 0;
+}
+
+.grammar-category-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .grammar-chip-group {
@@ -140,14 +187,29 @@
 }
 
 .grammar-select {
-  padding: 6px 10px;
-  border-radius: 10px;
-  border: 1px solid var(--border-color);
+  flex: 1;
+  max-width: 380px;
+  height: 42px;
+  padding: 8px 14px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border-color);
   background: var(--bg-surface);
   color: var(--text-primary);
-  font-size: 13px;
+  font-size: 14px;
+  font-weight: 600;
   outline: none;
   cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.grammar-select:hover {
+  border-color: var(--text-muted);
+}
+
+.grammar-select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-subtle);
 }
 
 /* --- Catalog Grid --- */
@@ -883,6 +945,23 @@
 }
 
 @media (max-width: 600px) {
+  .grammar-search-input {
+    height: 48px;
+    font-size: 15.5px;
+    padding-left: 46px;
+  }
+  .grammar-category-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+  }
+  .grammar-filter-label {
+    min-width: auto;
+  }
+  .grammar-select {
+    width: 100%;
+    max-width: 100%;
+  }
   .fill-blank-options-grid {
     grid-template-columns: 1fr;
   }
