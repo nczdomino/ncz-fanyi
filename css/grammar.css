@@ -59,6 +59,8 @@
   width: 100%;
   display: flex;
   align-items: center;
+  margin: 0;
+  box-sizing: border-box;
 }
 
 .grammar-search-input-box {
@@ -74,14 +76,28 @@
   background: var(--bg-muted);
   border: 1.5px solid var(--border-color);
   border-radius: 14px;
-  padding: 12px 44px 12px 50px;
-  font-size: 16px;
+  padding: 12px 44px 12px 48px;
+  font-size: 16px; /* 16px required on iOS Safari to prevent auto-zoom */
   font-weight: 500;
   color: var(--text-primary);
   outline: none;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
   transition: all 0.2s ease;
   box-sizing: border-box;
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-user-select: text;
+  user-select: text;
+  touch-action: manipulation;
+}
+
+.grammar-search-input::-webkit-search-decoration,
+.grammar-search-input::-webkit-search-cancel-button,
+.grammar-search-input::-webkit-search-results-button,
+.grammar-search-input::-webkit-search-results-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+  display: none;
 }
 
 .grammar-search-input:focus {
@@ -90,16 +106,31 @@
   box-shadow: 0 0 0 3.5px var(--accent-subtle), 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-.grammar-search-icon {
+.grammar-search-icon,
+.grammar-search-icon-btn {
   position: absolute;
-  left: 16px;
+  left: 14px;
+  background: none;
+  border: none;
+  padding: 0;
   color: var(--text-muted);
-  pointer-events: none;
-  font-size: 20px;
+  font-size: 19px;
   line-height: 1;
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+  outline: none;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.grammar-search-icon-btn:active {
+  transform: scale(0.92);
+}
+
+.grammar-search-icon-btn:hover {
+  opacity: 0.85;
 }
 
 .grammar-search-clear-btn {
@@ -959,8 +990,10 @@
 @media (max-width: 600px) {
   .grammar-search-input {
     height: 48px;
-    font-size: 15.5px;
-    padding-left: 46px;
+    font-size: 16px; /* Must remain 16px on mobile to avoid iOS Safari auto-zoom */
+    padding-left: 44px;
+    -webkit-user-select: text;
+    user-select: text;
   }
   .grammar-category-row {
     flex-direction: column;

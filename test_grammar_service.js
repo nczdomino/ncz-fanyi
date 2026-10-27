@@ -295,6 +295,57 @@ const totalItemsInLevels = levels.reduce((sum, l) => sum + l.count, 0);
 assert.strictEqual(totalItemsInLevels, 81, 'Total level counts sum up to 81');
 console.log(`  ✅ Verified 7 HSK levels covering all ${totalItemsInLevels} points`);
 
+// 10. Mobile Search & Input Robustness
+console.log('\n--- 10. Mobile Search Input & Composition Event Verification ---');
+assert(typeof window.handleGrammarSearchInput === 'function', 'handleGrammarSearchInput exposed');
+assert(typeof window.handleGrammarSearchCompositionEnd === 'function', 'handleGrammarSearchCompositionEnd exposed');
+assert(typeof window.handleGrammarSearchSubmit === 'function', 'handleGrammarSearchSubmit exposed');
+assert(typeof window.handleGrammarSearchKeydown === 'function', 'handleGrammarSearchKeydown exposed');
+assert(typeof window.clearGrammarSearch === 'function', 'clearGrammarSearch exposed');
+
+// Mock DOM elements
+let mockBlurred = false;
+const mockInput = {
+  value: 'so sanh',
+  blur: () => { mockBlurred = true; },
+  focus: () => {}
+};
+const mockClearBtn = { style: { display: 'none' } };
+const mockGrid = { innerHTML: '' };
+
+global.document.getElementById = (id) => {
+  if (id === 'grammar-search-input') return mockInput;
+  if (id === 'grammar-search-clear-btn') return mockClearBtn;
+  return null;
+};
+global.document.querySelector = (sel) => {
+  if (sel === '.grammar-catalog-grid') return mockGrid;
+  return null;
+};
+
+// Test composition end (IME on mobile)
+window.handleGrammarSearchCompositionEnd({ target: { value: '比' } });
+assert.strictEqual(grammarStore.getState().query, '比', 'CompositionEnd immediately commits IME text to store');
+assert.strictEqual(mockClearBtn.style.display, 'flex', 'Clear button shown on composition end');
+assert(mockGrid.innerHTML.includes('grammar-card'), 'Grid rendered cards for search query');
+console.log('  ✅ handleGrammarSearchCompositionEnd handles mobile IME committed text');
+
+// Test submit (Mobile Search/Go action)
+let prevented = false;
+mockInput.value = 'hsk1';
+window.handleGrammarSearchSubmit({ preventDefault: () => { prevented = true; } });
+assert(prevented, 'Submit event default is prevented');
+assert(mockBlurred, 'Input is blurred on submit to dismiss mobile virtual keyboard');
+assert.strictEqual(grammarStore.getState().query, 'hsk1', 'Store query updated to submitted value');
+console.log('  ✅ handleGrammarSearchSubmit handles mobile Go/Search and dismisses keyboard');
+
+// Test clear
+window.clearGrammarSearch();
+assert.strictEqual(grammarStore.getState().query, '', 'Store query cleared');
+assert.strictEqual(mockInput.value, '', 'Input value cleared');
+assert.strictEqual(mockClearBtn.style.display, 'none', 'Clear button hidden');
+console.log('  ✅ clearGrammarSearch clears state, input and updates DOM grid');
+
 console.log('\n========================================');
 console.log('🎉 ALL HSK GRAMMAR SYSTEM TESTS PASSED 100%!');
 console.log('========================================\n');

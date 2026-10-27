@@ -726,13 +726,23 @@
 
         <div class="grammar-controls">
           <!-- Row 1: Large & Prominent Search Bar -->
-          <div class="grammar-search-row">
+          <form class="grammar-search-row" action="javascript:void(0)" onsubmit="handleGrammarSearchSubmit(event)" role="search">
             <div class="grammar-search-input-box">
-              <span class="grammar-search-icon">🔍</span>
-              <input type="search" id="grammar-search-input" class="grammar-search-input" placeholder="${loc === 'ja' ? '文法名、ピンイン、キーワードで検索...' : (loc === 'en' ? 'Search grammar by name, pinyin, formula...' : 'Tìm kiếm ngữ pháp, pinyin, cấu trúc...')}" value="${escapeHtml(gState.query)}" oninput="handleGrammarSearchInput(this.value)">
+              <button type="submit" class="grammar-search-icon-btn" title="${loc === 'ja' ? '検索' : (loc === 'en' ? 'Search' : 'Tìm kiếm')}" aria-label="${loc === 'ja' ? '検索' : (loc === 'en' ? 'Search' : 'Tìm kiếm')}">🔍</button>
+              <input type="search" id="grammar-search-input" class="grammar-search-input" 
+                placeholder="${loc === 'ja' ? '文法名、ピンイン、キーワードで検索...' : (loc === 'en' ? 'Search grammar by name, pinyin, formula...' : 'Tìm kiếm ngữ pháp, pinyin, cấu trúc...')}" 
+                value="${escapeHtml(gState.query)}" 
+                oninput="handleGrammarSearchInput(event)" 
+                oncompositionend="handleGrammarSearchCompositionEnd(event)"
+                onkeydown="handleGrammarSearchKeydown(event)"
+                autocomplete="off" 
+                autocorrect="off" 
+                autocapitalize="off" 
+                spellcheck="false" 
+                enterkeyhint="search">
               <button type="button" id="grammar-search-clear-btn" class="grammar-search-clear-btn" style="display:${gState.query ? 'flex' : 'none'};" onclick="clearGrammarSearch()" title="${loc === 'ja' ? 'クリア' : (loc === 'en' ? 'Clear' : 'Xóa')}">✕</button>
             </div>
-          </div>
+          </form>
 
           <!-- Row 2: Category Filter Row (Placed Below Search Bar) -->
           <div class="grammar-filters-row grammar-category-row">
@@ -924,7 +934,17 @@
   let _grammarSearchTimer = null;
   let _grammarSearchRaf = null;
 
-  window.handleGrammarSearchInput = function (val) {
+  function extractGrammarSearchValue(eventOrVal) {
+    if (eventOrVal && eventOrVal.target) {
+      return String(eventOrVal.target.value == null ? '' : eventOrVal.target.value);
+    }
+    if (typeof eventOrVal === 'string') return eventOrVal;
+    const input = document.getElementById('grammar-search-input');
+    return input ? input.value : '';
+  }
+
+  window.handleGrammarSearchInput = function (eventOrVal) {
+    const val = extractGrammarSearchValue(eventOrVal);
     const clearBtn = document.getElementById('grammar-search-clear-btn');
     if (clearBtn) {
       clearBtn.style.display = val ? 'flex' : 'none';
@@ -959,6 +979,61 @@
     }, 60);
   };
 
+  window.handleGrammarSearchCompositionEnd = function (event) {
+    const val = extractGrammarSearchValue(event);
+    if (_grammarSearchTimer) { clearTimeout(_grammarSearchTimer); _grammarSearchTimer = null; }
+    if (_grammarSearchRaf) {
+      if (typeof cancelAnimationFrame === 'function') cancelAnimationFrame(_grammarSearchRaf);
+      _grammarSearchRaf = null;
+    }
+    grammarStore.setState({ query: val });
+    const clearBtn = document.getElementById('grammar-search-clear-btn');
+    if (clearBtn) {
+      clearBtn.style.display = val ? 'flex' : 'none';
+    }
+    const grid = document.querySelector('.grammar-catalog-grid');
+    if (grid) {
+      const loc = (typeof state !== 'undefined' && state.uiLang) || 'vi';
+      grid.innerHTML = buildGrammarCatalogCardsHtml(loc);
+    }
+  };
+
+  window.handleGrammarSearchSubmit = function (event) {
+    if (event && typeof event.preventDefault === 'function') {
+      event.preventDefault();
+    }
+    if (_grammarSearchTimer) { clearTimeout(_grammarSearchTimer); _grammarSearchTimer = null; }
+    if (_grammarSearchRaf) {
+      if (typeof cancelAnimationFrame === 'function') cancelAnimationFrame(_grammarSearchRaf);
+      _grammarSearchRaf = null;
+    }
+    const input = document.getElementById('grammar-search-input');
+    const val = input ? input.value : '';
+    grammarStore.setState({ query: val });
+    const clearBtn = document.getElementById('grammar-search-clear-btn');
+    if (clearBtn) {
+      clearBtn.style.display = val ? 'flex' : 'none';
+    }
+    const grid = document.querySelector('.grammar-catalog-grid');
+    if (grid) {
+      const loc = (typeof state !== 'undefined' && state.uiLang) || 'vi';
+      grid.innerHTML = buildGrammarCatalogCardsHtml(loc);
+    } else {
+      renderGrammarView();
+    }
+    // Dismiss mobile virtual keyboard on submit/Go
+    if (input && typeof input.blur === 'function') {
+      input.blur();
+    }
+  };
+
+  window.handleGrammarSearchKeydown = function (event) {
+    if (event && (event.key === 'Enter' || event.keyCode === 13)) {
+      if (typeof event.preventDefault === 'function') event.preventDefault();
+      handleGrammarSearchSubmit(event);
+    }
+  };
+
   window.clearGrammarSearch = function () {
     if (_grammarSearchTimer) { clearTimeout(_grammarSearchTimer); _grammarSearchTimer = null; }
     if (_grammarSearchRaf) {
@@ -967,7 +1042,10 @@
     }
     grammarStore.setState({ query: '' });
     const input = document.getElementById('grammar-search-input');
-    if (input) input.value = '';
+    if (input) {
+      input.value = '';
+      input.focus();
+    }
     const clearBtn = document.getElementById('grammar-search-clear-btn');
     if (clearBtn) clearBtn.style.display = 'none';
     const grid = document.querySelector('.grammar-catalog-grid');
