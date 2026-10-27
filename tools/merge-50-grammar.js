@@ -29,22 +29,24 @@ const currentSamples = JSON.parse(fs.readFileSync(samplesPath, 'utf8'));
 
 console.log(`Current samples count: ${currentSamples.length}`);
 
-// Check uniqueness
-const existingIds = new Set(currentSamples.map(x => x.id));
-new50.forEach(item => {
-  if (existingIds.has(item.id)) {
-    throw new Error(`Duplicate id detected: ${item.id}`);
-  }
-  existingIds.add(item.id);
-});
-
-// Merge
-const mergedSamples = [...currentSamples, ...new50];
-assert.strictEqual(mergedSamples.length, 67, 'Total merged samples must be 67');
-
-// Save JSON
-fs.writeFileSync(samplesPath, JSON.stringify(mergedSamples, null, 2), 'utf8');
-console.log(`✅ Saved ${mergedSamples.length} total samples into ${samplesPath}`);
+let mergedSamples;
+if (currentSamples.length === 67) {
+  mergedSamples = currentSamples;
+  console.log(`Samples already merged (67 items). Re-generating bundles.`);
+} else {
+  // Check uniqueness against existing
+  const existingIds = new Set(currentSamples.map(x => x.id));
+  new50.forEach(item => {
+    if (existingIds.has(item.id)) {
+      throw new Error(`Duplicate id detected: ${item.id}`);
+    }
+    existingIds.add(item.id);
+  });
+  mergedSamples = [...currentSamples, ...new50];
+  assert.strictEqual(mergedSamples.length, 67, 'Total merged samples must be 67');
+  fs.writeFileSync(samplesPath, JSON.stringify(mergedSamples, null, 2), 'utf8');
+  console.log(`✅ Saved ${mergedSamples.length} total samples into ${samplesPath}`);
+}
 
 // Update grammar-data.js bundle
 const bundleContent = `/**
@@ -66,9 +68,9 @@ const bundleContent = `/**
     root.HSK_GRAMMAR_SAMPLES = data.HSK_GRAMMAR_SAMPLES;
   }
 })(typeof window !== 'undefined' ? window : globalThis, function () {
-  var HSK_GRAMMAR_CATALOG = ${JSON.stringify(catalog, null, 2)};
+  var HSK_GRAMMAR_CATALOG = ${JSON.stringify(catalog)};
 
-  var HSK_GRAMMAR_SAMPLES = ${JSON.stringify(mergedSamples, null, 2)};
+  var HSK_GRAMMAR_SAMPLES = ${JSON.stringify(mergedSamples)};
 
   return {
     HSK_GRAMMAR_CATALOG: HSK_GRAMMAR_CATALOG,
@@ -80,3 +82,4 @@ const bundleContent = `/**
 fs.writeFileSync(bundlePath, bundleContent, 'utf8');
 console.log(`✅ Updated offline bundle in ${bundlePath}`);
 console.log(`🎉 50 new grammar lessons successfully merged! Total detailed lessons: ${mergedSamples.length}!`);
+
