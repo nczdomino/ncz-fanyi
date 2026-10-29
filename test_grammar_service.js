@@ -168,6 +168,15 @@ assert(typeof window.toggleStageAccordion === 'function', 'toggleStageAccordion 
 assert(typeof window.expandAllStages === 'function', 'expandAllStages is exposed');
 assert(typeof window.setGrammarLevelFilter === 'function', 'setGrammarLevelFilter is exposed');
 assert(typeof window.setDetailViewMode === 'function', 'setDetailViewMode is exposed');
+assert(typeof window.selectStage === 'function', 'selectStage is exposed');
+assert(typeof window.prevStage === 'function', 'prevStage is exposed');
+assert(typeof window.nextStage === 'function', 'nextStage is exposed');
+
+// Test stage selection controls
+window.selectStage(3);
+window.nextStage();
+window.prevStage();
+console.log('  ✅ Stage Rail and Timeline controls (selectStage, prevStage, nextStage) verified');
 
 // Test Mock Formula and TokenizedSentence
 const sampleItem = joinedAll[0].detail;

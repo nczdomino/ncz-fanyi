@@ -1,6 +1,6 @@
 {
   "name": "halouzhongwen",
-  "version": "1.4.9",
+  "version": "1.5.0",
   "private": true,
   "description": "Halou - The ultimate Chinese smart dictionary & context-aware translator with instant Pinyin annotation for Vietnamese, Japanese and English learners",
   "scripts": {

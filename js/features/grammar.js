@@ -38,18 +38,24 @@
     ? window.grammarStore
     : ((typeof grammarStore !== 'undefined') ? grammarStore : null);
 
-  // Canvas Runtime State (Lego selection, active step, challenge, accordion, smart level filter)
+  // Canvas Runtime State (Lego selection, active step, challenge, stage rail & timeline)
   const canvasState = {
     activeStep: 1, // 1: Cốt lõi, 2: Lắp ghép, 3: Bẫy hay sai, 4: Thử tài
     detailViewMode: 'stepper', // 'stepper' (Từng bước) | 'accordion' (Mở rộng toàn bộ)
     selectedLevelFilter: 'ALL', // 'ALL' | 'HSK1' | 'HSK2' | 'HSK3'
-    openStages: {}, // Collapsible stage accordions (true | false)
+    selectedStageNum: 1, // Currently focused station on the Stage Rail (1..6)
+    openStages: {}, // Collapsible stage accordions fallback
     legoSelections: {}, // { [grammarId]: [slot0Index, slot1Index, slot2Index] }
     challenge: {} // { [grammarId]: { placed: [], completed: false, isCorrect: false } }
   };
 
   const STAGE_META = {
     1: {
+      stationName: {
+        vi: "Ga 1: Sinh tồn & Giao tiếp",
+        en: "Station 1: Survival Core",
+        ja: "第1駅：基本サバイバル"
+      },
       title: {
         vi: "Chặng 1: Sinh tồn & Giao tiếp nền tảng",
         en: "Stage 1: Survival & Core Conversation",
@@ -65,6 +71,11 @@
       }
     },
     2: {
+      stationName: {
+        vi: "Ga 2: Thời gian & Trật tự từ",
+        en: "Station 2: Time & Order",
+        ja: "第2駅：時間詞と語順"
+      },
       title: {
         vi: "Chặng 2: Trật tự thời gian & Phương thức hành động",
         en: "Stage 2: Time Order & Action Methods",
@@ -80,6 +91,11 @@
       }
     },
     3: {
+      stationName: {
+        vi: "Ga 3: Trạng thái & So sánh",
+        en: "Station 3: States & Comparison",
+        ja: "第3駅：持続と実践比較"
+      },
       title: {
         vi: "Chặng 3: Trạng thái & So sánh thực tế",
         en: "Stage 3: Ongoing States & Real-World Comparisons",
@@ -95,6 +111,11 @@
       }
     },
     4: {
+      stationName: {
+        vi: "Ga 4: Bổ ngữ & Thời lượng",
+        en: "Station 4: Complements & Timing",
+        ja: "第4駅：補語と動作継続"
+      },
       title: {
         vi: "Chặng 4: Bổ ngữ & Cấu trúc thời gian hành động",
         en: "Stage 4: Complements & Action Timing",
@@ -110,6 +131,11 @@
       }
     },
     5: {
+      stationName: {
+        vi: "Ga 5: Cấu trúc 把 / 被 & Liên từ",
+        en: "Station 5: 把 / 被 & Connectors",
+        ja: "第5駅：把／被と接続詞"
+      },
       title: {
         vi: "Chặng 5: Cấu trúc câu then chốt (把 / 被) & Liên từ logic",
         en: "Stage 5: Core Sentence Patterns (把 / 被) & Logic Connectors",
@@ -125,6 +151,11 @@
       }
     },
     6: {
+      stationName: {
+        vi: "Ga 6: Bổ ngữ trạng thái & Phức hợp",
+        en: "Station 6: Advanced & Complex",
+        ja: "第6駅：様態補語と複合構文"
+      },
       title: {
         vi: "Chặng 6: Biểu đạt phức hợp & Bổ ngữ trình độ/trạng thái",
         en: "Stage 6: Advanced Expressions & Degree Complements",
@@ -233,9 +264,41 @@
     }
   };
 
-  // --- Stage Accordion Toggles & Smart Level Filter ---
+  // --- Stage Rail Navigation & Smart Level Filter ---
+  window.selectStage = function (stageNum) {
+    const num = Math.max(1, Math.min(6, Number(stageNum) || 1));
+    canvasState.selectedStageNum = num;
+    const meta = STAGE_META[num];
+    if (meta && canvasState.selectedLevelFilter !== 'ALL' && meta.level !== canvasState.selectedLevelFilter) {
+      canvasState.selectedLevelFilter = meta.level;
+    }
+    renderCanvasCatalogView();
+    if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof document.querySelector === 'function') {
+      const hero = document.querySelector('.stage-hero-panel');
+      if (hero && typeof window.innerWidth === 'number' && window.innerWidth <= 768 && typeof hero.scrollIntoView === 'function') {
+        hero.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+  };
+
+  window.prevStage = function () {
+    const cur = canvasState.selectedStageNum || 1;
+    if (cur > 1) {
+      window.selectStage(cur - 1);
+    }
+  };
+
+  window.nextStage = function () {
+    const cur = canvasState.selectedStageNum || 1;
+    if (cur < 6) {
+      window.selectStage(cur + 1);
+    }
+  };
+
+  // Backwards compatibility for tests & accordion views
   window.toggleStageAccordion = function (stageNum) {
     canvasState.openStages[stageNum] = !canvasState.openStages[stageNum];
+    canvasState.selectedStageNum = Number(stageNum);
     renderCanvasCatalogView();
   };
 
@@ -248,6 +311,19 @@
 
   window.setGrammarLevelFilter = function (level) {
     canvasState.selectedLevelFilter = level;
+    if (level === 'HSK1') {
+      if (canvasState.selectedStageNum !== 1 && canvasState.selectedStageNum !== 2) {
+        canvasState.selectedStageNum = 1;
+      }
+    } else if (level === 'HSK2') {
+      if (canvasState.selectedStageNum !== 3 && canvasState.selectedStageNum !== 4) {
+        canvasState.selectedStageNum = 3;
+      }
+    } else if (level === 'HSK3') {
+      if (canvasState.selectedStageNum !== 5 && canvasState.selectedStageNum !== 6) {
+        canvasState.selectedStageNum = 5;
+      }
+    }
     renderCanvasCatalogView();
   };
 
@@ -358,7 +434,7 @@
     }
   };
 
-  // --- Catalog (Roadmap) Renderer with Smart Focus & Collapsible Stages ---
+  // --- Catalog (Roadmap) Renderer with Stage Rail & Timeline Flow ---
   function renderCanvasCatalogView() {
     const container = document.getElementById('view-grammar');
     if (!container) return;
@@ -385,110 +461,191 @@
 
     const nextUnfinishedItem = allCatalog.find(c => !completedList.includes(c.id));
 
-    // Filter stages by Level Tab if not searching
+    // Maintain selected stage on the Stage Rail
+    if (!canvasState.selectedStageNum) {
+      canvasState.selectedStageNum = activeStageNum;
+    }
+
     const selectedLevel = canvasState.selectedLevelFilter || 'ALL';
-    const visibleStageGroups = allStageGroups.filter(st => {
-      if (query) return true;
+    const railStageGroups = allStageGroups.filter(st => {
       if (selectedLevel === 'ALL') return true;
       return STAGE_META[st]?.level === selectedLevel;
     });
 
-    let totalCardsRendered = 0;
+    if (railStageGroups.length > 0 && !railStageGroups.includes(canvasState.selectedStageNum)) {
+      canvasState.selectedStageNum = railStageGroups[0];
+    }
+    const selectedStageNum = canvasState.selectedStageNum;
 
-    const stageAccordionsHtml = visibleStageGroups.map(stageNum => {
-      const meta = STAGE_META[stageNum] || {};
-      const stageItems = catalog.filter(c => c.stage === stageNum);
-      if (!stageItems.length) return '';
-
-      totalCardsRendered += stageItems.length;
-      const doneInStage = stageItems.filter(it => completedList.includes(it.id)).length;
-      const isStageCompleted = doneInStage === stageItems.length && stageItems.length > 0;
-      const isStageCurrent = (stageNum === activeStageNum);
-      const stagePercent = Math.round((doneInStage / stageItems.length) * 100);
-
-      // Intelligent auto-collapse logic:
-      // 1. Search query: auto-expand matching stages
-      // 2. User clicked explicitly: respect user choice in canvasState.openStages
-      // 3. Default state: ONLY expand the current active learning stage to prevent clutter!
-      let isExpanded = false;
-      if (query) {
-        isExpanded = true;
-      } else if (canvasState.openStages[stageNum] !== undefined) {
-        isExpanded = !!canvasState.openStages[stageNum];
-      } else {
-        isExpanded = isStageCurrent;
-      }
-
-      const cardsHtml = stageItems.map(item => {
-        const isDone = completedList.includes(item.id);
-        const titleLocal = getLocText(item, loc) || item.zh_name;
-        const orderNum = String(item.order || 1).padStart(2, '0');
-
-        return `
-          <div class="grammar-canvas-card ${isDone ? 'is-completed' : ''}" onclick="openGrammarCanvas('${escapeQuotes(item.id)}')">
-            <div class="canvas-card-top">
-              <span class="canvas-order-badge">${orderNum}</span>
-              <span class="canvas-level-pill">${escapeHtml(item.level)}</span>
-              ${isDone ? `<span class="canvas-done-badge">✅ ${loc === 'ja' ? '完了' : (loc === 'en' ? 'Done' : 'Đã học')}</span>` : ''}
-            </div>
-
-            <div class="canvas-card-zh">${escapeHtml(item.zh_name)}</div>
-            <div class="canvas-card-title">${escapeHtml(titleLocal)}</div>
-
-            <div class="canvas-lego-preview">
-              <span class="lego-pill">${escapeHtml(item.formula)}</span>
-            </div>
-
-            <div class="canvas-card-footer">
-              <button type="button" class="canvas-start-btn">
-                <span>${loc === 'ja' ? '学習する' : (loc === 'en' ? 'Start' : 'Khám phá ngay')}</span>
-                <span class="canvas-btn-arrow">→</span>
-              </button>
-            </div>
+    // --- Search Mode Handling ---
+    let searchContentHtml = '';
+    if (query) {
+      if (catalog.length === 0) {
+        searchContentHtml = `
+          <div class="canvas-empty-search">
+            <div class="empty-search-icon">🔍</div>
+            <div class="empty-search-title">${loc === 'ja' ? '該当する文法が見つかりません' : (loc === 'en' ? 'No grammar patterns found' : 'Không tìm thấy cấu trúc phù hợp')}</div>
+            <p class="empty-search-desc">${loc === 'ja' ? 'キーワードやピンインを変えて再度お試しください。' : (loc === 'en' ? 'Try searching with different keywords or pinyin.' : 'Hãy thử tìm bằng từ khóa hoặc pinyin khác nhé.')}</p>
+            <button type="button" class="btn btn-primary btn-sm" onclick="clearGrammarSearch()">
+              ${loc === 'ja' ? '検索をリセット' : (loc === 'en' ? 'Reset Search' : 'Xóa bộ lọc tìm kiếm')}
+            </button>
           </div>
         `;
-      }).join('');
-
-      let statusBadgeHtml = '';
-      if (isStageCompleted) {
-        statusBadgeHtml = `<span class="stage-status-badge is-completed">🏆 ${loc === 'ja' ? '修了' : (loc === 'en' ? 'Mastered' : 'Hoàn thành')}</span>`;
-      } else if (isStageCurrent) {
-        statusBadgeHtml = `<span class="stage-status-badge is-active">🎯 ${loc === 'ja' ? '学習中' : (loc === 'en' ? 'In Progress' : 'Đang học')}</span>`;
       } else {
-        statusBadgeHtml = `<span class="stage-status-badge is-upcoming">⏳ ${loc === 'ja' ? '未着手' : (loc === 'en' ? 'Upcoming' : 'Sắp học')}</span>`;
+        const searchCardsHtml = catalog.map(item => {
+          const isDone = completedList.includes(item.id);
+          const titleLocal = getLocText(item, loc) || item.zh_name;
+          const orderNum = String(item.order || 1).padStart(2, '0');
+          const stMeta = STAGE_META[item.stage] || {};
+
+          return `
+            <div class="grammar-canvas-card ${isDone ? 'is-completed' : ''}" onclick="openGrammarCanvas('${escapeQuotes(item.id)}')">
+              <div class="canvas-card-top">
+                <span class="canvas-order-badge">${loc === 'ja' ? `駅 ${item.stage}` : (loc === 'en' ? `Stage ${item.stage}` : `Chặng ${item.stage}`)} • #${orderNum}</span>
+                <span class="canvas-level-pill">${escapeHtml(item.level)}</span>
+                ${isDone ? `<span class="canvas-done-badge">✅ ${loc === 'ja' ? '完了' : (loc === 'en' ? 'Done' : 'Đã học')}</span>` : ''}
+              </div>
+
+              <div class="canvas-card-zh">${escapeHtml(item.zh_name)}</div>
+              <div class="canvas-card-title">${escapeHtml(titleLocal)}</div>
+
+              <div class="canvas-lego-preview">
+                <span class="lego-pill">${escapeHtml(item.formula)}</span>
+              </div>
+
+              <div class="canvas-card-footer">
+                <button type="button" class="canvas-start-btn">
+                  <span>${isDone ? (loc === 'ja' ? '復習する' : (loc === 'en' ? 'Review' : 'Ôn tập lại')) : (loc === 'ja' ? '学習する' : (loc === 'en' ? 'Start' : 'Khám phá ngay'))}</span>
+                  <span class="canvas-btn-arrow">→</span>
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        searchContentHtml = `
+          <div class="grammar-search-results-banner">
+            <div class="search-banner-text">
+              <span class="search-banner-icon">🔍</span>
+              <span>${loc === 'ja' ? `「${escapeHtml(query)}」の検索結果: <b>${catalog.length}</b> 件` : (loc === 'en' ? `Search results for "${escapeHtml(query)}": <b>${catalog.length}</b> patterns` : `Tìm thấy <b>${catalog.length}</b> cấu trúc phù hợp với "${escapeHtml(query)}"`)}</span>
+            </div>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="clearGrammarSearch()">
+              ${loc === 'ja' ? '✕ 検索解除' : (loc === 'en' ? '✕ Clear' : '✕ Bỏ tìm kiếm')}
+            </button>
+          </div>
+          <div class="grammar-canvas-grid">${searchCardsHtml}</div>
+        `;
+      }
+    }
+
+    // --- Normal Mode: Stage Rail & Timeline Data ---
+    // 1. Stage Rail Buttons
+    const railButtonsHtml = railStageGroups.map(stNum => {
+      const meta = STAGE_META[stNum] || {};
+      const stItems = allCatalog.filter(c => c.stage === stNum);
+      const doneInSt = stItems.filter(it => completedList.includes(it.id)).length;
+      const isStDone = doneInSt === stItems.length && stItems.length > 0;
+      const isStActive = (stNum === activeStageNum);
+      const isStSelected = (stNum === selectedStageNum);
+      const stPercent = stItems.length ? Math.round((doneInSt / stItems.length) * 100) : 0;
+      const stationTitle = getLocText(meta.stationName || meta.title, loc);
+
+      let badgeContent = '';
+      if (isStDone) {
+        badgeContent = `<span class="rail-badge done">✓ 5/5</span>`;
+      } else if (isStActive) {
+        badgeContent = `<span class="rail-badge active"><span class="rail-pulse-dot"></span>${loc === 'ja' ? '学習中' : (loc === 'en' ? 'Active' : 'Đang học')}</span>`;
+      } else {
+        badgeContent = `<span class="rail-badge upcoming">${doneInSt}/${stItems.length}</span>`;
       }
 
       return `
-        <div class="stage-accordion-box ${isExpanded ? 'is-open' : 'is-collapsed'} ${isStageCurrent ? 'is-current-stage' : ''}">
-          <div class="stage-accordion-header" onclick="toggleStageAccordion(${stageNum})" role="button" tabindex="0">
-            <div class="stage-header-left">
-              <span class="stage-icon-circle">${meta.icon}</span>
-              <div class="stage-text-group">
-                <div class="stage-title-row">
-                  <span class="stage-main-title">${escapeHtml(getLocText(meta.title, loc))}</span>
-                  <span class="stage-level-badge">${escapeHtml(getLocText(meta.tag, loc))}</span>
-                  ${statusBadgeHtml}
-                </div>
-                <div class="stage-desc-text">${escapeHtml(getLocText(meta.desc, loc))}</div>
+        <button
+          type="button"
+          class="stage-rail-btn ${isStSelected ? 'is-selected' : ''} ${isStDone ? 'is-completed' : ''} ${isStActive ? 'is-current-learning' : ''}"
+          onclick="selectStage(${stNum})"
+          role="tab"
+          aria-selected="${isStSelected}"
+          aria-label="${escapeHtml(stationTitle)}"
+        >
+          <div class="rail-btn-top">
+            <span class="rail-btn-icon">${meta.icon}</span>
+            ${badgeContent}
+          </div>
+          <div class="rail-btn-name">${escapeHtml(stationTitle)}</div>
+          <div class="rail-btn-sub">
+            <span class="rail-btn-level">${meta.level}</span>
+            <span class="rail-btn-pct">${stPercent}%</span>
+          </div>
+          ${isStSelected ? '<div class="rail-active-indicator"></div>' : ''}
+        </button>
+      `;
+    }).join('');
+
+    // 2. Active Stage Hero Data
+    const curMeta = STAGE_META[selectedStageNum] || STAGE_META[1];
+    const curStageItems = allCatalog.filter(c => c.stage === selectedStageNum);
+    const curDone = curStageItems.filter(it => completedList.includes(it.id)).length;
+    const curIsDone = curDone === curStageItems.length && curStageItems.length > 0;
+    const curIsActive = (selectedStageNum === activeStageNum);
+    const curPercent = curStageItems.length ? Math.round((curDone / curStageItems.length) * 100) : 0;
+
+    let curStatusBadgeHtml = '';
+    if (curIsDone) {
+      curStatusBadgeHtml = `<span class="stage-status-badge is-completed">🏆 ${loc === 'ja' ? '修了' : (loc === 'en' ? 'Mastered' : 'Hoàn thành')}</span>`;
+    } else if (curIsActive) {
+      curStatusBadgeHtml = `<span class="stage-status-badge is-active">🎯 ${loc === 'ja' ? '学習中' : (loc === 'en' ? 'In Progress' : 'Đang học')}</span>`;
+    } else {
+      curStatusBadgeHtml = `<span class="stage-status-badge is-upcoming">⏳ ${loc === 'ja' ? '未着手' : (loc === 'en' ? 'Upcoming' : 'Sắp học')}</span>`;
+    }
+
+    // 3. Timeline Items for Selected Stage
+    const timelineItemsHtml = curStageItems.map((item, idx) => {
+      const isDone = completedList.includes(item.id);
+      const isNextUp = (item.id === nextUnfinishedItem?.id);
+      const titleLocal = getLocText(item, loc) || item.zh_name;
+      const orderNum = String(item.order || (idx + 1)).padStart(2, '0');
+
+      let nodeHtml = '';
+      if (isDone) {
+        nodeHtml = `<div class="timeline-node is-done" title="${loc === 'ja' ? '完了' : (loc === 'en' ? 'Completed' : 'Đã học')}">✓</div>`;
+      } else if (isNextUp) {
+        nodeHtml = `<div class="timeline-node is-active" title="${loc === 'ja' ? '次のレッスン' : (loc === 'en' ? 'Next Up' : 'Đang học')}"><span class="node-pulse-ring"></span>📍</div>`;
+      } else {
+        nodeHtml = `<div class="timeline-node is-upcoming">${orderNum}</div>`;
+      }
+
+      return `
+        <div class="timeline-flow-item ${isDone ? 'is-completed' : ''} ${isNextUp ? 'is-next-up' : ''}">
+          <div class="timeline-node-wrap">
+            ${nodeHtml}
+          </div>
+          <div class="timeline-card" onclick="openGrammarCanvas('${escapeQuotes(item.id)}')">
+            <div class="timeline-card-header">
+              <span class="timeline-order-badge">#${orderNum}</span>
+              <span class="timeline-level-badge">${escapeHtml(item.level)}</span>
+              ${isDone ? `<span class="timeline-done-pill">✅ ${loc === 'ja' ? '完了' : (loc === 'en' ? 'Completed' : 'Đã học')}</span>` : (isNextUp ? `<span class="timeline-next-pill">🎯 ${loc === 'ja' ? 'おすすめ' : (loc === 'en' ? 'Next Up' : 'Học tiếp')}</span>` : '')}
+            </div>
+
+            <div class="timeline-card-body">
+              <div class="timeline-card-zh">${escapeHtml(item.zh_name)}</div>
+              <div class="timeline-card-title">${escapeHtml(titleLocal)}</div>
+            </div>
+
+            <div class="timeline-lego-strip">
+              <div class="timeline-lego-pill">
+                <span class="lego-icon">🧩</span>
+                <span class="lego-formula">${escapeHtml(item.formula)}</span>
               </div>
             </div>
 
-            <div class="stage-header-right">
-              <div class="stage-progress-chip">
-                <span>${doneInStage}/${stageItems.length}</span>
-                <div class="stage-mini-bar"><div class="stage-mini-fill" style="width:${stagePercent}%;"></div></div>
-              </div>
-              <button type="button" class="stage-toggle-btn" aria-label="Toggle">
-                <span class="stage-chevron">${isExpanded ? '▲' : '▼'}</span>
+            <div class="timeline-card-footer">
+              <button type="button" class="timeline-action-btn ${isDone ? 'is-review' : 'is-start'}">
+                <span>${isDone ? (loc === 'ja' ? '復習する' : (loc === 'en' ? 'Review' : 'Ôn tập lại')) : (loc === 'ja' ? '学習スタート' : (loc === 'en' ? 'Start' : 'Khám phá ngay'))}</span>
+                <span class="btn-arrow">→</span>
               </button>
             </div>
           </div>
-
-          ${isExpanded ? `
-            <div class="stage-accordion-body">
-              <div class="grammar-canvas-grid">${cardsHtml}</div>
-            </div>
-          ` : ''}
         </div>
       `;
     }).join('');
@@ -534,7 +691,7 @@
             <div class="continue-card-left">
               <span class="continue-icon">🎯</span>
               <div class="continue-text-wrap">
-                <div class="continue-tag">${loc === 'ja' ? '次のレッスン' : (loc === 'en' ? 'Next Up' : 'Chặng đang chinh phục')} • Chặng ${nextUnfinishedItem.stage}</div>
+                <div class="continue-tag">${loc === 'ja' ? '次のレッスン' : (loc === 'en' ? 'Next Up' : 'Chặng đang chinh phục')} • ${loc === 'ja' ? `駅 ${nextUnfinishedItem.stage}` : (loc === 'en' ? `Stage ${nextUnfinishedItem.stage}` : `Chặng ${nextUnfinishedItem.stage}`)}</div>
                 <div class="continue-title">
                   <b>${escapeHtml(nextUnfinishedItem.zh_name)}</b> — ${escapeHtml(getLocText(nextUnfinishedItem, loc))}
                 </div>
@@ -556,7 +713,7 @@
           </div>
         `}
 
-        <!-- Master Roadmap Progress & Controls -->
+        <!-- Master Roadmap Progress -->
         <div class="grammar-master-bar">
           <div class="master-bar-left">
             <div class="master-progress-label">
@@ -564,12 +721,9 @@
             </div>
           </div>
           <div class="master-bar-right">
-            <button type="button" class="btn btn-secondary btn-sm" onclick="expandAllStages(true)">
-              📂 ${loc === 'ja' ? 'すべて展開' : (loc === 'en' ? 'Expand All' : 'Mở tất cả')}
-            </button>
-            <button type="button" class="btn btn-secondary btn-sm" onclick="expandAllStages(false)">
-              📁 ${loc === 'ja' ? 'すべて折りたたむ' : (loc === 'en' ? 'Collapse All' : 'Thu gọn')}
-            </button>
+            <div class="master-stage-indicator">
+              ${loc === 'ja' ? `選択中: 第${selectedStageNum}駅` : (loc === 'en' ? `Stage: ${selectedStageNum}/6` : `Đang xem: Chặng ${selectedStageNum}/6`)}
+            </div>
           </div>
         </div>
 
@@ -589,19 +743,79 @@
           </button>
         </div>
 
-        <!-- Stage Accordions or Empty State -->
-        ${totalCardsRendered > 0 ? `
-          <div class="grammar-stages-container">
-            ${stageAccordionsHtml}
-          </div>
-        ` : `
-          <div class="canvas-empty-search">
-            <div class="empty-search-icon">🔍</div>
-            <div class="empty-search-title">${loc === 'ja' ? '該当する文法が見つかりません' : (loc === 'en' ? 'No grammar patterns found' : 'Không tìm thấy cấu trúc phù hợp')}</div>
-            <p class="empty-search-desc">${loc === 'ja' ? 'キーワードやピンインを変えて再度お試しください。' : (loc === 'en' ? 'Try searching with different keywords or pinyin.' : 'Hãy thử tìm bằng từ khóa hoặc pinyin khác nhé.')}</p>
-            <button type="button" class="btn btn-primary btn-sm" onclick="clearGrammarSearch()">
-              ${loc === 'ja' ? '検索をリセット' : (loc === 'en' ? 'Reset Search' : 'Xóa bộ lọc tìm kiếm')}
-            </button>
+        <!-- Dynamic Main Content: Search Results OR Stage Rail + Timeline Flow -->
+        ${query ? searchContentHtml : `
+          <div class="stage-flow-view">
+            <!-- 1. Stage Rail Section (Metro Track Capsules) -->
+            <div class="stage-rail-section">
+              <div class="stage-rail-top-bar">
+                <div class="stage-rail-title-group">
+                  <span class="stage-rail-icon">🚆</span>
+                  <span class="stage-rail-heading">${loc === 'ja' ? '学習ルート駅 (全6ステージ)' : (loc === 'en' ? 'Stage Route Stations (6 Stages)' : 'Tuyến Trạm Chặng (Lộ trình 6 Chặng)')}</span>
+                </div>
+                <div class="stage-rail-quick-hint">
+                  ${loc === 'ja' ? '駅をタップして切り替え' : (loc === 'en' ? 'Tap station to switch' : 'Chạm trạm ga để chuyển chặng')}
+                </div>
+              </div>
+              <div class="stage-rail-scroller">
+                <div class="stage-rail-bar" role="tablist">
+                  ${railButtonsHtml}
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. Active Stage Focus Hero Panel -->
+            <div class="stage-hero-panel">
+              <div class="stage-hero-top">
+                <div class="stage-hero-title-group">
+                  <div class="stage-hero-pill-row">
+                    <span class="stage-hero-icon">${curMeta.icon}</span>
+                    <span class="stage-hero-level-tag">${escapeHtml(getLocText(curMeta.tag, loc))}</span>
+                    ${curStatusBadgeHtml}
+                  </div>
+                  <h2 class="stage-hero-title">${escapeHtml(getLocText(curMeta.title, loc))}</h2>
+                  <p class="stage-hero-desc">${escapeHtml(getLocText(curMeta.desc, loc))}</p>
+                </div>
+
+                <div class="stage-hero-nav-controls">
+                  <button type="button" class="stage-nav-btn prev" onclick="prevStage()" ${selectedStageNum <= 1 ? 'disabled' : ''} title="${loc === 'ja' ? '前のステージ' : (loc === 'en' ? 'Previous Stage' : 'Chặng trước')}">
+                    <span class="nav-arrow">←</span>
+                    <span class="nav-text">${loc === 'ja' ? '前駅' : (loc === 'en' ? 'Prev' : 'Chặng trước')}</span>
+                  </button>
+                  <div class="stage-nav-counter">
+                    <span class="stage-nav-cur">${selectedStageNum}</span>
+                    <span class="stage-nav-sep">/</span>
+                    <span class="stage-nav-tot">6</span>
+                  </div>
+                  <button type="button" class="stage-nav-btn next" onclick="nextStage()" ${selectedStageNum >= 6 ? 'disabled' : ''} title="${loc === 'ja' ? '次のステージ' : (loc === 'en' ? 'Next Stage' : 'Chặng sau')}">
+                    <span class="nav-text">${loc === 'ja' ? '次駅' : (loc === 'en' ? 'Next' : 'Chặng sau')}</span>
+                    <span class="nav-arrow">→</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="stage-hero-progress-section">
+                <div class="stage-progress-labels">
+                  <span class="stage-progress-title">
+                    ${loc === 'ja' ? 'この駅の達成度' : (loc === 'en' ? 'Station Mastery' : 'Tiến độ chặng này')}
+                  </span>
+                  <span class="stage-progress-stats">
+                    <b>${curDone}/${curStageItems.length}</b> ${loc === 'ja' ? 'レッスン完了' : (loc === 'en' ? 'lessons mastered' : 'cấu trúc hoàn thành')} (${curPercent}%)
+                  </span>
+                </div>
+                <div class="stage-progress-track">
+                  <div class="stage-progress-fill" style="width: ${curPercent}%;"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. Illuminated Vertical Timeline Pathway -->
+            <div class="stage-timeline-track">
+              <div class="timeline-spine-line"></div>
+              <div class="timeline-items-list">
+                ${timelineItemsHtml}
+              </div>
+            </div>
           </div>
         `}
       </div>
