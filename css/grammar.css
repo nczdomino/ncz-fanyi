@@ -1535,7 +1535,8 @@
 
 .master-bar-right {
   display: flex;
-  gap: 8px;
+  align-items: center;
+  gap: 10px;
 }
 
 /* Stage Accordion Container & Boxes */
@@ -2342,6 +2343,34 @@
   padding: 4px 10px;
   border-radius: var(--radius-pill);
   border: 1px solid var(--accent-border);
+}
+
+.master-reset-btn {
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-color);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+
+.master-reset-btn:hover {
+  color: var(--accent);
+  border-color: var(--accent-border);
+  background: rgba(217, 45, 67, 0.08);
+  transform: translateY(-1px);
+}
+
+.master-reset-btn:active {
+  transform: translateY(0);
 }
 
 .grammar-canvas-grid {
@@ -3285,10 +3314,20 @@
     gap: 8px;
   }
 
-  .master-bar-right .btn {
+  .master-bar-right .btn,
+  .master-bar-right .master-reset-btn {
     width: 100%;
     justify-content: center;
-    font-size: 12px;
+    font-size: 11.5px;
+    padding: 7px 6px;
+  }
+
+  .master-stage-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 11.5px;
     padding: 7px 6px;
   }
 

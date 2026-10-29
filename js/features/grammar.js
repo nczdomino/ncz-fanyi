@@ -509,6 +509,35 @@
     }
   };
 
+  // --- Reset Grammar Progress (for Multi-Learners / Shared Devices) ---
+  window.resetGrammarProgress = function () {
+    const loc = getLang();
+    const msg = loc === 'ja'
+      ? 'すべての文法学習進捗をリセットして0に戻しますか？\n（新しい学習者が最初から始めることができます）'
+      : (loc === 'en'
+        ? 'Are you sure you want to reset all grammar progress back to 0?\n(This allows a new learner to start fresh from Stage 1)'
+        : 'Bạn có chắc chắn muốn đặt lại toàn bộ tiến độ học ngữ pháp về 0 không?\n(Tiến độ sẽ được làm mới hoàn toàn để người học mới bắt đầu lại từ đầu)');
+
+    if (typeof window !== 'undefined' && typeof window.confirm === 'function') {
+      const ok = window.confirm(msg);
+      if (!ok) return false;
+    }
+
+    try {
+      localStorage.removeItem(STORAGE_COMPLETED_KEY);
+      canvasState.challenge = {};
+      canvasState.legoSelections = {};
+      canvasState.selectedStageNum = 1;
+    } catch (e) {}
+
+    renderCanvasCatalogView();
+
+    if (typeof showToast === 'function') {
+      showToast(loc === 'ja' ? '進捗を0にリセットしました' : (loc === 'en' ? 'Progress reset successfully' : 'Đã đặt lại tiến độ về 0'));
+    }
+    return true;
+  };
+
   // --- Catalog (Roadmap) Renderer with Stage Rail & Timeline Flow ---
   function renderCanvasCatalogView() {
     const container = document.getElementById('view-grammar');
@@ -806,6 +835,9 @@
             <div class="master-stage-indicator">
               ${loc === 'ja' ? `選択中: 第${selectedStageNum}駅` : (loc === 'en' ? `Viewing: Stage ${selectedStageNum}/6` : `Đang xem: Chặng ${selectedStageNum}/6`)}
             </div>
+            <button type="button" class="btn btn-secondary btn-sm master-reset-btn" onclick="resetGrammarProgress()" title="${loc === 'ja' ? '学習進捗を初期化して0に戻す' : (loc === 'en' ? 'Reset learning progress back to 0' : 'Đặt lại toàn bộ tiến độ học về 0')}">
+              🔄 <span>${loc === 'ja' ? '進捗リセット' : (loc === 'en' ? 'Reset' : 'Đặt lại tiến độ')}</span>
+            </button>
           </div>
         </div>
 

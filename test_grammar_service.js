@@ -153,11 +153,20 @@ console.log('  ✅ JoinedGrammarPoint verifies 100% of Stages 1 to 6 Lego Canvas
 // 6. UI Components Rendering Verification
 console.log('\n--- 6. UI Components Rendering ---');
 // Mock browser environment for grammar.js component tests
+let mockStorage = {};
+global.localStorage = {
+  getItem: (k) => mockStorage[k] || null,
+  setItem: (k, v) => { mockStorage[k] = String(v); },
+  removeItem: (k) => { delete mockStorage[k]; },
+  clear: () => { mockStorage = {}; }
+};
+
 global.window = {
   HSK_GRAMMAR_CATALOG: bundledData.HSK_GRAMMAR_CATALOG,
   HSK_GRAMMAR_SAMPLES: bundledData.HSK_GRAMMAR_SAMPLES,
   grammarStore: grammarStore,
-  grammarService: grammarService
+  grammarService: grammarService,
+  confirm: () => true
 };
 global.document = {
   getElementById: () => null,
@@ -183,12 +192,26 @@ assert(typeof window.setDetailViewMode === 'function', 'setDetailViewMode is exp
 assert(typeof window.selectStage === 'function', 'selectStage is exposed');
 assert(typeof window.prevStage === 'function', 'prevStage is exposed');
 assert(typeof window.nextStage === 'function', 'nextStage is exposed');
+assert(typeof window.resetGrammarProgress === 'function', 'resetGrammarProgress is exposed');
 
 // Test stage selection controls
 window.selectStage(3);
 window.nextStage();
 window.prevStage();
 console.log('  ✅ Stage Rail and Timeline controls (selectStage, prevStage, nextStage) verified');
+
+// Test Progress Reset functionality
+mockStorage['halou_grammar_completed_ids'] = JSON.stringify(['hsk1_shi', 'hsk1_de']);
+window.confirm = () => false;
+const cancelRes = window.resetGrammarProgress();
+assert.strictEqual(cancelRes, false, 'reset cancelled when confirm dialog is cancelled');
+assert(mockStorage['halou_grammar_completed_ids'], 'storage retained when cancelled');
+
+window.confirm = () => true;
+const okRes = window.resetGrammarProgress();
+assert.strictEqual(okRes, true, 'reset succeeded when confirmed');
+assert.strictEqual(mockStorage['halou_grammar_completed_ids'], undefined, 'grammar completed storage key wiped');
+console.log('  ✅ 1-Click Progress Reset (window.resetGrammarProgress) verified with confirmation & state clean');
 
 // Test Mock Formula and TokenizedSentence
 const sampleItem = joinedAll[0].detail;
