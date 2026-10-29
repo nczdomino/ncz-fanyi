@@ -16,6 +16,10 @@ function backupAllData() {
     cr_showMeaning: state.showMeaning,
     cr_userDict: getUserDict(),
     cr_recentTexts: state.recentTexts,
+    // Business Chinese (商务中文) SRS & Progress
+    hl_bc_srs_cards: (function() { try { return JSON.parse(localStorage.getItem('hl_bc_srs_cards_v1') || '{}'); } catch(e){ return {}; } })(),
+    hl_bc_favorites: (function() { try { return JSON.parse(localStorage.getItem('hl_bc_favorites_v1') || '[]'); } catch(e){ return []; } })(),
+    hl_bc_progress: (function() { try { return JSON.parse(localStorage.getItem('hl_bc_progress_v1') || '{}'); } catch(e){ return {}; } })(),
     // Backward compatibility aliases
     userDict: getUserDict(),
     recentTexts: state.recentTexts,
@@ -132,6 +136,15 @@ function restoreDataFromFile(file) {
         state.recentTexts = rawRecentTexts;
         localStorage.setItem('cr_recentTexts', JSON.stringify(rawRecentTexts));
       }
+      if (data.hl_bc_srs_cards && typeof data.hl_bc_srs_cards === 'object') {
+        localStorage.setItem('hl_bc_srs_cards_v1', JSON.stringify(data.hl_bc_srs_cards));
+      }
+      if (data.hl_bc_favorites && Array.isArray(data.hl_bc_favorites)) {
+        localStorage.setItem('hl_bc_favorites_v1', JSON.stringify(data.hl_bc_favorites));
+      }
+      if (data.hl_bc_progress && typeof data.hl_bc_progress === 'object') {
+        localStorage.setItem('hl_bc_progress_v1', JSON.stringify(data.hl_bc_progress));
+      }
 
       showToast(t('restoreSuccess'));
       updateThemeAndUI();
@@ -153,6 +166,9 @@ function clearAllAppData() {
     localStorage.removeItem('cr_recentTexts');
     localStorage.removeItem('cr_recent_searches');
     localStorage.removeItem('cr_meaningLang2');
+    localStorage.removeItem('hl_bc_srs_cards_v1');
+    localStorage.removeItem('hl_bc_favorites_v1');
+    localStorage.removeItem('hl_bc_progress_v1');
     showToast(t('allDataCleared'));
     renderCurrentView();
   }
@@ -384,6 +400,15 @@ function renderLegalContent() {
           バックアップファイル（JSON）の書き出しや、端末に保存された全データの完全消去は、設定画面からいつでもワンクリックで実行可能です。
         </div>
       </div>
+
+      <div class="legal-card-item">
+        <div class="legal-card-title">
+          <span>💼</span> ビジネス中国語・文法学習データの完全保護
+        </div>
+        <div class="legal-card-desc">
+          SRS間隔反復単語帳の学習履歴、お気に入り登録、ロールプレイ演習の回答、およびメール作成時の入力変数（会社名や担当者名など）は、<strong>100%端末内（localStorage）にのみ保持</strong>されます。ビジネス交渉や企業情報が外部へ漏洩・送信されることは決してありません。
+        </div>
+      </div>
     `;
 
     termsHtml = `
@@ -480,6 +505,15 @@ function renderLegalContent() {
           オープンソース画像文字認識ライブラリ。Apache License 2.0 に準拠。
         </div>
       </div>
+
+      <div class="legal-card-item">
+        <div class="legal-card-title">
+          <span>📐</span> HSK文法体系 & 国際貿易実務基準
+        </div>
+        <div class="legal-card-desc">
+          HSK 2.0 / 3.0 標準文法体系およびインコタームズ2020（国際商業会議所 ICC）、ACFTA原産地証明書（Form E）規則、WCO世界税関機構HSコード分類基準に準拠。
+        </div>
+      </div>
     `;
   } else if (isEn) {
     privacyHtml = `
@@ -517,6 +551,15 @@ function renderLegalContent() {
         </div>
         <div class="legal-card-desc">
           You have full control to export your personal data backup (JSON) or permanently wipe all application data with a single click in Settings at any time.
+        </div>
+      </div>
+
+      <div class="legal-card-item">
+        <div class="legal-card-title">
+          <span>💼</span> Business Chinese & Grammar Study Privacy
+        </div>
+        <div class="legal-card-desc">
+          Your SRS flashcard review intervals, bookmarked business vocabulary, interactive roleplay answers, and email template placeholders (such as company and contact names) are <strong>stored 100% locally on your device (localStorage)</strong>. No commercial communications, negotiations, or trade notes are ever uploaded or transmitted to external servers.
         </div>
       </div>
     `;
@@ -615,6 +658,15 @@ function renderLegalContent() {
           Open-source optical character recognition pipelines licensed under the Apache License 2.0.
         </div>
       </div>
+
+      <div class="legal-card-item">
+        <div class="legal-card-title">
+          <span>📐</span> HSK Grammar Master & International Trade Standards
+        </div>
+        <div class="legal-card-desc">
+          Complies with the official HSK 2.0 & 3.0 Grammar Syllabus, Incoterms 2020 (International Chamber of Commerce - ICC), ACFTA Form E Certificate of Origin regulations, and WCO Harmonized System (HS Code) nomenclature.
+        </div>
+      </div>
     `;
   } else {
     // Vietnamese (Default)
@@ -653,6 +705,15 @@ function renderLegalContent() {
         </div>
         <div class="legal-card-desc">
           Bạn có toàn quyền xuất tệp sao lưu dữ liệu cá nhân (tệp .json) hoặc xóa vĩnh viễn toàn bộ dữ liệu chỉ bằng 1 nút bấm trong phần Cài đặt bất kỳ lúc nào.
+        </div>
+      </div>
+
+      <div class="legal-card-item">
+        <div class="legal-card-title">
+          <span>💼</span> Bảo mật dữ liệu Thương mại & Luyện tập Ngữ pháp
+        </div>
+        <div class="legal-card-desc">
+          Tiến trình ôn tập thẻ ghi nhớ SRS, danh sách từ vựng thương mại yêu thích, câu trả lời bài tập tình huống và các dữ liệu điền vào mẫu email (tên công ty, đối tác, số tiền báo giá) được <strong>lưu trữ 100% cục bộ trên thiết bị của bạn (localStorage)</strong>. Tuyệt đối không có dữ liệu đàm phán hay bí mật thương mại nào được tải lên máy chủ ngoài.
         </div>
       </div>
     `;
@@ -749,6 +810,15 @@ function renderLegalContent() {
         </div>
         <div class="legal-card-desc">
           Công nghệ quang học nhận dạng chữ Hán mã nguồn mở theo giấy phép Apache License 2.0.
+        </div>
+      </div>
+
+      <div class="legal-card-item">
+        <div class="legal-card-title">
+          <span>📐</span> Hệ thống Ngữ pháp HSK 2.0 & 3.0 & Tiếng Trung Thương Mại
+        </div>
+        <div class="legal-card-desc">
+          Xây dựng chuẩn hóa theo Đề cương Ngữ pháp HSK 2.0 & 3.0, Quy tắc Thương mại Quốc tế Incoterms 2020 (Phòng Thương mại Quốc tế ICC), Quy tắc xuất xứ hàng hóa Hiệp định ACFTA (C/O Mẫu E) và Danh mục mã số hải quan thế giới WCO HS Code.
         </div>
       </div>
     `;

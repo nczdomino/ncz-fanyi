@@ -783,3 +783,4 @@ if (lastBracket1 !== -1) {
   fs.writeFileSync(p1Path, newContent1, 'utf8');
   console.log('✅ Appended extra items to business-vocab-1.js. Total items now:', require('./business-vocab-1.js').length);
 }
+

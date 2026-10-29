@@ -246,3 +246,4 @@ test('Email compiler supports concise messaging mode', () => {
 });
 
 console.log(`\n🎉 All ${passedTests} Business Chinese unit tests passed with 100% success!`);
+

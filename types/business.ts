@@ -177,3 +177,4 @@ export interface BusinessFilterOptions {
   favoritesOnly?: boolean;
   dueSrsOnly?: boolean;
 }
+

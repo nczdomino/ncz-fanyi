@@ -162,8 +162,24 @@
   .settings-control {
     margin-left: auto;
   }
+  #bottom-nav {
+    padding-left: max(4px, env(safe-area-inset-left, 0px));
+    padding-right: max(4px, env(safe-area-inset-right, 0px));
+  }
+  .nav-tab {
+    padding: 0 1px;
+    gap: 2px;
+    min-width: 0;
+  }
+  .nav-tab svg {
+    width: 20px;
+    height: 20px;
+  }
   .nav-tab span {
-    font-size: 10.5px;
+    font-size: 10px;
+    line-height: 1.1;
+    white-space: nowrap;
+    letter-spacing: -0.25px;
   }
   .modal-card {
     padding: 18px;
@@ -193,13 +209,21 @@
   }
 }
 
-/* Extra-small screens (e.g. 320px - 350px) */
-@media (max-width: 350px) {
+/* Extra-small screens (e.g. 320px - 360px) */
+@media (max-width: 360px) {
   .brand-title {
     display: none;
   }
+  .nav-tab {
+    padding: 0;
+  }
+  .nav-tab svg {
+    width: 18px;
+    height: 18px;
+  }
   .nav-tab span {
-    font-size: 9.5px;
+    font-size: 8.5px;
+    letter-spacing: -0.35px;
   }
 }
 
