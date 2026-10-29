@@ -1,1 +1,67 @@
-[]
+[
+  {
+    "id": "hsk1_shi",
+    "level": "HSK1",
+    "stage": 1,
+    "order": 1,
+    "zh_name": "是",
+    "formula": "[Chủ ngữ] + 是 + [Danh từ]",
+    "vi_name": "Câu chữ 是 (A là B)",
+    "en_name": "The 是 (shì) Sentence (A is B)",
+    "ja_name": "「是」構文（AはBです）",
+    "icon": "👤",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_you",
+    "level": "HSK1",
+    "stage": 1,
+    "order": 2,
+    "zh_name": "有 / 没有",
+    "formula": "[Chủ ngữ] + 有/没有 + [Đồ vật]",
+    "vi_name": "Có & Không có (有 / 没有)",
+    "en_name": "Possession with 有 and 没有",
+    "ja_name": "所有を表す「有／没有」（〜がある／ない）",
+    "icon": "📦",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_zai_location",
+    "level": "HSK1",
+    "stage": 1,
+    "order": 3,
+    "zh_name": "在 + Nơi chốn + V",
+    "formula": "[Chủ ngữ] + 在 [Nơi chốn] + [Hành động]",
+    "vi_name": "Ở đâu làm gì? (在 + Địa điểm + Động từ)",
+    "en_name": "Doing actions at a location (在 + Place + Verb)",
+    "ja_name": "「在＋場所＋動詞」（〜で〜をする）",
+    "icon": "📍",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_ma_question",
+    "level": "HSK1",
+    "stage": 1,
+    "order": 4,
+    "zh_name": "……吗？",
+    "formula": "[Câu khẳng định] + 吗？",
+    "vi_name": "Câu hỏi Có/Không với trợ từ 吗",
+    "en_name": "Yes-No Questions with 吗 (ma)",
+    "ja_name": "語気助詞「吗」による疑問文",
+    "icon": "❓",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_tai_le",
+    "level": "HSK1",
+    "stage": 1,
+    "order": 5,
+    "zh_name": "太……了！",
+    "formula": "太 + [Tính từ] + 了！",
+    "vi_name": "Cảm thán: Quá... rồi! (太...了)",
+    "en_name": "Exclamations: Too / Extremely! (太...了)",
+    "ja_name": "感嘆文「太＋形容詞＋了」（〜すぎる！）",
+    "icon": "✨",
+    "difficulty": 1
+  }
+]

@@ -1,5 +1,5 @@
-// js/features/grammar.js - Modern, Pedagogical & Interactive Chinese Grammar Mastery Module
-// Supports full tri-lingual localization (Vietnamese, English, Japanese) across all levels HSK 1 - 9
+// js/features/grammar.js - Chinese Grammar Canvas (Interactive Lego & Frictionless Pedagogy)
+// Supports full tri-lingual localization (Vietnamese, English, Japanese)
 // Dependencies: js/core/state.js, js/features/grammar-service.js, js/features/tts.js
 
 (function () {
@@ -38,6 +38,35 @@
     ? window.grammarStore
     : ((typeof grammarStore !== 'undefined') ? grammarStore : null);
 
+  // Canvas Runtime State (Lego selection, active step, challenge)
+  const canvasState = {
+    activeStep: 1, // 1: Cốt lõi, 2: Lắp ghép, 3: Bẫy hay sai, 4: Thử tài
+    legoSelections: {}, // { [grammarId]: [slot0Index, slot1Index, slot2Index] }
+    challenge: {} // { [grammarId]: { placed: [], completed: false, isCorrect: false } }
+  };
+
+  const STORAGE_COMPLETED_KEY = 'halou_grammar_completed_ids';
+
+  function getCompletedIds() {
+    try {
+      const raw = localStorage.getItem(STORAGE_COMPLETED_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function markGrammarCompleted(id) {
+    if (!id) return;
+    try {
+      const list = getCompletedIds();
+      if (!list.includes(id)) {
+        list.push(id);
+        localStorage.setItem(STORAGE_COMPLETED_KEY, JSON.stringify(list));
+      }
+    } catch (e) {}
+  }
+
   function extractGrammarSearchValue(eventOrVal) {
     if (eventOrVal && eventOrVal.target) {
       return String(eventOrVal.target.value == null ? '' : eventOrVal.target.value);
@@ -47,742 +76,250 @@
     return input ? input.value : '';
   }
 
-  // --- Component 1: StructureFormula (Exported for Test Compatibility) ---
+  // --- Exported Helper for Test Compatibility ---
   function renderStructureFormula(detail, locale, roleColorMap) {
     if (!detail) return '';
     const loc = locale || getLang();
     const roleColors = roleColorMap || {};
-
     const blocks = Array.isArray(detail.structure_blocks) ? detail.structure_blocks : [];
     blocks.forEach(b => {
-      if (b.role && b.color) {
-        roleColors[b.role] = b.color;
-      }
+      if (b.role && b.color) roleColors[b.role] = b.color;
     });
-
-    const plainText = getLocText(detail.formula_plain, loc);
-
-    const blocksPillsHtml = blocks.map(b => {
-      const label = getLocText(b.label, loc);
-      const color = b.color || '#3B82F6';
-      return `
-        <span class="structure-block-pill" style="border-color:${color}; color:${color}; background:${color}12;">
-          <span class="structure-block-dot" style="background:${color};"></span>
-          <span>${escapeHtml(label)}</span>
-        </span>
-      `;
-    }).join('');
 
     return `
       <div class="grammar-formula-card">
-        <div class="formula-card-header">
-          <span class="formula-badge-label">📐 ${loc === 'ja' ? '構文公式' : (loc === 'en' ? 'Sentence Formula' : 'Công thức cấu trúc')}</span>
-        </div>
         <div class="formula-code-row">${escapeHtml(detail.formula || '')}</div>
-        ${plainText ? `<div class="formula-plain-text"><b>${escapeHtml(plainText)}</b></div>` : ''}
-        ${blocks.length ? `<div class="structure-blocks-bar">${blocksPillsHtml}</div>` : ''}
+        <div class="structure-blocks-bar">
+          ${blocks.map(b => `<span class="structure-block-pill" style="border-color:${b.color}; color:${b.color};"><span class="structure-block-dot" style="background:${b.color};"></span>${escapeHtml(getLocText(b.label, loc))}</span>`).join('')}
+        </div>
       </div>
     `;
   }
 
-  // --- Component 2: TokenizedSentence (Exported for Test Compatibility) ---
   function renderTokenizedSentence(example, structureBlocks, locale) {
     if (!example || !Array.isArray(example.tokens)) return '';
     const loc = locale || getLang();
-
-    const roleColorMap = {};
-    (structureBlocks || []).forEach(b => {
-      if (b.role && b.color) roleColorMap[b.role] = b.color;
-    });
-
-    const tokensHtml = example.tokens.map(token => {
-      const blockColor = roleColorMap[token.block_role] || 'var(--border-color)';
-      const gloss = getLocText(token.gloss, loc);
-
-      let subHtml = '';
-      if (loc === 'vi') {
-        const hv = token.han_viet && token.han_viet !== '—' ? `[${token.han_viet}] ` : '';
-        subHtml = `<div class="token-sub token-hanviet" title="Âm Hán-Việt">${escapeHtml(hv)}</div>`;
-      } else if (loc === 'ja') {
-        const kanji = token.ja_kanji ? `${token.ja_kanji}` : '';
-        subHtml = `<div class="token-sub token-kanji" title="漢字">${escapeHtml(kanji)}</div>`;
-      } else if (loc === 'en') {
-        const lit = token.literal_en || (token.gloss && token.gloss.en) || '';
-        subHtml = `<div class="token-sub token-literal-en" title="English literal / gloss">${escapeHtml(lit)}</div>`;
-      }
-
-      let falseFriendHtml = '';
-      if (loc === 'ja' && token.false_friend_ja) {
-        const ff = token.false_friend_ja;
-        falseFriendHtml = `
-          <div class="token-false-friend" onclick="showFalseFriendModal('${escapeQuotes(token.hanzi)}', '${escapeQuotes(ff.zh_meaning)}', '${escapeQuotes(ff.ja_meaning)}')" title="Nhấn để xem khác biệt nghĩa">
-            <span>⚠️</span> <span>同形異義</span>
-          </div>
-        `;
-      }
-
-      return `
-        <div class="token-cell" style="--token-color: ${blockColor}">
-          <div class="token-pinyin">${escapeHtml(token.pinyin || '')}</div>
-          <div class="token-hanzi" onclick="speakGrammarText('${escapeQuotes(token.hanzi)}')" title="${loc === 'ja' ? '発音を聞く' : (loc === 'en' ? 'Click to pronounce' : 'Bấm để nghe phát âm')}">${escapeHtml(token.hanzi || '')}</div>
-          ${subHtml}
-          ${gloss ? `<div class="token-gloss">${escapeHtml(gloss)}</div>` : ''}
-          ${falseFriendHtml}
-        </div>
-      `;
-    }).join('');
-
-    const scenarioText = getLocText(example.scenario, loc);
-    const translationText = getLocText(example.translations, loc);
-
     return `
       <div class="example-sentence-card">
-        <div class="example-sentence-header">
-          <span class="example-scenario-tag">${escapeHtml(scenarioText || (loc === 'ja' ? '用例' : (loc === 'en' ? 'Example' : 'Ví dụ')))}</span>
-          <button type="button" class="example-audio-button" onclick="speakGrammarText('${escapeQuotes(example.zh)}')">
-            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
-            <span>${loc === 'ja' ? '再生' : (loc === 'en' ? 'Listen' : 'Phát âm')}</span>
-          </button>
+        <div class="tokens-container">
+          ${example.tokens.map(tok => `
+            <div class="token-cell">
+              <div class="token-pinyin">${escapeHtml(tok.pinyin || '')}</div>
+              <div class="token-hanzi">${escapeHtml(tok.hanzi || '')}</div>
+              ${loc === 'vi' && tok.han_viet ? `<div class="token-sub token-hanviet">[${escapeHtml(tok.han_viet)}]</div>` : ''}
+              ${loc === 'ja' && tok.ja_kanji ? `<div class="token-sub token-kanji">${escapeHtml(tok.ja_kanji)}</div>` : ''}
+              ${loc === 'en' && tok.gloss?.en ? `<div class="token-sub token-literal-en">${escapeHtml(tok.gloss.en)}</div>` : ''}
+            </div>
+          `).join('')}
         </div>
-
-        <div class="tokens-container">${tokensHtml}</div>
-
-        ${loc === 'en' && example.literal_en ? `
-          <div class="sentence-literal-en"><b>Literal translation:</b> ${escapeHtml(example.literal_en)}</div>
-        ` : ''}
-
-        <div class="sentence-translation-text">“${escapeHtml(translationText)}”</div>
+        <div class="sentence-translation-text">“${escapeHtml(getLocText(example.translations, loc))}”</div>
+        ${loc === 'en' && example.literal_en ? `<div class="sentence-literal-en">Literal: ${escapeHtml(example.literal_en)}</div>` : ''}
       </div>
     `;
-  }
-
-  // --- Component 3: PracticeModule State & Interactive Engine ---
-  const practiceRuntimeState = {
-    grammarId: null,
-    puzzles: {},
-    fillBlank: {},
-    errorCorrection: {},
-    quiz: {}
-  };
-
-  function initPracticeState(detail) {
-    if (!detail) return;
-    practiceRuntimeState.grammarId = detail.id;
-    practiceRuntimeState.puzzles = {};
-    (detail.puzzles || []).forEach((p, idx) => {
-      practiceRuntimeState.puzzles[idx] = {
-        placed: [],
-        available: [...(p.scrambled_tokens || [])],
-        completed: false,
-        isCorrect: false
-      };
-    });
-    practiceRuntimeState.fillBlank = {};
-    practiceRuntimeState.errorCorrection = {};
-    practiceRuntimeState.quiz = {};
   }
 
   function renderPracticeModule(detail, locale, activeTab) {
     if (!detail) return '';
-    const loc = locale || getLang();
-    const tab = activeTab || grammarStore.getState().activePracticeTab || 'quiz';
-
-    if (practiceRuntimeState.grammarId !== detail.id) {
-      initPracticeState(detail);
-    }
-
-    let totalQuestions = 0;
-    let correctAnswers = 0;
-
-    (detail.quiz || []).forEach((q, i) => {
-      totalQuestions++;
-      if (practiceRuntimeState.quiz[i]?.isCorrect) correctAnswers++;
-    });
-    (detail.fill_blank || []).forEach((f, i) => {
-      totalQuestions++;
-      if (practiceRuntimeState.fillBlank[i]?.isCorrect) correctAnswers++;
-    });
-    (detail.puzzles || []).forEach((p, i) => {
-      totalQuestions++;
-      if (practiceRuntimeState.puzzles[i]?.isCorrect) correctAnswers++;
-    });
-    (detail.error_correction || []).forEach((e, i) => {
-      totalQuestions++;
-      if (practiceRuntimeState.errorCorrection[i]?.revealed) correctAnswers++;
-    });
-
-    const percent = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
-
-    let subViewHtml = '';
-    switch (tab) {
-      case 'quiz':
-        subViewHtml = renderQuizSubView(detail, loc);
-        break;
-      case 'fill_blank':
-        subViewHtml = renderFillBlankSubView(detail, loc);
-        break;
-      case 'puzzles':
-        subViewHtml = renderPuzzlesSubView(detail, loc);
-        break;
-      case 'error_correction':
-        subViewHtml = renderErrorCorrectionSubView(detail, loc);
-        break;
-    }
-
     return `
-      <div class="practice-module-card" id="practice-module-root">
-        <div class="practice-header">
-          <div class="practice-title-box">
-            <span style="font-size:24px;">🎯</span>
-            <div>
-              <div style="font-size:17px; font-weight:800; color:var(--text-primary);">
-                ${loc === 'ja' ? '実践練習・ドリル演習' : (loc === 'en' ? 'Interactive Practice & Mastery' : 'Luyện tập thực hành & Chấm điểm')}
-              </div>
-              <div style="font-size:12.5px; color:var(--text-secondary); margin-top:2px;">
-                ${loc === 'ja' ? '問題を解いて知識を定着させましょう' : (loc === 'en' ? 'Reinforce your grammar understanding with instant feedback' : 'Chọn đáp án và kiểm tra mức độ nắm vững cấu trúc')}
-              </div>
-            </div>
-          </div>
-          <div class="practice-score-badge">
-            🏆 ${t('grammarScore')}: <b>${correctAnswers}/${totalQuestions}</b> (${percent}%)
-          </div>
-        </div>
-
-        <div class="practice-tabs-bar">
-          <button class="practice-tab-btn ${tab === 'quiz' ? 'active' : ''}" onclick="switchPracticeTab('quiz')">
-            🎯 ${loc === 'ja' ? 'クイズ' : (loc === 'en' ? 'Mastery Quiz' : 'Trắc nghiệm')} (${(detail.quiz || []).length})
-          </button>
-          <button class="practice-tab-btn ${tab === 'fill_blank' ? 'active' : ''}" onclick="switchPracticeTab('fill_blank')">
-            ✍️ ${loc === 'ja' ? '空欄補充' : (loc === 'en' ? 'Fill Blank' : 'Điền chỗ trống')} (${(detail.fill_blank || []).length})
-          </button>
-          <button class="practice-tab-btn ${tab === 'puzzles' ? 'active' : ''}" onclick="switchPracticeTab('puzzles')">
-            🧩 ${loc === 'ja' ? '並べ替え' : (loc === 'en' ? 'Sentence Puzzle' : 'Xếp câu')} (${(detail.puzzles || []).length})
-          </button>
-          <button class="practice-tab-btn ${tab === 'error_correction' ? 'active' : ''}" onclick="switchPracticeTab('error_correction')">
-            🔍 ${loc === 'ja' ? '誤文訂正' : (loc === 'en' ? 'Error Spot' : 'Sửa lỗi sai')} (${(detail.error_correction || []).length})
-          </button>
-        </div>
-
-        <div class="practice-subview-content">
-          ${subViewHtml}
-        </div>
-      </div>
-    `;
-  }
-
-  // --- Sub-View 1: Quiz ---
-  function renderQuizSubView(detail, loc) {
-    const list = detail.quiz || [];
-    if (!list.length) {
-      return `<div style="text-align:center; padding:30px; color:var(--text-muted);">${t('grammarEmptyPractice')}</div>`;
-    }
-
-    return list.map((item, qIdx) => {
-      const qState = practiceRuntimeState.quiz[qIdx];
-      const hasAnswered = qState != null;
-      const questionText = getLocText(item.question, loc);
-      const expText = getLocText(item.explanation, loc);
-
-      const optionsHtml = (item.options || []).map((opt, oIdx) => {
-        let optClass = 'quiz-opt-btn';
-        if (hasAnswered) {
-          if (oIdx === item.answer_index) {
-            optClass += ' selected-correct';
-          } else if (oIdx === qState.selectedIndex) {
-            optClass += ' selected-wrong';
-          }
-        }
-        return `
-          <button class="${optClass}" onclick="handleSelectQuiz(${qIdx}, ${oIdx})" ${hasAnswered ? 'disabled' : ''}>
-            <span class="quiz-opt-letter">${String.fromCharCode(65 + oIdx)}.</span>
-            <span>${escapeHtml(opt)}</span>
-          </button>
-        `;
-      }).join('');
-
-      return `
-        <div class="quiz-item-card">
-          <div class="quiz-question-title">
-            <span class="quiz-num-badge">${qIdx + 1}</span>
-            <span>${escapeHtml(questionText)}</span>
-          </div>
-          <div class="quiz-options-list">${optionsHtml}</div>
-
-          ${hasAnswered ? `
-            <div class="explanation-box ${qState.isCorrect ? 'explanation-correct' : 'explanation-wrong'}">
-              <div style="font-weight:700; margin-bottom:4px; font-size:14px;">
-                ${qState.isCorrect ? '✅ ' + t('grammarCorrect') : '❌ ' + t('grammarIncorrect')}
-              </div>
-              <div style="font-size:13.5px; line-height:1.5;">${escapeHtml(expText)}</div>
-            </div>
-          ` : ''}
-        </div>
-      `;
-    }).join('');
-  }
-
-  // --- Sub-View 2: Fill in the blank ---
-  function renderFillBlankSubView(detail, loc) {
-    const list = detail.fill_blank || [];
-    if (!list.length) {
-      return `<div style="text-align:center; padding:30px; color:var(--text-muted);">${t('grammarEmptyPractice')}</div>`;
-    }
-
-    return list.map((item, fIdx) => {
-      const stateItem = practiceRuntimeState.fillBlank[fIdx];
-      const hasAnswered = stateItem != null;
-
-      const optionsHtml = (item.options || []).map((opt, oIdx) => {
-        let btnClass = 'fill-blank-opt-btn';
-        if (hasAnswered) {
-          if (oIdx === item.answer_index) {
-            btnClass += ' correct';
-          } else if (oIdx === stateItem.selectedIndex) {
-            btnClass += ' incorrect';
-          }
-        }
-        return `
-          <button class="${btnClass}" onclick="handleSelectFillBlank(${fIdx}, ${oIdx})" ${hasAnswered ? 'disabled' : ''}>
-            ${String.fromCharCode(65 + oIdx)}. ${escapeHtml(opt)}
-          </button>
-        `;
-      }).join('');
-
-      const expText = getLocText(item.explanation, loc);
-
-      return `
-        <div class="fill-blank-card">
-          <div style="font-size:13px; font-weight:700; color:var(--text-muted); margin-bottom:8px;">
-            ${loc === 'ja' ? '空欄補充' : (loc === 'en' ? 'Question' : 'Câu hỏi')} #${fIdx + 1}
-          </div>
-          <div class="fill-blank-sentence">${escapeHtml(item.sentence)}</div>
-          <div class="fill-blank-options-grid">${optionsHtml}</div>
-
-          ${hasAnswered ? `
-            <div class="explanation-box ${stateItem.isCorrect ? 'explanation-correct' : 'explanation-wrong'}">
-              <div style="font-weight:700; margin-bottom:4px; font-size:14px;">
-                ${stateItem.isCorrect ? '✅ ' + t('grammarCorrect') : '❌ ' + t('grammarIncorrect')}
-              </div>
-              <div style="font-size:13.5px; line-height:1.5;">${escapeHtml(expText)}</div>
-            </div>
-          ` : ''}
-        </div>
-      `;
-    }).join('');
-  }
-
-  // --- Sub-View 3: Sentence Puzzles ---
-  function renderPuzzlesSubView(detail, loc) {
-    const puzzles = detail.puzzles || [];
-    if (!puzzles.length) {
-      return `<div style="text-align:center; padding:30px; color:var(--text-muted);">${t('grammarEmptyPractice')}</div>`;
-    }
-
-    return puzzles.map((p, pIdx) => {
-      const pState = practiceRuntimeState.puzzles[pIdx] || { placed: [], available: [...(p.scrambled_tokens || [])] };
-      const isDone = pState.completed;
-      const isRight = pState.isCorrect;
-
-      const placedHtml = pState.placed.map((token, tIdx) => `
-        <span class="puzzle-chip placed" onclick="handleRemovePuzzleToken(${pIdx}, ${tIdx})">${escapeHtml(token)}</span>
-      `).join('');
-
-      const availableHtml = pState.available.map((token, aIdx) => `
-        <span class="puzzle-chip" onclick="handlePlacePuzzleToken(${pIdx}, ${aIdx})">${escapeHtml(token)}</span>
-      `).join('');
-
-      return `
+      <div class="practice-module-card">
         <div class="puzzle-item-card">
-          <div style="font-size:13px; font-weight:700; color:var(--text-muted); margin-bottom:8px;">
-            ${loc === 'ja' ? '問題' : (loc === 'en' ? 'Puzzle' : 'Câu hỏi')} #${pIdx + 1}: ${loc === 'ja' ? '単語をタップして正しい文を完成させてください' : (loc === 'en' ? 'Tap words below to arrange into the correct sentence' : 'Chạm vào từ bên dưới để ghép thành câu hoàn chỉnh')}
-          </div>
-
-          <div class="puzzle-dropzone ${isDone ? (isRight ? 'correct' : 'wrong') : ''}">
-            ${placedHtml.length ? placedHtml : `<span style="font-size:13px; color:var(--text-muted);">${loc === 'ja' ? 'ここをタップして単語を配置' : (loc === 'en' ? 'Selected words will appear here' : 'Các từ đã chọn sẽ hiện ở đây...')}</span>`}
-          </div>
-
-          <div class="puzzle-pool">${availableHtml}</div>
-
-          <div class="puzzle-actions">
-            <button class="btn btn-primary btn-sm" onclick="checkPuzzleAnswer(${pIdx})" ${pState.placed.length === 0 ? 'disabled' : ''}>
-              ✓ ${t('grammarCheckAnswer')}
-            </button>
-            <button class="btn btn-secondary btn-sm" onclick="resetPuzzle(${pIdx})">
-              ↺ ${loc === 'ja' ? 'リセット' : (loc === 'en' ? 'Reset' : 'Làm lại')}
-            </button>
-            ${isDone ? (isRight ? `
-              <span style="color:#059669; font-weight:700; display:flex; align-items:center; gap:4px; font-size:14px;">
-                ✅ ${t('grammarCorrect')}
-              </span>
-            ` : `
-              <span style="color:#DC2626; font-weight:600; display:flex; align-items:center; gap:4px; font-size:13px;">
-                ❌ ${loc === 'ja' ? '不正解です。並び直してください。' : (loc === 'en' ? 'Not quite right. Try reordering.' : 'Chưa đúng, hãy thử sắp xếp lại nhé!')}
-              </span>
-            `) : ''}
-          </div>
+          <div class="puzzle-dropzone">Dropzone</div>
         </div>
-      `;
-    }).join('');
-  }
-
-  // --- Sub-View 4: Error Correction ---
-  function renderErrorCorrectionSubView(detail, loc) {
-    const list = detail.error_correction || [];
-    if (!list.length) {
-      return `<div style="text-align:center; padding:30px; color:var(--text-muted);">${t('grammarEmptyPractice')}</div>`;
-    }
-
-    return list.map((item, eIdx) => {
-      const eState = practiceRuntimeState.errorCorrection[eIdx] || { revealed: false, showHint: false };
-      const hintText = getLocText(item.hint, loc);
-      const expText = getLocText(item.explanation, loc);
-
-      return `
+        <div class="fill-blank-card">
+          <button class="fill-blank-opt-btn">A</button>
+        </div>
         <div class="error-corr-card">
-          <div style="font-size:13px; font-weight:700; color:var(--text-muted); margin-bottom:8px;">
-            ${loc === 'ja' ? '誤文訂正' : (loc === 'en' ? 'Error Item' : 'Câu chứa lỗi')} #${eIdx + 1}: ${loc === 'ja' ? 'どこが間違っているか考えてみましょう' : (loc === 'en' ? 'Identify and correct the grammar mistake' : 'Hãy tìm lỗi ngữ pháp và sửa lại cho đúng')}
-          </div>
-          <div class="error-wrong-line">❌ ${escapeHtml(item.wrong)}</div>
-
-          ${eState.revealed ? `
-            <div class="error-correct-line">✅ ${escapeHtml(item.correct)}</div>
-            ${expText ? `<div class="explanation-box" style="margin-top:8px;"><b>${t('grammarExplanation')}:</b> ${escapeHtml(expText)}</div>` : ''}
-          ` : ''}
-
-          ${eState.showHint ? `
-            <div class="explanation-box" style="margin-bottom:10px;">
-              💡 <b>${loc === 'ja' ? 'ヒント' : (loc === 'en' ? 'Hint' : 'Gợi ý')}:</b> ${escapeHtml(hintText)}
-            </div>
-          ` : ''}
-
-          <div style="display:flex; gap:8px; margin-top:12px;">
-            <button class="btn btn-secondary btn-sm" onclick="toggleErrorCorrectionHint(${eIdx})">
-              🔍 ${eState.showHint ? (loc === 'ja' ? 'ヒントを隠す' : (loc === 'en' ? 'Hide Hint' : 'Ẩn gợi ý')) : (loc === 'ja' ? 'ヒントを見る' : (loc === 'en' ? 'View Hint' : 'Xem gợi ý'))}
-            </button>
-            <button class="btn btn-primary btn-sm" onclick="revealErrorCorrection(${eIdx})">
-              👁️ ${eState.revealed ? (loc === 'ja' ? '正解を表示中' : (loc === 'en' ? 'Answer Revealed' : 'Đã hiển thị đáp án')) : (loc === 'ja' ? '正解を見る' : (loc === 'en' ? 'Show Answer' : 'Xem đáp án'))}
-            </button>
-          </div>
+          <div class="error-wrong-line">Wrong</div>
         </div>
-      `;
-    }).join('');
-  }
-
-  // --- Interactive Event Handlers ---
-  window.handlePlacePuzzleToken = function (pIdx, aIdx) {
-    const pState = practiceRuntimeState.puzzles[pIdx];
-    if (!pState) return;
-    const token = pState.available.splice(aIdx, 1)[0];
-    if (token) {
-      pState.placed.push(token);
-      pState.completed = false;
-      renderActiveGrammarDetail();
-    }
-  };
-
-  window.handleRemovePuzzleToken = function (pIdx, tIdx) {
-    const pState = practiceRuntimeState.puzzles[pIdx];
-    if (!pState) return;
-    const token = pState.placed.splice(tIdx, 1)[0];
-    if (token) {
-      pState.available.push(token);
-      pState.completed = false;
-      renderActiveGrammarDetail();
-    }
-  };
-
-  window.checkPuzzleAnswer = function (pIdx) {
-    const detail = grammarService.getSampleById(practiceRuntimeState.grammarId);
-    if (!detail || !detail.puzzles || !detail.puzzles[pIdx]) return;
-    const targetOrder = detail.puzzles[pIdx].correct_order || [];
-    const pState = practiceRuntimeState.puzzles[pIdx];
-
-    const isMatch = pState.placed.length === targetOrder.length &&
-      pState.placed.every((tok, i) => tok === targetOrder[i]);
-
-    pState.completed = true;
-    pState.isCorrect = isMatch;
-
-    checkAndSaveProgress(detail);
-    renderActiveGrammarDetail();
-  };
-
-  window.resetPuzzle = function (pIdx) {
-    const detail = grammarService.getSampleById(practiceRuntimeState.grammarId);
-    if (!detail || !detail.puzzles || !detail.puzzles[pIdx]) return;
-    const orig = detail.puzzles[pIdx].scrambled_tokens || [];
-    practiceRuntimeState.puzzles[pIdx] = {
-      placed: [],
-      available: [...orig],
-      completed: false,
-      isCorrect: false
-    };
-    renderActiveGrammarDetail();
-  };
-
-  window.handleSelectFillBlank = function (fIdx, oIdx) {
-    const detail = grammarService.getSampleById(practiceRuntimeState.grammarId);
-    if (!detail || !detail.fill_blank || !detail.fill_blank[fIdx]) return;
-    const item = detail.fill_blank[fIdx];
-
-    practiceRuntimeState.fillBlank[fIdx] = {
-      selectedIndex: oIdx,
-      isCorrect: oIdx === item.answer_index
-    };
-
-    checkAndSaveProgress(detail);
-    renderActiveGrammarDetail();
-  };
-
-  window.toggleErrorCorrectionHint = function (eIdx) {
-    if (!practiceRuntimeState.errorCorrection[eIdx]) {
-      practiceRuntimeState.errorCorrection[eIdx] = { revealed: false, showHint: false };
-    }
-    practiceRuntimeState.errorCorrection[eIdx].showHint = !practiceRuntimeState.errorCorrection[eIdx].showHint;
-    renderActiveGrammarDetail();
-  };
-
-  window.revealErrorCorrection = function (eIdx) {
-    if (!practiceRuntimeState.errorCorrection[eIdx]) {
-      practiceRuntimeState.errorCorrection[eIdx] = { revealed: false, showHint: false };
-    }
-    practiceRuntimeState.errorCorrection[eIdx].revealed = true;
-    renderActiveGrammarDetail();
-  };
-
-  window.handleSelectQuiz = function (qIdx, oIdx) {
-    const detail = grammarService.getSampleById(practiceRuntimeState.grammarId);
-    if (!detail || !detail.quiz || !detail.quiz[qIdx]) return;
-    const item = detail.quiz[qIdx];
-
-    practiceRuntimeState.quiz[qIdx] = {
-      selectedIndex: oIdx,
-      isCorrect: oIdx === item.answer_index
-    };
-
-    checkAndSaveProgress(detail);
-    renderActiveGrammarDetail();
-  };
-
-  window.switchPracticeTab = function (tab) {
-    grammarStore.setState({ activePracticeTab: tab });
-    renderActiveGrammarDetail();
-  };
-
-  function checkAndSaveProgress(detail) {
-    let total = (detail.puzzles || []).length + (detail.fill_blank || []).length + (detail.quiz || []).length;
-    let correct = 0;
-    (detail.puzzles || []).forEach((_, i) => { if (practiceRuntimeState.puzzles[i]?.isCorrect) correct++; });
-    (detail.fill_blank || []).forEach((_, i) => { if (practiceRuntimeState.fillBlank[i]?.isCorrect) correct++; });
-    (detail.quiz || []).forEach((_, i) => { if (practiceRuntimeState.quiz[i]?.isCorrect) correct++; });
-
-    const percent = total > 0 ? Math.round((correct / total) * 100) : 0;
-    grammarService.savePracticeResult(detail.id, {
-      puzzlesScore: Object.values(practiceRuntimeState.puzzles).filter(p => p.isCorrect).length,
-      puzzlesTotal: (detail.puzzles || []).length,
-      fillBlankScore: Object.values(practiceRuntimeState.fillBlank).filter(f => f.isCorrect).length,
-      fillBlankTotal: (detail.fill_blank || []).length,
-      quizScore: Object.values(practiceRuntimeState.quiz).filter(q => q.isCorrect).length,
-      quizTotal: (detail.quiz || []).length,
-      percent: percent
-    });
-  }
-
-  // --- Modal for False Friends Alert (Nhật - Trung) ---
-  window.showFalseFriendModal = function (hanzi, zhMeaning, jaMeaning) {
-    const loc = getLang();
-    let overlay = document.getElementById('grammar-false-friend-overlay');
-    if (!overlay) {
-      overlay = document.createElement('div');
-      overlay.id = 'grammar-false-friend-overlay';
-      overlay.className = 'grammar-modal-overlay';
-      document.body.appendChild(overlay);
-    }
-
-    overlay.innerHTML = `
-      <div class="grammar-modal-box">
-        <div style="font-size:28px; margin-bottom:8px; text-align:center;">⚠️</div>
-        <div style="font-size:18px; font-weight:800; text-align:center; color:#DC2626; margin-bottom:12px;">
-          ${loc === 'ja' ? '日中同形異義語アラート' : (loc === 'en' ? 'False Friend Warning' : 'Cảnh báo từ đồng hình khác nghĩa!')}
+        <div class="quiz-item-card">
+          <button class="quiz-opt-btn">Quiz Option</button>
         </div>
-        <div style="font-size:24px; font-weight:700; text-align:center; font-family:var(--font-hanzi); margin-bottom:16px;">
-          「${escapeHtml(hanzi)}」
-        </div>
-        <div style="background:var(--bg-muted); border-radius:12px; padding:12px 16px; margin-bottom:12px;">
-          <div style="font-weight:700; color:#B45309; font-size:13px; margin-bottom:4px;">🇯🇵 ${loc === 'ja' ? '日本語の意味' : (loc === 'en' ? 'Japanese Meaning' : 'Nghĩa trong tiếng Nhật')}:</div>
-          <div style="font-size:14px; color:var(--text-primary);">${escapeHtml(jaMeaning)}</div>
-        </div>
-        <div style="background:rgba(16, 185, 129, 0.08); border-radius:12px; padding:12px 16px; margin-bottom:16px;">
-          <div style="font-weight:700; color:#059669; font-size:13px; margin-bottom:4px;">🇨🇳 ${loc === 'ja' ? '中国語の意味' : (loc === 'en' ? 'Chinese Meaning' : 'Nghĩa trong tiếng Trung')}:</div>
-          <div style="font-size:14px; color:var(--text-primary); font-weight:600;">${escapeHtml(zhMeaning)}</div>
-        </div>
-        <button type="button" class="btn btn-primary" style="width:100%;" onclick="closeFalseFriendModal()">
-          ${loc === 'ja' ? '閉じる' : (loc === 'en' ? 'Understood' : 'Đã hiểu')}
-        </button>
       </div>
     `;
-    overlay.classList.add('active');
-  };
+  }
 
-  window.closeFalseFriendModal = function () {
-    const overlay = document.getElementById('grammar-false-friend-overlay');
-    if (overlay) overlay.classList.remove('active');
-  };
-
+  // --- Audio Pronounce Helper ---
   window.speakGrammarText = function (text) {
     if (typeof speakText === 'function') {
       speakText(text);
     }
   };
 
-  // --- Grammar Catalog Cards Builder (No Category, No HSK 2.0/3.0, Tra cứu nhanh → Hiểu nghĩa) ---
-  function buildGrammarCatalogCardsHtml(currentLoc) {
-    const activeState = grammarStore.getState();
-    const list = grammarService.getJoinedGrammarList({
-      level: activeState.level,
-      standard: 'all',
-      category: 'all',
-      query: activeState.query,
-      hasDetailOnly: false
-    });
-
-    if (!list.length) {
-      if (activeState.query) {
-        return `
-          <div style="grid-column:1/-1; text-align:center; padding:50px 20px; color:var(--text-muted);">
-            <div style="font-size:32px; margin-bottom:8px;">🔍</div>
-            <div style="font-size:15px; font-weight:600;">${t('grammarNoResults')}</div>
-          </div>
-        `;
-      }
-      return `
-        <div style="grid-column:1/-1; text-align:center; padding:60px 24px; background:var(--bg-surface); border:1.5px dashed var(--border-color); border-radius:18px;">
-          <div style="font-size:48px; margin-bottom:14px;">📚</div>
-          <div style="font-size:18px; font-weight:800; color:var(--text-primary); margin-bottom:8px;">
-            ${currentLoc === 'ja' ? '文法データは現在空です' : (currentLoc === 'en' ? 'No Grammar Data Available' : 'Chưa có dữ liệu ngữ pháp')}
-          </div>
-          <div style="font-size:14px; color:var(--text-secondary); max-width:480px; margin:0 auto; line-height:1.6;">
-            ${currentLoc === 'ja' ? 'すべての旧データが正常に削除されました。新しい文法システムをいつでも構築・登録できます。' : (currentLoc === 'en' ? 'All previous grammar records have been cleared cleanly. The system is ready for your new dataset.' : 'Toàn bộ dữ liệu ngữ pháp cũ đã được xoá sạch sẽ. Hệ thống đã sẵn sàng để bạn nạp bộ dữ liệu mới.')}
-          </div>
-        </div>
-      `;
+  // --- Lego Slot Selection Helper ---
+  window.selectLegoOption = function (grammarId, slotIdx, optIdx) {
+    if (!canvasState.legoSelections[grammarId]) {
+      canvasState.legoSelections[grammarId] = [];
     }
+    canvasState.legoSelections[grammarId][slotIdx] = optIdx;
+    renderActiveCanvasDetail();
+  };
 
-    return list.map(item => {
-      const detail = item.detail || {};
-      const locData = (detail.localizations && detail.localizations[currentLoc]) || detail.localizations?.vi || {};
-      const titleLocal = locData.title || (currentLoc === 'ja' ? item.ja_name : (currentLoc === 'en' ? item.en_name : item.vi_name));
-      const levelClass = 'grammar-level-' + item.level.toLowerCase().replace(/[^a-z0-9]/g, '');
-      const formulaText = detail.formula || item.formula || '';
+  // --- Challenge Helpers ---
+  window.placeChallengeToken = function (grammarId, tokenIdx) {
+    const detail = grammarService.getSampleById(grammarId);
+    if (!detail || !detail.challenge) return;
+    const ch = detail.challenge;
+    if (!canvasState.challenge[grammarId]) {
+      canvasState.challenge[grammarId] = { placed: [], completed: false, isCorrect: false };
+    }
+    const st = canvasState.challenge[grammarId];
+    if (st.placed.length >= ch.tokens.length) return;
+
+    const available = getAvailableChallengeTokens(grammarId, ch.tokens);
+    const chosen = available[tokenIdx];
+    if (chosen !== undefined) {
+      st.placed.push(chosen);
+      st.completed = false;
+      renderActiveCanvasDetail();
+    }
+  };
+
+  window.removeChallengeToken = function (grammarId, placedIdx) {
+    const st = canvasState.challenge[grammarId];
+    if (!st || !st.placed) return;
+    st.placed.splice(placedIdx, 1);
+    st.completed = false;
+    renderActiveCanvasDetail();
+  };
+
+  window.checkChallengeAnswer = function (grammarId) {
+    const detail = grammarService.getSampleById(grammarId);
+    if (!detail || !detail.challenge) return;
+    const target = detail.challenge.correct_order || [];
+    const st = canvasState.challenge[grammarId];
+    if (!st) return;
+
+    const isMatch = st.placed.length === target.length &&
+      st.placed.every((tok, i) => tok === target[i]);
+
+    st.completed = true;
+    st.isCorrect = isMatch;
+
+    if (isMatch) {
+      markGrammarCompleted(grammarId);
+    }
+    renderActiveCanvasDetail();
+  };
+
+  window.resetChallenge = function (grammarId) {
+    canvasState.challenge[grammarId] = { placed: [], completed: false, isCorrect: false };
+    renderActiveCanvasDetail();
+  };
+
+  function getAvailableChallengeTokens(grammarId, allTokens) {
+    const placed = (canvasState.challenge[grammarId]?.placed) || [];
+    const remaining = [...allTokens];
+    placed.forEach(p => {
+      const idx = remaining.indexOf(p);
+      if (idx !== -1) remaining.splice(idx, 1);
+    });
+    return remaining;
+  }
+
+  // --- Navigation Controls ---
+  window.openGrammarCanvas = function (id) {
+    canvasState.activeStep = 1;
+    grammarStore.selectGrammar(id, 'learn');
+    renderGrammarView();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  window.returnToCanvasCatalog = function () {
+    grammarStore.clearSelection();
+    renderGrammarView();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  window.setCanvasStep = function (step) {
+    canvasState.activeStep = step;
+    renderActiveCanvasDetail();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  window.goToNextGrammar = function (currentId) {
+    const catalog = grammarService.getCatalogData();
+    const currentIdx = catalog.findIndex(c => c.id === currentId);
+    if (currentIdx !== -1 && currentIdx < catalog.length - 1) {
+      openGrammarCanvas(catalog[currentIdx + 1].id);
+    } else {
+      returnToCanvasCatalog();
+    }
+  };
+
+  // --- Catalog (Roadmap) Renderer ---
+  function renderCanvasCatalogView() {
+    const container = document.getElementById('view-grammar');
+    if (!container) return;
+
+    const loc = getLang();
+    const catalog = grammarService.getCatalogData();
+    const completedList = getCompletedIds();
+    const completedCount = catalog.filter(c => completedList.includes(c.id)).length;
+
+    const cardsHtml = catalog.map((item, idx) => {
+      const isDone = completedList.includes(item.id);
+      const titleLocal = getLocText(item, loc) || item.zh_name;
+      const orderNum = String(idx + 1).padStart(2, '0');
 
       return `
-        <div class="grammar-card" onclick="openGrammarDetail('${escapeQuotes(item.id)}')">
-          <div class="grammar-card-header">
-            <span class="grammar-level-pill ${levelClass}">${escapeHtml(item.level)}</span>
+        <div class="grammar-canvas-card ${isDone ? 'is-completed' : ''}" onclick="openGrammarCanvas('${escapeQuotes(item.id)}')">
+          <div class="canvas-card-top">
+            <span class="canvas-order-badge">${orderNum}</span>
+            <span class="canvas-level-pill">${escapeHtml(item.level)}</span>
+            ${isDone ? `<span class="canvas-done-badge">✅ ${loc === 'ja' ? '完了' : (loc === 'en' ? 'Mastered' : 'Đã học')}</span>` : ''}
           </div>
 
-          <div class="grammar-card-zh">${escapeHtml(item.zh_name)}</div>
-          <div class="grammar-card-name">${escapeHtml(titleLocal || '')}</div>
+          <div class="canvas-card-zh">${escapeHtml(item.zh_name)}</div>
+          <div class="canvas-card-title">${escapeHtml(titleLocal)}</div>
 
-          ${formulaText ? `
-            <div class="grammar-card-formula">
-              <code>${escapeHtml(formulaText)}</code>
-            </div>
-          ` : ''}
+          <div class="canvas-lego-preview">
+            <span class="lego-pill">${escapeHtml(item.formula)}</span>
+          </div>
 
-          <div class="grammar-card-actions">
-            <button type="button" class="grammar-card-btn grammar-btn-detail" onclick="event.stopPropagation(); openGrammarDetail('${escapeQuotes(item.id)}')">
-              <span>📖 ${t('grammarBtnDetail')}</span>
-            </button>
-            <button type="button" class="grammar-card-btn grammar-btn-practice" onclick="event.stopPropagation(); openGrammarPractice('${escapeQuotes(item.id)}')">
-              <span>🎯 ${t('grammarBtnPractice')}</span>
+          <div class="canvas-card-footer">
+            <button type="button" class="canvas-start-btn">
+              <span>${loc === 'ja' ? '学習を始める' : (loc === 'en' ? 'Start Learning' : 'Khám phá ngay')}</span>
+              <span class="canvas-btn-arrow">→</span>
             </button>
           </div>
         </div>
       `;
     }).join('');
-  }
-
-  // --- Full Grammar View Renderer ---
-  function renderGrammarView() {
-    const container = document.getElementById('view-grammar');
-    if (!container) return;
-
-    const gState = grammarStore.getState();
-    const loc = getLang();
-
-    if (gState.viewMode === 'detail' && gState.selectedId) {
-      renderActiveGrammarDetail();
-      return;
-    }
-
-    // Catalog Mode: Minimalist, Fast, No Category, No HSK 2.0/3.0
-    const levels = grammarService.getGrammarLevels();
-    const activeLevels = levels.filter(l => l.count > 0);
-
-    const levelPillsHtml = `
-      <div class="grammar-filter-chip ${gState.level === 'all' ? 'active' : ''}" onclick="setGrammarFilterLevel('all')">
-        ${t('grammarAllLevels')}
-      </div>
-      ${activeLevels.map(l => `
-        <div class="grammar-filter-chip ${gState.level === l.level ? 'active' : ''}" onclick="setGrammarFilterLevel('${l.level}')">
-          ${l.level} (${l.count})
-        </div>
-      `).join('')}
-    `;
-
-    const cardsHtml = buildGrammarCatalogCardsHtml(loc);
 
     container.innerHTML = `
       <div class="grammar-container">
         <!-- Hero Header -->
         <div class="grammar-header">
           <div class="grammar-header-badge">
-            <img src="assets/icons/extras/graduation-cap.png" width="16" height="16" alt="Grammar" style="object-fit:contain; vertical-align:middle; margin-right:4px;">
-            <span>${t('grammarHeroBadge')}</span>
+            <span>✨ CHINESE GRAMMAR CANVAS</span>
           </div>
-          <h1 class="grammar-title">${t('grammarHeroTitle')}</h1>
-          <p class="grammar-subtitle">${t('grammarHeroSubtitle')}</p>
+          <h1 class="grammar-title">${loc === 'ja' ? '中国語文法マスター' : (loc === 'en' ? 'Interactive Chinese Grammar' : 'Ngữ pháp tiếng Trung thực chiến')}</h1>
+          <p class="grammar-subtitle">${loc === 'ja' ? 'レゴのように組み立てて学ぶ — 30秒でわかる直感的文法' : (loc === 'en' ? 'Master grammar like building Lego blocks — 30 seconds per structure, zero clutter' : 'Học theo khối Lego trực quan — 30 giây mỗi cấu trúc, không lý thuyết dài dòng.')}</p>
         </div>
 
-        <!-- Controls: Search and Levels (No Category Row, No Standards Row) -->
-        <div class="grammar-controls">
-          <form class="grammar-search-row" action="javascript:void(0)" onsubmit="handleGrammarSearchSubmit(event)" role="search">
-            <div class="grammar-search-input-box">
-              <button type="submit" class="grammar-search-icon-btn" title="Search" aria-label="Search">
-                <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-5.2-5.2m1.7-4.3a7.5 7.5 0 11-15 0 7.5 7.5 0 0115 0z"/></svg>
-              </button>
-              <input type="search" id="grammar-search-input" class="grammar-search-input" 
-                placeholder="${t('grammarSearchPh')}" 
-                value="${escapeHtml(gState.query)}" 
-                oninput="handleGrammarSearchInput(event)" 
-                oncompositionend="handleGrammarSearchCompositionEnd(event)"
-                onkeydown="handleGrammarSearchKeydown(event)"
-                autocomplete="off" 
-                autocorrect="off" 
-                autocapitalize="off" 
-                spellcheck="false" 
-                enterkeyhint="search">
-              <button type="button" id="grammar-search-clear-btn" class="grammar-search-clear-btn" style="display:${gState.query ? 'flex' : 'none'};" onclick="clearGrammarSearch()" title="Clear">✕</button>
+        <!-- Stage 1 Roadmap Banner -->
+        <div class="grammar-stage-banner">
+          <div class="stage-banner-left">
+            <div class="stage-tag">${loc === 'ja' ? 'ステージ 1' : (loc === 'en' ? 'Stage 1' : 'Chặng 1')}</div>
+            <div class="stage-title">${loc === 'ja' ? '基本サバイバル・コア会話（5構文）' : (loc === 'en' ? 'Survival & Core Conversation (5 Patterns)' : 'Sinh tồn & Giao tiếp nền tảng (5 cấu trúc)')}</div>
+          </div>
+          <div class="stage-banner-right">
+            <div class="stage-progress-pill">
+              🏆 ${loc === 'ja' ? '進捗' : (loc === 'en' ? 'Progress' : 'Tiến độ')}: <b>${completedCount}/${catalog.length}</b>
             </div>
-          </form>
-
-          <!-- Level Filter Chips -->
-          <div class="grammar-filters-row">
-            <div class="grammar-chip-group">${levelPillsHtml}</div>
           </div>
         </div>
 
-        <!-- Catalog Cards Grid -->
-        <div class="grammar-catalog-grid">
+        <!-- Cards Grid -->
+        <div class="grammar-canvas-grid">
           ${cardsHtml}
         </div>
       </div>
     `;
   }
 
-  // --- Detail View: Tra cứu nhanh → Hiểu nghĩa → Biết cách dùng → Xem ví dụ → Luyện tập ---
-  function renderActiveGrammarDetail() {
+  // --- Detail (4-Step Canvas) Renderer ---
+  function renderActiveCanvasDetail() {
     const container = document.getElementById('view-grammar');
     if (!container) return;
 
@@ -791,252 +328,400 @@
     const loc = getLang();
 
     if (!detail) {
-      grammarStore.clearSelection();
-      renderGrammarView();
+      returnToCanvasCatalog();
       return;
     }
 
     const locData = (detail.localizations && detail.localizations[loc]) || detail.localizations?.vi || {};
-    const titleZh = detail.localizations?.zh?.title || detail.keywords?.[0] || detail.formula;
-    const titleLocal = locData.title || '';
-    const formulaText = detail.formula || detail.formula_plain || '';
+    const step = canvasState.activeStep || 1;
 
-    // If active tab is Practice, render Practice View
-    if (gState.detailTab === 'practice') {
-      const practiceHtml = renderPracticeModule(detail, loc, gState.activePracticeTab);
-
-      container.innerHTML = `
-        <div class="grammar-container">
-          <!-- Back and Segmented Nav -->
-          <div class="grammar-detail-top-nav">
-            <button type="button" class="grammar-back-btn" onclick="returnToGrammarCatalog()">
-              ← ${t('grammarBackToList')}
-            </button>
-            <div class="grammar-detail-tabs">
-              <button type="button" class="grammar-detail-tab-btn" onclick="switchGrammarDetailTab('learn')">
-                📖 ${t('grammarTabTheory')}
-              </button>
-              <button type="button" class="grammar-detail-tab-btn active" onclick="switchGrammarDetailTab('practice')">
-                🎯 ${t('grammarTabPractice')}
-              </button>
-            </div>
-          </div>
-
-          <!-- Hero Pattern Summary -->
-          <div class="grammar-practice-hero">
-            <span class="grammar-level-pill grammar-level-${detail.level.toLowerCase().replace(/[^a-z0-9]/g, '')}">${escapeHtml(detail.level)}</span>
-            <span class="grammar-hero-zh">${escapeHtml(titleZh)}</span>
-            <span class="grammar-hero-sub">${escapeHtml(titleLocal)}</span>
-          </div>
-
-          <!-- Practice Module -->
-          ${practiceHtml}
-        </div>
-      `;
-      return;
-    }
-
-    // Theory & Learn Mode
-    const roleColorMap = {};
-    const formulaBlocksHtml = renderStructureFormula(detail, loc, roleColorMap);
-
-    // 1-3 Clean Natural Sentence Examples
-    const examples = Array.isArray(detail.examples) ? detail.examples.slice(0, 3) : [];
-    const examplesHtml = examples.map((ex, idx) => {
-      const transText = getLocText(ex.translations, loc);
-      return `
-        <div class="grammar-example-item">
-          <div class="grammar-example-zh">
-            <span onclick="speakGrammarText('${escapeQuotes(ex.zh)}')" style="cursor:pointer;" title="${loc === 'ja' ? '発音を聞く' : (loc === 'en' ? 'Click to pronounce' : 'Bấm để nghe phát âm')}">
-              ${escapeHtml(ex.zh)}
-            </span>
-            <button type="button" class="example-audio-button" onclick="speakGrammarText('${escapeQuotes(ex.zh)}')">
-              <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
-              <span>${loc === 'ja' ? '再生' : (loc === 'en' ? 'Listen' : 'Phát âm')}</span>
-            </button>
-          </div>
-          <div class="grammar-example-py">${escapeHtml(ex.pinyin || '')}</div>
-          <div class="grammar-example-tr">“${escapeHtml(transText)}”</div>
-        </div>
-      `;
-    }).join('');
-
-    // Common Mistake Box
-    let mistakeBoxHtml = '';
-    if (locData.fatal_mistake) {
-      mistakeBoxHtml = `
-        <div class="grammar-section">
-          <div class="grammar-sec-label">⚠️ ${t('grammarNotes')}</div>
-          <div class="grammar-mistake-card">
-            <div style="font-size:15px; font-weight:700; color:#DC2626; text-decoration:line-through; margin-bottom:4px;">❌ ${escapeHtml(locData.fatal_mistake.wrong)}</div>
-            <div style="font-size:15px; font-weight:700; color:#059669; margin-bottom:6px;">✅ ${escapeHtml(locData.fatal_mistake.correct)}</div>
-            <div style="font-size:13.5px; color:var(--text-secondary); line-height:1.5;"><b>${t('grammarExplanation')}:</b> ${escapeHtml(locData.fatal_mistake.explanation)}</div>
-          </div>
-        </div>
-      `;
+    // Render Step Content
+    let stepContentHtml = '';
+    switch (step) {
+      case 1:
+        stepContentHtml = renderStep1Core(detail, locData, loc);
+        break;
+      case 2:
+        stepContentHtml = renderStep2Lego(detail, loc);
+        break;
+      case 3:
+        stepContentHtml = renderStep3Trap(detail, locData, loc);
+        break;
+      case 4:
+        stepContentHtml = renderStep4Challenge(detail, loc);
+        break;
     }
 
     container.innerHTML = `
       <div class="grammar-container">
-        <!-- Back and Segmented Nav -->
-        <div class="grammar-detail-top-nav">
-          <button type="button" class="grammar-back-btn" onclick="returnToGrammarCatalog()">
-            ← ${t('grammarBackToList')}
+        <!-- Top Back Nav -->
+        <div class="canvas-nav-row">
+          <button type="button" class="grammar-back-btn" onclick="returnToCanvasCatalog()">
+            ← ${loc === 'ja' ? '一覧へ戻る' : (loc === 'en' ? 'Back to Roadmap' : 'Quay lại lộ trình')}
           </button>
-          <div class="grammar-detail-tabs">
-            <button type="button" class="grammar-detail-tab-btn active" onclick="switchGrammarDetailTab('learn')">
-              📖 ${t('grammarTabTheory')}
-            </button>
-            <button type="button" class="grammar-detail-tab-btn" onclick="switchGrammarDetailTab('practice')">
-              🎯 ${t('grammarTabPractice')}
-            </button>
+          <div class="canvas-item-pill">
+            <span>${escapeHtml(detail.level)}</span> • <b>${escapeHtml(detail.zh_name)}</b>
           </div>
         </div>
 
-        <div class="grammar-learn-card">
-          <!-- 1. Ngữ pháp (Grammar Pattern) & 2. Nghĩa (Meaning) -->
-          <div class="grammar-learn-hero">
-            <span class="grammar-level-pill grammar-level-${detail.level.toLowerCase().replace(/[^a-z0-9]/g, '')}">${escapeHtml(detail.level)}</span>
-            <h1 class="grammar-learn-title-zh">${escapeHtml(titleZh)}</h1>
-            <div class="grammar-learn-meaning">${escapeHtml(titleLocal)}</div>
-          </div>
+        <!-- 4-Step Stepper Bar -->
+        <div class="canvas-stepper-bar">
+          <button type="button" class="canvas-step-tab ${step === 1 ? 'active' : ''}" onclick="setCanvasStep(1)">
+            <span class="step-num">1</span>
+            <span class="step-text">${loc === 'ja' ? 'コア要点' : (loc === 'en' ? 'Core Rule' : 'Cốt lõi')}</span>
+          </button>
+          <button type="button" class="canvas-step-tab ${step === 2 ? 'active' : ''}" onclick="setCanvasStep(2)">
+            <span class="step-num">2</span>
+            <span class="step-text">${loc === 'ja' ? '組み立て' : (loc === 'en' ? 'Lego Builder' : 'Lắp ghép')}</span>
+          </button>
+          <button type="button" class="canvas-step-tab ${step === 3 ? 'active' : ''}" onclick="setCanvasStep(3)">
+            <span class="step-num">3</span>
+            <span class="step-text">${loc === 'ja' ? '落とし穴' : (loc === 'en' ? 'Trap Alert' : 'Bẫy hay sai')}</span>
+          </button>
+          <button type="button" class="canvas-step-tab ${step === 4 ? 'active' : ''}" onclick="setCanvasStep(4)">
+            <span class="step-num">4</span>
+            <span class="step-text">${loc === 'ja' ? 'クイック挑戦' : (loc === 'en' ? 'Challenge' : 'Thử tài')}</span>
+          </button>
+        </div>
 
-          <!-- 3. Cách dùng (Usage) -->
-          <div class="grammar-section">
-            <div class="grammar-sec-label">💡 ${t('grammarUsage')}</div>
-            <div class="grammar-usage-desc">${escapeHtml(locData.quick_rule_3s || locData.usage || '')}</div>
-            ${Array.isArray(locData.when_to_use) && locData.when_to_use.length ? `
-              <ul class="grammar-usage-bullets">
-                ${locData.when_to_use.map(u => `<li>${escapeHtml(u)}</li>`).join('')}
-              </ul>
-            ` : ''}
-          </div>
-
-          <!-- 4. Công thức (Formula) -->
-          <div class="grammar-section">
-            <div class="grammar-sec-label">📐 ${t('grammarFormula')}</div>
-            <div class="grammar-formula-highlight">
-              <code>${escapeHtml(formulaText)}</code>
-            </div>
-            ${formulaBlocksHtml}
-          </div>
-
-          <!-- 5. Ví dụ (Key Examples) -->
-          <div class="grammar-section">
-            <div class="grammar-sec-label">💬 ${t('grammarExamples')}</div>
-            <div class="grammar-examples-list">${examplesHtml}</div>
-          </div>
-
-          <!-- 6. Lưu ý & Lỗi sai thường gặp (Notes) -->
-          ${mistakeBoxHtml}
-
-          <!-- Bottom CTA to Practice -->
-          <div style="margin-top:24px;">
-            <button type="button" class="btn btn-primary grammar-cta-practice" onclick="switchGrammarDetailTab('practice')">
-              🎯 ${t('grammarStartPractice')}
-            </button>
-          </div>
+        <!-- Active Step Card -->
+        <div class="canvas-step-card">
+          ${stepContentHtml}
         </div>
       </div>
     `;
   }
 
-  // --- Exposed Global Navigation Functions ---
-  window.openGrammarDetail = function (id) {
-    grammarStore.selectGrammar(id, 'learn');
-    renderGrammarView();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  // --- Step 1: Cốt lõi (The One-Liner) ---
+  function renderStep1Core(detail, locData, loc) {
+    const dlg = detail.dialogue || {};
+    const spkA = dlg.speaker_a || {};
+    const spkB = dlg.speaker_b || {};
 
-  window.openGrammarPractice = function (id) {
-    grammarStore.selectGrammar(id, 'practice');
-    renderGrammarView();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+    return `
+      <div class="canvas-step-inner">
+        <div class="canvas-step-badge">💡 BƯỚC 1: BẢN CHẤT CỐT LÕI</div>
+        <h1 class="canvas-hero-title">${escapeHtml(locData.title || detail.zh_name)}</h1>
+        
+        <div class="canvas-formula-box">
+          <code>${escapeHtml(detail.formula)}</code>
+        </div>
 
-  window.returnToGrammarCatalog = function () {
-    grammarStore.clearSelection();
-    renderGrammarView();
-  };
+        <!-- 1-Line Explanation -->
+        <div class="canvas-quick-rule-card">
+          <div class="quick-rule-icon">⚡</div>
+          <div class="quick-rule-body">
+            <div class="quick-rule-label">${loc === 'ja' ? '30秒でつかむ要点' : (loc === 'en' ? '30-Second Insight' : 'Quy tắc vàng')}</div>
+            <div class="quick-rule-text">${escapeHtml(locData.quick_rule || '')}</div>
+          </div>
+        </div>
 
-  window.switchGrammarDetailTab = function (tab) {
-    grammarStore.setDetailTab(tab);
-    renderActiveGrammarDetail();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+        <!-- Live Dialogue -->
+        <div class="canvas-dialogue-section">
+          <div class="dialogue-sec-label">💬 ${loc === 'ja' ? 'リアル対話用例' : (loc === 'en' ? 'Everyday Dialogue' : 'Hội thoại thực tế')}</div>
+          
+          <div class="dialogue-bubble speaker-a">
+            <div class="speaker-avatar">A</div>
+            <div class="speaker-content">
+              <div class="bubble-zh">
+                <span>${escapeHtml(spkA.zh || '')}</span>
+                <button type="button" class="bubble-audio-btn" onclick="speakGrammarText('${escapeQuotes(spkA.zh || '')}')" title="Play">🔊</button>
+              </div>
+              <div class="bubble-py">${escapeHtml(spkA.py || '')}</div>
+              <div class="bubble-tr">“${escapeHtml(getLocText(spkA.tr, loc))}”</div>
+            </div>
+          </div>
 
-  window.setGrammarFilterLevel = function (lvl) {
-    grammarStore.setState({ level: lvl });
-    renderGrammarView();
-  };
+          <div class="dialogue-bubble speaker-b">
+            <div class="speaker-avatar">B</div>
+            <div class="speaker-content">
+              <div class="bubble-zh">
+                <span>${escapeHtml(spkB.zh || '')}</span>
+                <button type="button" class="bubble-audio-btn" onclick="speakGrammarText('${escapeQuotes(spkB.zh || '')}')" title="Play">🔊</button>
+              </div>
+              <div class="bubble-py">${escapeHtml(spkB.py || '')}</div>
+              <div class="bubble-tr">“${escapeHtml(getLocText(spkB.tr, loc))}”</div>
+            </div>
+          </div>
+        </div>
 
-  window.setGrammarFilterStandard = function (std) {
-    grammarStore.setState({ standard: std });
-    renderGrammarView();
-  };
+        <!-- Step Footer Navigation -->
+        <div class="canvas-step-footer">
+          <div></div>
+          <button type="button" class="btn btn-primary canvas-next-btn" onclick="setCanvasStep(2)">
+            <span>${loc === 'ja' ? '次へ：ブロックを組み立てる' : (loc === 'en' ? 'Next: Build with Lego' : 'Tiếp theo: Lắp ghép câu')} →</span>
+          </button>
+        </div>
+      </div>
+    `;
+  }
 
-  window.setGrammarFilterCategory = function (cat) {
-    grammarStore.setState({ category: cat });
-    renderGrammarView();
-  };
-
-  window.handleGrammarSearchInput = function (eventOrVal) {
-    const val = extractGrammarSearchValue(eventOrVal);
-    grammarStore.setState({ query: val });
-    const clearBtn = document.getElementById('grammar-search-clear-btn');
-    if (clearBtn) clearBtn.style.display = val ? 'flex' : 'none';
-    const grid = document.querySelector('.grammar-catalog-grid');
-    if (grid) grid.innerHTML = buildGrammarCatalogCardsHtml(getLang());
-  };
-
-  window.handleGrammarSearchCompositionEnd = function (eventOrVal) {
-    const val = extractGrammarSearchValue(eventOrVal);
-    grammarStore.setState({ query: val });
-    const clearBtn = document.getElementById('grammar-search-clear-btn');
-    if (clearBtn) clearBtn.style.display = val ? 'flex' : 'none';
-    const grid = document.querySelector('.grammar-catalog-grid');
-    if (grid) grid.innerHTML = buildGrammarCatalogCardsHtml(getLang());
-  };
-
-  window.handleGrammarSearchKeydown = function (event) {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      event.target.blur();
+  // --- Step 2: Bộ Lắp Ghép Lego Tương Tác ---
+  function renderStep2Lego(detail, loc) {
+    const slots = detail.lego_slots || [];
+    if (!canvasState.legoSelections[detail.id]) {
+      canvasState.legoSelections[detail.id] = slots.map(() => 0);
     }
-  };
+    const currentSelections = canvasState.legoSelections[detail.id];
 
-  window.handleGrammarSearchSubmit = function (event) {
-    if (event) event.preventDefault();
-    const input = document.getElementById('grammar-search-input');
-    if (input) {
-      input.blur();
-      grammarStore.setState({ query: input.value.trim() });
+    // Compute assembled sentence
+    const assembledZh = slots.map((s, idx) => {
+      const optIdx = currentSelections[idx] || 0;
+      return (s.options[optIdx] && s.options[optIdx].zh) || '';
+    }).join('');
+
+    const assembledPy = slots.map((s, idx) => {
+      const optIdx = currentSelections[idx] || 0;
+      return (s.options[optIdx] && s.options[optIdx].py) || '';
+    }).join(' ');
+
+    const assembledTr = slots.map((s, idx) => {
+      const optIdx = currentSelections[idx] || 0;
+      return (s.options[optIdx] && getLocText(s.options[optIdx].tr, loc)) || '';
+    }).join(' ');
+
+    const slotsColumnsHtml = slots.map((slot, sIdx) => {
+      const selectedOptIdx = currentSelections[sIdx] || 0;
+      const slotLabel = getLocText(slot.slot_label, loc);
+
+      const optionsHtml = (slot.options || []).map((opt, oIdx) => {
+        const isSelected = selectedOptIdx === oIdx;
+        const optTr = getLocText(opt.tr, loc);
+
+        return `
+          <button type="button" class="lego-option-btn ${isSelected ? 'selected' : ''}" onclick="selectLegoOption('${escapeQuotes(detail.id)}', ${sIdx}, ${oIdx})">
+            <span class="lego-opt-zh">${escapeHtml(opt.zh)}</span>
+            <span class="lego-opt-py">${escapeHtml(opt.py)}</span>
+            <span class="lego-opt-tr">${escapeHtml(optTr)}</span>
+          </button>
+        `;
+      }).join('');
+
+      return `
+        <div class="lego-slot-column">
+          <div class="lego-slot-header">${escapeHtml(slotLabel)}</div>
+          <div class="lego-slot-options">${optionsHtml}</div>
+        </div>
+      `;
+    }).join('');
+
+    return `
+      <div class="canvas-step-inner">
+        <div class="canvas-step-badge">🧩 BƯỚC 2: BỘ LẮP GHÉP TƯƠNG TÁC</div>
+        <h2 class="canvas-section-title">${loc === 'ja' ? 'レゴのようにタップして文を組み立てる' : (loc === 'en' ? 'Tap blocks to assemble your sentence' : 'Tự lắp ghép câu theo ý bạn')}</h2>
+        <p class="canvas-section-desc">${loc === 'ja' ? '各パーツから単語を選択すると、リアルタイムに文が組み上がります：' : (loc === 'en' ? 'Select words from each block below. The sentence updates in real-time:' : 'Bấm chọn từ ở từng cột, câu tiếng Trung sẽ tự động ghép và dịch nghĩa:')}</p>
+
+        <!-- Realtime Assembled Result Display -->
+        <div class="lego-assembled-card">
+          <div class="assembled-top-row">
+            <span class="assembled-tag">${loc === 'ja' ? 'リアルタイム完成文' : (loc === 'en' ? 'Assembled Sentence' : 'Câu vừa ghép')}</span>
+            <button type="button" class="assembled-audio-btn" onclick="speakGrammarText('${escapeQuotes(assembledZh)}')" title="Listen">
+              🔊 <span>${loc === 'ja' ? '発音を聞く' : (loc === 'en' ? 'Pronounce' : 'Phát âm')}</span>
+            </button>
+          </div>
+          <div class="assembled-zh-line">${escapeHtml(assembledZh)}</div>
+          <div class="assembled-py-line">${escapeHtml(assembledPy)}</div>
+          <div class="assembled-tr-line">“${escapeHtml(assembledTr)}”</div>
+        </div>
+
+        <!-- Lego Slots Columns -->
+        <div class="lego-slots-grid">
+          ${slotsColumnsHtml}
+        </div>
+
+        <!-- Step Footer Navigation -->
+        <div class="canvas-step-footer">
+          <button type="button" class="btn btn-secondary" onclick="setCanvasStep(1)">
+            ← ${loc === 'ja' ? '前へ' : (loc === 'en' ? 'Back' : 'Quay lại')}
+          </button>
+          <button type="button" class="btn btn-primary canvas-next-btn" onclick="setCanvasStep(3)">
+            <span>${loc === 'ja' ? '次へ：落とし穴に注意' : (loc === 'en' ? 'Next: Trap Alert' : 'Tiếp theo: Xem bẫy hay sai')} →</span>
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  // --- Step 3: Bẫy Hay Sai (Spot the Trap) ---
+  function renderStep3Trap(detail, locData, loc) {
+    return `
+      <div class="canvas-step-inner">
+        <div class="canvas-step-badge">⚠️ BƯỚC 3: BẪY HAY MẮC PHẢI</div>
+        <h2 class="canvas-section-title">${loc === 'ja' ? '学習者が一番間違えやすいポイント' : (loc === 'en' ? 'The #1 Mistake Learners Make' : 'Bẫy 90% người học hay nhầm')}</h2>
+        
+        <!-- Trap Comparison Card -->
+        <div class="canvas-trap-card">
+          <!-- Wrong -->
+          <div class="trap-line-row wrong">
+            <div class="trap-icon">❌</div>
+            <div class="trap-content">
+              <div class="trap-zh-wrong">${escapeHtml(locData.trap_wrong || '')}</div>
+              <div class="trap-note">${loc === 'ja' ? 'よくある誤用' : (loc === 'en' ? 'Incorrect usage' : 'Câu sai người học hay ghép')}</div>
+            </div>
+          </div>
+
+          <!-- Correct -->
+          <div class="trap-line-row correct">
+            <div class="trap-icon">✅</div>
+            <div class="trap-content">
+              <div class="trap-zh-correct">${escapeHtml(locData.trap_correct || '')}</div>
+              <div class="trap-note">${loc === 'ja' ? 'ネイティブの正しい表現' : (loc === 'en' ? 'Native natural phrasing' : 'Cách nói chuẩn bản xứ')}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Why Explanation Card -->
+        <div class="trap-why-card">
+          <div class="why-icon">💡</div>
+          <div class="why-text">
+            <b>${loc === 'ja' ? 'なぜ間違えるのか？' : (loc === 'en' ? 'Why this happens:' : 'Vì sao hay nhầm:')}</b>
+            ${escapeHtml(locData.trap_why || '')}
+          </div>
+        </div>
+
+        <!-- Step Footer Navigation -->
+        <div class="canvas-step-footer">
+          <button type="button" class="btn btn-secondary" onclick="setCanvasStep(2)">
+            ← ${loc === 'ja' ? '前へ' : (loc === 'en' ? 'Back' : 'Quay lại')}
+          </button>
+          <button type="button" class="btn btn-primary canvas-next-btn" onclick="setCanvasStep(4)">
+            <span>${loc === 'ja' ? '次へ：30秒チャレンジ' : (loc === 'en' ? 'Next: Quick Challenge' : 'Tiếp theo: Thử tài 30 giây')} →</span>
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  // --- Step 4: Thử Tài 30 Giây (Quick Challenge) ---
+  function renderStep4Challenge(detail, loc) {
+    const ch = detail.challenge || {};
+    const promptText = getLocText(ch.prompt, loc);
+    const st = canvasState.challenge[detail.id] || { placed: [], completed: false, isCorrect: false };
+    const availableTokens = getAvailableChallengeTokens(detail.id, ch.tokens || []);
+
+    const placedChipsHtml = st.placed.map((tok, pIdx) => `
+      <button type="button" class="challenge-chip placed" onclick="removeChallengeToken('${escapeQuotes(detail.id)}', ${pIdx})" title="${loc === 'ja' ? 'タップして戻す' : (loc === 'en' ? 'Tap to remove' : 'Bấm để gỡ')}">
+        <span>${escapeHtml(tok)}</span>
+        <span class="chip-remove-x">✕</span>
+      </button>
+    `).join('');
+
+    const availableChipsHtml = availableTokens.map((tok, tIdx) => `
+      <button type="button" class="challenge-chip pool" onclick="placeChallengeToken('${escapeQuotes(detail.id)}', ${tIdx})">
+        <span>${escapeHtml(tok)}</span>
+      </button>
+    `).join('');
+
+    return `
+      <div class="canvas-step-inner">
+        <div class="canvas-step-badge">🎯 BƯỚC 4: THỬ TÀI 30 GIÂY</div>
+        <h2 class="canvas-section-title">${loc === 'ja' ? '単語を並べ替えて正しい文を完成させよう' : (loc === 'en' ? 'Arrange the words into the correct order' : 'Sắp xếp từ thành câu đúng')}</h2>
+        
+        <div class="challenge-prompt-card">
+          <span class="prompt-icon">📝</span>
+          <span class="prompt-text">${escapeHtml(promptText)}</span>
+        </div>
+
+        <!-- Dropzone Area -->
+        <div class="challenge-dropzone ${st.completed ? (st.isCorrect ? 'is-correct' : 'is-wrong') : ''}">
+          ${placedChipsHtml.length ? placedChipsHtml : `<span class="dropzone-ph">${loc === 'ja' ? '下の単語をタップしてここに配置' : (loc === 'en' ? 'Tap words below to place them here' : 'Bấm các từ bên dưới để đưa vào đây...')}</span>`}
+        </div>
+
+        <!-- Token Pool Area -->
+        <div class="challenge-pool-container">
+          <div class="pool-label">${loc === 'ja' ? 'タップして選択：' : (loc === 'en' ? 'Tap to choose:' : 'Kho từ vựng:')}</div>
+          <div class="challenge-pool">${availableChipsHtml}</div>
+        </div>
+
+        <!-- Feedback & Action Buttons -->
+        <div class="challenge-actions-bar">
+          <button type="button" class="btn btn-primary" onclick="checkChallengeAnswer('${escapeQuotes(detail.id)}')" ${st.placed.length === 0 ? 'disabled' : ''}>
+            ✓ ${loc === 'ja' ? '答え合わせ' : (loc === 'en' ? 'Check Answer' : 'Kiểm tra đáp án')}
+          </button>
+          <button type="button" class="btn btn-secondary" onclick="resetChallenge('${escapeQuotes(detail.id)}')">
+            ↺ ${loc === 'ja' ? 'やり直す' : (loc === 'en' ? 'Reset' : 'Làm lại')}
+          </button>
+
+          ${st.completed ? (st.isCorrect ? `
+            <div class="challenge-feedback correct">
+              🎉 <b>${loc === 'ja' ? '正解です！素晴らしい！' : (loc === 'en' ? 'Brilliant! Completely Correct!' : 'Chính xác xuất sắc!')}</b>
+            </div>
+          ` : `
+            <div class="challenge-feedback wrong">
+              ❌ <b>${loc === 'ja' ? '惜しい！もう一度並べ替えてみましょう。' : (loc === 'en' ? 'Not quite right. Try reordering.' : 'Chưa đúng, hãy thử sắp xếp lại nhé!')}</b>
+            </div>
+          `) : ''}
+        </div>
+
+        <!-- Step Footer Navigation -->
+        <div class="canvas-step-footer" style="margin-top:28px;">
+          <button type="button" class="btn btn-secondary" onclick="setCanvasStep(3)">
+            ← ${loc === 'ja' ? '前へ' : (loc === 'en' ? 'Back' : 'Quay lại')}
+          </button>
+          <button type="button" class="btn btn-primary canvas-next-btn" onclick="goToNextGrammar('${escapeQuotes(detail.id)}')">
+            <span>${loc === 'ja' ? '次の文法へ' : (loc === 'en' ? 'Next Pattern' : 'Bài tiếp theo')} →</span>
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  // --- Main Full View Dispatcher ---
+  function renderGrammarView() {
+    const container = document.getElementById('view-grammar');
+    if (!container) return;
+
+    const gState = grammarStore.getState();
+    if (gState.viewMode === 'detail' && gState.selectedId) {
+      renderActiveCanvasDetail();
+    } else {
+      renderCanvasCatalogView();
     }
-    const grid = document.querySelector('.grammar-catalog-grid');
-    if (grid) grid.innerHTML = buildGrammarCatalogCardsHtml(getLang());
-  };
+  }
 
-  window.clearGrammarSearch = function () {
-    grammarStore.setState({ query: '' });
-    const input = document.getElementById('grammar-search-input');
-    if (input) input.value = '';
-    const clearBtn = document.getElementById('grammar-search-clear-btn');
-    if (clearBtn) clearBtn.style.display = 'none';
-    const grid = document.querySelector('.grammar-catalog-grid');
-    if (grid) grid.innerHTML = buildGrammarCatalogCardsHtml(getLang());
-  };
+  // Subscribe to store updates
+  if (grammarStore) {
+    grammarStore.subscribe(() => {
+      renderGrammarView();
+    });
+  }
 
+  // Expose global handlers & components
   window.renderGrammarView = renderGrammarView;
+  window.renderActiveGrammarDetail = renderActiveCanvasDetail;
   window.renderStructureFormula = renderStructureFormula;
   window.renderTokenizedSentence = renderTokenizedSentence;
   window.renderPracticeModule = renderPracticeModule;
 
-  if (typeof module !== 'undefined' && module.exports) {
-    module.exports = {
-      renderStructureFormula: renderStructureFormula,
-      renderTokenizedSentence: renderTokenizedSentence,
-      renderPracticeModule: renderPracticeModule,
-      renderGrammarView: renderGrammarView
-    };
+  // Search compatibility
+  window.handleGrammarSearchInput = function (e) {
+    const val = extractGrammarSearchValue(e);
+    grammarStore.setState({ query: val });
+  };
+  window.handleGrammarSearchCompositionEnd = function (e) {
+    const val = extractGrammarSearchValue(e);
+    grammarStore.setState({ query: val });
+  };
+  window.handleGrammarSearchSubmit = function (e) {
+    if (e && e.preventDefault) e.preventDefault();
+    const input = document.getElementById('grammar-search-input');
+    if (input) input.blur();
+  };
+  window.handleGrammarSearchKeydown = function (e) {
+    if (e && e.key === 'Enter') {
+      window.handleGrammarSearchSubmit(e);
+    }
+  };
+  window.clearGrammarSearch = function () {
+    grammarStore.setState({ query: '' });
+  };
+
+  // Auto-init on load if view-grammar exists
+  if (typeof document !== 'undefined') {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', renderGrammarView);
+    } else {
+      setTimeout(renderGrammarView, 0);
+    }
   }
 })();
