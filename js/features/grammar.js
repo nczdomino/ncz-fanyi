@@ -41,10 +41,10 @@
     return `
       <div class="grammar-formula-card">
         <div class="formula-card-header">
-          <span class="formula-badge-label">📐 ${loc === 'ja' ? '構文公式' : (loc === 'en' ? 'Sentence Formula' : 'Công thức cấu trúc')}</span>
+          <span class="formula-badge-label"> ${loc === 'ja' ? '構文公式' : (loc === 'en' ? 'Sentence Formula' : 'Công thức cấu trúc')}</span>
         </div>
         <div class="formula-code-row">${escapeHtml(detail.formula || '')}</div>
-        ${plainText ? `<div class="formula-plain-text">💡 <b>${escapeHtml(plainText)}</b></div>` : ''}
+        ${plainText ? `<div class="formula-plain-text"> <b>${escapeHtml(plainText)}</b></div>` : ''}
         ${blocks.length ? `<div class="structure-blocks-bar">${blocksPillsHtml}</div>` : ''}
       </div>
     `;
@@ -89,7 +89,7 @@
         const ff = token.false_friend_ja;
         falseFriendHtml = `
           <div class="token-false-friend" onclick="showFalseFriendModal('${escapeQuotes(token.hanzi)}', '${escapeQuotes(ff.zh_meaning)}', '${escapeQuotes(ff.ja_meaning)}')" title="Nhấn để xem khác biệt nghĩa">
-            <span>⚠️</span> <span>同形異義</span>
+            <span></span> <span>同形異義</span>
           </div>
         `;
       }
@@ -114,9 +114,9 @@
     return `
       <div class="example-sentence-card">
         <div class="example-sentence-header">
-          <span class="example-scenario-tag">📍 ${escapeHtml(scenarioText || (loc === 'ja' ? '用例' : (loc === 'en' ? 'Example' : 'Ví dụ')))}</span>
+          <span class="example-scenario-tag"> ${escapeHtml(scenarioText || (loc === 'ja' ? '用例' : (loc === 'en' ? 'Example' : 'Ví dụ')))}</span>
           <button class="example-audio-button" onclick="speakGrammarText('${escapeQuotes(example.zh)}')">
-            <span>🔊</span> <span>${loc === 'ja' ? '再生' : (loc === 'en' ? 'Listen' : 'Phát âm')}</span>
+            <span></span> <span>${loc === 'ja' ? '再生' : (loc === 'en' ? 'Listen' : 'Phát âm')}</span>
           </button>
         </div>
 
@@ -130,9 +130,9 @@
 
         ${(toneTip || wordOrderDiff || note) ? `
           <div class="sentence-tips-row">
-            ${toneTip ? `<div>🎵 <b>${loc === 'ja' ? '声調のヒント' : (loc === 'en' ? 'Tone tip' : 'Mẹo thanh điệu')}:</b> ${escapeHtml(toneTip)}</div>` : ''}
-            ${wordOrderDiff ? `<div>🔄 <b>${loc === 'ja' ? '語順の比較' : (loc === 'en' ? 'Word order diff' : 'Khác biệt trật tự từ')}:</b> ${escapeHtml(wordOrderDiff)}</div>` : ''}
-            ${note ? `<div>💡 <b>${loc === 'ja' ? '注記' : (loc === 'en' ? 'Note' : 'Lưu ý')}:</b> ${escapeHtml(note)}</div>` : ''}
+            ${toneTip ? `<div> <b>${loc === 'ja' ? '声調のヒント' : (loc === 'en' ? 'Tone tip' : 'Mẹo thanh điệu')}:</b> ${escapeHtml(toneTip)}</div>` : ''}
+            ${wordOrderDiff ? `<div> <b>${loc === 'ja' ? '語順の比較' : (loc === 'en' ? 'Word order diff' : 'Khác biệt trật tự từ')}:</b> ${escapeHtml(wordOrderDiff)}</div>` : ''}
+            ${note ? `<div> <b>${loc === 'ja' ? '注記' : (loc === 'en' ? 'Note' : 'Lưu ý')}:</b> ${escapeHtml(note)}</div>` : ''}
           </div>
         ` : ''}
       </div>
@@ -223,28 +223,28 @@
       <div class="practice-module-card" id="practice-module-root">
         <div class="practice-header">
           <div class="practice-title-box">
-            <span style="font-size:22px;">🎯</span>
+            <span style="font-size:22px;"></span>
             <div style="font-size:17px; font-weight:800; color:var(--text-primary);">
               ${loc === 'ja' ? '実践練習 & スコア判定' : (loc === 'en' ? 'Interactive Practice & Quiz' : 'Luyện tập thực hành & Chấm điểm')}
             </div>
           </div>
           <div class="practice-score-badge">
-            🏆 ${loc === 'ja' ? '正解率' : (loc === 'en' ? 'Score' : 'Điểm')}: ${correctAnswers}/${totalQuestions} (${percent}%)
+             ${loc === 'ja' ? '正解率' : (loc === 'en' ? 'Score' : 'Điểm')}: ${correctAnswers}/${totalQuestions} (${percent}%)
           </div>
         </div>
 
         <div class="practice-tabs-bar">
           <button class="practice-tab-btn ${tab === 'puzzles' ? 'active' : ''}" onclick="switchPracticeTab('puzzles')">
-            🧩 ${loc === 'ja' ? '並べ替え' : (loc === 'en' ? 'Sentence Puzzle' : 'Xếp câu')} (${(detail.puzzles || []).length})
+             ${loc === 'ja' ? '並べ替え' : (loc === 'en' ? 'Sentence Puzzle' : 'Xếp câu')} (${(detail.puzzles || []).length})
           </button>
           <button class="practice-tab-btn ${tab === 'fill_blank' ? 'active' : ''}" onclick="switchPracticeTab('fill_blank')">
-            ✏️ ${loc === 'ja' ? '空欄補充' : (loc === 'en' ? 'Fill Blank' : 'Điền chỗ trống')} (${(detail.fill_blank || []).length})
+             ${loc === 'ja' ? '空欄補充' : (loc === 'en' ? 'Fill Blank' : 'Điền chỗ trống')} (${(detail.fill_blank || []).length})
           </button>
           <button class="practice-tab-btn ${tab === 'error_correction' ? 'active' : ''}" onclick="switchPracticeTab('error_correction')">
-            🔍 ${loc === 'ja' ? '誤文訂正' : (loc === 'en' ? 'Error Spot' : 'Sửa lỗi sai')} (${(detail.error_correction || []).length})
+             ${loc === 'ja' ? '誤文訂正' : (loc === 'en' ? 'Error Spot' : 'Sửa lỗi sai')} (${(detail.error_correction || []).length})
           </button>
           <button class="practice-tab-btn ${tab === 'quiz' ? 'active' : ''}" onclick="switchPracticeTab('quiz')">
-            📝 ${loc === 'ja' ? 'クイズ' : (loc === 'en' ? 'Mastery Quiz' : 'Trắc nghiệm')} (${(detail.quiz || []).length})
+             ${loc === 'ja' ? 'クイズ' : (loc === 'en' ? 'Mastery Quiz' : 'Trắc nghiệm')} (${(detail.quiz || []).length})
           </button>
         </div>
 
@@ -296,7 +296,7 @@
             </button>
             ${isDone ? (isRight ? `
               <span style="color:#059669; font-weight:700; display:flex; align-items:center; gap:4px; font-size:14px;">
-                🎉 ${loc === 'ja' ? '正解！' : (loc === 'en' ? 'Correct!' : 'Chính xác!')}
+                 ${loc === 'ja' ? '正解！' : (loc === 'en' ? 'Correct!' : 'Chính xác!')}
               </span>
             ` : `
               <span style="color:#DC2626; font-weight:600; display:flex; align-items:center; gap:4px; font-size:13px;">
@@ -383,16 +383,16 @@
 
           ${eState.showHint ? `
             <div class="explanation-box" style="margin-bottom:10px;">
-              💡 <b>${loc === 'ja' ? 'ヒント' : (loc === 'en' ? 'Hint' : 'Gợi ý')}:</b> ${escapeHtml(hintText)}
+               <b>${loc === 'ja' ? 'ヒント' : (loc === 'en' ? 'Hint' : 'Gợi ý')}:</b> ${escapeHtml(hintText)}
             </div>
           ` : ''}
 
           <div style="display:flex; gap:8px;">
             <button class="btn btn-secondary btn-sm" onclick="toggleErrorCorrectionHint(${eIdx})">
-              💡 ${eState.showHint ? (loc === 'ja' ? 'ヒントを隠す' : 'Ẩn gợi ý') : (loc === 'ja' ? 'ヒントを見る' : 'Xem gợi ý')}
+               ${eState.showHint ? (loc === 'ja' ? 'ヒントを隠す' : 'Ẩn gợi ý') : (loc === 'ja' ? 'ヒントを見る' : 'Xem gợi ý')}
             </button>
             <button class="btn btn-primary btn-sm" onclick="revealErrorCorrection(${eIdx})">
-              👁️ ${eState.revealed ? (loc === 'ja' ? '正解を表示中' : 'Đã hiển thị đáp án') : (loc === 'ja' ? '正解を見る' : 'Xem đáp án')}
+               ${eState.revealed ? (loc === 'ja' ? '正解を表示中' : 'Đã hiển thị đáp án') : (loc === 'ja' ? '正解を見る' : 'Xem đáp án')}
             </button>
           </div>
         </div>
@@ -437,7 +437,7 @@
           ${hasAnswered ? `
             <div class="explanation-box">
               <div style="font-weight:700; color:${qState.isCorrect ? '#059669' : '#DC2626'}; margin-bottom:4px;">
-                ${qState.isCorrect ? '🎉 ' + (loc === 'ja' ? '正解！素晴らしい！' : (loc === 'en' ? 'Correct!' : 'Chính xác!')) : '❌ ' + (loc === 'ja' ? '不正解' : (loc === 'en' ? 'Incorrect' : 'Chưa chính xác'))}
+                ${qState.isCorrect ? ' ' + (loc === 'ja' ? '正解！素晴らしい！' : (loc === 'en' ? 'Correct!' : 'Chính xác!')) : '❌ ' + (loc === 'ja' ? '不正解' : (loc === 'en' ? 'Incorrect' : 'Chưa chính xác'))}
               </div>
               <div>${escapeHtml(expText)}</div>
             </div>
@@ -580,7 +580,7 @@
 
     overlay.innerHTML = `
       <div class="grammar-modal-box">
-        <div style="font-size:28px; margin-bottom:8px; text-align:center;">⚠️</div>
+        <div style="font-size:28px; margin-bottom:8px; text-align:center;"></div>
         <div style="font-size:18px; font-weight:800; text-align:center; color:#DC2626; margin-bottom:12px;">
           ${loc === 'ja' ? '日中同形異義語アラート' : (loc === 'en' ? 'False Friend Warning' : 'Cảnh báo từ đồng hình khác nghĩa!')}
         </div>
@@ -588,11 +588,11 @@
           「${escapeHtml(hanzi)}」
         </div>
         <div style="background:var(--bg-muted); border-radius:12px; padding:12px 16px; margin-bottom:12px;">
-          <div style="font-weight:700; color:#B45309; font-size:13px; margin-bottom:4px;">🇯🇵 ${loc === 'ja' ? '日本語の意味' : 'Nghĩa trong tiếng Nhật'}:</div>
+          <div style="font-weight:700; color:#B45309; font-size:13px; margin-bottom:4px;"> ${loc === 'ja' ? '日本語の意味' : 'Nghĩa trong tiếng Nhật'}:</div>
           <div style="font-size:14px; color:var(--text-primary);">${escapeHtml(jaMeaning)}</div>
         </div>
         <div style="background:rgba(16, 185, 129, 0.08); border-radius:12px; padding:12px 16px; margin-bottom:16px;">
-          <div style="font-weight:700; color:#059669; font-size:13px; margin-bottom:4px;">🇨🇳 ${loc === 'ja' ? '中国語の意味' : 'Nghĩa trong tiếng Trung'}:</div>
+          <div style="font-weight:700; color:#059669; font-size:13px; margin-bottom:4px;"> ${loc === 'ja' ? '中国語の意味' : 'Nghĩa trong tiếng Trung'}:</div>
           <div style="font-size:14px; color:var(--text-primary); font-weight:600;">${escapeHtml(zhMeaning)}</div>
         </div>
         <button class="btn btn-primary" style="width:100%;" onclick="closeFalseFriendModal()">
@@ -628,7 +628,7 @@
     if (!list.length) {
       return `
         <div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-muted);">
-          🔍 ${currentLoc === 'ja' ? '条件に一致する文法が見つかりませんでした' : (currentLoc === 'en' ? 'No matching grammar points found.' : 'Không tìm thấy điểm ngữ pháp nào phù hợp.')}
+           ${currentLoc === 'ja' ? '条件に一致する文法が見つかりませんでした' : (currentLoc === 'en' ? 'No matching grammar points found.' : 'Không tìm thấy điểm ngữ pháp nào phù hợp.')}
         </div>
       `;
     }
@@ -655,7 +655,7 @@
           <div class="grammar-card-bottom">
             <span class="grammar-category-badge">${escapeHtml(catLabel)}</span>
             ${item.hasDetail ? `
-              <span class="grammar-detail-badge">✨ ${currentLoc === 'ja' ? '詳細・練習' : (currentLoc === 'en' ? 'Practice' : 'Chi tiết & Luyện tập')}</span>
+              <span class="grammar-detail-badge"> ${currentLoc === 'ja' ? '詳細・練習' : (currentLoc === 'en' ? 'Practice' : 'Chi tiết & Luyện tập')}</span>
             ` : `
               <span style="font-size:11px; color:var(--text-muted);">${currentLoc === 'ja' ? '概要' : 'Mục lục'}</span>
             `}
@@ -731,7 +731,7 @@
           <!-- Row 1: Large & Prominent Search Bar -->
           <form class="grammar-search-row" action="javascript:void(0)" onsubmit="handleGrammarSearchSubmit(event)" role="search">
             <div class="grammar-search-input-box">
-              <button type="submit" class="grammar-search-icon-btn" title="${loc === 'ja' ? '検索' : (loc === 'en' ? 'Search' : 'Tìm kiếm')}" aria-label="${loc === 'ja' ? '検索' : (loc === 'en' ? 'Search' : 'Tìm kiếm')}">🔍</button>
+              <button type="submit" class="grammar-search-icon-btn" title="${loc === 'ja' ? '検索' : (loc === 'en' ? 'Search' : 'Tìm kiếm')}" aria-label="${loc === 'ja' ? '検索' : (loc === 'en' ? 'Search' : 'Tìm kiếm')}"></button>
               <input type="search" id="grammar-search-input" class="grammar-search-input" 
                 placeholder="${loc === 'ja' ? '文法名、ピンイン、キーワードで検索...' : (loc === 'en' ? 'Search grammar by name, pinyin, formula...' : 'Tìm kiếm ngữ pháp, pinyin, cấu trúc...')}" 
                 value="${escapeHtml(gState.query)}" 
@@ -749,7 +749,7 @@
 
           <!-- Row 2: Category Filter Row (Placed Below Search Bar) -->
           <div class="grammar-filters-row grammar-category-row">
-            <span class="grammar-filter-label">📂 ${loc === 'ja' ? 'カテゴリー' : (loc === 'en' ? 'Category' : 'Phân loại')}:</span>
+            <span class="grammar-filter-label"> ${loc === 'ja' ? 'カテゴリー' : (loc === 'en' ? 'Category' : 'Phân loại')}:</span>
             <select class="grammar-select" id="grammar-category-select" onchange="setGrammarFilterCategory(this.value)">
               ${categoryOptionsHtml}
             </select>
@@ -757,13 +757,13 @@
 
           <!-- Row 3: Level Filter -->
           <div class="grammar-filters-row">
-            <span class="grammar-filter-label">🎯 ${loc === 'ja' ? 'レベル' : (loc === 'en' ? 'Level' : 'Cấp độ')}:</span>
+            <span class="grammar-filter-label"> ${loc === 'ja' ? 'レベル' : (loc === 'en' ? 'Level' : 'Cấp độ')}:</span>
             <div class="grammar-chip-group">${levelPillsHtml}</div>
           </div>
 
           <!-- Row 4: Standard Filter -->
           <div class="grammar-filters-row">
-            <span class="grammar-filter-label">🏷️ ${loc === 'ja' ? '基準' : (loc === 'en' ? 'Standard' : 'Chuẩn')}:</span>
+            <span class="grammar-filter-label"> ${loc === 'ja' ? '基準' : (loc === 'en' ? 'Standard' : 'Chuẩn')}:</span>
             <div class="grammar-chip-group">${standardHtml}</div>
           </div>
         </div>
@@ -809,7 +809,7 @@
           <span style="font-weight:700; color:var(--accent); min-width:24px;">${escapeHtml(line.speaker)}:</span>
           <div>
             <div style="font-size:16px; font-weight:700; font-family:var(--font-hanzi); color:var(--text-primary); cursor:pointer;" onclick="speakGrammarText('${escapeQuotes(line.zh)}')">
-              ${escapeHtml(line.zh)} 🔊
+              ${escapeHtml(line.zh)} 
             </div>
             <div style="font-size:12px; color:var(--text-muted); font-family:var(--font-pinyin);">${escapeHtml(line.pinyin)}</div>
             <div style="font-size:13px; color:var(--text-secondary); margin-top:2px;">${escapeHtml(getLocalizedText(line.tr, loc))}</div>
@@ -819,8 +819,8 @@
 
       dialogueHtml = `
         <div class="grammar-section">
-          <div class="grammar-section-title">💬 ${loc === 'ja' ? '実践会話シーン' : (loc === 'en' ? 'Practical Dialogue' : 'Hội thoại giao tiếp thực tế')}</div>
-          <div style="font-size:12.5px; color:var(--text-muted); margin-bottom:10px;">🎯 <b>Mục tiêu:</b> ${escapeHtml(dGoal)}</div>
+          <div class="grammar-section-title"> ${loc === 'ja' ? '実践会話シーン' : (loc === 'en' ? 'Practical Dialogue' : 'Hội thoại giao tiếp thực tế')}</div>
+          <div style="font-size:12.5px; color:var(--text-muted); margin-bottom:10px;"> <b>Mục tiêu:</b> ${escapeHtml(dGoal)}</div>
           <div style="background:var(--bg-muted); border-radius:12px; padding:14px;">${linesHtml}</div>
         </div>
       `;
@@ -831,7 +831,7 @@
     if (Array.isArray(detail.collocations) && detail.collocations.length) {
       collocationsHtml = `
         <div class="grammar-section">
-          <div class="grammar-section-title">🔗 ${loc === 'ja' ? 'よく使われるコロケーション' : (loc === 'en' ? 'Common Collocations' : 'Cụm từ cố định thường gặp')}</div>
+          <div class="grammar-section-title"> ${loc === 'ja' ? 'よく使われるコロケーション' : (loc === 'en' ? 'Common Collocations' : 'Cụm từ cố định thường gặp')}</div>
           <div style="display:flex; flex-wrap:wrap; gap:8px;">
             ${detail.collocations.map(col => `
               <div style="background:var(--bg-muted); border:1px solid var(--border-color); border-radius:8px; padding:6px 10px; font-size:13px;">
@@ -850,11 +850,11 @@
     if (localData.fatal_mistake) {
       mistakesHtml = `
         <div class="grammar-section">
-          <div class="grammar-section-title">🚨 ${loc === 'ja' ? '学習者が犯しやすい致命的なミス' : (loc === 'en' ? 'Common Mistakes to Avoid' : 'Lỗi sai chí mạng cần tránh')}</div>
+          <div class="grammar-section-title"> ${loc === 'ja' ? '学習者が犯しやすい致命的なミス' : (loc === 'en' ? 'Common Mistakes to Avoid' : 'Lỗi sai chí mạng cần tránh')}</div>
           <div style="background:rgba(239, 68, 68, 0.06); border:1px solid rgba(239, 68, 68, 0.25); border-radius:12px; padding:14px; margin-bottom:10px;">
             <div style="font-size:15px; font-weight:700; color:#DC2626; text-decoration:line-through; margin-bottom:4px;">❌ ${escapeHtml(localData.fatal_mistake.wrong)}</div>
             <div style="font-size:15px; font-weight:700; color:#059669; margin-bottom:6px;">✅ ${escapeHtml(localData.fatal_mistake.correct)}</div>
-            <div style="font-size:13px; color:var(--text-secondary); line-height:1.45;">💡 <b>${loc === 'ja' ? '解説' : 'Giải thích'}:</b> ${escapeHtml(localData.fatal_mistake.explanation)}</div>
+            <div style="font-size:13px; color:var(--text-secondary); line-height:1.45;"> <b>${loc === 'ja' ? '解説' : 'Giải thích'}:</b> ${escapeHtml(localData.fatal_mistake.explanation)}</div>
           </div>
         </div>
       `;
@@ -883,7 +883,7 @@
           <!-- Quick Rule 3s -->
           ${localData.quick_rule_3s ? `
             <div class="grammar-section">
-              <div class="grammar-section-title">⚡ ${loc === 'ja' ? '3秒でわかる速習ルール' : (loc === 'en' ? '3-Second Core Rule' : 'Quy tắc vàng 3 giây')}</div>
+              <div class="grammar-section-title"> ${loc === 'ja' ? '3秒でわかる速習ルール' : (loc === 'en' ? '3-Second Core Rule' : 'Quy tắc vàng 3 giây')}</div>
               <div class="grammar-quick-rule-box">${escapeHtml(localData.quick_rule_3s)}</div>
             </div>
           ` : ''}
@@ -891,7 +891,7 @@
           <!-- Contrastive note -->
           ${localData.contrastive_note ? `
             <div class="grammar-section">
-              <div class="grammar-section-title">🔍 ${loc === 'ja' ? '母語との比較・注意点' : (loc === 'en' ? 'Contrastive Note' : 'Lưu ý so sánh với tiếng mẹ đẻ')}</div>
+              <div class="grammar-section-title"> ${loc === 'ja' ? '母語との比較・注意点' : (loc === 'en' ? 'Contrastive Note' : 'Lưu ý so sánh với tiếng mẹ đẻ')}</div>
               <div class="grammar-contrastive-box">${escapeHtml(localData.contrastive_note)}</div>
             </div>
           ` : ''}
@@ -901,7 +901,7 @@
 
           <!-- Component 2: TokenizedSentence Examples -->
           <div class="grammar-section">
-            <div class="grammar-section-title">📖 ${loc === 'ja' ? '詳細例文 & 構文色分け' : (loc === 'en' ? 'Detailed Examples & Color Analysis' : 'Câu ví dụ chi tiết & Ánh xạ cấu trúc')}</div>
+            <div class="grammar-section-title"> ${loc === 'ja' ? '詳細例文 & 構文色分け' : (loc === 'en' ? 'Detailed Examples & Color Analysis' : 'Câu ví dụ chi tiết & Ánh xạ cấu trúc')}</div>
             <div>${examplesHtml}</div>
           </div>
 

@@ -122,10 +122,10 @@
 
           <!-- Metrics summary pill row -->
           <div class="bc-hero-metrics">
-            <span class="bc-metric-pill">📚 <b>12</b> ${lang === 'vi' ? 'Danh mục' : (lang === 'ja' ? 'カテゴリー' : 'Categories')}</span>
-            <span class="bc-metric-pill">🔤 <b>144</b> ${lang === 'vi' ? 'Thuật ngữ' : (lang === 'ja' ? '専門用語' : 'Vocab')}</span>
-            <span class="bc-metric-pill">✉️ <b>11</b> ${lang === 'vi' ? 'Mẫu Email' : (lang === 'ja' ? '実務メール' : 'Emails')}</span>
-            <span class="bc-metric-pill">📄 <b>10</b> ${lang === 'vi' ? 'Chứng từ' : (lang === 'ja' ? '船積書類' : 'Documents')}</span>
+            <span class="bc-metric-pill"> <b>12</b> ${lang === 'vi' ? 'Danh mục' : (lang === 'ja' ? 'カテゴリー' : 'Categories')}</span>
+            <span class="bc-metric-pill"> <b>144</b> ${lang === 'vi' ? 'Thuật ngữ' : (lang === 'ja' ? '専門用語' : 'Vocab')}</span>
+            <span class="bc-metric-pill"> <b>11</b> ${lang === 'vi' ? 'Mẫu Email' : (lang === 'ja' ? '実務メール' : 'Emails')}</span>
+            <span class="bc-metric-pill"> <b>10</b> ${lang === 'vi' ? 'Chứng từ' : (lang === 'ja' ? '船積書類' : 'Documents')}</span>
             <span class="bc-metric-pill">
               <img src="assets/icons/extras/lightning.png" width="14" height="14" alt="SRS" style="object-fit:contain; vertical-align:middle; margin-right:2px;">
               <b>${stats.dueToday}</b> ${lang === 'vi' ? 'Thẻ cần ôn' : (lang === 'ja' ? '復習必要' : 'Due SRS')}
@@ -136,28 +136,28 @@
         <!-- Sub-Navigation Navigation Tabs -->
         <nav class="bc-subnav" role="tablist">
           <button class="bc-subnav-btn ${businessState.activeSubTab === 'vocab' ? 'active' : ''}" onclick="bcSwitchSubTab('vocab')">
-            <span class="bc-tab-icon">📖</span>
+            <span class="bc-tab-icon"></span>
             <span>${t('bcTabVocab') || 'Từ vựng'}</span>
           </button>
           <button class="bc-subnav-btn ${businessState.activeSubTab === 'pinyin-quiz' ? 'active' : ''}" onclick="bcSwitchSubTab('pinyin-quiz')">
-            <span class="bc-tab-icon">🎯</span>
+            <span class="bc-tab-icon"></span>
             <span>${lang === 'vi' ? 'Kiểm tra Pinyin' : (lang === 'ja' ? 'ピンインテスト' : 'Pinyin Test')}</span>
           </button>
           <button class="bc-subnav-btn ${businessState.activeSubTab === 'srs' ? 'active' : ''}" onclick="bcSwitchSubTab('srs')">
-            <span class="bc-tab-icon">🗂️</span>
+            <span class="bc-tab-icon"></span>
             <span>${t('bcTabSRS') || 'Flashcards'}</span>
             ${stats.dueToday > 0 ? `<span class="bc-srs-badge">${stats.dueToday}</span>` : ''}
           </button>
           <button class="bc-subnav-btn ${businessState.activeSubTab === 'emails' ? 'active' : ''}" onclick="bcSwitchSubTab('emails')">
-            <span class="bc-tab-icon">✉️</span>
+            <span class="bc-tab-icon"></span>
             <span>${t('bcTabEmails') || 'Mẫu Email'}</span>
           </button>
           <button class="bc-subnav-btn ${businessState.activeSubTab === 'documents' ? 'active' : ''}" onclick="bcSwitchSubTab('documents')">
-            <span class="bc-tab-icon">📑</span>
+            <span class="bc-tab-icon"></span>
             <span>${t('bcTabDocs') || 'Chứng từ'}</span>
           </button>
           <button class="bc-subnav-btn ${businessState.activeSubTab === 'practice' ? 'active' : ''}" onclick="bcSwitchSubTab('practice')">
-            <span class="bc-tab-icon">💼</span>
+            <span class="bc-tab-icon"></span>
             <span>${t('bcTabPractice') || 'Tình huống'}</span>
           </button>
         </nav>
@@ -217,7 +217,7 @@
         <div class="bc-search-panel">
           <form class="bc-search-form" action="javascript:void(0)" role="search" onsubmit="event.preventDefault()">
             <div class="bc-search-input-wrap">
-              <span class="bc-search-lens">🔍</span>
+              <span class="bc-search-lens"></span>
               <input 
                 type="search" 
                 id="bc-vocab-search-input" 
@@ -238,7 +238,7 @@
           <!-- Filters row -->
           <div class="bc-filter-row">
             <div class="bc-filter-group">
-              <label class="bc-filter-label">📂 ${lang === 'vi' ? 'Danh mục:' : (lang === 'ja' ? 'カテゴリー:' : 'Category:')}</label>
+              <label class="bc-filter-label"> ${lang === 'vi' ? 'Danh mục:' : (lang === 'ja' ? 'カテゴリー:' : 'Category:')}</label>
               <select class="bc-select" id="bc-cat-filter" onchange="bcOnCategoryFilter(this.value)">
                 <option value="all">${t('bcAllCategories') || 'Tất cả danh mục'}</option>
                 ${categories.map(c => `
@@ -250,12 +250,12 @@
             </div>
 
             <div class="bc-filter-group">
-              <label class="bc-filter-label">📊 ${lang === 'vi' ? 'Cấp độ:' : (lang === 'ja' ? '難易度:' : 'Level:')}</label>
+              <label class="bc-filter-label"> ${lang === 'vi' ? 'Cấp độ:' : (lang === 'ja' ? '難易度:' : 'Level:')}</label>
               <select class="bc-select" id="bc-level-filter" onchange="bcOnLevelFilter(this.value)">
                 <option value="all">${t('bcAllLevels') || 'Tất cả cấp độ'}</option>
-                <option value="beginner" ${businessState.selectedLevel === 'beginner' ? 'selected' : ''}>🌱 ${t('bcLevelBeginner') || 'Cơ bản'}</option>
-                <option value="intermediate" ${businessState.selectedLevel === 'intermediate' ? 'selected' : ''}>⚡ ${t('bcLevelIntermediate') || 'Trung cấp'}</option>
-                <option value="advanced" ${businessState.selectedLevel === 'advanced' ? 'selected' : ''}>🔥 ${t('bcLevelAdvanced') || 'Nâng cao'}</option>
+                <option value="beginner" ${businessState.selectedLevel === 'beginner' ? 'selected' : ''}> ${t('bcLevelBeginner') || 'Cơ bản'}</option>
+                <option value="intermediate" ${businessState.selectedLevel === 'intermediate' ? 'selected' : ''}> ${t('bcLevelIntermediate') || 'Trung cấp'}</option>
+                <option value="advanced" ${businessState.selectedLevel === 'advanced' ? 'selected' : ''}> ${t('bcLevelAdvanced') || 'Nâng cao'}</option>
               </select>
             </div>
           </div>
@@ -264,14 +264,14 @@
         <!-- Pinyin Quiz Interactive Banner -->
         <div style="background:var(--bg-surface); border:1px solid var(--border-color); border-radius:var(--radius-xl, 18px); padding:16px 20px; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; box-shadow:0 2px 8px rgba(0,0,0,0.02);">
           <div style="display:flex; align-items:center; gap:12px;">
-            <div style="width:42px; height:42px; border-radius:50%; background:var(--accent-subtle); display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;">🎯</div>
+            <div style="width:42px; height:42px; border-radius:50%; background:var(--accent-subtle); display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;"></div>
             <div>
               <div style="font-weight:700; font-size:14.5px; color:var(--text-primary);">${lang === 'vi' ? 'Kiểm tra phản xạ Pinyin & Thanh điệu' : (lang === 'ja' ? 'ピンイン・声調判定テスト' : 'Pinyin Tone Mastery Quiz')}</div>
               <div style="font-size:13px; color:var(--text-secondary); margin-top:2px;">${lang === 'vi' ? 'Thử thách chọn Pinyin chính xác của 144 thuật ngữ ngoại thương' : (lang === 'ja' ? '144の貿易専門用語のピンインと声調をテスト' : 'Challenge your pronunciation and tone recognition across 144 trade terms')}</div>
             </div>
           </div>
           <button class="bc-pinyin-action-btn" onclick="bcSwitchSubTab('pinyin-quiz')" style="padding:10px 20px; font-size:13.5px;">
-            <span>${lang === 'vi' ? 'Bắt đầu Test ngay' : (lang === 'ja' ? '今すぐテスト' : 'Start Pinyin Quiz')}</span> ➔
+            <span>${lang === 'vi' ? 'Bắt đầu Test ngay' : (lang === 'ja' ? '今すぐテスト' : 'Start Pinyin Quiz')}</span> 
           </button>
         </div>
 
@@ -318,7 +318,7 @@
     if (results.length === 0) {
       listContainer.innerHTML = `
         <div class="bc-empty-state">
-          <div class="bc-empty-icon">🔍</div>
+          <div class="bc-empty-icon"></div>
           <div class="bc-empty-title">${lang === 'vi' ? 'Không tìm thấy thuật ngữ phù hợp' : (lang === 'ja' ? '該当する用語が見つかりません' : 'No matching terms found')}</div>
           <p class="bc-empty-desc">${lang === 'vi' ? 'Hãy thử tìm bằng từ khóa khác hoặc bỏ bớt bộ lọc' : 'Try broadening your search criteria or resetting filters'}</p>
         </div>
@@ -338,7 +338,7 @@
         return `
           <div class="bc-example-row">
             <div class="bc-ex-zh">
-              <span class="bc-ex-speaker" onclick="bcPlayAudio('${escapeHtml(ex.zh)}', event)" title="Nghe câu này">🔊</span>
+              <span class="bc-ex-speaker" onclick="bcPlayAudio('${escapeHtml(ex.zh)}', event)" title="Nghe câu này"></span>
               <span>${escapeHtml(ex.zh)}</span>
             </div>
             <div class="bc-ex-py">${escapeHtml(ex.pinyin)}</div>
@@ -358,9 +358,9 @@
             </div>
             <div class="bc-card-actions">
               <button class="bc-test-pinyin-btn" onclick="bcStartPinyinQuizWithTerm('${item.id}', event)" title="${lang === 'vi' ? 'Kiểm tra Pinyin từ này' : 'Test Pinyin'}">
-                🎯 <span>${lang === 'vi' ? 'Test Pinyin' : 'Quiz'}</span>
+                 <span>${lang === 'vi' ? 'Test Pinyin' : 'Quiz'}</span>
               </button>
-              <button class="bc-audio-btn" onclick="bcPlayAudio('${escapeHtml(item.term)}', event)" title="Phát âm">🔊</button>
+              <button class="bc-audio-btn" onclick="bcPlayAudio('${escapeHtml(item.term)}', event)" title="Phát âm"></button>
               <button class="bc-fav-btn ${isFav ? 'active' : ''}" data-id="${item.id}" onclick="bcToggleFavorite('${item.id}', event)" title="Lưu từ này">
                 ${isFav ? '★' : '☆'}
               </button>
@@ -375,14 +375,14 @@
 
           <div class="bc-card-meaning">
             <div class="bc-def-main"><strong>${escapeHtml(meaning)}</strong></div>
-            ${note ? `<div class="bc-def-note">💡 ${escapeHtml(note)}</div>` : ''}
+            ${note ? `<div class="bc-def-note"> ${escapeHtml(note)}</div>` : ''}
           </div>
 
           ${examplesHtml ? `<div class="bc-card-examples">${examplesHtml}</div>` : ''}
 
           ${tipText ? `
             <div class="bc-card-protip">
-              <div class="bc-protip-label">💼 ${lang === 'vi' ? 'Kinh nghiệm thực chiến:' : (lang === 'ja' ? '実務ノウハウ:' : 'Business Pro Tip:')}</div>
+              <div class="bc-protip-label"> ${lang === 'vi' ? 'Kinh nghiệm thực chiến:' : (lang === 'ja' ? '実務ノウハウ:' : 'Business Pro Tip:')}</div>
               <div class="bc-protip-body">${escapeHtml(tipText)}</div>
             </div>
           ` : ''}
@@ -415,7 +415,7 @@
         <!-- Sidebar Template Selector -->
         <aside class="bc-email-sidebar">
           <div class="bc-sidebar-header">
-            <h3>✉️ ${lang === 'vi' ? 'Danh sách mẫu Email' : (lang === 'ja' ? 'メールテンプレート一覧' : 'Email Templates')}</h3>
+            <h3> ${lang === 'vi' ? 'Danh sách mẫu Email' : (lang === 'ja' ? 'メールテンプレート一覧' : 'Email Templates')}</h3>
             <span class="bc-badge bc-badge-cat">${emails.length} ${lang === 'vi' ? 'mẫu' : 'templates'}</span>
           </div>
           <div class="bc-email-nav-list">
@@ -439,30 +439,30 @@
           <!-- Template Header -->
           <div class="bc-email-header-card">
             <div class="bc-email-meta-top">
-              <span class="bc-badge bc-badge-cat">✉️ ${escapeHtml(currentEmail.category)}</span>
+              <span class="bc-badge bc-badge-cat"> ${escapeHtml(currentEmail.category)}</span>
               <div class="bc-mode-toggle">
                 <button 
                   class="bc-toggle-pill ${!businessState.emailIsConcise ? 'active' : ''}" 
                   onclick="bcSetEmailMode(false)"
                 >
-                  🎩 ${t('bcFormal') || 'Trang trọng'}
+                   ${t('bcFormal') || 'Trang trọng'}
                 </button>
                 <button 
                   class="bc-toggle-pill ${businessState.emailIsConcise ? 'active' : ''}" 
                   onclick="bcSetEmailMode(true)"
                 >
-                  ⚡ ${t('bcConcise') || 'Ngắn gọn / Nhắn tin'}
+                   ${t('bcConcise') || 'Ngắn gọn / Nhắn tin'}
                 </button>
               </div>
             </div>
 
             <h2 class="bc-email-subject">${escapeHtml(getLocText(currentEmail.subject, lang))}</h2>
-            <div class="bc-email-purpose">🎯 <b>${lang === 'vi' ? 'Mục đích:' : (lang === 'ja' ? '用途:' : 'Objective:')}</b> ${escapeHtml(getLocText(currentEmail.purpose, lang))}</div>
+            <div class="bc-email-purpose"> <b>${lang === 'vi' ? 'Mục đích:' : (lang === 'ja' ? '用途:' : 'Objective:')}</b> ${escapeHtml(getLocText(currentEmail.purpose, lang))}</div>
           </div>
 
           <!-- Dynamic Placeholders Form -->
           <div class="bc-placeholders-panel">
-            <div class="bc-panel-title">✍️ ${lang === 'vi' ? 'Tùy chỉnh thông tin trong ngoặc [ ]' : (lang === 'ja' ? '変数 [ ] のカスタマイズ入力' : 'Customize Placeholders [ ]')}</div>
+            <div class="bc-panel-title"> ${lang === 'vi' ? 'Tùy chỉnh thông tin trong ngoặc [ ]' : (lang === 'ja' ? '変数 [ ] のカスタマイズ入力' : 'Customize Placeholders [ ]')}</div>
             <div class="bc-placeholders-grid">
               ${(currentEmail.placeholders || []).map(ph => `
                 <div class="bc-field-box">
@@ -482,9 +482,9 @@
           <!-- Output Preview and 1-Click Copy -->
           <div class="bc-email-preview-box">
             <div class="bc-preview-toolbar">
-              <span class="bc-preview-tag">📄 ${lang === 'vi' ? 'Bản thảo hoàn chỉnh (Tiếng Trung):' : (lang === 'ja' ? '完成文プレビュー（中国語）' : 'Compiled Chinese Output')}</span>
+              <span class="bc-preview-tag"> ${lang === 'vi' ? 'Bản thảo hoàn chỉnh (Tiếng Trung):' : (lang === 'ja' ? '完成文プレビュー（中国語）' : 'Compiled Chinese Output')}</span>
               <button class="bc-copy-btn" id="bc-email-copy-btn" onclick="bcCopyEmailText()">
-                📋 <span id="bc-copy-text">${t('bcCopyEmail') || 'Sao chép toàn bộ thư'}</span>
+                 <span id="bc-copy-text">${t('bcCopyEmail') || 'Sao chép toàn bộ thư'}</span>
               </button>
             </div>
             <div class="bc-email-output-content" id="bc-compiled-email-text">${escapeHtml(rendered.fullText)}</div>
@@ -492,7 +492,7 @@
 
           <!-- Parallel Translation Reference -->
           <div class="bc-email-translation-box">
-            <div class="bc-panel-title">🌐 ${lang === 'vi' ? 'Bản dịch tham khảo (' + lang.toUpperCase() + '):' : 'Reference Translation (' + lang.toUpperCase() + ')'}</div>
+            <div class="bc-panel-title"> ${lang === 'vi' ? 'Bản dịch tham khảo (' + lang.toUpperCase() + '):' : 'Reference Translation (' + lang.toUpperCase() + ')'}</div>
             <div class="bc-email-trans-content">
               ${escapeHtml(BusinessService.renderEmailTemplate(currentEmail.id, businessState.emailPlaceholders, businessState.emailIsConcise, lang).fullText)}
             </div>
@@ -566,7 +566,7 @@
         <!-- Sidebar Document List -->
         <aside class="bc-docs-sidebar">
           <div class="bc-sidebar-header">
-            <h3>📑 ${lang === 'vi' ? 'Chứng từ xuất nhập khẩu' : (lang === 'ja' ? '貿易船積書類一覧' : 'Trade Documents')}</h3>
+            <h3> ${lang === 'vi' ? 'Chứng từ xuất nhập khẩu' : (lang === 'ja' ? '貿易船積書類一覧' : 'Trade Documents')}</h3>
             <span class="bc-badge bc-badge-cat">10 ${lang === 'vi' ? 'chứng từ' : 'docs'}</span>
           </div>
           <div class="bc-docs-nav-list">
@@ -590,15 +590,15 @@
           <!-- Document Hero Header -->
           <div class="bc-doc-header-card">
             <div class="bc-doc-badge-row">
-              <span class="bc-badge bc-badge-cat">📜 Core Trade Document</span>
-              <button class="bc-audio-btn" onclick="bcPlayAudio('${escapeHtml(currentDoc.nameZh)}', event)">🔊 Nghe tên chứng từ</button>
+              <span class="bc-badge bc-badge-cat"> Core Trade Document</span>
+              <button class="bc-audio-btn" onclick="bcPlayAudio('${escapeHtml(currentDoc.nameZh)}', event)"> Nghe tên chứng từ</button>
             </div>
             <h2 class="bc-doc-name-zh">${escapeHtml(currentDoc.nameZh)} <small>(${escapeHtml(currentDoc.pinyin)})</small></h2>
             <div class="bc-doc-name-local">${escapeHtml(currentDoc['name' + lang.charAt(0).toUpperCase() + lang.slice(1)] || currentDoc.nameVi)}</div>
 
             <!-- Purpose Box -->
             <div class="bc-doc-purpose-box">
-              <div class="bc-box-label">🎯 ${lang === 'vi' ? 'Mục đích & Ý nghĩa pháp lý:' : (lang === 'ja' ? '法的意義・使用目的:' : 'Commercial & Legal Purpose:')}</div>
+              <div class="bc-box-label"> ${lang === 'vi' ? 'Mục đích & Ý nghĩa pháp lý:' : (lang === 'ja' ? '法的意義・使用目的:' : 'Commercial & Legal Purpose:')}</div>
               <div class="bc-box-body">${escapeHtml(getLocText(currentDoc.purpose, lang))}</div>
             </div>
 
@@ -612,7 +612,7 @@
 
           <!-- Standard Fields Breakdown Table -->
           <div class="bc-doc-fields-section">
-            <h3 class="bc-fields-header">🔍 ${lang === 'vi' ? 'Chi tiết các ô / mục trên chứng từ:' : (lang === 'ja' ? '主要記載項目・フィールド別解説:' : 'Field-by-Field Breakdown:')}</h3>
+            <h3 class="bc-fields-header"> ${lang === 'vi' ? 'Chi tiết các ô / mục trên chứng từ:' : (lang === 'ja' ? '主要記載項目・フィールド別解説:' : 'Field-by-Field Breakdown:')}</h3>
             
             <div class="bc-fields-grid">
               ${(currentDoc.standardFields || []).map((fld, fIdx) => `
@@ -620,7 +620,7 @@
                   <div class="bc-field-card-header">
                     <span class="bc-field-tag">Box 0${fIdx + 1}</span>
                     <span class="bc-field-zh">${escapeHtml(fld.fieldZh)}</span>
-                    <button class="bc-mini-speaker" onclick="bcPlayAudio('${escapeHtml(fld.fieldZh.split('(')[0])}', event)">🔊</button>
+                    <button class="bc-mini-speaker" onclick="bcPlayAudio('${escapeHtml(fld.fieldZh.split('(')[0])}', event)"></button>
                   </div>
                   <div class="bc-field-en">${escapeHtml(fld.fieldEn)}</div>
                   <div class="bc-field-desc">${escapeHtml(getLocText(fld.explanation, lang))}</div>
@@ -654,13 +654,13 @@
     if (dueCards.length === 0) {
       mount.innerHTML = `
         <div class="bc-srs-empty">
-          <div class="bc-empty-icon">🎉</div>
+          <div class="bc-empty-icon"></div>
           <h2>${lang === 'vi' ? 'Tuyệt vời! Bạn đã hoàn thành hết thẻ ôn tập hôm nay!' : (lang === 'ja' ? 'おめでとうございます！本日の復習は完了しました！' : 'All caught up! No due cards today!')}</h2>
           <p>${lang === 'vi' ? 'Hệ thống SRS đã ghi nhớ tiến độ. Hãy quay lại vào ngày mai để củng cố trí nhớ dài hạn nhé.' : 'The spaced repetition engine has scheduled your reviews for optimal long-term retention.'}</p>
           <div class="bc-hero-metrics" style="justify-content:center; margin-top:20px;">
-            <span class="bc-metric-pill">🏆 <b>${stats.mastered}</b> ${lang === 'vi' ? 'Đã thuộc làu' : 'Mastered'}</span>
-            <span class="bc-metric-pill">📖 <b>${stats.learning}</b> ${lang === 'vi' ? 'Đang học' : 'Learning'}</span>
-            <span class="bc-metric-pill">📚 <b>${stats.totalVocab}</b> ${lang === 'vi' ? 'Tổng từ vựng' : 'Total Terms'}</span>
+            <span class="bc-metric-pill"> <b>${stats.mastered}</b> ${lang === 'vi' ? 'Đã thuộc làu' : 'Mastered'}</span>
+            <span class="bc-metric-pill"> <b>${stats.learning}</b> ${lang === 'vi' ? 'Đang học' : 'Learning'}</span>
+            <span class="bc-metric-pill"> <b>${stats.totalVocab}</b> ${lang === 'vi' ? 'Tổng từ vựng' : 'Total Terms'}</span>
           </div>
         </div>
       `;
@@ -696,8 +696,8 @@
           </div>
 
           <div class="bc-srs-mini-stats">
-            <span class="bc-stat-badge">🔥 Review: ${cardState.repetitions} lần</span>
-            <span class="bc-stat-badge">⏱️ Interval: ${cardState.interval}d</span>
+            <span class="bc-stat-badge"> Review: ${cardState.repetitions} lần</span>
+            <span class="bc-stat-badge">⏱ Interval: ${cardState.interval}d</span>
           </div>
         </div>
 
@@ -711,8 +711,8 @@
               </div>
               <div class="bc-front-hanzi">${escapeHtml(currentCard.term)}</div>
               <div class="bc-front-pinyin">${escapeHtml(currentCard.pinyin)}</div>
-              <button class="bc-front-audio" onclick="bcPlayAudio('${escapeHtml(currentCard.term)}', event)" title="Nghe phát âm">🔊</button>
-              <div class="bc-flip-hint">👆 ${t('bcFlipCard') || 'Chạm để lật xem nghĩa & bí kíp'}</div>
+              <button class="bc-front-audio" onclick="bcPlayAudio('${escapeHtml(currentCard.term)}', event)" title="Nghe phát âm"></button>
+              <div class="bc-flip-hint"> ${t('bcFlipCard') || 'Chạm để lật xem nghĩa & bí kíp'}</div>
             </div>
 
             <!-- Card Back -->
@@ -720,12 +720,12 @@
               <div class="bc-back-term-summary">
                 <span class="bc-back-hanzi">${escapeHtml(currentCard.term)}</span>
                 <span class="bc-back-pinyin">${escapeHtml(currentCard.pinyin)}</span>
-                <button class="bc-mini-speaker" onclick="bcPlayAudio('${escapeHtml(currentCard.term)}', event)">🔊</button>
+                <button class="bc-mini-speaker" onclick="bcPlayAudio('${escapeHtml(currentCard.term)}', event)"></button>
               </div>
 
               <div class="bc-back-meaning">
                 <div class="bc-back-def"><strong>${escapeHtml(transObj.meaning || '')}</strong></div>
-                ${transObj.note ? `<div class="bc-back-note">💡 ${escapeHtml(transObj.note)}</div>` : ''}
+                ${transObj.note ? `<div class="bc-back-note"> ${escapeHtml(transObj.note)}</div>` : ''}
               </div>
 
               <!-- First Example -->
@@ -739,7 +739,7 @@
               <!-- Business Tip -->
               ${currentCard.businessTip ? `
                 <div class="bc-back-tip">
-                  💼 <b>Mẹo nghề:</b> ${escapeHtml(getLocText(currentCard.businessTip, lang))}
+                   <b>Mẹo nghề:</b> ${escapeHtml(getLocText(currentCard.businessTip, lang))}
                 </div>
               ` : ''}
             </div>
@@ -749,22 +749,22 @@
         <!-- Rating Buttons Bar (Only visible when card is flipped) -->
         <div class="bc-srs-actions-bar ${businessState.srsIsFlipped ? 'visible' : ''}">
           <button class="bc-srs-rate-btn rate-again" onclick="bcRateSRSCard('${currentCard.id}', 'again')">
-            <span class="rate-icon">🔄</span>
+            <span class="rate-icon"></span>
             <span class="rate-label">${t('bcAgain') || 'Chưa nhớ'}</span>
             <span class="rate-time">1d</span>
           </button>
           <button class="bc-srs-rate-btn rate-hard" onclick="bcRateSRSCard('${currentCard.id}', 'hard')">
-            <span class="rate-icon">😓</span>
+            <span class="rate-icon"></span>
             <span class="rate-label">${t('bcHard') || 'Khó'}</span>
             <span class="rate-time">~2d</span>
           </button>
           <button class="bc-srs-rate-btn rate-good" onclick="bcRateSRSCard('${currentCard.id}', 'good')">
-            <span class="rate-icon">👍</span>
+            <span class="rate-icon"></span>
             <span class="rate-label">${t('bcGood') || 'Tốt'}</span>
             <span class="rate-time">~6d</span>
           </button>
           <button class="bc-srs-rate-btn rate-easy" onclick="bcRateSRSCard('${currentCard.id}', 'easy')">
-            <span class="rate-icon">⚡</span>
+            <span class="rate-icon"></span>
             <span class="rate-label">${t('bcEasy') || 'Rất dễ'}</span>
             <span class="rate-time">~10d</span>
           </button>
@@ -811,7 +811,7 @@
         <!-- Section A: 10 Interactive Roleplay Scenarios -->
         <section class="bc-practice-section">
           <div class="bc-sec-header">
-            <h2>🎭 ${lang === 'vi' ? 'Tình huống nhập vai thực chiến' : (lang === 'ja' ? '実践ビジネスロールプレイ' : 'Interactive Business Roleplay')}</h2>
+            <h2> ${lang === 'vi' ? 'Tình huống nhập vai thực chiến' : (lang === 'ja' ? '実践ビジネスロールプレイ' : 'Interactive Business Roleplay')}</h2>
             <p>${lang === 'vi' ? 'Đóng vai nhân viên kinh doanh / thu mua đối thoại từng bước xử lý tình huống thực tế' : 'Step-by-step business roleplay simulations'}</p>
           </div>
 
@@ -834,7 +834,7 @@
         <!-- Section B: 24 Contextual Situational Quizzes -->
         <section class="bc-practice-section" style="margin-top:36px;">
           <div class="bc-sec-header">
-            <h2>🎯 ${lang === 'vi' ? 'Trắc nghiệm tình huống nghiệp vụ' : (lang === 'ja' ? '貿易実務クイズ演習' : 'Situational Trade Quizzes')}</h2>
+            <h2> ${lang === 'vi' ? 'Trắc nghiệm tình huống nghiệp vụ' : (lang === 'ja' ? '貿易実務クイズ演習' : 'Situational Trade Quizzes')}</h2>
             <p>${lang === 'vi' ? '24 câu đố tình huống chuyên sâu về Incoterms, thanh toán L/C, thủ tục Hải quan và Logistics' : '24 trade scenarios testing Incoterms, LC, customs and logistics'}</p>
           </div>
 
@@ -875,14 +875,14 @@
         </div>
 
         <h3 class="bc-scen-title">${escapeHtml(getLocText(scenario.title, lang))}</h3>
-        <div class="bc-scen-context">📍 <b>${lang === 'vi' ? 'Bối cảnh:' : 'Context:'}</b> ${escapeHtml(getLocText(scenario.context, lang))}</div>
+        <div class="bc-scen-context"> <b>${lang === 'vi' ? 'Bối cảnh:' : 'Context:'}</b> ${escapeHtml(getLocText(scenario.context, lang))}</div>
 
         <!-- Speaker Prompt Bubble -->
         <div class="bc-dialogue-card">
           <div class="bc-dialogue-speaker">
-            <span class="bc-avatar">👔</span>
+            <span class="bc-avatar"></span>
             <span class="bc-speaker-role">${escapeHtml(getLocText(currentStep.speakerRole, lang))}</span>
-            <button class="bc-mini-speaker" onclick="bcPlayAudio('${escapeHtml(currentStep.promptZh)}', event)">🔊 Nghe</button>
+            <button class="bc-mini-speaker" onclick="bcPlayAudio('${escapeHtml(currentStep.promptZh)}', event)"> Nghe</button>
           </div>
           <div class="bc-dialogue-prompt-zh">${escapeHtml(currentStep.promptZh)}</div>
           <div class="bc-dialogue-prompt-py">${escapeHtml(currentStep.promptPinyin)}</div>
@@ -891,7 +891,7 @@
 
         <!-- User Decision Options -->
         <div class="bc-options-group">
-          <div class="bc-opt-heading">👉 ${lang === 'vi' ? 'Chọn câu trả lời đàm phán tối ưu nhất của bạn:' : 'Choose your negotiation response:'}</div>
+          <div class="bc-opt-heading"> ${lang === 'vi' ? 'Chọn câu trả lời đàm phán tối ưu nhất của bạn:' : 'Choose your negotiation response:'}</div>
           ${currentStep.options.map((opt, oIdx) => {
             const isSelected = userChoiceIdx === oIdx;
             return `
@@ -945,7 +945,7 @@
         ${quiz.contextSentence ? `
           <div class="bc-quiz-context-card">
             <div class="bc-quiz-ctx-zh">
-              <span class="bc-mini-speaker" onclick="bcPlayAudio('${escapeHtml(quiz.contextSentence.zh)}', event)">🔊</span>
+              <span class="bc-mini-speaker" onclick="bcPlayAudio('${escapeHtml(quiz.contextSentence.zh)}', event)"></span>
               <span>${escapeHtml(quiz.contextSentence.zh)}</span>
             </div>
             <div class="bc-quiz-ctx-py">${escapeHtml(quiz.contextSentence.pinyin)}</div>
@@ -1121,11 +1121,11 @@
       const score = qState.score;
       const percent = Math.round((score / total) * 100);
       let title = lang === 'vi' ? 'Hoàn thành bài kiểm tra Pinyin!' : (lang === 'ja' ? 'テスト完了！' : 'Pinyin Quiz Completed!');
-      let badge = '🎉';
-      if (percent === 100) badge = '🏆';
-      else if (percent >= 80) badge = '🌟';
-      else if (percent >= 50) badge = '👍';
-      else badge = '💪';
+      let badge = '';
+      if (percent === 100) badge = '';
+      else if (percent >= 80) badge = '';
+      else if (percent >= 50) badge = '';
+      else badge = '';
 
       mount.innerHTML = `
         <div class="bc-pinyin-quiz-layout">
@@ -1133,14 +1133,14 @@
             <div class="bc-pinyin-summary-badge">${badge}</div>
             <h2 class="bc-pinyin-summary-title">${title}</h2>
             <p class="bc-pinyin-summary-desc">
-              ${lang === 'vi' ? `Bạn trả lời đúng <b>${score}/${total}</b> câu (${percent}%). Chuỗi đúng tốt nhất: 🔥 <b>${qState.bestStreak || qState.streak}</b> câu.` : (lang === 'ja' ? `スコア: <b>${score}/${total}</b> (${percent}%)。最高連続正解: 🔥 <b>${qState.bestStreak || qState.streak}</b> 問。` : `You scored <b>${score}/${total}</b> (${percent}%). Best streak: 🔥 <b>${qState.bestStreak || qState.streak}</b>.`)}
+              ${lang === 'vi' ? `Bạn trả lời đúng <b>${score}/${total}</b> câu (${percent}%). Chuỗi đúng tốt nhất:  <b>${qState.bestStreak || qState.streak}</b> câu.` : (lang === 'ja' ? `スコア: <b>${score}/${total}</b> (${percent}%)。最高連続正解:  <b>${qState.bestStreak || qState.streak}</b> 問。` : `You scored <b>${score}/${total}</b> (${percent}%). Best streak:  <b>${qState.bestStreak || qState.streak}</b>.`)}
             </p>
             <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
               <button class="bc-pinyin-action-btn" onclick="bcRestartPinyinQuiz()">
-                🔄 ${lang === 'vi' ? 'Làm bài kiểm tra mới' : (lang === 'ja' ? 'もう一度挑戦' : 'Try Another Quiz')}
+                 ${lang === 'vi' ? 'Làm bài kiểm tra mới' : (lang === 'ja' ? 'もう一度挑戦' : 'Try Another Quiz')}
               </button>
               <button class="btn btn-secondary" onclick="bcSwitchSubTab('vocab')" style="border-radius:var(--radius-pill); padding:14px 24px; font-weight:700;">
-                📖 ${lang === 'vi' ? 'Xem lại bảng từ vựng' : (lang === 'ja' ? '用語集に戻る' : 'Back to Vocab')}
+                 ${lang === 'vi' ? 'Xem lại bảng từ vựng' : (lang === 'ja' ? '用語集に戻る' : 'Back to Vocab')}
               </button>
             </div>
           </div>
@@ -1181,9 +1181,9 @@
           <!-- Top Bar -->
           <div class="bc-pinyin-quiz-top-bar">
             <div class="bc-pinyin-quiz-meta">
-              <span class="bc-pinyin-score-badge">📝 ${lang === 'vi' ? 'Câu' : 'Question'} <b>${qState.currentIndex + 1}</b> / ${qState.items.length}</span>
+              <span class="bc-pinyin-score-badge"> ${lang === 'vi' ? 'Câu' : 'Question'} <b>${qState.currentIndex + 1}</b> / ${qState.items.length}</span>
               <span class="bc-pinyin-score-badge">✅ ${lang === 'vi' ? 'Điểm:' : 'Score:'} <b>${qState.score}</b></span>
-              ${qState.streak > 1 ? `<span class="bc-pinyin-streak-badge">🔥 ${qState.streak} ${lang === 'vi' ? 'chuỗi' : 'streak'}</span>` : ''}
+              ${qState.streak > 1 ? `<span class="bc-pinyin-streak-badge"> ${qState.streak} ${lang === 'vi' ? 'chuỗi' : 'streak'}</span>` : ''}
             </div>
 
             <!-- Category selector -->
@@ -1203,7 +1203,7 @@
           <!-- Hanzi and speaker -->
           <div class="bc-pinyin-quiz-hanzi-wrap">
             <div class="bc-pinyin-quiz-hanzi">${escapeHtml(v.term)}</div>
-            <button class="bc-pinyin-quiz-speaker-btn" onclick="bcPlayAudio('${escapeHtml(v.term)}', event)" title="Nghe phát âm">🔊</button>
+            <button class="bc-pinyin-quiz-speaker-btn" onclick="bcPlayAudio('${escapeHtml(v.term)}', event)" title="Nghe phát âm"></button>
           </div>
 
           <div style="margin-bottom:14px;">
@@ -1243,8 +1243,8 @@
             <div>
               <button class="bc-pinyin-action-btn" onclick="bcNextPinyinQuestion()">
                 ${qState.currentIndex + 1 < qState.items.length 
-                  ? (lang === 'vi' ? 'Câu tiếp theo ➔' : (lang === 'ja' ? '次の問題へ ➔' : 'Next Question ➔'))
-                  : (lang === 'vi' ? 'Xem kết quả tổng kết ➔' : (lang === 'ja' ? '結果を見る ➔' : 'View Results ➔'))}
+                  ? (lang === 'vi' ? 'Câu tiếp theo ' : (lang === 'ja' ? '次の問題へ ' : 'Next Question '))
+                  : (lang === 'vi' ? 'Xem kết quả tổng kết ' : (lang === 'ja' ? '結果を見る ' : 'View Results '))}
               </button>
             </div>
           ` : ''}

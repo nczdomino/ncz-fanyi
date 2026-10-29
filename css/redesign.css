@@ -1634,3 +1634,90 @@ input[type="range"] { accent-color: var(--accent); }
     scroll-behavior: auto !important;
   }
 }
+/* ==========================================================================
+   10. Grammar module — Ink & Paper redesign
+   ========================================================================== */
+.grammar-container { max-width: 1180px; margin: 0 auto; padding: 44px 24px 56px; }
+.grammar-header { text-align: center; margin-bottom: 32px; }
+.grammar-header-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; background: var(--accent-subtle); color: var(--accent); font-size: 12px; font-weight: 600; margin-bottom: 12px; border: 1px solid rgba(196, 67, 47, 0.22); }
+.grammar-title { font-family: var(--font-serif-sc); font-size: 34px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.02em; margin-bottom: 8px; }
+.grammar-subtitle { font-size: 14px; color: var(--text-secondary); max-width: 680px; margin: 0 auto; line-height: 1.6; }
+.grammar-controls { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 16px; padding: 18px 20px; margin-bottom: 24px; box-shadow: 0 1px 2px rgba(45, 30, 18, 0.04); }
+.grammar-search-row { margin-bottom: 14px; }
+.grammar-search-input-box { display: flex; align-items: center; gap: 8px; background: var(--bg-muted); border: 1px solid var(--border-color); border-radius: 12px; padding: 4px 10px; transition: border-color 0.18s ease, box-shadow 0.18s ease; }
+.grammar-search-input-box:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); background: var(--bg-surface); }
+.grammar-search-input { flex: 1; border: 0; background: transparent; font-size: 15px; color: var(--text-primary); padding: 10px 4px; outline: none; }
+.grammar-search-icon-btn, .grammar-search-clear-btn { width: 34px; height: 34px; border-radius: 8px; border: 0; background: transparent; color: var(--text-muted); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 16px; }
+.grammar-search-icon-btn:hover, .grammar-search-clear-btn:hover { background: var(--bg-surface); color: var(--accent); }
+.grammar-filters-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+.grammar-filter-label { font-size: 12px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.04em; text-transform: uppercase; }
+.grammar-select { padding: 8px 12px; border-radius: 9px; border: 1px solid var(--border-color); background: var(--bg-muted); color: var(--text-primary); font-size: 13px; cursor: pointer; min-height: 36px; }
+.grammar-select:hover { border-color: var(--accent); }
+.grammar-filter-chip { padding: 7px 13px; border-radius: 999px; border: 1px solid var(--border-color); background: var(--bg-muted); color: var(--text-secondary); font-size: 12.5px; font-weight: 600; cursor: pointer; transition: all 0.16s ease; min-height: 34px; display: inline-flex; align-items: center; }
+.grammar-filter-chip:hover { border-color: var(--accent); color: var(--accent); }
+.grammar-filter-chip.active { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+.grammar-chip-group { display: flex; gap: 8px; flex-wrap: wrap; }
+.grammar-catalog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+.grammar-card { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 14px; padding: 16px 18px; cursor: pointer; transition: border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease; box-shadow: 0 1px 2px rgba(45, 30, 18, 0.04); display: flex; flex-direction: column; gap: 10px; }
+.grammar-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 6px 18px -12px rgba(45, 30, 18, 0.35); }
+.grammar-card-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.grammar-level-pill { padding: 3px 9px; border-radius: 6px; font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; background: var(--accent-subtle); color: var(--accent); border: 1px solid rgba(196, 67, 47, 0.22); }
+.grammar-standard-tag { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 5px; background: var(--bg-muted); color: var(--text-muted); border: 1px solid var(--border-color); }
+.grammar-card-zh { font-family: var(--font-serif-sc); font-size: 22px; font-weight: 600; color: var(--text-primary); line-height: 1.2; }
+.grammar-card-name { font-size: 13.5px; color: var(--text-secondary); line-height: 1.45; }
+.grammar-card-bottom { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 4px; padding-top: 10px; border-top: 1px solid var(--border-light); }
+.grammar-category-badge { font-size: 11px; font-weight: 600; color: var(--text-muted); }
+.grammar-detail-badge { font-size: 11px; font-weight: 600; color: var(--accent); }
+.grammar-detail-view { max-width: 920px; margin: 0 auto; }
+.grammar-detail-hero { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 16px; padding: 24px 26px; margin-bottom: 20px; }
+.grammar-detail-title-zh { font-family: var(--font-serif-sc); font-size: 30px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; }
+.grammar-detail-title-local { font-size: 15px; color: var(--text-secondary); }
+.grammar-section { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 14px; padding: 18px 20px; margin-bottom: 14px; }
+.grammar-section-title { font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; }
+.grammar-formula-card, .formula-card-header { background: var(--bg-muted); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 14px; }
+.grammar-back-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 9px; border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-primary); font-size: 13px; font-weight: 600; cursor: pointer; margin-bottom: 16px; }
+.grammar-back-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-subtle); }
+.grammar-modal-overlay { background: rgba(30, 26, 22, 0.45); backdrop-filter: blur(4px); }
+.grammar-modal-box { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 16px; box-shadow: var(--sheet-shadow); }
+.grammar-quick-rule-box, .explanation-box, .contrastive-box, .grammar-contrastive-box { background: var(--bg-muted); border-left: 3px solid var(--accent); border-radius: 0 10px 10px 0; padding: 12px 14px; }
+/* ==========================================================================
+   11. Business module — Ink & Paper redesign
+   ========================================================================== */
+.bc-vocab-layout, .bc-email-layout, .bc-docs-layout { max-width: 1200px; margin: 0 auto; padding: 40px 24px 56px; }
+.bc-search-panel { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 16px; padding: 18px 20px; margin-bottom: 20px; box-shadow: 0 1px 2px rgba(45, 30, 18, 0.04); }
+.bc-search-input-wrap { display: flex; align-items: center; gap: 8px; background: var(--bg-muted); border: 1px solid var(--border-color); border-radius: 12px; padding: 4px 10px; transition: border-color 0.18s ease, box-shadow 0.18s ease; }
+.bc-search-input-wrap:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); background: var(--bg-surface); }
+.bc-search-input { flex: 1; border: 0; background: transparent; font-size: 15px; color: var(--text-primary); padding: 10px 4px; outline: none; }
+.bc-clear-btn { width: 30px; height: 30px; border-radius: 7px; border: 0; background: transparent; color: var(--text-muted); cursor: pointer; }
+.bc-clear-btn:hover { color: var(--accent); background: var(--accent-subtle); }
+.bc-filter-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
+.bc-filter-group { display: flex; align-items: center; gap: 8px; flex: 1 1 220px; min-width: 0; }
+.bc-filter-label { font-size: 12px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.04em; text-transform: uppercase; white-space: nowrap; }
+.bc-select { flex: 1; padding: 8px 12px; border-radius: 9px; border: 1px solid var(--border-color); background: var(--bg-muted); color: var(--text-primary); font-size: 13px; min-height: 36px; cursor: pointer; }
+.bc-select:hover { border-color: var(--accent); }
+.bc-card, .bc-dialogue-card, .bc-doc-header-card, .bc-email-header-card, .bc-placeholders-panel, .bc-email-preview-box, .bc-email-translation-box { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 14px; padding: 18px 20px; box-shadow: 0 1px 2px rgba(45, 30, 18, 0.04); }
+.bc-card:hover { border-color: var(--border-focus); box-shadow: 0 6px 18px -12px rgba(45, 30, 18, 0.35); }
+.bc-card-hanzi, .bc-back-hanzi { font-family: var(--font-serif-sc); font-size: 26px; font-weight: 600; color: var(--text-primary); }
+.bc-card-pinyin, .bc-back-pinyin, .bc-ex-py { font-size: 13px; font-weight: 600; color: var(--text-muted); }
+.bc-card-meaning, .bc-def-main, .bc-back-meaning { font-size: 14px; color: var(--text-primary); line-height: 1.5; }
+.bc-badge, .bc-badge-cat, .bc-badge-level, .bc-badge-tag { display: inline-flex; align-items: center; gap: 4px; font-size: 10.5px; font-weight: 600; padding: 3px 8px; border-radius: 6px; background: var(--accent-subtle); color: var(--accent); border: 1px solid rgba(196, 67, 47, 0.22); }
+.bc-badge-level { background: var(--bg-muted); color: var(--text-secondary); border-color: var(--border-color); }
+.bc-email-sidebar, .bc-docs-sidebar { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 14px; padding: 14px; }
+.bc-email-nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 9px; cursor: pointer; border: 1px solid transparent; transition: all 0.16s ease; }
+.bc-email-nav-item:hover { background: var(--bg-muted); border-color: var(--border-color); }
+.bc-email-nav-item.active { background: var(--accent-subtle); border-color: var(--accent); }
+.bc-email-nav-title { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.bc-email-nav-role { font-size: 11.5px; color: var(--text-muted); }
+.bc-email-nav-num { width: 26px; height: 26px; border-radius: 7px; background: var(--bg-muted); color: var(--text-muted); font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
+.bc-email-subject { font-family: var(--font-serif-sc); font-size: 20px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; }
+.bc-email-purpose { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+.bc-toggle-pill { padding: 7px 13px; border-radius: 999px; border: 1px solid var(--border-color); background: var(--bg-muted); color: var(--text-secondary); font-size: 12.5px; font-weight: 600; cursor: pointer; transition: all 0.16s ease; min-height: 34px; }
+.bc-toggle-pill.active { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+.bc-panel-title { font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; }
+.bc-empty-state { text-align: center; padding: 48px 20px; color: var(--text-muted); }
+.bc-empty-icon { font-size: 36px; margin-bottom: 10px; opacity: 0.4; }
+.bc-empty-title { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; }
+.bc-empty-desc { font-size: 13px; color: var(--text-muted); }
+.bc-audio-btn, .bc-copy-btn, .bc-fav-btn { width: 34px; height: 34px; border-radius: 9px; border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-secondary); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: all 0.16s ease; }
+.bc-audio-btn:hover, .bc-copy-btn:hover, .bc-fav-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-subtle); }
+@media (max-width: 767px) { .grammar-card, .bc-card { padding: 14px 16px; } .grammar-search-input, .bc-search-input { font-size: 16px; } .grammar-filter-chip, .bc-toggle-pill, .bc-select, .grammar-select { min-height: 40px; } .grammar-catalog-grid { grid-template-columns: 1fr; } }
