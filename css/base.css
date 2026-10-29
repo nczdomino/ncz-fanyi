@@ -1,34 +1,54 @@
 /* css/base.css - Design tokens, themes, reset, base typography & app shell */
 :root {
-  --accent: #E8344E;
-  --accent-hover: #D02B43;
-  --accent-subtle: rgba(232, 52, 78, 0.1);
-  --accent-glow: rgba(232, 52, 78, 0.25);
+  /* Apple-inspired Crimson Red Brand Identity */
+  --accent: #D92D43;
+  --accent-hover: #C52237;
+  --accent-subtle: rgba(217, 45, 67, 0.08);
+  --accent-soft: rgba(217, 45, 67, 0.14);
+  --accent-border: rgba(217, 45, 67, 0.22);
+  --accent-glow: rgba(217, 45, 67, 0.18);
   --accent-text: #FFFFFF;
-  --success: #2EA043;
-  --warning: #F59E0B;
-  --info: #0969DA;
   
+  /* Semantic Tones */
+  --success: #10B981;
+  --warning: #F59E0B;
+  --info: #0284C7;
+  
+  /* Light Neutral Palette (Apple Minimalist Canvas) */
   --bg-base: #F8F9FA;
   --bg-surface: #FFFFFF;
   --bg-card: #FFFFFF;
-  --bg-muted: #F1F3F5;
+  --bg-muted: #F2F4F7;
+  --bg-subtle: #FAFAFC;
   --bg-input: #FFFFFF;
-  --text-primary: #1F2328;
-  --text-secondary: #57606A;
-  --text-muted: #8C959F;
-  --border-color: #E1E4E8;
-  --border-light: #ECEFF2;
-  --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-  --sheet-shadow: 0 -8px 32px rgba(0, 0, 0, 0.12);
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
-  --radius-xl: 28px;
   
-  --font-hanzi: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-  --font-kanji: "Noto Sans JP", "Yu Gothic", sans-serif;
-  --font-ui: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  /* Typographic Contrast (WCAG AA compliant) */
+  --text-primary: #111827;
+  --text-secondary: #4B5563;
+  --text-muted: #6B7280;
+  
+  /* Hairline Borders & Shadows */
+  --border-color: rgba(0, 0, 0, 0.08);
+  --border-subtle: rgba(0, 0, 0, 0.04);
+  --border-light: rgba(0, 0, 0, 0.05);
+  --border-focus: #D92D43;
+  
+  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.03), 0 4px 12px rgba(0, 0, 0, 0.02);
+  --card-shadow-hover: 0 2px 6px rgba(0, 0, 0, 0.04), 0 8px 20px rgba(0, 0, 0, 0.04);
+  --sheet-shadow: 0 -4px 24px rgba(0, 0, 0, 0.08), 0 -1px 2px rgba(0, 0, 0, 0.02);
+  
+  /* Radii Scale */
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+  --radius-pill: 9999px;
+  
+  /* Fonts */
+  --font-hanzi: "PingFang SC", "Noto Sans SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --font-kanji: "Hiragino Sans", "Noto Sans JP", "Yu Gothic", sans-serif;
+  --font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter", -system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   
   --reader-font-size: 28px;
   --top-bar-height: 56px;
@@ -36,18 +56,26 @@
 }
 
 [data-theme="dark"] {
-  --bg-base: #0D1117;
-  --bg-surface: #161B22;
-  --bg-card: #1B2129;
-  --bg-muted: #21262D;
-  --bg-input: #12161C;
-  --text-primary: #F0F6FC;
-  --text-secondary: #8B949E;
-  --text-muted: #6E7681;
-  --border-color: #30363D;
-  --border-light: #21262D;
-  --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
-  --sheet-shadow: 0 -8px 32px rgba(0, 0, 0, 0.55);
+  /* Apple Midnight Dark Canvas */
+  --bg-base: #0B0E14;
+  --bg-surface: #141820;
+  --bg-card: #161C26;
+  --bg-muted: #1E2532;
+  --bg-subtle: #181F2B;
+  --bg-input: #10141C;
+  
+  --text-primary: #F9FAFB;
+  --text-secondary: #9CA3AF;
+  --text-muted: #6B7280;
+  
+  --border-color: rgba(255, 255, 255, 0.10);
+  --border-subtle: rgba(255, 255, 255, 0.05);
+  --border-light: rgba(255, 255, 255, 0.06);
+  --border-focus: #F43F5E;
+  
+  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 6px 18px rgba(0, 0, 0, 0.25);
+  --card-shadow-hover: 0 2px 8px rgba(0, 0, 0, 0.35), 0 12px 28px rgba(0, 0, 0, 0.3);
+  --sheet-shadow: 0 -6px 28px rgba(0, 0, 0, 0.55);
 }
 
 * {
@@ -119,11 +147,17 @@ button, input, textarea, select {
   padding-top: env(safe-area-inset-top, 0px);
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
-  background-color: var(--bg-surface);
+  background-color: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
   border-bottom: 1px solid var(--border-color);
   z-index: 100;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
   flex-shrink: 0;
+}
+
+[data-theme="dark"] #top-bar {
+  background-color: rgba(20, 24, 32, 0.88);
 }
 
 .brand-badge {
@@ -137,24 +171,25 @@ button, input, textarea, select {
 }
 
 .brand-badge:hover {
-  opacity: 0.9;
+  opacity: 0.92;
 }
 
 .brand-badge:active {
-  transform: scale(0.96);
+  transform: scale(0.97);
 }
 
 .brand-icon {
   width: 34px;
   height: 34px;
-  border-radius: 9px;
+  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 3px 10px rgba(0, 76, 245, 0.25);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--border-subtle);
   flex-shrink: 0;
   overflow: hidden;
-  background: transparent;
+  background: var(--bg-surface);
 }
 
 .brand-icon img,
@@ -162,14 +197,14 @@ button, input, textarea, select {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 9px;
+  border-radius: calc(var(--radius-sm) - 1px);
   display: block;
 }
 
 .brand-title {
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 700;
-  letter-spacing: -0.3px;
+  letter-spacing: -0.02em;
   color: var(--text-primary);
   white-space: nowrap;
 }
@@ -186,7 +221,7 @@ button, input, textarea, select {
   align-items: center;
   background: var(--bg-muted);
   border: 1px solid var(--border-color);
-  border-radius: 20px;
+  border-radius: var(--radius-pill);
   padding: 2.5px;
   gap: 2px;
 }
@@ -196,10 +231,10 @@ button, input, textarea, select {
   border: none;
   color: var(--text-secondary);
   font-size: 11.5px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
   padding: 4px 9px;
-  border-radius: 14px;
+  border-radius: var(--radius-pill);
   cursor: pointer;
   transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
   -webkit-tap-highlight-color: transparent;
@@ -213,26 +248,25 @@ button, input, textarea, select {
 .top-lang-btn.active {
   background: var(--accent);
   color: #FFFFFF !important;
-  box-shadow: 0 2px 8px rgba(232, 52, 78, 0.35);
-  transform: scale(1.02);
+  box-shadow: 0 1px 4px var(--accent-glow);
 }
 
 .top-lang-btn:active {
-  transform: scale(0.95);
+  transform: scale(0.96);
 }
 
 .icon-btn {
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
   color: var(--text-secondary);
-  border-radius: 9px;
+  border-radius: var(--radius-sm);
   width: 36px;
   height: 36px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
   -webkit-tap-highlight-color: transparent;
   flex-shrink: 0;
   position: relative;
@@ -250,16 +284,16 @@ button, input, textarea, select {
 .icon-btn:hover {
   background-color: var(--bg-muted);
   color: var(--text-primary);
-  border-color: var(--border-focus);
+  border-color: var(--border-color);
 }
 
 .icon-btn:active {
-  transform: scale(0.92);
+  transform: scale(0.94);
 }
 
 @keyframes speakerPulse {
   0% { transform: scale(1); color: var(--accent); }
-  50% { transform: scale(1.18); color: #FF4757; }
+  50% { transform: scale(1.12); color: #FF4757; }
   100% { transform: scale(1); color: var(--accent); }
 }
 
@@ -271,15 +305,38 @@ button, input, textarea, select {
 
 .lang-pill-btn {
   font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
   padding: 4px 8px;
   border-radius: var(--radius-sm);
   background: var(--bg-muted);
   border: 1px solid var(--border-color);
   color: var(--text-primary);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.18s;
+}
+
+/* Accessible focus visible states */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+button:focus:not(:focus-visible),
+input:focus:not(:focus-visible),
+textarea:focus:not(:focus-visible),
+select:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* Main Content Area */
@@ -300,7 +357,7 @@ button, input, textarea, select {
   min-height: 100%;
   padding: 16px;
   box-sizing: border-box;
-  animation: fadeIn 0.2s ease;
+  animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .view.active {

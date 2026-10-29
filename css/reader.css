@@ -7,14 +7,20 @@
   flex-wrap: wrap;
   gap: 8px;
   padding: 10px 14px;
-  background-color: var(--bg-surface);
+  background-color: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   margin-bottom: 14px;
   position: sticky;
   top: 0;
   z-index: 50;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+[data-theme="dark"] .reader-toolbar {
+  background-color: rgba(20, 24, 32, 0.88);
 }
 
 .toolbar-group {
@@ -24,7 +30,7 @@
 }
 
 .toggle-btn {
-  padding: 6px 10px;
+  padding: 6px 11px;
   font-size: 12px;
   font-weight: 600;
   border-radius: var(--radius-sm);
@@ -32,13 +38,14 @@
   background: var(--bg-muted);
   color: var(--text-secondary);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .toggle-btn.active {
   background: var(--accent);
   color: white;
   border-color: var(--accent);
+  box-shadow: 0 1px 4px var(--accent-glow);
 }
 
 .sentence-card {
@@ -247,9 +254,10 @@
   box-shadow: 0 2px 6px rgba(59, 130, 246, 0.25);
 }
 .trans-lens-tab[data-lens="all"].active {
-  background: #8B5CF6;
-  border-color: #8B5CF6;
-  box-shadow: 0 2px 6px rgba(139, 92, 246, 0.25);
+  background: var(--text-primary);
+  border-color: var(--text-primary);
+  color: var(--bg-surface);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
 }
 .trans-lens-card {
   padding: 12px 14px;

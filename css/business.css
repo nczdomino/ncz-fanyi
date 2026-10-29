@@ -12,35 +12,38 @@
    HERO BANNER
    ======================================================== */
 .bc-hero {
-  background: linear-gradient(135deg, rgba(232, 52, 78, 0.08) 0%, rgba(9, 105, 218, 0.05) 100%);
+  background: var(--bg-surface);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
-  padding: 24px 20px 20px;
+  padding: 24px 22px 20px;
   margin-bottom: 20px;
   position: relative;
   overflow: hidden;
+  box-shadow: var(--card-shadow);
 }
 
 .bc-hero-badge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: var(--accent);
-  color: #fff;
-  font-size: 12px;
+  background: var(--accent-subtle);
+  color: var(--accent);
+  border: 1px solid var(--accent-border);
+  font-size: 11.5px;
   font-weight: 700;
   padding: 4px 12px;
-  border-radius: 20px;
-  letter-spacing: 0.3px;
-  margin-bottom: 10px;
+  border-radius: var(--radius-pill);
+  letter-spacing: 0.2px;
+  margin-bottom: 12px;
 }
 
 .bc-hero-title {
   font-size: 24px;
   font-weight: 800;
+  letter-spacing: -0.02em;
   color: var(--text-primary);
   margin-bottom: 8px;
-  line-height: 1.3;
+  line-height: 1.25;
 }
 
 .bc-hero-subtitle {
@@ -61,10 +64,10 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: var(--bg-surface);
+  background: var(--bg-muted);
   border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  padding: 5px 12px;
   font-size: 12px;
   color: var(--text-secondary);
 }
@@ -97,27 +100,27 @@
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
   color: var(--text-secondary);
-  padding: 10px 18px;
-  border-radius: var(--radius-md);
-  font-size: 14px;
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  font-size: 13.5px;
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
-  transition: all 0.2s ease;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
   flex-shrink: 0;
 }
 
 .bc-subnav-btn:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-  background: var(--accent-subtle);
+  border-color: var(--border-focus);
+  color: var(--text-primary);
+  background: var(--bg-muted);
 }
 
 .bc-subnav-btn.active {
   background: var(--accent);
   border-color: var(--accent);
   color: #fff;
-  box-shadow: 0 4px 14px var(--accent-glow);
+  box-shadow: 0 1px 4px var(--accent-glow);
 }
 
 .bc-srs-badge {
@@ -141,9 +144,10 @@
 .bc-search-panel {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   padding: 16px;
   margin-bottom: 20px;
+  box-shadow: var(--card-shadow);
 }
 
 .bc-search-form {
@@ -169,14 +173,14 @@
   height: 46px;
   padding: 0 40px 0 44px;
   background: var(--bg-input);
-  border: 1.5px solid var(--border-color);
-  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-pill);
   color: var(--text-primary);
   font-size: 16px; /* Prevents auto-zoom on iOS Safari */
   -webkit-user-select: text;
   user-select: text;
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
 .bc-search-input:focus {
@@ -248,18 +252,19 @@
 .bc-card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   padding: 18px;
   box-shadow: var(--card-shadow);
   display: flex;
   flex-direction: column;
   gap: 12px;
-  transition: transform 0.2s, border-color 0.2s;
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
 .bc-card:hover {
   border-color: var(--accent);
-  transform: translateY(-2px);
+  transform: translateY(-1px);
+  box-shadow: var(--card-shadow-hover);
 }
 
 .bc-card-header {
@@ -432,7 +437,7 @@
 }
 
 .bc-card-protip {
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(232, 52, 78, 0.05) 100%);
+  background: rgba(245, 158, 11, 0.06);
   border-left: 3px solid #f59e0b;
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
   padding: 8px 12px;
@@ -995,7 +1000,7 @@
 }
 
 .bc-card-front {
-  background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-surface) 100%);
+  background: var(--bg-card);
 }
 
 .bc-card-back {

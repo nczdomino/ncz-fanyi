@@ -256,21 +256,21 @@
   max-width: 720px;
   position: relative;
   background: var(--bg-surface);
-  border: 1.5px solid var(--border-color);
-  border-radius: 28px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.03);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--card-shadow);
   display: flex;
   align-items: center;
   padding: 4px 12px 4px 18px;
   margin: 0;
   box-sizing: border-box;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .ai-search-card:focus-within {
   border-color: var(--accent);
-  box-shadow: 0 6px 28px rgba(232, 52, 78, 0.12), 0 0 0 4px var(--accent-subtle);
-  transform: translateY(-1px);
+  box-shadow: 0 0 0 3px var(--accent-subtle);
+  transform: translateY(-0.5px);
 }
 
 .ai-search-icon {
@@ -474,15 +474,15 @@
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   cursor: pointer;
-  transition: all 0.2s;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: var(--card-shadow);
   -webkit-tap-highlight-color: transparent;
 }
 
 .dict-item-card:hover {
   border-color: var(--accent);
-  transform: translateY(-1px);
-  box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+  transform: translateY(-0.5px);
+  box-shadow: var(--card-shadow-hover);
 }
 
 .dict-item-left {
@@ -525,21 +525,22 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  background: linear-gradient(135deg, rgba(232, 52, 78, 0.08) 0%, rgba(232, 52, 78, 0.02) 100%);
-  border: 1.5px dashed rgba(232, 52, 78, 0.35);
+  background: var(--bg-surface);
+  border: 1px solid var(--accent-border);
   border-radius: var(--radius-lg);
   padding: 12px 16px;
   margin-bottom: 12px;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: var(--card-shadow);
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
   -webkit-tap-highlight-color: transparent;
 }
 
 .dict-online-card:hover {
-  background: var(--accent-subtle);
+  background: var(--bg-surface);
   border-color: var(--accent);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(232, 52, 78, 0.1);
+  box-shadow: var(--card-shadow-hover);
+  transform: translateY(-0.5px);
 }
 
 .badge {
@@ -760,11 +761,11 @@
 /* ===== AI WORD DEEP ANALYSIS (AI 解析) ===== */
 .ai-word-card {
   margin-top: 16px;
-  border-radius: 14px;
-  border: 1px solid rgba(232, 52, 78, 0.2);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
   background: var(--bg-card);
   overflow: hidden;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--card-shadow);
 }
 .ai-word-header {
   display: flex;
@@ -772,8 +773,8 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 8px;
-  padding: 12px 14px;
-  background: linear-gradient(135deg, rgba(232, 52, 78, 0.08) 0%, rgba(245, 158, 11, 0.08) 100%);
+  padding: 12px 16px;
+  background: var(--bg-muted);
   border-bottom: 1px solid var(--border-color);
 }
 .ai-word-title {
@@ -781,7 +782,7 @@
   align-items: center;
   gap: 6px;
   font-weight: 700;
-  font-size: 14px;
+  font-size: 13.5px;
   color: var(--accent);
 }
 .ai-word-body {
@@ -873,10 +874,10 @@
   word-break: break-word;
 }
 .ai-word-tip-box {
-  background: rgba(139, 92, 246, 0.05);
-  border-left: 3.5px solid #8B5CF6;
+  background: var(--accent-subtle);
+  border-left: 3px solid var(--accent);
   padding: 10px 14px;
-  border-radius: 0 10px 10px 0;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
   font-size: 13px;
   line-height: 1.55;
   color: var(--text-primary);
@@ -991,9 +992,9 @@
 }
 
 .dict-search-badge.multi {
-  background: rgba(139, 92, 246, 0.08);
-  color: #7C3AED;
-  border: 1px solid rgba(139, 92, 246, 0.25);
+  background: var(--accent-subtle);
+  color: var(--accent);
+  border: 1px solid var(--accent-border);
 }
 
 .dict-search-badge-desc {
@@ -1003,12 +1004,13 @@
 
 /* --- Semantic Mindmap Accordion (Non-Intrusive, Scientific Layout) --- */
 .dict-mindmap-accordion {
-  background: linear-gradient(135deg, rgba(232, 52, 78, 0.03) 0%, rgba(139, 92, 246, 0.04) 100%);
-  border: 1px solid rgba(232, 52, 78, 0.2);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius-lg, 12px);
   margin-top: 14px;
   margin-bottom: 14px;
   overflow: hidden;
+  box-shadow: var(--card-shadow);
   transition: all 0.2s ease;
 }
 
@@ -1027,7 +1029,7 @@
 }
 
 .dict-mindmap-toggle-btn:hover {
-  background: rgba(0, 0, 0, 0.02);
+  background: var(--bg-muted);
 }
 
 .dict-mindmap-content {
@@ -1047,12 +1049,12 @@
 }
 
 .dict-mindmap-card {
-  background: linear-gradient(135deg, rgba(232, 52, 78, 0.03) 0%, rgba(139, 92, 246, 0.04) 100%);
-  border: 1px solid rgba(232, 52, 78, 0.18);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius-lg, 14px);
   padding: 14px 16px;
   margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  box-shadow: var(--card-shadow);
 }
 
 .dict-mindmap-header {
@@ -1164,12 +1166,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(232, 52, 78, 0.06) 100%);
-  border: 1px solid rgba(139, 92, 246, 0.22);
-  border-radius: 12px;
-  padding: 10px 14px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 12px 16px;
   margin-bottom: 14px;
   gap: 12px;
+  box-shadow: var(--card-shadow);
 }
 
 .dict-semantic-action-text {
@@ -1189,30 +1192,30 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: linear-gradient(135deg, #8B5CF6 0%, var(--accent) 100%);
+  background: var(--accent);
   color: #fff;
   border: none;
-  border-radius: 20px;
+  border-radius: var(--radius-pill);
   padding: 7px 14px;
   font-size: 12.5px;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(139, 92, 246, 0.25);
-  transition: all 0.2s ease;
+  box-shadow: 0 1px 4px var(--accent-glow);
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .dict-semantic-btn:hover {
-  opacity: 0.95;
-  transform: translateY(-1px);
+  background: var(--accent-hover);
+  transform: translateY(-0.5px);
 }
 
 .dict-semantic-results-box {
   background: var(--bg-surface);
-  border: 1px solid rgba(139, 92, 246, 0.25);
-  border-radius: 14px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
   padding: 14px 16px;
   margin-bottom: 16px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--card-shadow);
 }
 
 .dict-semantic-results-head {
@@ -1227,7 +1230,7 @@
 .dict-semantic-concept-title {
   font-size: 14px;
   font-weight: 700;
-  color: #7C3AED;
+  color: var(--accent);
   display: flex;
   align-items: center;
   gap: 6px;
@@ -1235,17 +1238,17 @@
 
 .dict-semantic-item {
   border: 1px solid var(--border-color);
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   padding: 10px 12px;
   margin-bottom: 10px;
-  background: var(--bg-surface-alt, rgba(0,0,0,0.015));
+  background: var(--bg-surface);
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .dict-semantic-item:hover {
-  border-color: #8B5CF6;
-  background: rgba(139, 92, 246, 0.03);
+  border-color: var(--accent);
+  background: var(--accent-subtle);
 }
 
 .dict-semantic-item:last-child {
@@ -1276,9 +1279,10 @@
 .dict-semantic-hsk-badge {
   font-size: 10.5px;
   padding: 2px 7px;
-  border-radius: 999px;
-  background: rgba(139, 92, 246, 0.12);
-  color: #7C3AED;
+  border-radius: var(--radius-pill);
+  background: var(--bg-muted);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
   font-weight: 600;
 }
 
@@ -1307,11 +1311,11 @@
 
 /* --- HSK 7-9 Premium Styling --- */
 .badge-hsk-pro {
-  background: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%) !important;
-  color: #fff !important;
+  background: var(--text-primary) !important;
+  color: var(--bg-surface) !important;
+  border: 1px solid var(--border-color);
   font-weight: 700 !important;
-  box-shadow: 0 1px 4px rgba(124, 58, 237, 0.3);
-  letter-spacing: 0.3px;
+  letter-spacing: 0.2px;
 }
 
 /* --- External Authoritative Dictionaries Bar --- */
@@ -1447,22 +1451,22 @@ mark.dict-hit {
    The card is the only answer on screen in that case, so it gets a real hierarchy:
    headword -> meaning -> nuance -> examples -> synonyms -> memory tip. */
 .ai-lookup-section {
-  --ai-accent: #7C3AED;
-  --ai-accent-soft: rgba(139, 92, 246, 0.10);
-  --ai-accent-line: rgba(139, 92, 246, 0.26);
+  --ai-accent: var(--accent);
+  --ai-accent-soft: var(--accent-subtle);
+  --ai-accent-line: var(--accent-border);
   margin-top: 14px;
   margin-bottom: 16px;
-  border: 1px solid var(--ai-accent-line);
-  border-radius: var(--radius-lg, 14px);
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(37, 99, 235, 0.04) 100%);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  box-shadow: var(--card-shadow);
   overflow: hidden;
 }
 
 [data-theme="dark"] .ai-lookup-section {
-  --ai-accent: #A78BFA;
-  --ai-accent-soft: rgba(139, 92, 246, 0.18);
-  --ai-accent-line: rgba(167, 139, 250, 0.32);
+  --ai-accent: #F43F5E;
+  --ai-accent-soft: rgba(244, 63, 94, 0.12);
+  --ai-accent-line: rgba(244, 63, 94, 0.24);
 }
 
 .ai-lookup-head {
@@ -1846,9 +1850,9 @@ mark.dict-hit {
   gap: 9px;
   margin-top: 14px;
   padding: 13px 15px;
-  border: 1px dashed var(--ai-accent-line, rgba(139, 92, 246, 0.35));
-  border-radius: var(--radius-lg, 14px);
-  background: rgba(139, 92, 246, 0.04);
+  border: 1px dashed var(--accent-border);
+  border-radius: var(--radius-lg);
+  background: var(--accent-subtle);
   font-size: 13px;
   line-height: 1.5;
   color: var(--text-secondary);
@@ -1857,11 +1861,11 @@ mark.dict-hit {
 /* Loading skeleton: mirrors the final card so the layout does not jump. */
 .ai-lookup-sk {
   display: block;
-  border-radius: 6px;
+  border-radius: var(--radius-xs);
   background: linear-gradient(
     90deg,
     var(--bg-muted) 25%,
-    rgba(139, 92, 246, 0.12) 37%,
+    var(--accent-subtle) 37%,
     var(--bg-muted) 63%
   );
   background-size: 400% 100%;
