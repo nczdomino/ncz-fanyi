@@ -330,7 +330,74 @@
   font-size: 14px;
   color: var(--text-secondary);
   line-height: 1.45;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
+}
+
+.grammar-card-formula {
+  background: var(--bg-muted);
+  border: 1px dashed var(--border-color);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  overflow-x: auto;
+  white-space: nowrap;
+  margin-bottom: 10px;
+}
+
+.grammar-card-formula code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.grammar-card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.grammar-card-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 7px 10px;
+  border-radius: 10px;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid transparent;
+  outline: none;
+}
+
+.grammar-btn-detail {
+  background: var(--bg-muted);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.grammar-btn-detail:hover {
+  background: var(--bg-surface);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.grammar-btn-practice {
+  background: rgba(217, 45, 67, 0.08);
+  color: var(--accent);
+  border-color: var(--accent-border);
+}
+
+.grammar-btn-practice:hover {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+  box-shadow: 0 3px 10px rgba(217, 45, 67, 0.2);
 }
 
 .grammar-card-bottom {
@@ -379,13 +446,14 @@
   border-color: var(--accent);
 }
 
-/* --- Detail Sheet / View --- */
-.grammar-detail-view {
-  background: var(--bg-surface);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  padding: 24px 20px;
-  box-shadow: var(--card-shadow);
+/* --- Detail / Learn / Practice Navigation --- */
+.grammar-detail-top-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 .grammar-back-btn {
@@ -394,13 +462,12 @@
   gap: 6px;
   background: var(--bg-muted);
   border: 1px solid var(--border-color);
-  padding: 6px 14px;
+  padding: 8px 16px;
   border-radius: var(--radius-pill);
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 13.5px;
+  font-weight: 700;
   color: var(--text-primary);
   cursor: pointer;
-  margin-bottom: 16px;
   transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -408,6 +475,224 @@
   background: var(--bg-surface);
   color: var(--accent);
   border-color: var(--accent);
+}
+
+.grammar-detail-tabs {
+  display: inline-flex;
+  background: var(--bg-muted);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-pill);
+  padding: 4px;
+  gap: 4px;
+}
+
+.grammar-detail-tab-btn {
+  background: none;
+  border: none;
+  padding: 7px 18px;
+  border-radius: var(--radius-pill);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.16s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.grammar-detail-tab-btn:hover {
+  color: var(--text-primary);
+}
+
+.grammar-detail-tab-btn.active {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(217, 45, 67, 0.25);
+}
+
+.grammar-practice-hero {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.grammar-hero-zh {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-primary);
+  font-family: var(--font-hanzi);
+}
+
+.grammar-hero-sub {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+/* --- Learn Card & Pedagogy Flow --- */
+.grammar-learn-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg, 16px);
+  padding: 26px 22px;
+  box-shadow: var(--card-shadow);
+}
+
+.grammar-learn-hero {
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 20px;
+  margin-bottom: 22px;
+}
+
+.grammar-learn-title-zh {
+  font-size: 30px;
+  font-weight: 800;
+  color: var(--text-primary);
+  font-family: var(--font-hanzi);
+  margin: 10px 0 6px;
+  line-height: 1.25;
+}
+
+.grammar-learn-meaning {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1.4;
+}
+
+.grammar-sec-label {
+  font-size: 13.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.grammar-usage-desc {
+  font-size: 15px;
+  color: var(--text-primary);
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+
+.grammar-usage-bullets {
+  margin: 8px 0 0 20px;
+  padding: 0;
+  color: var(--text-secondary);
+  font-size: 14.5px;
+  line-height: 1.6;
+}
+
+.grammar-formula-highlight {
+  background: var(--bg-muted);
+  border: 1px solid var(--border-color);
+  border-left: 4px solid var(--accent);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  overflow-x: auto;
+}
+
+.grammar-formula-highlight code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.grammar-examples-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.grammar-example-item {
+  background: var(--bg-muted);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 14px 16px;
+  transition: border-color 0.15s;
+}
+
+.grammar-example-item:hover {
+  border-color: var(--accent);
+}
+
+.grammar-example-zh {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: var(--font-hanzi);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.grammar-example-py {
+  font-size: 13.5px;
+  color: var(--text-muted);
+  font-family: var(--font-pinyin);
+  margin-bottom: 6px;
+}
+
+.grammar-example-tr {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.45;
+}
+
+.grammar-mistake-card {
+  background: rgba(239, 68, 68, 0.04);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-left: 4px solid #DC2626;
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+.grammar-cta-practice {
+  width: 100%;
+  padding: 14px 20px;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: var(--radius-md, 12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 14px rgba(217, 45, 67, 0.25);
+  cursor: pointer;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  transition: all 0.18s ease;
+}
+
+.grammar-cta-practice:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
+}
+
+/* --- Detail Sheet / View --- */
+.grammar-detail-view {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 24px 20px;
+  box-shadow: var(--card-shadow);
 }
 
 .grammar-detail-hero {
@@ -971,15 +1256,54 @@
   border-color: #EF4444;
 }
 
+.quiz-num-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.quiz-opt-letter {
+  font-weight: 700;
+  margin-right: 8px;
+  color: var(--text-muted);
+}
+
 .explanation-box {
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  padding: 10px 12px;
-  font-size: 13px;
+  padding: 10px 14px;
+  font-size: 13.5px;
   color: var(--text-secondary);
-  line-height: 1.45;
+  line-height: 1.5;
   margin-top: 10px;
+}
+
+.explanation-correct {
+  border-left: 4px solid #10B981 !important;
+  background: rgba(16, 185, 129, 0.08) !important;
+  color: #065F46 !important;
+}
+
+.explanation-wrong {
+  border-left: 4px solid #EF4444 !important;
+  background: rgba(239, 68, 68, 0.08) !important;
+  color: #991B1B !important;
+}
+
+.puzzle-chip.placed {
+  background: var(--accent-subtle);
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 /* Modal for False Friends / Dialogues */

@@ -1,23 +1,58 @@
-// js/features/grammar.js - Interactive UI Components for HSK 2.0 & 3.0 Grammar System
+// js/features/grammar.js - Modern, Pedagogical & Interactive Chinese Grammar Mastery Module
+// Supports full tri-lingual localization (Vietnamese, English, Japanese) across all levels HSK 1 - 9
 // Dependencies: js/core/state.js, js/features/grammar-service.js, js/features/tts.js
 
 (function () {
   'use strict';
 
-  // --- Component 1: StructureFormula ---
-  /**
-   * Renders color-coded structure blocks and plain formula
-   * @param {Object} detail - GrammarDetailItem
-   * @param {'vi'|'ja'|'en'} [locale] - Active locale
-   * @param {Object} [roleColorMap] - Role to color map output
-   * @returns {string} HTML string
-   */
+  function getLang() {
+    return (typeof state !== 'undefined' && state.uiLang) || 'vi';
+  }
+
+  function getLocText(obj, lang) {
+    if (!obj) return '';
+    if (typeof obj === 'string') return obj;
+    const l = lang || getLang();
+    if (obj[l] && typeof obj[l] === 'string' && obj[l].trim()) return obj[l];
+    if (obj.vi) return obj.vi;
+    if (obj.en) return obj.en;
+    if (obj.ja) return obj.ja;
+    const firstKey = Object.keys(obj)[0];
+    return firstKey ? String(obj[firstKey] || '') : '';
+  }
+
+  function t(key) {
+    if (typeof window !== 'undefined' && typeof window.t === 'function') {
+      const res = window.t(key);
+      if (res && res !== key) return res;
+    }
+    const loc = getLang();
+    if (typeof I18N_DATA !== 'undefined' && I18N_DATA[loc] && I18N_DATA[loc][key]) {
+      return I18N_DATA[loc][key];
+    }
+    return key;
+  }
+
+  // --- Grammar State Store Access ---
+  const grammarStore = (typeof window !== 'undefined' && window.grammarStore)
+    ? window.grammarStore
+    : ((typeof grammarStore !== 'undefined') ? grammarStore : null);
+
+  function extractGrammarSearchValue(eventOrVal) {
+    if (eventOrVal && eventOrVal.target) {
+      return String(eventOrVal.target.value == null ? '' : eventOrVal.target.value);
+    }
+    if (typeof eventOrVal === 'string') return eventOrVal;
+    const input = document.getElementById('grammar-search-input');
+    return input ? input.value : '';
+  }
+
+  // --- Component 1: StructureFormula (Exported for Test Compatibility) ---
   function renderStructureFormula(detail, locale, roleColorMap) {
     if (!detail) return '';
-    const loc = locale || (typeof state !== 'undefined' && state.uiLang) || 'vi';
+    const loc = locale || getLang();
     const roleColors = roleColorMap || {};
 
-    // Populate role to color mapping
     const blocks = Array.isArray(detail.structure_blocks) ? detail.structure_blocks : [];
     blocks.forEach(b => {
       if (b.role && b.color) {
@@ -25,10 +60,10 @@
       }
     });
 
-    const plainText = getLocalizedText(detail.formula_plain, loc);
+    const plainText = getLocText(detail.formula_plain, loc);
 
     const blocksPillsHtml = blocks.map(b => {
-      const label = getLocalizedText(b.label, loc);
+      const label = getLocText(b.label, loc);
       const color = b.color || '#3B82F6';
       return `
         <span class="structure-block-pill" style="border-color:${color}; color:${color}; background:${color}12;">
@@ -41,28 +76,20 @@
     return `
       <div class="grammar-formula-card">
         <div class="formula-card-header">
-          <span class="formula-badge-label"> ${loc === 'ja' ? '構文公式' : (loc === 'en' ? 'Sentence Formula' : 'Công thức cấu trúc')}</span>
+          <span class="formula-badge-label">📐 ${loc === 'ja' ? '構文公式' : (loc === 'en' ? 'Sentence Formula' : 'Công thức cấu trúc')}</span>
         </div>
         <div class="formula-code-row">${escapeHtml(detail.formula || '')}</div>
-        ${plainText ? `<div class="formula-plain-text"> <b>${escapeHtml(plainText)}</b></div>` : ''}
+        ${plainText ? `<div class="formula-plain-text"><b>${escapeHtml(plainText)}</b></div>` : ''}
         ${blocks.length ? `<div class="structure-blocks-bar">${blocksPillsHtml}</div>` : ''}
       </div>
     `;
   }
 
-  // --- Component 2: TokenizedSentence ---
-  /**
-   * Renders a tokenized sentence with color mapping, pinyin, and locale-specific annotations
-   * @param {Object} example - GrammarExample
-   * @param {Array} structureBlocks - StructureBlock[]
-   * @param {'vi'|'ja'|'en'} [locale] - Active locale
-   * @returns {string} HTML string
-   */
+  // --- Component 2: TokenizedSentence (Exported for Test Compatibility) ---
   function renderTokenizedSentence(example, structureBlocks, locale) {
     if (!example || !Array.isArray(example.tokens)) return '';
-    const loc = locale || (typeof state !== 'undefined' && state.uiLang) || 'vi';
+    const loc = locale || getLang();
 
-    // Build role color map
     const roleColorMap = {};
     (structureBlocks || []).forEach(b => {
       if (b.role && b.color) roleColorMap[b.role] = b.color;
@@ -70,7 +97,7 @@
 
     const tokensHtml = example.tokens.map(token => {
       const blockColor = roleColorMap[token.block_role] || 'var(--border-color)';
-      const gloss = getLocalizedText(token.gloss, loc);
+      const gloss = getLocText(token.gloss, loc);
 
       let subHtml = '';
       if (loc === 'vi') {
@@ -105,17 +132,14 @@
       `;
     }).join('');
 
-    const scenarioText = getLocalizedText(example.scenario, loc);
-    const translationText = getLocalizedText(example.translations, loc);
-    const toneTip = getLocalizedText(example.tone_tip, loc);
-    const wordOrderDiff = getLocalizedText(example.word_order_diff, loc);
-    const note = getLocalizedText(example.note, loc);
+    const scenarioText = getLocText(example.scenario, loc);
+    const translationText = getLocText(example.translations, loc);
 
     return `
       <div class="example-sentence-card">
         <div class="example-sentence-header">
           <span class="example-scenario-tag">${escapeHtml(scenarioText || (loc === 'ja' ? '用例' : (loc === 'en' ? 'Example' : 'Ví dụ')))}</span>
-          <button class="example-audio-button" onclick="speakGrammarText('${escapeQuotes(example.zh)}')">
+          <button type="button" class="example-audio-button" onclick="speakGrammarText('${escapeQuotes(example.zh)}')">
             <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
             <span>${loc === 'ja' ? '再生' : (loc === 'en' ? 'Listen' : 'Phát âm')}</span>
           </button>
@@ -128,26 +152,17 @@
         ` : ''}
 
         <div class="sentence-translation-text">“${escapeHtml(translationText)}”</div>
-
-        ${(toneTip || wordOrderDiff || note) ? `
-          <div class="sentence-tips-row">
-            ${toneTip ? `<div> <b>${loc === 'ja' ? '声調のヒント' : (loc === 'en' ? 'Tone tip' : 'Mẹo thanh điệu')}:</b> ${escapeHtml(toneTip)}</div>` : ''}
-            ${wordOrderDiff ? `<div> <b>${loc === 'ja' ? '語順の比較' : (loc === 'en' ? 'Word order diff' : 'Khác biệt trật tự từ')}:</b> ${escapeHtml(wordOrderDiff)}</div>` : ''}
-            ${note ? `<div> <b>${loc === 'ja' ? '注記' : (loc === 'en' ? 'Note' : 'Lưu ý')}:</b> ${escapeHtml(note)}</div>` : ''}
-          </div>
-        ` : ''}
       </div>
     `;
   }
 
-  // --- Component 3: PracticeModule State & Scoring ---
-  // In-memory interactive state for active exercises
+  // --- Component 3: PracticeModule State & Interactive Engine ---
   const practiceRuntimeState = {
     grammarId: null,
-    puzzles: {}, // index -> { placed: [], completed: boolean, isCorrect: boolean }
-    fillBlank: {}, // index -> { selectedIndex: number, isCorrect: boolean }
-    errorCorrection: {}, // index -> { revealed: boolean, showHint: boolean }
-    quiz: {}, // index -> { selectedIndex: number, isCorrect: boolean }
+    puzzles: {},
+    fillBlank: {},
+    errorCorrection: {},
+    quiz: {}
   };
 
   function initPracticeState(detail) {
@@ -157,7 +172,7 @@
     (detail.puzzles || []).forEach((p, idx) => {
       practiceRuntimeState.puzzles[idx] = {
         placed: [],
-        available: [...p.scrambled_tokens],
+        available: [...(p.scrambled_tokens || [])],
         completed: false,
         isCorrect: false
       };
@@ -167,56 +182,50 @@
     practiceRuntimeState.quiz = {};
   }
 
-  /**
-   * Renders the interactive practice module with 4 tabs
-   * @param {Object} detail - GrammarDetailItem
-   * @param {'vi'|'ja'|'en'} [locale] - Active locale
-   * @param {string} [activeTab='puzzles'] - 'puzzles' | 'fill_blank' | 'error_correction' | 'quiz'
-   * @returns {string} HTML string
-   */
   function renderPracticeModule(detail, locale, activeTab) {
     if (!detail) return '';
-    const loc = locale || (typeof state !== 'undefined' && state.uiLang) || 'vi';
-    const tab = activeTab || grammarStore.getState().activePracticeTab || 'puzzles';
+    const loc = locale || getLang();
+    const tab = activeTab || grammarStore.getState().activePracticeTab || 'quiz';
 
     if (practiceRuntimeState.grammarId !== detail.id) {
       initPracticeState(detail);
     }
 
-    const savedProgress = grammarService.getPracticeResult(detail.id);
-
-    // Calculate score
     let totalQuestions = 0;
     let correctAnswers = 0;
 
-    (detail.puzzles || []).forEach((p, i) => {
+    (detail.quiz || []).forEach((q, i) => {
       totalQuestions++;
-      if (practiceRuntimeState.puzzles[i]?.isCorrect) correctAnswers++;
+      if (practiceRuntimeState.quiz[i]?.isCorrect) correctAnswers++;
     });
     (detail.fill_blank || []).forEach((f, i) => {
       totalQuestions++;
       if (practiceRuntimeState.fillBlank[i]?.isCorrect) correctAnswers++;
     });
-    (detail.quiz || []).forEach((q, i) => {
+    (detail.puzzles || []).forEach((p, i) => {
       totalQuestions++;
-      if (practiceRuntimeState.quiz[i]?.isCorrect) correctAnswers++;
+      if (practiceRuntimeState.puzzles[i]?.isCorrect) correctAnswers++;
+    });
+    (detail.error_correction || []).forEach((e, i) => {
+      totalQuestions++;
+      if (practiceRuntimeState.errorCorrection[i]?.revealed) correctAnswers++;
     });
 
     const percent = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
 
     let subViewHtml = '';
     switch (tab) {
-      case 'puzzles':
-        subViewHtml = renderPuzzlesSubView(detail, loc);
+      case 'quiz':
+        subViewHtml = renderQuizSubView(detail, loc);
         break;
       case 'fill_blank':
         subViewHtml = renderFillBlankSubView(detail, loc);
         break;
+      case 'puzzles':
+        subViewHtml = renderPuzzlesSubView(detail, loc);
+        break;
       case 'error_correction':
         subViewHtml = renderErrorCorrectionSubView(detail, loc);
-        break;
-      case 'quiz':
-        subViewHtml = renderQuizSubView(detail, loc);
         break;
     }
 
@@ -224,28 +233,33 @@
       <div class="practice-module-card" id="practice-module-root">
         <div class="practice-header">
           <div class="practice-title-box">
-            <span style="font-size:22px;">🎯</span>
-            <div style="font-size:17px; font-weight:800; color:var(--text-primary);">
-              ${loc === 'ja' ? '実践練習 & スコア判定' : (loc === 'en' ? 'Interactive Practice & Quiz' : 'Luyện tập thực hành & Chấm điểm')}
+            <span style="font-size:24px;">🎯</span>
+            <div>
+              <div style="font-size:17px; font-weight:800; color:var(--text-primary);">
+                ${loc === 'ja' ? '実践練習・ドリル演習' : (loc === 'en' ? 'Interactive Practice & Mastery' : 'Luyện tập thực hành & Chấm điểm')}
+              </div>
+              <div style="font-size:12.5px; color:var(--text-secondary); margin-top:2px;">
+                ${loc === 'ja' ? '問題を解いて知識を定着させましょう' : (loc === 'en' ? 'Reinforce your grammar understanding with instant feedback' : 'Chọn đáp án và kiểm tra mức độ nắm vững cấu trúc')}
+              </div>
             </div>
           </div>
           <div class="practice-score-badge">
-            🏆 ${loc === 'ja' ? '正解率' : (loc === 'en' ? 'Score' : 'Điểm')}: ${correctAnswers}/${totalQuestions} (${percent}%)
+            🏆 ${t('grammarScore')}: <b>${correctAnswers}/${totalQuestions}</b> (${percent}%)
           </div>
         </div>
 
         <div class="practice-tabs-bar">
-          <button class="practice-tab-btn ${tab === 'puzzles' ? 'active' : ''}" onclick="switchPracticeTab('puzzles')">
-            🧩 ${loc === 'ja' ? '並べ替え' : (loc === 'en' ? 'Sentence Puzzle' : 'Xếp câu')} (${(detail.puzzles || []).length})
+          <button class="practice-tab-btn ${tab === 'quiz' ? 'active' : ''}" onclick="switchPracticeTab('quiz')">
+            🎯 ${loc === 'ja' ? 'クイズ' : (loc === 'en' ? 'Mastery Quiz' : 'Trắc nghiệm')} (${(detail.quiz || []).length})
           </button>
           <button class="practice-tab-btn ${tab === 'fill_blank' ? 'active' : ''}" onclick="switchPracticeTab('fill_blank')">
             ✍️ ${loc === 'ja' ? '空欄補充' : (loc === 'en' ? 'Fill Blank' : 'Điền chỗ trống')} (${(detail.fill_blank || []).length})
           </button>
+          <button class="practice-tab-btn ${tab === 'puzzles' ? 'active' : ''}" onclick="switchPracticeTab('puzzles')">
+            🧩 ${loc === 'ja' ? '並べ替え' : (loc === 'en' ? 'Sentence Puzzle' : 'Xếp câu')} (${(detail.puzzles || []).length})
+          </button>
           <button class="practice-tab-btn ${tab === 'error_correction' ? 'active' : ''}" onclick="switchPracticeTab('error_correction')">
             🔍 ${loc === 'ja' ? '誤文訂正' : (loc === 'en' ? 'Error Spot' : 'Sửa lỗi sai')} (${(detail.error_correction || []).length})
-          </button>
-          <button class="practice-tab-btn ${tab === 'quiz' ? 'active' : ''}" onclick="switchPracticeTab('quiz')">
-            🎯 ${loc === 'ja' ? 'クイズ' : (loc === 'en' ? 'Mastery Quiz' : 'Trắc nghiệm')} (${(detail.quiz || []).length})
           </button>
         </div>
 
@@ -256,55 +270,52 @@
     `;
   }
 
-  // --- Sub-View 1: Sentence Puzzles ---
-  function renderPuzzlesSubView(detail, loc) {
-    const puzzles = detail.puzzles || [];
-    if (!puzzles.length) {
-      return `<div style="text-align:center; padding:20px; color:var(--text-muted);">${loc === 'ja' ? '練習問題はありません' : 'Chưa có bài tập sắp xếp cho mục này.'}</div>`;
+  // --- Sub-View 1: Quiz ---
+  function renderQuizSubView(detail, loc) {
+    const list = detail.quiz || [];
+    if (!list.length) {
+      return `<div style="text-align:center; padding:30px; color:var(--text-muted);">${t('grammarEmptyPractice')}</div>`;
     }
 
-    return puzzles.map((p, pIdx) => {
-      const pState = practiceRuntimeState.puzzles[pIdx] || { placed: [], available: [...p.scrambled_tokens] };
-      const isDone = pState.completed;
-      const isRight = pState.isCorrect;
+    return list.map((item, qIdx) => {
+      const qState = practiceRuntimeState.quiz[qIdx];
+      const hasAnswered = qState != null;
+      const questionText = getLocText(item.question, loc);
+      const expText = getLocText(item.explanation, loc);
 
-      const placedHtml = pState.placed.map((token, tIdx) => `
-        <span class="puzzle-chip" onclick="handleRemovePuzzleToken(${pIdx}, ${tIdx})">${escapeHtml(token)}</span>
-      `).join('');
-
-      const availableHtml = pState.available.map((token, aIdx) => `
-        <span class="puzzle-chip" onclick="handlePlacePuzzleToken(${pIdx}, ${aIdx})">${escapeHtml(token)}</span>
-      `).join('');
+      const optionsHtml = (item.options || []).map((opt, oIdx) => {
+        let optClass = 'quiz-opt-btn';
+        if (hasAnswered) {
+          if (oIdx === item.answer_index) {
+            optClass += ' selected-correct';
+          } else if (oIdx === qState.selectedIndex) {
+            optClass += ' selected-wrong';
+          }
+        }
+        return `
+          <button class="${optClass}" onclick="handleSelectQuiz(${qIdx}, ${oIdx})" ${hasAnswered ? 'disabled' : ''}>
+            <span class="quiz-opt-letter">${String.fromCharCode(65 + oIdx)}.</span>
+            <span>${escapeHtml(opt)}</span>
+          </button>
+        `;
+      }).join('');
 
       return `
-        <div class="puzzle-item-card">
-          <div style="font-size:13px; font-weight:700; color:var(--text-muted); margin-bottom:8px;">
-            ${loc === 'ja' ? '問題' : (loc === 'en' ? 'Puzzle' : 'Câu hỏi')} #${pIdx + 1}: ${loc === 'ja' ? '単語をタップして正しい文を完成させてください' : (loc === 'en' ? 'Tap tokens to arrange into the correct sentence' : 'Chạm vào từ bên dưới để ghép thành câu hoàn chỉnh')}
+        <div class="quiz-item-card">
+          <div class="quiz-question-title">
+            <span class="quiz-num-badge">${qIdx + 1}</span>
+            <span>${escapeHtml(questionText)}</span>
           </div>
+          <div class="quiz-options-list">${optionsHtml}</div>
 
-          <div class="puzzle-dropzone ${isDone ? (isRight ? 'correct' : 'wrong') : ''}">
-            ${placedHtml.length ? placedHtml : `<span style="font-size:13px; color:var(--text-muted);">${loc === 'ja' ? 'ここをタップして単語を配置' : (loc === 'en' ? 'Selected words will appear here' : 'Các từ đã chọn sẽ hiện ở đây...')}</span>`}
-          </div>
-
-          <div class="puzzle-pool">${availableHtml}</div>
-
-          <div class="puzzle-actions">
-            <button class="btn btn-primary btn-sm" onclick="checkPuzzleAnswer(${pIdx})" ${pState.placed.length === 0 ? 'disabled' : ''}>
-              ✓ ${loc === 'ja' ? '確認' : (loc === 'en' ? 'Check' : 'Kiểm tra')}
-            </button>
-            <button class="btn btn-secondary btn-sm" onclick="resetPuzzle(${pIdx})">
-              ↺ ${loc === 'ja' ? 'リセット' : (loc === 'en' ? 'Reset' : 'Làm lại')}
-            </button>
-            ${isDone ? (isRight ? `
-              <span style="color:#059669; font-weight:700; display:flex; align-items:center; gap:4px; font-size:14px;">
-                ✅ ${loc === 'ja' ? '正解！' : (loc === 'en' ? 'Correct!' : 'Chính xác!')}
-              </span>
-            ` : `
-              <span style="color:#DC2626; font-weight:600; display:flex; align-items:center; gap:4px; font-size:13px;">
-                ❌ ${loc === 'ja' ? '不正解です。並び直してください。' : (loc === 'en' ? 'Not quite right. Try reordering.' : 'Chưa đúng, hãy thử sắp xếp lại nhé!')}
-              </span>
-            `) : ''}
-          </div>
+          ${hasAnswered ? `
+            <div class="explanation-box ${qState.isCorrect ? 'explanation-correct' : 'explanation-wrong'}">
+              <div style="font-weight:700; margin-bottom:4px; font-size:14px;">
+                ${qState.isCorrect ? '✅ ' + t('grammarCorrect') : '❌ ' + t('grammarIncorrect')}
+              </div>
+              <div style="font-size:13.5px; line-height:1.5;">${escapeHtml(expText)}</div>
+            </div>
+          ` : ''}
         </div>
       `;
     }).join('');
@@ -314,14 +325,14 @@
   function renderFillBlankSubView(detail, loc) {
     const list = detail.fill_blank || [];
     if (!list.length) {
-      return `<div style="text-align:center; padding:20px; color:var(--text-muted);">${loc === 'ja' ? '練習問題はありません' : 'Chưa có bài tập điền từ.'}</div>`;
+      return `<div style="text-align:center; padding:30px; color:var(--text-muted);">${t('grammarEmptyPractice')}</div>`;
     }
 
     return list.map((item, fIdx) => {
       const stateItem = practiceRuntimeState.fillBlank[fIdx];
       const hasAnswered = stateItem != null;
 
-      const optionsHtml = item.options.map((opt, oIdx) => {
+      const optionsHtml = (item.options || []).map((opt, oIdx) => {
         let btnClass = 'fill-blank-opt-btn';
         if (hasAnswered) {
           if (oIdx === item.answer_index) {
@@ -337,7 +348,7 @@
         `;
       }).join('');
 
-      const expText = getLocalizedText(item.explanation, loc);
+      const expText = getLocText(item.explanation, loc);
 
       return `
         <div class="fill-blank-card">
@@ -348,11 +359,11 @@
           <div class="fill-blank-options-grid">${optionsHtml}</div>
 
           ${hasAnswered ? `
-            <div class="explanation-box">
-              <div style="font-weight:700; color:${stateItem.isCorrect ? '#059669' : '#DC2626'}; margin-bottom:4px;">
-                ${stateItem.isCorrect ? '✅ ' + (loc === 'ja' ? '正解！' : (loc === 'en' ? 'Correct!' : 'Chính xác!')) : '❌ ' + (loc === 'ja' ? '不正解' : (loc === 'en' ? 'Incorrect' : 'Chưa chính xác'))}
+            <div class="explanation-box ${stateItem.isCorrect ? 'explanation-correct' : 'explanation-wrong'}">
+              <div style="font-weight:700; margin-bottom:4px; font-size:14px;">
+                ${stateItem.isCorrect ? '✅ ' + t('grammarCorrect') : '❌ ' + t('grammarIncorrect')}
               </div>
-              <div>${escapeHtml(expText)}</div>
+              <div style="font-size:13.5px; line-height:1.5;">${escapeHtml(expText)}</div>
             </div>
           ` : ''}
         </div>
@@ -360,16 +371,71 @@
     }).join('');
   }
 
-  // --- Sub-View 3: Error Correction ---
+  // --- Sub-View 3: Sentence Puzzles ---
+  function renderPuzzlesSubView(detail, loc) {
+    const puzzles = detail.puzzles || [];
+    if (!puzzles.length) {
+      return `<div style="text-align:center; padding:30px; color:var(--text-muted);">${t('grammarEmptyPractice')}</div>`;
+    }
+
+    return puzzles.map((p, pIdx) => {
+      const pState = practiceRuntimeState.puzzles[pIdx] || { placed: [], available: [...(p.scrambled_tokens || [])] };
+      const isDone = pState.completed;
+      const isRight = pState.isCorrect;
+
+      const placedHtml = pState.placed.map((token, tIdx) => `
+        <span class="puzzle-chip placed" onclick="handleRemovePuzzleToken(${pIdx}, ${tIdx})">${escapeHtml(token)}</span>
+      `).join('');
+
+      const availableHtml = pState.available.map((token, aIdx) => `
+        <span class="puzzle-chip" onclick="handlePlacePuzzleToken(${pIdx}, ${aIdx})">${escapeHtml(token)}</span>
+      `).join('');
+
+      return `
+        <div class="puzzle-item-card">
+          <div style="font-size:13px; font-weight:700; color:var(--text-muted); margin-bottom:8px;">
+            ${loc === 'ja' ? '問題' : (loc === 'en' ? 'Puzzle' : 'Câu hỏi')} #${pIdx + 1}: ${loc === 'ja' ? '単語をタップして正しい文を完成させてください' : (loc === 'en' ? 'Tap words below to arrange into the correct sentence' : 'Chạm vào từ bên dưới để ghép thành câu hoàn chỉnh')}
+          </div>
+
+          <div class="puzzle-dropzone ${isDone ? (isRight ? 'correct' : 'wrong') : ''}">
+            ${placedHtml.length ? placedHtml : `<span style="font-size:13px; color:var(--text-muted);">${loc === 'ja' ? 'ここをタップして単語を配置' : (loc === 'en' ? 'Selected words will appear here' : 'Các từ đã chọn sẽ hiện ở đây...')}</span>`}
+          </div>
+
+          <div class="puzzle-pool">${availableHtml}</div>
+
+          <div class="puzzle-actions">
+            <button class="btn btn-primary btn-sm" onclick="checkPuzzleAnswer(${pIdx})" ${pState.placed.length === 0 ? 'disabled' : ''}>
+              ✓ ${t('grammarCheckAnswer')}
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="resetPuzzle(${pIdx})">
+              ↺ ${loc === 'ja' ? 'リセット' : (loc === 'en' ? 'Reset' : 'Làm lại')}
+            </button>
+            ${isDone ? (isRight ? `
+              <span style="color:#059669; font-weight:700; display:flex; align-items:center; gap:4px; font-size:14px;">
+                ✅ ${t('grammarCorrect')}
+              </span>
+            ` : `
+              <span style="color:#DC2626; font-weight:600; display:flex; align-items:center; gap:4px; font-size:13px;">
+                ❌ ${loc === 'ja' ? '不正解です。並び直してください。' : (loc === 'en' ? 'Not quite right. Try reordering.' : 'Chưa đúng, hãy thử sắp xếp lại nhé!')}
+              </span>
+            `) : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // --- Sub-View 4: Error Correction ---
   function renderErrorCorrectionSubView(detail, loc) {
     const list = detail.error_correction || [];
     if (!list.length) {
-      return `<div style="text-align:center; padding:20px; color:var(--text-muted);">${loc === 'ja' ? '練習問題はありません' : 'Chưa có bài tập sửa lỗi sai.'}</div>`;
+      return `<div style="text-align:center; padding:30px; color:var(--text-muted);">${t('grammarEmptyPractice')}</div>`;
     }
 
     return list.map((item, eIdx) => {
       const eState = practiceRuntimeState.errorCorrection[eIdx] || { revealed: false, showHint: false };
-      const hintText = getLocalizedText(item.hint, loc);
+      const hintText = getLocText(item.hint, loc);
+      const expText = getLocText(item.explanation, loc);
 
       return `
         <div class="error-corr-card">
@@ -380,6 +446,7 @@
 
           ${eState.revealed ? `
             <div class="error-correct-line">✅ ${escapeHtml(item.correct)}</div>
+            ${expText ? `<div class="explanation-box" style="margin-top:8px;"><b>${t('grammarExplanation')}:</b> ${escapeHtml(expText)}</div>` : ''}
           ` : ''}
 
           ${eState.showHint ? `
@@ -388,61 +455,14 @@
             </div>
           ` : ''}
 
-          <div style="display:flex; gap:8px;">
+          <div style="display:flex; gap:8px; margin-top:12px;">
             <button class="btn btn-secondary btn-sm" onclick="toggleErrorCorrectionHint(${eIdx})">
-              🔍 ${eState.showHint ? (loc === 'ja' ? 'ヒントを隠す' : 'Ẩn gợi ý') : (loc === 'ja' ? 'ヒントを見る' : 'Xem gợi ý')}
+              🔍 ${eState.showHint ? (loc === 'ja' ? 'ヒントを隠す' : (loc === 'en' ? 'Hide Hint' : 'Ẩn gợi ý')) : (loc === 'ja' ? 'ヒントを見る' : (loc === 'en' ? 'View Hint' : 'Xem gợi ý'))}
             </button>
             <button class="btn btn-primary btn-sm" onclick="revealErrorCorrection(${eIdx})">
-              👁️ ${eState.revealed ? (loc === 'ja' ? '正解を表示中' : 'Đã hiển thị đáp án') : (loc === 'ja' ? '正解を見る' : 'Xem đáp án')}
+              👁️ ${eState.revealed ? (loc === 'ja' ? '正解を表示中' : (loc === 'en' ? 'Answer Revealed' : 'Đã hiển thị đáp án')) : (loc === 'ja' ? '正解を見る' : (loc === 'en' ? 'Show Answer' : 'Xem đáp án'))}
             </button>
           </div>
-        </div>
-      `;
-    }).join('');
-  }
-
-  // --- Sub-View 4: Quiz ---
-  function renderQuizSubView(detail, loc) {
-    const list = detail.quiz || [];
-    if (!list.length) {
-      return `<div style="text-align:center; padding:20px; color:var(--text-muted);">${loc === 'ja' ? 'クイズはありません' : 'Chưa có câu hỏi trắc nghiệm.'}</div>`;
-    }
-
-    return list.map((item, qIdx) => {
-      const qState = practiceRuntimeState.quiz[qIdx];
-      const hasAnswered = qState != null;
-      const questionText = getLocalizedText(item.question, loc);
-      const expText = getLocalizedText(item.explanation, loc);
-
-      const optionsHtml = item.options.map((opt, oIdx) => {
-        let optClass = 'quiz-opt-btn';
-        if (hasAnswered) {
-          if (oIdx === item.answer_index) {
-            optClass += ' selected-correct';
-          } else if (oIdx === qState.selectedIndex) {
-            optClass += ' selected-wrong';
-          }
-        }
-        return `
-          <button class="${optClass}" onclick="handleSelectQuiz(${qIdx}, ${oIdx})" ${hasAnswered ? 'disabled' : ''}>
-            ${String.fromCharCode(65 + oIdx)}. ${escapeHtml(opt)}
-          </button>
-        `;
-      }).join('');
-
-      return `
-        <div class="quiz-item-card">
-          <div class="quiz-question-title">${qIdx + 1}. ${escapeHtml(questionText)}</div>
-          <div class="quiz-options-list">${optionsHtml}</div>
-
-          ${hasAnswered ? `
-            <div class="explanation-box">
-              <div style="font-weight:700; color:${qState.isCorrect ? '#059669' : '#DC2626'}; margin-bottom:4px;">
-                ${qState.isCorrect ? '✅ ' + (loc === 'ja' ? '正解！素晴らしい！' : (loc === 'en' ? 'Correct!' : 'Chính xác!')) : '❌ ' + (loc === 'ja' ? '不正解' : (loc === 'en' ? 'Incorrect' : 'Chưa chính xác'))}
-              </div>
-              <div>${escapeHtml(expText)}</div>
-            </div>
-          ` : ''}
         </div>
       `;
     }).join('');
@@ -570,7 +590,7 @@
 
   // --- Modal for False Friends Alert (Nhật - Trung) ---
   window.showFalseFriendModal = function (hanzi, zhMeaning, jaMeaning) {
-    const loc = (typeof state !== 'undefined' && state.uiLang) || 'vi';
+    const loc = getLang();
     let overlay = document.getElementById('grammar-false-friend-overlay');
     if (!overlay) {
       overlay = document.createElement('div');
@@ -589,24 +609,24 @@
           「${escapeHtml(hanzi)}」
         </div>
         <div style="background:var(--bg-muted); border-radius:12px; padding:12px 16px; margin-bottom:12px;">
-          <div style="font-weight:700; color:#B45309; font-size:13px; margin-bottom:4px;">🇯🇵 ${loc === 'ja' ? '日本語の意味' : 'Nghĩa trong tiếng Nhật'}:</div>
+          <div style="font-weight:700; color:#B45309; font-size:13px; margin-bottom:4px;">🇯🇵 ${loc === 'ja' ? '日本語の意味' : (loc === 'en' ? 'Japanese Meaning' : 'Nghĩa trong tiếng Nhật')}:</div>
           <div style="font-size:14px; color:var(--text-primary);">${escapeHtml(jaMeaning)}</div>
         </div>
         <div style="background:rgba(16, 185, 129, 0.08); border-radius:12px; padding:12px 16px; margin-bottom:16px;">
-          <div style="font-weight:700; color:#059669; font-size:13px; margin-bottom:4px;">🇨🇳 ${loc === 'ja' ? '中国語の意味' : 'Nghĩa trong tiếng Trung'}:</div>
+          <div style="font-weight:700; color:#059669; font-size:13px; margin-bottom:4px;">🇨🇳 ${loc === 'ja' ? '中国語の意味' : (loc === 'en' ? 'Chinese Meaning' : 'Nghĩa trong tiếng Trung')}:</div>
           <div style="font-size:14px; color:var(--text-primary); font-weight:600;">${escapeHtml(zhMeaning)}</div>
         </div>
-        <button class="btn btn-primary" style="width:100%;" onclick="closeFalseFriendModal()">
+        <button type="button" class="btn btn-primary" style="width:100%;" onclick="closeFalseFriendModal()">
           ${loc === 'ja' ? '閉じる' : (loc === 'en' ? 'Understood' : 'Đã hiểu')}
         </button>
       </div>
     `;
-    overlay.style.display = 'flex';
+    overlay.classList.add('active');
   };
 
   window.closeFalseFriendModal = function () {
     const overlay = document.getElementById('grammar-false-friend-overlay');
-    if (overlay) overlay.style.display = 'none';
+    if (overlay) overlay.classList.remove('active');
   };
 
   window.speakGrammarText = function (text) {
@@ -615,51 +635,55 @@
     }
   };
 
-  // --- Grammar Catalog Cards HTML Builder ---
+  // --- Grammar Catalog Cards Builder (No Category, No HSK 2.0/3.0, Tra cứu nhanh → Hiểu nghĩa) ---
   function buildGrammarCatalogCardsHtml(currentLoc) {
     const activeState = grammarStore.getState();
     const list = grammarService.getJoinedGrammarList({
       level: activeState.level,
-      standard: activeState.standard,
-      category: activeState.category,
+      standard: 'all',
+      category: 'all',
       query: activeState.query,
-      hasDetailOnly: activeState.hasDetailOnly
+      hasDetailOnly: false
     });
 
     if (!list.length) {
       return `
-        <div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-muted);">
-           ${currentLoc === 'ja' ? '条件に一致する文法が見つかりませんでした' : (currentLoc === 'en' ? 'No matching grammar points found.' : 'Không tìm thấy điểm ngữ pháp nào phù hợp.')}
+        <div style="grid-column:1/-1; text-align:center; padding:50px 20px; color:var(--text-muted);">
+          <div style="font-size:32px; margin-bottom:8px;">🔍</div>
+          <div style="font-size:15px; font-weight:600;">${t('grammarNoResults')}</div>
         </div>
       `;
     }
 
     return list.map(item => {
-      const titleLocal = currentLoc === 'ja' ? item.ja_name : (currentLoc === 'en' ? item.en_name : item.vi_name);
+      const detail = item.detail || {};
+      const locData = (detail.localizations && detail.localizations[currentLoc]) || detail.localizations?.vi || {};
+      const titleLocal = locData.title || (currentLoc === 'ja' ? item.ja_name : (currentLoc === 'en' ? item.en_name : item.vi_name));
       const levelClass = 'grammar-level-' + item.level.toLowerCase().replace(/[^a-z0-9]/g, '');
-      const catLabel = (typeof grammarService !== 'undefined' && grammarService.getCategoryName)
-        ? grammarService.getCategoryName(item.category, currentLoc)
-        : (item.category || '');
+      const formulaText = detail.formula || item.formula || '';
 
       return `
         <div class="grammar-card" onclick="openGrammarDetail('${escapeQuotes(item.id)}')">
-          <div>
-            <div class="grammar-card-top">
-              <span class="grammar-level-pill ${levelClass}">${escapeHtml(item.level)}</span>
-              <div class="grammar-standards-tags">
-                ${(item.standard || []).map(s => `<span class="grammar-standard-tag">${escapeHtml(s)}</span>`).join('')}
-              </div>
-            </div>
-            <div class="grammar-card-zh">${escapeHtml(item.zh_name)}</div>
-            <div class="grammar-card-name">${escapeHtml(titleLocal || item.vi_name)}</div>
+          <div class="grammar-card-header">
+            <span class="grammar-level-pill ${levelClass}">${escapeHtml(item.level)}</span>
           </div>
-          <div class="grammar-card-bottom">
-            <span class="grammar-category-badge">${escapeHtml(catLabel)}</span>
-            ${item.hasDetail ? `
-              <span class="grammar-detail-badge"> ${currentLoc === 'ja' ? '詳細・練習' : (currentLoc === 'en' ? 'Practice' : 'Chi tiết & Luyện tập')}</span>
-            ` : `
-              <span style="font-size:11px; color:var(--text-muted);">${currentLoc === 'ja' ? '概要' : 'Mục lục'}</span>
-            `}
+
+          <div class="grammar-card-zh">${escapeHtml(item.zh_name)}</div>
+          <div class="grammar-card-name">${escapeHtml(titleLocal || '')}</div>
+
+          ${formulaText ? `
+            <div class="grammar-card-formula">
+              <code>${escapeHtml(formulaText)}</code>
+            </div>
+          ` : ''}
+
+          <div class="grammar-card-actions">
+            <button type="button" class="grammar-card-btn grammar-btn-detail" onclick="event.stopPropagation(); openGrammarDetail('${escapeQuotes(item.id)}')">
+              <span>📖 ${t('grammarBtnDetail')}</span>
+            </button>
+            <button type="button" class="grammar-card-btn grammar-btn-practice" onclick="event.stopPropagation(); openGrammarPractice('${escapeQuotes(item.id)}')">
+              <span>🎯 ${t('grammarBtnPractice')}</span>
+            </button>
           </div>
         </div>
       `;
@@ -672,20 +696,19 @@
     if (!container) return;
 
     const gState = grammarStore.getState();
-    const loc = (typeof state !== 'undefined' && state.uiLang) || 'vi';
+    const loc = getLang();
 
     if (gState.viewMode === 'detail' && gState.selectedId) {
       renderActiveGrammarDetail();
       return;
     }
 
-    // Render Catalog Explorer
-    const categories = grammarService.getGrammarCategories(loc);
+    // Catalog Mode: Minimalist, Fast, No Category, No HSK 2.0/3.0
     const levels = grammarService.getGrammarLevels();
 
     const levelPillsHtml = `
       <div class="grammar-filter-chip ${gState.level === 'all' ? 'active' : ''}" onclick="setGrammarFilterLevel('all')">
-        ${loc === 'ja' ? 'すべて' : (loc === 'en' ? 'All' : 'Tất cả')}
+        ${t('grammarAllLevels')}
       </div>
       ${levels.map(l => `
         <div class="grammar-filter-chip ${gState.level === l.level ? 'active' : ''}" onclick="setGrammarFilterLevel('${l.level}')">
@@ -694,49 +717,29 @@
       `).join('')}
     `;
 
-    const standardHtml = `
-      <div class="grammar-filter-chip ${gState.standard === 'all' ? 'active' : ''}" onclick="setGrammarFilterStandard('all')">
-        ${loc === 'ja' ? '新旧両方' : (loc === 'en' ? 'All standards' : 'Chuẩn 2.0 & 3.0')}
-      </div>
-      <div class="grammar-filter-chip ${gState.standard === 'HSK 3.0' ? 'active' : ''}" onclick="setGrammarFilterStandard('HSK 3.0')">
-        HSK 3.0
-      </div>
-      <div class="grammar-filter-chip ${gState.standard === 'HSK 2.0' ? 'active' : ''}" onclick="setGrammarFilterStandard('HSK 2.0')">
-        HSK 2.0
-      </div>
-    `;
-
-    const categoryOptionsHtml = `
-      <option value="all">${loc === 'ja' ? 'すべてのカテゴリー' : (loc === 'en' ? 'All Categories' : 'Tất cả phân loại')}</option>
-      ${categories.map(c => `
-        <option value="${c.id}" ${gState.category === c.id ? 'selected' : ''}>${escapeHtml(c.name)} (${c.count})</option>
-      `).join('')}
-    `;
-
     const cardsHtml = buildGrammarCatalogCardsHtml(loc);
 
     container.innerHTML = `
       <div class="grammar-container">
+        <!-- Hero Header -->
         <div class="grammar-header">
           <div class="grammar-header-badge">
-            <img src="assets/icons/extras/graduation-cap.png" width="18" height="18" alt="Grammar" style="object-fit:contain; vertical-align:middle; margin-right:4px;">
-            <span>HSK 2.0 & 3.0 Grammar Mastery</span>
+            <img src="assets/icons/extras/graduation-cap.png" width="16" height="16" alt="Grammar" style="object-fit:contain; vertical-align:middle; margin-right:4px;">
+            <span>${t('grammarHeroBadge')}</span>
           </div>
-          <h1 class="grammar-title">${loc === 'ja' ? 'HSK文法マスター' : (loc === 'en' ? 'HSK Grammar Guide' : 'Ngữ pháp tiếng Trung HSK')}</h1>
-          <p class="grammar-subtitle">
-            ${loc === 'ja' ? 'HSK 1〜9級の必須文法を体系的に学習。直感的な構造ブロック、日中同形異義語のアラート、実践的な練習問題を提供。' : (loc === 'en' ? 'Master essential Chinese grammar from HSK 1 to 9 with visual formulas, comparative notes, and interactive quizzes.' : 'Hệ thống ngữ pháp HSK chuẩn 2.0 & 3.0 với công thức màu sắc trực quan, cảnh báo bẫy ngữ pháp và bài tập chấm điểm.')}
-          </p>
+          <h1 class="grammar-title">${t('grammarHeroTitle')}</h1>
+          <p class="grammar-subtitle">${t('grammarHeroSubtitle')}</p>
         </div>
 
+        <!-- Controls: Search and Levels (No Category Row, No Standards Row) -->
         <div class="grammar-controls">
-          <!-- Row 1: Large & Prominent Search Bar -->
           <form class="grammar-search-row" action="javascript:void(0)" onsubmit="handleGrammarSearchSubmit(event)" role="search">
             <div class="grammar-search-input-box">
-              <button type="submit" class="grammar-search-icon-btn" title="${loc === 'ja' ? '検索' : (loc === 'en' ? 'Search' : 'Tìm kiếm')}" aria-label="${loc === 'ja' ? '検索' : (loc === 'en' ? 'Search' : 'Tìm kiếm')}">
+              <button type="submit" class="grammar-search-icon-btn" title="Search" aria-label="Search">
                 <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-5.2-5.2m1.7-4.3a7.5 7.5 0 11-15 0 7.5 7.5 0 0115 0z"/></svg>
               </button>
               <input type="search" id="grammar-search-input" class="grammar-search-input" 
-                placeholder="${loc === 'ja' ? '文法名、ピンイン、キーワードで検索...' : (loc === 'en' ? 'Search grammar by name, pinyin, formula...' : 'Tìm kiếm ngữ pháp, pinyin, cấu trúc...')}" 
+                placeholder="${t('grammarSearchPh')}" 
                 value="${escapeHtml(gState.query)}" 
                 oninput="handleGrammarSearchInput(event)" 
                 oncompositionend="handleGrammarSearchCompositionEnd(event)"
@@ -746,31 +749,17 @@
                 autocapitalize="off" 
                 spellcheck="false" 
                 enterkeyhint="search">
-              <button type="button" id="grammar-search-clear-btn" class="grammar-search-clear-btn" style="display:${gState.query ? 'flex' : 'none'};" onclick="clearGrammarSearch()" title="${loc === 'ja' ? 'クリア' : (loc === 'en' ? 'Clear' : 'Xóa')}">✕</button>
+              <button type="button" id="grammar-search-clear-btn" class="grammar-search-clear-btn" style="display:${gState.query ? 'flex' : 'none'};" onclick="clearGrammarSearch()" title="Clear">✕</button>
             </div>
           </form>
 
-          <!-- Row 2: Category Filter Row (Placed Below Search Bar) -->
-          <div class="grammar-filters-row grammar-category-row">
-            <span class="grammar-filter-label"> ${loc === 'ja' ? 'カテゴリー' : (loc === 'en' ? 'Category' : 'Phân loại')}:</span>
-            <select class="grammar-select" id="grammar-category-select" onchange="setGrammarFilterCategory(this.value)">
-              ${categoryOptionsHtml}
-            </select>
-          </div>
-
-          <!-- Row 3: Level Filter -->
+          <!-- Level Filter Chips -->
           <div class="grammar-filters-row">
-            <span class="grammar-filter-label"> ${loc === 'ja' ? 'レベル' : (loc === 'en' ? 'Level' : 'Cấp độ')}:</span>
             <div class="grammar-chip-group">${levelPillsHtml}</div>
-          </div>
-
-          <!-- Row 4: Standard Filter -->
-          <div class="grammar-filters-row">
-            <span class="grammar-filter-label"> ${loc === 'ja' ? '基準' : (loc === 'en' ? 'Standard' : 'Chuẩn')}:</span>
-            <div class="grammar-chip-group">${standardHtml}</div>
           </div>
         </div>
 
+        <!-- Catalog Cards Grid -->
         <div class="grammar-catalog-grid">
           ${cardsHtml}
         </div>
@@ -778,86 +767,96 @@
     `;
   }
 
+  // --- Detail View: Tra cứu nhanh → Hiểu nghĩa → Biết cách dùng → Xem ví dụ → Luyện tập ---
   function renderActiveGrammarDetail() {
     const container = document.getElementById('view-grammar');
     if (!container) return;
 
     const gState = grammarStore.getState();
     const detail = grammarService.getSampleById(gState.selectedId);
-    const loc = (typeof state !== 'undefined' && state.uiLang) || 'vi';
+    const loc = getLang();
 
     if (!detail) {
-      // If no detail, return to catalog
       grammarStore.clearSelection();
       renderGrammarView();
       return;
     }
 
-    const roleColorMap = {};
-    const formulaHtml = renderStructureFormula(detail, loc, roleColorMap);
-    const localData = (detail.localizations && detail.localizations[loc]) || detail.localizations?.vi || {};
+    const locData = (detail.localizations && detail.localizations[loc]) || detail.localizations?.vi || {};
+    const titleZh = detail.localizations?.zh?.title || detail.keywords?.[0] || detail.formula;
+    const titleLocal = locData.title || '';
+    const formulaText = detail.formula || detail.formula_plain || '';
 
-    const examplesHtml = (detail.examples || []).map(ex => {
-      return renderTokenizedSentence(ex, detail.structure_blocks, loc);
+    // If active tab is Practice, render Practice View
+    if (gState.detailTab === 'practice') {
+      const practiceHtml = renderPracticeModule(detail, loc, gState.activePracticeTab);
+
+      container.innerHTML = `
+        <div class="grammar-container">
+          <!-- Back and Segmented Nav -->
+          <div class="grammar-detail-top-nav">
+            <button type="button" class="grammar-back-btn" onclick="returnToGrammarCatalog()">
+              ← ${t('grammarBackToList')}
+            </button>
+            <div class="grammar-detail-tabs">
+              <button type="button" class="grammar-detail-tab-btn" onclick="switchGrammarDetailTab('learn')">
+                📖 ${t('grammarTabTheory')}
+              </button>
+              <button type="button" class="grammar-detail-tab-btn active" onclick="switchGrammarDetailTab('practice')">
+                🎯 ${t('grammarTabPractice')}
+              </button>
+            </div>
+          </div>
+
+          <!-- Hero Pattern Summary -->
+          <div class="grammar-practice-hero">
+            <span class="grammar-level-pill grammar-level-${detail.level.toLowerCase().replace(/[^a-z0-9]/g, '')}">${escapeHtml(detail.level)}</span>
+            <span class="grammar-hero-zh">${escapeHtml(titleZh)}</span>
+            <span class="grammar-hero-sub">${escapeHtml(titleLocal)}</span>
+          </div>
+
+          <!-- Practice Module -->
+          ${practiceHtml}
+        </div>
+      `;
+      return;
+    }
+
+    // Theory & Learn Mode
+    const roleColorMap = {};
+    const formulaBlocksHtml = renderStructureFormula(detail, loc, roleColorMap);
+
+    // 1-3 Clean Natural Sentence Examples
+    const examples = Array.isArray(detail.examples) ? detail.examples.slice(0, 3) : [];
+    const examplesHtml = examples.map((ex, idx) => {
+      const transText = getLocText(ex.translations, loc);
+      return `
+        <div class="grammar-example-item">
+          <div class="grammar-example-zh">
+            <span onclick="speakGrammarText('${escapeQuotes(ex.zh)}')" style="cursor:pointer;" title="${loc === 'ja' ? '発音を聞く' : (loc === 'en' ? 'Click to pronounce' : 'Bấm để nghe phát âm')}">
+              ${escapeHtml(ex.zh)}
+            </span>
+            <button type="button" class="example-audio-button" onclick="speakGrammarText('${escapeQuotes(ex.zh)}')">
+              <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+              <span>${loc === 'ja' ? '再生' : (loc === 'en' ? 'Listen' : 'Phát âm')}</span>
+            </button>
+          </div>
+          <div class="grammar-example-py">${escapeHtml(ex.pinyin || '')}</div>
+          <div class="grammar-example-tr">“${escapeHtml(transText)}”</div>
+        </div>
+      `;
     }).join('');
 
-    const practiceHtml = renderPracticeModule(detail, loc, gState.activePracticeTab);
-
-    // Dialogue section
-    let dialogueHtml = '';
-    if (detail.dialogue && Array.isArray(detail.dialogue.lines)) {
-      const dGoal = getLocalizedText(detail.dialogue.goal, loc);
-      const linesHtml = detail.dialogue.lines.map(line => `
-        <div style="display:flex; gap:10px; margin-bottom:8px; align-items:flex-start;">
-          <span style="font-weight:700; color:var(--accent); min-width:24px;">${escapeHtml(line.speaker)}:</span>
-          <div>
-            <div style="font-size:16px; font-weight:700; font-family:var(--font-hanzi); color:var(--text-primary); cursor:pointer;" onclick="speakGrammarText('${escapeQuotes(line.zh)}')">
-              ${escapeHtml(line.zh)} 
-            </div>
-            <div style="font-size:12px; color:var(--text-muted); font-family:var(--font-pinyin);">${escapeHtml(line.pinyin)}</div>
-            <div style="font-size:13px; color:var(--text-secondary); margin-top:2px;">${escapeHtml(getLocalizedText(line.tr, loc))}</div>
-          </div>
-        </div>
-      `).join('');
-
-      dialogueHtml = `
+    // Common Mistake Box
+    let mistakeBoxHtml = '';
+    if (locData.fatal_mistake) {
+      mistakeBoxHtml = `
         <div class="grammar-section">
-          <div class="grammar-section-title"> ${loc === 'ja' ? '実践会話シーン' : (loc === 'en' ? 'Practical Dialogue' : 'Hội thoại giao tiếp thực tế')}</div>
-          <div style="font-size:12.5px; color:var(--text-muted); margin-bottom:10px;"> <b>Mục tiêu:</b> ${escapeHtml(dGoal)}</div>
-          <div style="background:var(--bg-muted); border-radius:12px; padding:14px;">${linesHtml}</div>
-        </div>
-      `;
-    }
-
-    // Collocations
-    let collocationsHtml = '';
-    if (Array.isArray(detail.collocations) && detail.collocations.length) {
-      collocationsHtml = `
-        <div class="grammar-section">
-          <div class="grammar-section-title"> ${loc === 'ja' ? 'よく使われるコロケーション' : (loc === 'en' ? 'Common Collocations' : 'Cụm từ cố định thường gặp')}</div>
-          <div style="display:flex; flex-wrap:wrap; gap:8px;">
-            ${detail.collocations.map(col => `
-              <div style="background:var(--bg-muted); border:1px solid var(--border-color); border-radius:8px; padding:6px 10px; font-size:13px;">
-                <b style="font-family:var(--font-hanzi); color:var(--text-primary); cursor:pointer;" onclick="speakGrammarText('${escapeQuotes(col.zh)}')">${escapeHtml(col.zh)}</b>
-                <span style="font-size:11px; color:var(--text-muted); margin-left:4px;">(${escapeHtml(col.pinyin)})</span>:
-                <span style="color:var(--text-secondary); margin-left:4px;">${escapeHtml(getLocalizedText(col.meaning, loc))}</span>
-              </div>
-            `).join('')}
-          </div>
-        </div>
-      `;
-    }
-
-    // Mistakes box
-    let mistakesHtml = '';
-    if (localData.fatal_mistake) {
-      mistakesHtml = `
-        <div class="grammar-section">
-          <div class="grammar-section-title"> ${loc === 'ja' ? '学習者が犯しやすい致命的なミス' : (loc === 'en' ? 'Common Mistakes to Avoid' : 'Lỗi sai chí mạng cần tránh')}</div>
-          <div style="background:rgba(239, 68, 68, 0.06); border:1px solid rgba(239, 68, 68, 0.25); border-radius:12px; padding:14px; margin-bottom:10px;">
-            <div style="font-size:15px; font-weight:700; color:#DC2626; text-decoration:line-through; margin-bottom:4px;">❌ ${escapeHtml(localData.fatal_mistake.wrong)}</div>
-            <div style="font-size:15px; font-weight:700; color:#059669; margin-bottom:6px;">✅ ${escapeHtml(localData.fatal_mistake.correct)}</div>
-            <div style="font-size:13px; color:var(--text-secondary); line-height:1.45;"> <b>${loc === 'ja' ? '解説' : 'Giải thích'}:</b> ${escapeHtml(localData.fatal_mistake.explanation)}</div>
+          <div class="grammar-sec-label">⚠️ ${t('grammarNotes')}</div>
+          <div class="grammar-mistake-card">
+            <div style="font-size:15px; font-weight:700; color:#DC2626; text-decoration:line-through; margin-bottom:4px;">❌ ${escapeHtml(locData.fatal_mistake.wrong)}</div>
+            <div style="font-size:15px; font-weight:700; color:#059669; margin-bottom:6px;">✅ ${escapeHtml(locData.fatal_mistake.correct)}</div>
+            <div style="font-size:13.5px; color:var(--text-secondary); line-height:1.5;"><b>${t('grammarExplanation')}:</b> ${escapeHtml(locData.fatal_mistake.explanation)}</div>
           </div>
         </div>
       `;
@@ -865,63 +864,93 @@
 
     container.innerHTML = `
       <div class="grammar-container">
-        <button class="grammar-back-btn" onclick="returnToGrammarCatalog()">
-          ← ${loc === 'ja' ? '文法一覧に戻る' : (loc === 'en' ? 'Back to Grammar List' : 'Quay lại danh sách ngữ pháp')}
-        </button>
+        <!-- Back and Segmented Nav -->
+        <div class="grammar-detail-top-nav">
+          <button type="button" class="grammar-back-btn" onclick="returnToGrammarCatalog()">
+            ← ${t('grammarBackToList')}
+          </button>
+          <div class="grammar-detail-tabs">
+            <button type="button" class="grammar-detail-tab-btn active" onclick="switchGrammarDetailTab('learn')">
+              📖 ${t('grammarTabTheory')}
+            </button>
+            <button type="button" class="grammar-detail-tab-btn" onclick="switchGrammarDetailTab('practice')">
+              🎯 ${t('grammarTabPractice')}
+            </button>
+          </div>
+        </div>
 
-        <div class="grammar-detail-view">
-          <div class="grammar-detail-hero">
-            <div class="grammar-detail-meta" style="margin-bottom:8px;">
-              <span class="grammar-level-pill grammar-level-${detail.level.toLowerCase().replace(/[^a-z0-9]/g, '')}">${escapeHtml(detail.level)}</span>
-              <span class="grammar-standard-tag">${escapeHtml((typeof grammarService !== 'undefined' && grammarService.getCategoryName) ? grammarService.getCategoryName(detail.category, loc) : (detail.category || ''))}</span>
-              <span class="grammar-standard-tag">★${detail.difficulty}/5</span>
-            </div>
-            <div class="grammar-detail-title-zh">${escapeHtml(detail.localizations?.zh?.title || detail.keywords?.[0] || detail.formula)}</div>
-            <div class="grammar-detail-title-local">${escapeHtml(localData.title || '')}</div>
+        <div class="grammar-learn-card">
+          <!-- 1. Ngữ pháp (Grammar Pattern) & 2. Nghĩa (Meaning) -->
+          <div class="grammar-learn-hero">
+            <span class="grammar-level-pill grammar-level-${detail.level.toLowerCase().replace(/[^a-z0-9]/g, '')}">${escapeHtml(detail.level)}</span>
+            <h1 class="grammar-learn-title-zh">${escapeHtml(titleZh)}</h1>
+            <div class="grammar-learn-meaning">${escapeHtml(titleLocal)}</div>
           </div>
 
-          <!-- Component 1: StructureFormula -->
-          ${formulaHtml}
-
-          <!-- Quick Rule 3s -->
-          ${localData.quick_rule_3s ? `
-            <div class="grammar-section">
-              <div class="grammar-section-title"> ${loc === 'ja' ? '3秒でわかる速習ルール' : (loc === 'en' ? '3-Second Core Rule' : 'Quy tắc vàng 3 giây')}</div>
-              <div class="grammar-quick-rule-box">${escapeHtml(localData.quick_rule_3s)}</div>
-            </div>
-          ` : ''}
-
-          <!-- Contrastive note -->
-          ${localData.contrastive_note ? `
-            <div class="grammar-section">
-              <div class="grammar-section-title"> ${loc === 'ja' ? '母語との比較・注意点' : (loc === 'en' ? 'Contrastive Note' : 'Lưu ý so sánh với tiếng mẹ đẻ')}</div>
-              <div class="grammar-contrastive-box">${escapeHtml(localData.contrastive_note)}</div>
-            </div>
-          ` : ''}
-
-          <!-- Collocations -->
-          ${collocationsHtml}
-
-          <!-- Component 2: TokenizedSentence Examples -->
+          <!-- 3. Cách dùng (Usage) -->
           <div class="grammar-section">
-            <div class="grammar-section-title"> ${loc === 'ja' ? '詳細例文 & 構文色分け' : (loc === 'en' ? 'Detailed Examples & Color Analysis' : 'Câu ví dụ chi tiết & Ánh xạ cấu trúc')}</div>
-            <div>${examplesHtml}</div>
+            <div class="grammar-sec-label">💡 ${t('grammarUsage')}</div>
+            <div class="grammar-usage-desc">${escapeHtml(locData.quick_rule_3s || locData.usage || '')}</div>
+            ${Array.isArray(locData.when_to_use) && locData.when_to_use.length ? `
+              <ul class="grammar-usage-bullets">
+                ${locData.when_to_use.map(u => `<li>${escapeHtml(u)}</li>`).join('')}
+              </ul>
+            ` : ''}
           </div>
 
-          <!-- Dialogue -->
-          ${dialogueHtml}
+          <!-- 4. Công thức (Formula) -->
+          <div class="grammar-section">
+            <div class="grammar-sec-label">📐 ${t('grammarFormula')}</div>
+            <div class="grammar-formula-highlight">
+              <code>${escapeHtml(formulaText)}</code>
+            </div>
+            ${formulaBlocksHtml}
+          </div>
 
-          <!-- Fatal mistakes -->
-          ${mistakesHtml}
+          <!-- 5. Ví dụ (Key Examples) -->
+          <div class="grammar-section">
+            <div class="grammar-sec-label">💬 ${t('grammarExamples')}</div>
+            <div class="grammar-examples-list">${examplesHtml}</div>
+          </div>
 
-          <!-- Component 3: PracticeModule -->
-          ${practiceHtml}
+          <!-- 6. Lưu ý & Lỗi sai thường gặp (Notes) -->
+          ${mistakeBoxHtml}
+
+          <!-- Bottom CTA to Practice -->
+          <div style="margin-top:24px;">
+            <button type="button" class="btn btn-primary grammar-cta-practice" onclick="switchGrammarDetailTab('practice')">
+              🎯 ${t('grammarStartPractice')}
+            </button>
+          </div>
         </div>
       </div>
     `;
   }
 
-  // --- Global Window Helpers ---
+  // --- Exposed Global Navigation Functions ---
+  window.openGrammarDetail = function (id) {
+    grammarStore.selectGrammar(id, 'learn');
+    renderGrammarView();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  window.openGrammarPractice = function (id) {
+    grammarStore.selectGrammar(id, 'practice');
+    renderGrammarView();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  window.returnToGrammarCatalog = function () {
+    grammarStore.clearSelection();
+    renderGrammarView();
+  };
+
+  window.switchGrammarDetailTab = function (tab) {
+    grammarStore.setDetailTab(tab);
+    renderActiveGrammarDetail();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   window.setGrammarFilterLevel = function (lvl) {
     grammarStore.setState({ level: lvl });
     renderGrammarView();
@@ -937,141 +966,50 @@
     renderGrammarView();
   };
 
-  let _grammarSearchTimer = null;
-  let _grammarSearchRaf = null;
-
-  function extractGrammarSearchValue(eventOrVal) {
-    if (eventOrVal && eventOrVal.target) {
-      return String(eventOrVal.target.value == null ? '' : eventOrVal.target.value);
-    }
-    if (typeof eventOrVal === 'string') return eventOrVal;
-    const input = document.getElementById('grammar-search-input');
-    return input ? input.value : '';
-  }
-
   window.handleGrammarSearchInput = function (eventOrVal) {
     const val = extractGrammarSearchValue(eventOrVal);
-    const clearBtn = document.getElementById('grammar-search-clear-btn');
-    if (clearBtn) {
-      clearBtn.style.display = val ? 'flex' : 'none';
-    }
-
-    if (_grammarSearchTimer) clearTimeout(_grammarSearchTimer);
-    if (_grammarSearchRaf) {
-      if (typeof cancelAnimationFrame === 'function') cancelAnimationFrame(_grammarSearchRaf);
-      _grammarSearchRaf = null;
-    }
-
-    // Debounce 60ms to prevent layout thrashing on mobile keyboards
-    _grammarSearchTimer = setTimeout(() => {
-      _grammarSearchTimer = null;
-      const executeUpdate = () => {
-        _grammarSearchRaf = null;
-        grammarStore.setState({ query: val });
-        const grid = document.querySelector('.grammar-catalog-grid');
-        if (grid) {
-          const loc = (typeof state !== 'undefined' && state.uiLang) || 'vi';
-          grid.innerHTML = buildGrammarCatalogCardsHtml(loc);
-        } else {
-          renderGrammarView();
-        }
-      };
-
-      if (typeof requestAnimationFrame === 'function') {
-        _grammarSearchRaf = requestAnimationFrame(executeUpdate);
-      } else {
-        executeUpdate();
-      }
-    }, 60);
-  };
-
-  window.handleGrammarSearchCompositionEnd = function (event) {
-    const val = extractGrammarSearchValue(event);
-    if (_grammarSearchTimer) { clearTimeout(_grammarSearchTimer); _grammarSearchTimer = null; }
-    if (_grammarSearchRaf) {
-      if (typeof cancelAnimationFrame === 'function') cancelAnimationFrame(_grammarSearchRaf);
-      _grammarSearchRaf = null;
-    }
     grammarStore.setState({ query: val });
     const clearBtn = document.getElementById('grammar-search-clear-btn');
-    if (clearBtn) {
-      clearBtn.style.display = val ? 'flex' : 'none';
-    }
+    if (clearBtn) clearBtn.style.display = val ? 'flex' : 'none';
     const grid = document.querySelector('.grammar-catalog-grid');
-    if (grid) {
-      const loc = (typeof state !== 'undefined' && state.uiLang) || 'vi';
-      grid.innerHTML = buildGrammarCatalogCardsHtml(loc);
+    if (grid) grid.innerHTML = buildGrammarCatalogCardsHtml(getLang());
+  };
+
+  window.handleGrammarSearchCompositionEnd = function (eventOrVal) {
+    const val = extractGrammarSearchValue(eventOrVal);
+    grammarStore.setState({ query: val });
+    const clearBtn = document.getElementById('grammar-search-clear-btn');
+    if (clearBtn) clearBtn.style.display = val ? 'flex' : 'none';
+    const grid = document.querySelector('.grammar-catalog-grid');
+    if (grid) grid.innerHTML = buildGrammarCatalogCardsHtml(getLang());
+  };
+
+  window.handleGrammarSearchKeydown = function (event) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      event.target.blur();
     }
   };
 
   window.handleGrammarSearchSubmit = function (event) {
-    if (event && typeof event.preventDefault === 'function') {
-      event.preventDefault();
-    }
-    if (_grammarSearchTimer) { clearTimeout(_grammarSearchTimer); _grammarSearchTimer = null; }
-    if (_grammarSearchRaf) {
-      if (typeof cancelAnimationFrame === 'function') cancelAnimationFrame(_grammarSearchRaf);
-      _grammarSearchRaf = null;
-    }
+    if (event) event.preventDefault();
     const input = document.getElementById('grammar-search-input');
-    const val = input ? input.value : '';
-    grammarStore.setState({ query: val });
-    const clearBtn = document.getElementById('grammar-search-clear-btn');
-    if (clearBtn) {
-      clearBtn.style.display = val ? 'flex' : 'none';
+    if (input) {
+      input.blur();
+      grammarStore.setState({ query: input.value.trim() });
     }
     const grid = document.querySelector('.grammar-catalog-grid');
-    if (grid) {
-      const loc = (typeof state !== 'undefined' && state.uiLang) || 'vi';
-      grid.innerHTML = buildGrammarCatalogCardsHtml(loc);
-    } else {
-      renderGrammarView();
-    }
-    // Dismiss mobile virtual keyboard on submit/Go
-    if (input && typeof input.blur === 'function') {
-      input.blur();
-    }
-  };
-
-  window.handleGrammarSearchKeydown = function (event) {
-    if (event && (event.key === 'Enter' || event.keyCode === 13)) {
-      if (typeof event.preventDefault === 'function') event.preventDefault();
-      handleGrammarSearchSubmit(event);
-    }
+    if (grid) grid.innerHTML = buildGrammarCatalogCardsHtml(getLang());
   };
 
   window.clearGrammarSearch = function () {
-    if (_grammarSearchTimer) { clearTimeout(_grammarSearchTimer); _grammarSearchTimer = null; }
-    if (_grammarSearchRaf) {
-      if (typeof cancelAnimationFrame === 'function') cancelAnimationFrame(_grammarSearchRaf);
-      _grammarSearchRaf = null;
-    }
     grammarStore.setState({ query: '' });
     const input = document.getElementById('grammar-search-input');
-    if (input) {
-      input.value = '';
-      input.focus();
-    }
+    if (input) input.value = '';
     const clearBtn = document.getElementById('grammar-search-clear-btn');
     if (clearBtn) clearBtn.style.display = 'none';
     const grid = document.querySelector('.grammar-catalog-grid');
-    if (grid) {
-      const loc = (typeof state !== 'undefined' && state.uiLang) || 'vi';
-      grid.innerHTML = buildGrammarCatalogCardsHtml(loc);
-    } else {
-      renderGrammarView();
-    }
-  };
-
-  window.openGrammarDetail = function (id) {
-    grammarStore.selectGrammar(id);
-    renderGrammarView();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  window.returnToGrammarCatalog = function () {
-    grammarStore.clearSelection();
-    renderGrammarView();
+    if (grid) grid.innerHTML = buildGrammarCatalogCardsHtml(getLang());
   };
 
   window.renderGrammarView = renderGrammarView;

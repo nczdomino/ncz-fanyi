@@ -185,7 +185,9 @@ console.log('\n--- 6. UI Components Rendering (StructureFormula & TokenizedSente
 // Mock browser environment for grammar.js component tests
 global.window = {
   HSK_GRAMMAR_CATALOG: bundledData.HSK_GRAMMAR_CATALOG,
-  HSK_GRAMMAR_SAMPLES: bundledData.HSK_GRAMMAR_SAMPLES
+  HSK_GRAMMAR_SAMPLES: bundledData.HSK_GRAMMAR_SAMPLES,
+  grammarStore: grammarStore,
+  grammarService: grammarService
 };
 global.document = {
   getElementById: () => null,
