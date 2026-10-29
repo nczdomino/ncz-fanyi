@@ -310,18 +310,25 @@
     if (!container) return;
 
     const loc = getLang();
-    const catalog = grammarService.getCatalogData();
+    const gState = grammarStore.getState();
+    const query = (gState.query || '').trim();
+    const allCatalog = grammarService.getCatalogData();
+    const catalog = query ? grammarService.filterGrammarCatalog(gState) : allCatalog;
     const completedList = getCompletedIds();
-    const completedCount = catalog.filter(c => completedList.includes(c.id)).length;
+    const completedCount = allCatalog.filter(c => completedList.includes(c.id)).length;
 
     // Render Stage Accordions
     const stageGroups = [1, 2, 3];
+    let totalCardsRendered = 0;
+
     const stageAccordionsHtml = stageGroups.map(stageNum => {
       const meta = STAGE_META[stageNum] || {};
       const stageItems = catalog.filter(c => c.stage === stageNum);
       if (!stageItems.length) return '';
 
-      const isExpanded = canvasState.openStages[stageNum] !== false;
+      totalCardsRendered += stageItems.length;
+      // Auto-expand all matching stages during search, otherwise follow user's toggle state
+      const isExpanded = query ? true : (canvasState.openStages[stageNum] !== false);
       const doneInStage = stageItems.filter(it => completedList.includes(it.id)).length;
       const stagePercent = Math.round((doneInStage / stageItems.length) * 100);
 
@@ -400,11 +407,35 @@
           <p class="grammar-subtitle">${loc === 'ja' ? 'レゴのように組み立てて学ぶ — 30秒でわかる直感的文法' : (loc === 'en' ? 'Master grammar like building Lego blocks — 30 seconds per structure, zero clutter' : 'Học theo khối Lego trực quan — 30 giây mỗi cấu trúc, phân chia chặng gọn gàng.')}</p>
         </div>
 
+        <!-- Search Input Row -->
+        <div class="grammar-search-row">
+          <div class="grammar-search-input-box">
+            <span class="grammar-search-icon">🔍</span>
+            <input
+              type="text"
+              id="grammar-search-input"
+              class="grammar-search-input"
+              placeholder="${loc === 'ja' ? '文法・ピンイン・キーワードを検索…' : (loc === 'en' ? 'Search grammar, pinyin, meaning…' : 'Tìm cấu trúc, pinyin, tiếng Việt…')}"
+              value="${escapeHtml(gState.query || '')}"
+              oninput="handleGrammarSearchInput(event)"
+              oncompositionend="handleGrammarSearchCompositionEnd(event)"
+              onkeydown="handleGrammarSearchKeydown(event)"
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="off"
+              spellcheck="false"
+            />
+            ${gState.query ? `
+              <button type="button" id="grammar-search-clear-btn" class="grammar-search-clear-btn" onclick="clearGrammarSearch()" title="Xóa">✕</button>
+            ` : ''}
+          </div>
+        </div>
+
         <!-- Master Roadmap Progress & Controls -->
         <div class="grammar-master-bar">
           <div class="master-bar-left">
             <div class="master-progress-label">
-              🏆 ${loc === 'ja' ? '全体の進捗' : (loc === 'en' ? 'Overall Mastery' : 'Tổng tiến độ toàn lộ trình')}: <b>${completedCount}/${catalog.length} cấu trúc</b> (${catalog.length ? Math.round((completedCount / catalog.length) * 100) : 0}%)
+              🏆 ${loc === 'ja' ? '全体の進捗' : (loc === 'en' ? 'Overall Mastery' : 'Tổng tiến độ toàn lộ trình')}: <b>${completedCount}/${allCatalog.length} cấu trúc</b> (${allCatalog.length ? Math.round((completedCount / allCatalog.length) * 100) : 0}%)
             </div>
           </div>
           <div class="master-bar-right">
@@ -417,10 +448,21 @@
           </div>
         </div>
 
-        <!-- Stage Accordions -->
-        <div class="grammar-stages-container">
-          ${stageAccordionsHtml}
-        </div>
+        <!-- Stage Accordions or Empty State -->
+        ${totalCardsRendered > 0 ? `
+          <div class="grammar-stages-container">
+            ${stageAccordionsHtml}
+          </div>
+        ` : `
+          <div class="canvas-empty-search">
+            <div class="empty-search-icon">🔍</div>
+            <div class="empty-search-title">${loc === 'ja' ? '該当する文法が見つかりません' : (loc === 'en' ? 'No grammar patterns found' : 'Không tìm thấy cấu trúc phù hợp')}</div>
+            <p class="empty-search-desc">${loc === 'ja' ? 'キーワードやピンインを変えて再度お試しください。' : (loc === 'en' ? 'Try searching with different keywords or pinyin.' : 'Hãy thử tìm bằng từ khóa hoặc pinyin khác nhé.')}</p>
+            <button type="button" class="btn btn-primary btn-sm" onclick="clearGrammarSearch()">
+              ${loc === 'ja' ? '検索をリセット' : (loc === 'en' ? 'Reset Search' : 'Xóa bộ lọc tìm kiếm')}
+            </button>
+          </div>
+        `}
       </div>
     `;
   }
@@ -483,9 +525,14 @@
       <div class="grammar-container">
         <!-- Top Back Nav & Mode Toggle -->
         <div class="canvas-nav-row">
-          <button type="button" class="grammar-back-btn" onclick="returnToCanvasCatalog()">
-            ← ${loc === 'ja' ? '一覧へ戻る' : (loc === 'en' ? 'Back to Roadmap' : 'Quay lại lộ trình')}
-          </button>
+          <div class="canvas-nav-top-subrow">
+            <button type="button" class="grammar-back-btn" onclick="returnToCanvasCatalog()">
+              ← <span>${loc === 'ja' ? '一覧へ戻る' : (loc === 'en' ? 'Back' : 'Quay lại lộ trình')}</span>
+            </button>
+            <div class="canvas-item-pill">
+              <span>${escapeHtml(detail.level)}</span> • <b>${escapeHtml(detail.zh_name)}</b>
+            </div>
+          </div>
           
           <div class="canvas-top-right-group">
             <div class="canvas-mode-toggle">
@@ -496,9 +543,6 @@
                 📑 ${loc === 'ja' ? '一覧展開' : (loc === 'en' ? 'All Sections' : 'Xem trọn gói')}
               </button>
             </div>
-            <div class="canvas-item-pill">
-              <span>${escapeHtml(detail.level)}</span> • <b>${escapeHtml(detail.zh_name)}</b>
-            </div>
           </div>
         </div>
 
@@ -507,19 +551,19 @@
           <div class="canvas-stepper-bar">
             <button type="button" class="canvas-step-tab ${step === 1 ? 'active' : ''}" onclick="setCanvasStep(1)">
               <span class="step-num">1</span>
-              <span class="step-text">${loc === 'ja' ? 'コア要点' : (loc === 'en' ? 'Core Rule' : 'Cốt lõi')}</span>
+              <span class="step-text">${loc === 'ja' ? '要点' : (loc === 'en' ? 'Core' : 'Cốt lõi')}</span>
             </button>
             <button type="button" class="canvas-step-tab ${step === 2 ? 'active' : ''}" onclick="setCanvasStep(2)">
               <span class="step-num">2</span>
-              <span class="step-text">${loc === 'ja' ? '組み立て' : (loc === 'en' ? 'Lego Builder' : 'Lắp ghép')}</span>
+              <span class="step-text">${loc === 'ja' ? '組み立て' : (loc === 'en' ? 'Lego' : 'Lắp ghép')}</span>
             </button>
             <button type="button" class="canvas-step-tab ${step === 3 ? 'active' : ''}" onclick="setCanvasStep(3)">
               <span class="step-num">3</span>
-              <span class="step-text">${loc === 'ja' ? '落とし穴' : (loc === 'en' ? 'Trap Alert' : 'Bẫy hay sai')}</span>
+              <span class="step-text">${loc === 'ja' ? '落とし穴' : (loc === 'en' ? 'Traps' : 'Bẫy sai')}</span>
             </button>
             <button type="button" class="canvas-step-tab ${step === 4 ? 'active' : ''}" onclick="setCanvasStep(4)">
               <span class="step-num">4</span>
-              <span class="step-text">${loc === 'ja' ? 'クイック挑戦' : (loc === 'en' ? 'Challenge' : 'Thử tài')}</span>
+              <span class="step-text">${loc === 'ja' ? '挑戦' : (loc === 'en' ? 'Quiz' : 'Thử tài')}</span>
             </button>
           </div>
         ` : ''}
@@ -538,7 +582,7 @@
 
     return `
       <div class="canvas-step-inner">
-        <div class="canvas-step-badge">💡 BƯỚC 1: BẢN CHẤT CỐT LÕI</div>
+        <div class="canvas-step-badge">💡 ${loc === 'ja' ? 'ステップ 1: コア要点' : (loc === 'en' ? 'STEP 1: CORE RULE' : 'BƯỚC 1: BẢN CHẤT CỐT LÕI')}</div>
         <h1 class="canvas-hero-title">${escapeHtml(locData.title || detail.zh_name)}</h1>
         
         <div class="canvas-formula-box">
@@ -562,7 +606,7 @@
             <div class="speaker-avatar">A</div>
             <div class="speaker-content">
               <div class="bubble-zh">
-                <span>${escapeHtml(spkA.zh || '')}</span>
+                <span class="bubble-zh-text">${escapeHtml(spkA.zh || '')}</span>
                 <button type="button" class="bubble-audio-btn" onclick="speakGrammarText('${escapeQuotes(spkA.zh || '')}')" title="Play">🔊</button>
               </div>
               <div class="bubble-py">${escapeHtml(spkA.py || '')}</div>
@@ -574,7 +618,7 @@
             <div class="speaker-avatar">B</div>
             <div class="speaker-content">
               <div class="bubble-zh">
-                <span>${escapeHtml(spkB.zh || '')}</span>
+                <span class="bubble-zh-text">${escapeHtml(spkB.zh || '')}</span>
                 <button type="button" class="bubble-audio-btn" onclick="speakGrammarText('${escapeQuotes(spkB.zh || '')}')" title="Play">🔊</button>
               </div>
               <div class="bubble-py">${escapeHtml(spkB.py || '')}</div>
@@ -646,7 +690,7 @@
 
     return `
       <div class="canvas-step-inner">
-        <div class="canvas-step-badge">🧩 BƯỚC 2: BỘ LẮP GHÉP TƯƠNG TÁC</div>
+        <div class="canvas-step-badge">🧩 ${loc === 'ja' ? 'ステップ 2: 組み立て' : (loc === 'en' ? 'STEP 2: LEGO BUILDER' : 'BƯỚC 2: BỘ LẮP GHÉP TƯƠNG TÁC')}</div>
         <h2 class="canvas-section-title">${loc === 'ja' ? 'レゴのようにタップして文を組み立てる' : (loc === 'en' ? 'Tap blocks to assemble your sentence' : 'Tự lắp ghép câu theo ý bạn')}</h2>
         <p class="canvas-section-desc">${loc === 'ja' ? '各パーツから単語を選択すると、リアルタイムに文が組み上がります：' : (loc === 'en' ? 'Select words from each block below. The sentence updates in real-time:' : 'Bấm chọn từ ở từng cột, câu tiếng Trung sẽ tự động ghép và dịch nghĩa:')}</p>
 
@@ -686,7 +730,7 @@
   function renderStep3Trap(detail, locData, loc, showFooter) {
     return `
       <div class="canvas-step-inner">
-        <div class="canvas-step-badge">⚠️ BƯỚC 3: BẪY HAY MẮC PHẢI</div>
+        <div class="canvas-step-badge">⚠️ ${loc === 'ja' ? 'ステップ 3: よくある落とし穴' : (loc === 'en' ? 'STEP 3: TRAP ALERT' : 'BƯỚC 3: BẪY HAY MẮC PHẢI')}</div>
         <h2 class="canvas-section-title">${loc === 'ja' ? '学習者が一番間違えやすいポイント' : (loc === 'en' ? 'The #1 Mistake Learners Make' : 'Bẫy 90% người học hay nhầm')}</h2>
         
         <!-- Trap Comparison Card -->
@@ -715,7 +759,7 @@
           <div class="why-icon">💡</div>
           <div class="why-text">
             <b>${loc === 'ja' ? 'なぜ間違えるのか？' : (loc === 'en' ? 'Why this happens:' : 'Vì sao hay nhầm:')}</b>
-            ${escapeHtml(locData.trap_why || '')}
+            <span>${escapeHtml(locData.trap_why || '')}</span>
           </div>
         </div>
 
@@ -755,7 +799,7 @@
 
     return `
       <div class="canvas-step-inner">
-        <div class="canvas-step-badge">🎯 BƯỚC 4: THỬ TÀI 30 GIÂY</div>
+        <div class="canvas-step-badge">🎯 ${loc === 'ja' ? 'ステップ 4: クイック挑戦' : (loc === 'en' ? 'STEP 4: QUICK CHALLENGE' : 'BƯỚC 4: THỬ TÀI 30 GIÂY')}</div>
         <h2 class="canvas-section-title">${loc === 'ja' ? '単語を並べ替えて正しい文を完成させよう' : (loc === 'en' ? 'Arrange the words into the correct order' : 'Sắp xếp từ thành câu đúng')}</h2>
         
         <div class="challenge-prompt-card">
