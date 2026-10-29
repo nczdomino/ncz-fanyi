@@ -34,6 +34,11 @@ function renderCurrentView() {
         renderGrammarView();
       }
       break;
+    case 'business':
+      if (typeof renderBusinessView === 'function') {
+        renderBusinessView();
+      }
+      break;
     case 'settings':
       renderSettingsView();
       break;

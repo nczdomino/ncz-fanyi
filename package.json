@@ -1,10 +1,11 @@
 {
   "name": "halouzhongwen",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "private": true,
   "description": "Halou - The ultimate Chinese smart dictionary & context-aware translator with instant Pinyin annotation for Vietnamese, Japanese and English learners",
   "scripts": {
-    "test": "node test_dict_scoring.js && node test_dict_render.js && node test_dict_ai_fallback.mjs && node test_i18n_langs.js && node test_examples_logic.js && node test_audio_core.js && node test_audio_manager.js && node test_read_aloud.js && node test_ext_dict.js && node test_api_security.mjs && node test_sw.js && node test_dict_search.js && node test_hsk789_and_live_dict.js && node test_ocr.js && node test_handwriting.js && node test_grammar_service.js",
+    "test": "node test_dict_scoring.js && node test_dict_render.js && node test_dict_ai_fallback.mjs && node test_i18n_langs.js && node test_examples_logic.js && node test_audio_core.js && node test_audio_manager.js && node test_read_aloud.js && node test_ext_dict.js && node test_api_security.mjs && node test_sw.js && node test_dict_search.js && node test_hsk789_and_live_dict.js && node test_ocr.js && node test_handwriting.js && node test_grammar_service.js && node test_business_service.js",
+    "test:business": "node test_business_service.js",
     "test:grammar": "node test_grammar_service.js",
     "test:dict": "node test_dict_scoring.js && node test_dict_render.js",
     "test:ai": "node test_dict_ai_fallback.mjs",
