@@ -717,7 +717,10 @@
     container.innerHTML = `
       <div class="grammar-container">
         <div class="grammar-header">
-          <div class="grammar-header-badge">📚 HSK 2.0 & 3.0 Grammar Mastery</div>
+          <div class="grammar-header-badge">
+            <img src="assets/icons/extras/graduation-cap.png" width="18" height="18" alt="Grammar" style="object-fit:contain; vertical-align:middle; margin-right:4px;">
+            <span>HSK 2.0 & 3.0 Grammar Mastery</span>
+          </div>
           <h1 class="grammar-title">${loc === 'ja' ? 'HSK文法マスター' : (loc === 'en' ? 'HSK Grammar Guide' : 'Ngữ pháp tiếng Trung HSK')}</h1>
           <p class="grammar-subtitle">
             ${loc === 'ja' ? 'HSK 1〜9級の必須文法を体系的に学習。直感的な構造ブロック、日中同形異義語のアラート、実践的な練習問題を提供。' : (loc === 'en' ? 'Master essential Chinese grammar from HSK 1 to 9 with visual formulas, comparative notes, and interactive quizzes.' : 'Hệ thống ngữ pháp HSK chuẩn 2.0 & 3.0 với công thức màu sắc trực quan, cảnh báo bẫy ngữ pháp và bài tập chấm điểm.')}

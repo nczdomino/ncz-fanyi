@@ -104,7 +104,10 @@
       <div class="bc-wrapper">
         <!-- Hero Header -->
         <header class="bc-hero">
-          <div class="bc-hero-badge">💼 ${t('bcHeroBadge') || '商务中文 · Business Chinese'}</div>
+          <div class="bc-hero-badge">
+            <img src="assets/icons/app-icons/global-learning.png" width="18" height="18" alt="Business Chinese" style="object-fit:contain; vertical-align:middle; margin-right:4px;">
+            <span>${t('bcHeroBadge') || '商务中文 · Business Chinese'}</span>
+          </div>
           <h1 class="bc-hero-title">${t('bcHeroTitle') || 'Tiếng Trung Thương Mại & Ngoại Thương'}</h1>
           <p class="bc-hero-subtitle">${t('bcHeroSubtitle') || 'Từ điển chuyên ngành, email thực chiến, chứng từ, đàm phán và flashcard SRS ghi nhớ lâu'}</p>
 
@@ -114,7 +117,10 @@
             <span class="bc-metric-pill">🔤 <b>144</b> ${lang === 'vi' ? 'Thuật ngữ' : (lang === 'ja' ? '専門用語' : 'Vocab')}</span>
             <span class="bc-metric-pill">✉️ <b>11</b> ${lang === 'vi' ? 'Mẫu Email' : (lang === 'ja' ? '実務メール' : 'Emails')}</span>
             <span class="bc-metric-pill">📄 <b>10</b> ${lang === 'vi' ? 'Chứng từ' : (lang === 'ja' ? '船積書類' : 'Documents')}</span>
-            <span class="bc-metric-pill">🧠 <b>${stats.dueToday}</b> ${lang === 'vi' ? 'Thẻ cần ôn' : (lang === 'ja' ? '復習必要' : 'Due SRS')}</span>
+            <span class="bc-metric-pill">
+              <img src="assets/icons/extras/lightning.png" width="14" height="14" alt="SRS" style="object-fit:contain; vertical-align:middle; margin-right:2px;">
+              <b>${stats.dueToday}</b> ${lang === 'vi' ? 'Thẻ cần ôn' : (lang === 'ja' ? '復習必要' : 'Due SRS')}
+            </span>
           </div>
         </header>
 

@@ -605,7 +605,7 @@ function renderDictView() {
           <div id="dict-ai-fallback-container">${aiEligible && typeof aiLookupPlaceholderHtml === 'function' ? aiLookupPlaceholderHtml(meaningLang) : ''}</div>
         ` : `
           <div class="dict-no-match-header">
-            <div style="font-size:36px; margin-bottom:8px;">🔍</div>
+            <img src="assets/icons/ui-icons/search.png" width="48" height="48" style="margin-bottom:8px; display:inline-block; object-fit:contain;" alt="Search">
             <div style="font-size:16px; font-weight:700; color:var(--text-primary);">${t('noResults')}</div>
             <div style="font-size:13px; color:var(--text-muted); margin-top:4px;">${noMatchSub}</div>
           </div>
