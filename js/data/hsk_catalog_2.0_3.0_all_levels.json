@@ -7,10 +7,11 @@
     "zh_name": "是",
     "formula": "[Chủ ngữ] + 是 + [Danh từ]",
     "vi_name": "Câu chữ 是 (A là B)",
-    "en_name": "The 是 (shì) Sentence (A is B)",
-    "ja_name": "「是」構文（AはBです）",
+    "en_name": "The 是 (shì) Sentence: A is B",
+    "ja_name": "「是」構文：AはBです",
     "icon": "👤",
-    "difficulty": 1
+    "difficulty": 1,
+    "pinyin": "shì"
   },
   {
     "id": "hsk1_you",
@@ -20,10 +21,11 @@
     "zh_name": "有 / 没有",
     "formula": "[Chủ ngữ] + 有/没有 + [Đồ vật]",
     "vi_name": "Có & Không có (有 / 没有)",
-    "en_name": "Possession with 有 and 没有",
-    "ja_name": "所有を表す「有／没有」（〜がある／ない）",
+    "en_name": "Possession with 有 & 没有",
+    "ja_name": "所有を表す「有／没有」",
     "icon": "📦",
-    "difficulty": 1
+    "difficulty": 1,
+    "pinyin": "yǒu / méiyǒu"
   },
   {
     "id": "hsk1_zai_location",
@@ -32,11 +34,12 @@
     "order": 3,
     "zh_name": "在 + Nơi chốn + V",
     "formula": "[Chủ ngữ] + 在 [Nơi chốn] + [Hành động]",
-    "vi_name": "Ở đâu làm gì? (在 + Nơi chốn + Động từ)",
-    "en_name": "Actions at a location (在 + Place + Verb)",
-    "ja_name": "「在＋場所＋動詞」（〜で〜をする）",
+    "vi_name": "Ở đâu làm gì (在 + Địa điểm + Động từ)",
+    "en_name": "Action at a Place (在 + Location + Verb)",
+    "ja_name": "場所で行う動作（在＋場所＋動詞）",
     "icon": "📍",
-    "difficulty": 1
+    "difficulty": 1,
+    "pinyin": "zài"
   },
   {
     "id": "hsk1_ma_question",
@@ -47,9 +50,10 @@
     "formula": "[Câu khẳng định] + 吗？",
     "vi_name": "Câu hỏi Có/Không với trợ từ 吗",
     "en_name": "Yes-No Questions with 吗 (ma)",
-    "ja_name": "語気助詞「吗」による疑問文",
+    "ja_name": "疑問助詞「吗」（〜ですか？）",
     "icon": "❓",
-    "difficulty": 1
+    "difficulty": 1,
+    "pinyin": "ma"
   },
   {
     "id": "hsk1_tai_le",
@@ -58,11 +62,12 @@
     "order": 5,
     "zh_name": "太……了！",
     "formula": "太 + [Tính từ] + 了！",
-    "vi_name": "Cảm thán: Quá... rồi! (太...了)",
-    "en_name": "Exclamations: Too / Extremely! (太...了)",
-    "ja_name": "感嘆文「太＋形容詞＋了」（〜すぎる！）",
+    "vi_name": "Câu cảm thán: Quá... rồi! (太...了)",
+    "en_name": "Exclamations: Too / Extremely (太...了)",
+    "ja_name": "感嘆表現（太＋形容詞＋了）",
     "icon": "✨",
-    "difficulty": 1
+    "difficulty": 1,
+    "pinyin": "tài...le"
   },
   {
     "id": "hsk1_time_order",
@@ -71,11 +76,12 @@
     "order": 6,
     "zh_name": "时间 + 动作",
     "formula": "[Chủ ngữ] + [Thời gian] + [Hành động]",
-    "vi_name": "Khi nào làm gì? (Thời gian trước hành động)",
-    "en_name": "Time before Verb word order",
-    "ja_name": "時間詞の位置（時間の後に動作）",
+    "vi_name": "Trật tự từ: Thời gian đứng trước hành động",
+    "en_name": "Word Order: Time before action",
+    "ja_name": "語順ルール：時間詞を動詞の前に置く",
     "icon": "⏰",
-    "difficulty": 1
+    "difficulty": 1,
+    "pinyin": "shíjiān"
   },
   {
     "id": "hsk1_gen_with",
@@ -84,11 +90,12 @@
     "order": 7,
     "zh_name": "跟……一起 + V",
     "formula": "[Chủ ngữ] + 跟 [Người] + 一起 + [Hành động]",
-    "vi_name": "Cùng ai làm gì? (跟 / 和 + Người + Động từ)",
-    "en_name": "Doing actions with someone (跟 / 和 + Someone + Verb)",
-    "ja_name": "「跟／和＋人＋一起＋動詞」（〜と一緒に〜する）",
+    "vi_name": "Làm gì cùng ai (跟 / 和 + Ai + 一起 + Động từ)",
+    "en_name": "Doing things with someone (跟...一起)",
+    "ja_name": "誰かと一緒に行う動作（跟…一起）",
     "icon": "🤝",
-    "difficulty": 1
+    "difficulty": 1,
+    "pinyin": "gēn...yìqǐ"
   },
   {
     "id": "hsk1_ne_question",
@@ -97,11 +104,12 @@
     "order": 8,
     "zh_name": "……呢？",
     "formula": "[Người / Đồ vật] + 呢？",
-    "vi_name": "Câu hỏi tỉnh lược (Còn... thì sao? / ...đâu rồi?)",
-    "en_name": "Elliptical follow-up questions with 呢 (ne)",
-    "ja_name": "省略疑問文を作る「呢」（〜は？）",
+    "vi_name": "Câu hỏi tỉnh lược (Còn... thì sao? / ...ở đâu?)",
+    "en_name": "Follow-up Questions (How about...? / Where is...?)",
+    "ja_name": "簡潔な聞き返し（〜は？／〜はどこ？）",
     "icon": "💬",
-    "difficulty": 1
+    "difficulty": 1,
+    "pinyin": "ne"
   },
   {
     "id": "hsk1_hui_ability",
@@ -110,11 +118,12 @@
     "order": 9,
     "zh_name": "会 + V",
     "formula": "[Chủ ngữ] + 会 / 不会 + [Kỹ năng]",
-    "vi_name": "Diễn tả kỹ năng học mới biết (会 + Động từ)",
-    "en_name": "Learned skills and abilities with 会 (huì)",
-    "ja_name": "習得能力を表す「会」（〜できる）",
+    "vi_name": "Biết làm gì qua rèn luyện (会 + Động từ)",
+    "en_name": "Learned Skills & Abilities (会 + Verb)",
+    "ja_name": "習得したスキルを表す（会＋動詞）",
     "icon": "🧠",
-    "difficulty": 1
+    "difficulty": 1,
+    "pinyin": "huì"
   },
   {
     "id": "hsk1_de_possessive",
@@ -124,10 +133,11 @@
     "zh_name": "……的 + N",
     "formula": "[Chủ sở hữu / Tính chất] + 的 + [Danh từ]",
     "vi_name": "Sở hữu & Bổ nghĩa danh từ (...的 + Danh từ)",
-    "en_name": "Possession and modification with 的 (de)",
-    "ja_name": "修飾・所有の構造助詞「的」（〜の…）",
+    "en_name": "Possession & Modification with 的 (de)",
+    "ja_name": "所有・修飾の構造助詞「的」（〜の…）",
     "icon": "🏷️",
-    "difficulty": 1
+    "difficulty": 1,
+    "pinyin": "de"
   },
   {
     "id": "hsk2_guo_experience",
@@ -136,11 +146,12 @@
     "order": 11,
     "zh_name": "V + 过",
     "formula": "[Chủ ngữ] + 没/没有 + [V] + 过 + [Tân ngữ]",
-    "vi_name": "Đã từng làm việc gì (Động từ + 过)",
-    "en_name": "Past experience with particle 过 (guò)",
-    "ja_name": "経験を表すアスペクト助詞「过」（〜したことがある）",
+    "vi_name": "Từng làm gì trong quá khứ (V + 过)",
+    "en_name": "Past Experience: Have done before (V + 过)",
+    "ja_name": "過去の経験（動詞＋过：〜したことがある）",
     "icon": "🚀",
-    "difficulty": 2
+    "difficulty": 2,
+    "pinyin": "guò"
   },
   {
     "id": "hsk2_bi_comparison",
@@ -149,11 +160,12 @@
     "order": 12,
     "zh_name": "A + 比 + B + Adj",
     "formula": "[A] + 比 + [B] + [Tính từ]",
-    "vi_name": "Câu so sánh hơn với chữ 比 (A hơn B)",
-    "en_name": "Comparisons using 比 (bǐ - A is more than B)",
-    "ja_name": "「比」を用いた比較文（AはBより〜）",
+    "vi_name": "So sánh hơn kém với chữ 比 (A hơn B)",
+    "en_name": "Comparisons with 比 (A is more... than B)",
+    "ja_name": "比較文「A 比 B ＋形容詞」（AはBより〜）",
     "icon": "⚖️",
-    "difficulty": 2
+    "difficulty": 2,
+    "pinyin": "bǐ"
   },
   {
     "id": "hsk2_zhe_state",
@@ -163,10 +175,11 @@
     "zh_name": "V + 着",
     "formula": "[Chủ ngữ / Nơi chốn] + [V] + 着",
     "vi_name": "Trạng thái đang duy trì (Động từ + 着)",
-    "en_name": "Continuous state particle 着 (zhe)",
-    "ja_name": "状態の持続を表す「着」（〜している／〜てある）",
+    "en_name": "Ongoing States with 着 (zhe)",
+    "ja_name": "状態の持続（動詞＋着：〜している）",
     "icon": "🚪",
-    "difficulty": 2
+    "difficulty": 2,
+    "pinyin": "zhe"
   },
   {
     "id": "hsk2_kuai_le",
@@ -175,11 +188,12 @@
     "order": 14,
     "zh_name": "快要……了！",
     "formula": "[Chủ ngữ] + 快要 + [Hành động] + 了！",
-    "vi_name": "Sắp sửa diễn ra (快要...了 / 要...了)",
-    "en_name": "Imminent actions: About to happen! (快要...了)",
-    "ja_name": "近未来を表す「快要…了」（もうすぐ〜する）",
+    "vi_name": "Sắp sửa xảy ra (快要...了 / 要...了)",
+    "en_name": "Imminent Actions: About to happen (快要...了)",
+    "ja_name": "近未来の出来事（もうすぐ〜する：快要…了）",
     "icon": "⚡",
-    "difficulty": 2
+    "difficulty": 2,
+    "pinyin": "kuàiyào...le"
   },
   {
     "id": "hsk2_yue_lai_yue",
@@ -189,10 +203,11 @@
     "zh_name": "越来越 + Adj",
     "formula": "[Sự vật] + 越来越 + [Tính từ]",
     "vi_name": "Càng ngày càng... (越来越 + Tính từ)",
-    "en_name": "More and more with 越来越 (yuèláiyuè)",
-    "ja_name": "漸進を表す「越来越…」（ますます〜）",
+    "en_name": "More and More: Progressive Change (越来越)",
+    "ja_name": "漸進的な変化（ますます〜：越来越）",
     "icon": "📈",
-    "difficulty": 2
+    "difficulty": 2,
+    "pinyin": "yuèláiyuè"
   },
   {
     "id": "hsk2_dong_jie_guo",
@@ -201,11 +216,12 @@
     "order": 16,
     "zh_name": "V + 结果补语 (完/懂/见/到)",
     "formula": "[Chủ ngữ] + [V] + 完/懂/见/到 + [Tân ngữ]",
-    "vi_name": "Bổ ngữ kết quả: Làm xong, hiểu, nhìn thấy (V + 完/懂/见/到)",
-    "en_name": "Resultative Verb Complements (完, 懂, 见, 到)",
-    "ja_name": "結果補語「完・懂・见・到」（〜し終わる／分かる／見える）",
+    "vi_name": "Bổ ngữ kết quả: Làm xong, hiểu, đạt được (完/懂/见/到)",
+    "en_name": "Result Complements: Finished, understood (完/懂/见/到)",
+    "ja_name": "結果補語（〜し終わる・分かる・届く：完/懂/见/到）",
     "icon": "🎯",
-    "difficulty": 2
+    "difficulty": 2,
+    "pinyin": "wán / dǒng / dào"
   },
   {
     "id": "hsk2_lai_qu_direction",
@@ -214,11 +230,12 @@
     "order": 17,
     "zh_name": "V + 来 / 去",
     "formula": "[Chủ ngữ] + [V] + (Nơi chốn) + 来 / 去",
-    "vi_name": "Bổ ngữ xu hướng đơn: Lại đây / Đi ra xa (V + 来/去)",
-    "en_name": "Simple Directional Complements with 来 (lái) & 去 (qù)",
-    "ja_name": "単純方向補語「来／去」（話者に近づくか遠ざかるか）",
+    "vi_name": "Bổ ngữ xu hướng đơn: Lại gần / Đi xa (V + 来/去)",
+    "en_name": "Directional Complements: Coming / Going (来 / 去)",
+    "ja_name": "単純方向補語（話者に近づく「来」・遠ざかる「去」）",
     "icon": "🧭",
-    "difficulty": 2
+    "difficulty": 2,
+    "pinyin": "lái / qù"
   },
   {
     "id": "hsk2_shi_de_emphasis",
@@ -227,11 +244,12 @@
     "order": 18,
     "zh_name": "是……的 (强调句)",
     "formula": "[Chủ ngữ] + 是 + [Thời gian/Nơi chốn/Cách thức] + [V] + 的",
-    "vi_name": "Cấu trúc nhấn mạnh thời gian, nơi chốn: 是……的",
-    "en_name": "The 是……的 (shì...de) construction for emphasis",
-    "ja_name": "時間・場所・方式を強調する「是…的」構文",
+    "vi_name": "Nhấn mạnh thời gian, địa điểm, cách thức (是...的)",
+    "en_name": "Emphasis on Time, Place, or Manner (是...的)",
+    "ja_name": "時間・場所・手段の強調「是…的」構文",
     "icon": "🔦",
-    "difficulty": 2
+    "difficulty": 2,
+    "pinyin": "shì...de"
   },
   {
     "id": "hsk2_shi_jian_duan",
@@ -240,11 +258,12 @@
     "order": 19,
     "zh_name": "V + 了 + 时间段 (时量补语)",
     "formula": "[Chủ ngữ] + [V] + 了 + [Khoảng thời gian] + (的 + [Tân ngữ])",
-    "vi_name": "Bổ ngữ thời lượng: Làm gì trong bao lâu (V + 了 + Khoảng thời gian)",
-    "en_name": "Duration of action: Verb + 了 + Time Duration",
+    "vi_name": "Thời lượng hành động: Đã làm trong bao lâu (时量补语)",
+    "en_name": "Action Duration: How long an action lasted",
     "ja_name": "動作の継続時間を表す時量補語（〜時間〜した）",
     "icon": "⏳",
-    "difficulty": 2
+    "difficulty": 2,
+    "pinyin": "shíjiānduàn"
   },
   {
     "id": "hsk2_yao_le_immediate",
@@ -253,11 +272,12 @@
     "order": 20,
     "zh_name": "就要……了 (即将发生)",
     "formula": "[Chủ ngữ] + (Thời gian cụ thể) + 就要 + [V] + 了",
-    "vi_name": "Sắp sửa diễn ra ngay (就要...了 / 快要...了)",
-    "en_name": "Imminent action with 就要……了 / 快要……了",
-    "ja_name": "近未来「就要…了」（時間が明示される場合にも使える）",
+    "vi_name": "Sắp sửa diễn ra ngay (Có mốc thời gian cụ thể: 就要...了)",
+    "en_name": "Action about to happen at a specific time (就要...了)",
+    "ja_name": "特定の日時を伴う近未来表現（もうすぐ〜する：就要…了）",
     "icon": "⚡",
-    "difficulty": 2
+    "difficulty": 2,
+    "pinyin": "jiùyào...le"
   },
   {
     "id": "hsk3_ba_sentence",
@@ -266,11 +286,12 @@
     "order": 21,
     "zh_name": "把字句 (处置式)",
     "formula": "[Chủ ngữ] + 把 + [Tân ngữ] + [V] + [Kết quả/Thành phần khác]",
-    "vi_name": "Câu chữ 把: Tác động xử lý vật (S + 把 + O + V + Kết quả)",
-    "en_name": "The 把 (bǎ) disposal sentence structure",
-    "ja_name": "処置を表す「把」構文（〜を…する）",
+    "vi_name": "Câu chữ 把: Tác động xử lý vật (把字句)",
+    "en_name": "The 把 (bǎ) Disposal Sentence Structure",
+    "ja_name": "処置を表す「把」構文（目的語を〜する）",
     "icon": "📦",
-    "difficulty": 3
+    "difficulty": 3,
+    "pinyin": "bǎ"
   },
   {
     "id": "hsk3_bei_passive",
@@ -279,11 +300,12 @@
     "order": 22,
     "zh_name": "被字句 (被动句)",
     "formula": "[Chủ ngữ] + 被 + (Tác nhân) + [V] + (Kết quả/了)",
-    "vi_name": "Câu bị động chữ 被: Bị / Được tác động (S + 被 + Tác nhân + V)",
-    "en_name": "Passive voice with 被 (bèi)",
-    "ja_name": "受身（パッシブ）を表す「被」構文（〜に…される）",
+    "vi_name": "Câu bị động chữ 被: Bị / Được tác động (被字句)",
+    "en_name": "Passive Voice with 被 (bèi)",
+    "ja_name": "受身を表す「被」構文（〜に…される）",
     "icon": "🛡️",
-    "difficulty": 3
+    "difficulty": 3,
+    "pinyin": "bèi"
   },
   {
     "id": "hsk3_you_you",
@@ -292,11 +314,12 @@
     "order": 23,
     "zh_name": "又……又……",
     "formula": "[Chủ ngữ] + 又 + [Tính từ 1] + 又 + [Tính từ 2]",
-    "vi_name": "Vừa... lại vừa... (Cùng lúc có 2 đặc tính: 又...又...)",
-    "en_name": "Both... and... with 又……又……",
-    "ja_name": "並列を表す「又…又…」（〜でもあり〜でもある）",
+    "vi_name": "Vừa... lại vừa... (Đồng thời có 2 đặc tính: 又...又...)",
+    "en_name": "Both... and... (Dual characteristics: 又...又...)",
+    "ja_name": "並列を表す「又…又…」（〜でもあり…でもある）",
     "icon": "🍉",
-    "difficulty": 3
+    "difficulty": 3,
+    "pinyin": "yòu...yòu..."
   },
   {
     "id": "hsk3_sui_ran_dan_shi",
@@ -306,10 +329,11 @@
     "zh_name": "虽然……但是……",
     "formula": "虽然 + [Vế 1]，但是 + [Vế 2]",
     "vi_name": "Tuy rằng... nhưng mà... (Quan hệ chuyển ngoặt: 虽然...但是...)",
-    "en_name": "Although... but... with 虽然……但是……",
-    "ja_name": "逆接を表す「虽然…但是…」（〜だけれども…）",
+    "en_name": "Although... but... (Contrast: 虽然...但是...)",
+    "ja_name": "逆接の接続「虽然…但是…」（〜だけれども…）",
     "icon": "🌦️",
-    "difficulty": 3
+    "difficulty": 3,
+    "pinyin": "suīrán...dànshì..."
   },
   {
     "id": "hsk3_bu_dan_er_qie",
@@ -319,10 +343,11 @@
     "zh_name": "不但……而且……",
     "formula": "[Chủ ngữ] + 不但 + [Vế 1]，而且 + [Vế 2]",
     "vi_name": "Không những... mà còn... (Tăng tiến: 不但...而且...)",
-    "en_name": "Not only... but also... with 不但……而且……",
-    "ja_name": "累加を表す「不但…而且…」（〜だけでなく…も）",
+    "en_name": "Not only... but also... (Progression: 不但...而且...)",
+    "ja_name": "累加の接続「不但…而且…」（〜だけでなく…も）",
     "icon": "🚀",
-    "difficulty": 3
+    "difficulty": 3,
+    "pinyin": "búdàn...érqiě..."
   },
   {
     "id": "hsk3_de_degree",
@@ -332,10 +357,11 @@
     "zh_name": "动词 + 得 (状态补语)",
     "formula": "[Chủ ngữ] + [V] + 得 + 很 / 非常 + [Tính từ]",
     "vi_name": "Bổ ngữ trạng thái: Đánh giá cách làm (V + 得 + Tính từ)",
-    "en_name": "State/Degree Complements with 得 (V + 得 + Adj)",
-    "ja_name": "様態補語「動詞＋得＋形容詞」（〜の仕方が…だ）",
+    "en_name": "State/Degree Complements: Evaluating action (V + 得 + Adj)",
+    "ja_name": "様態補語（動詞＋得＋形容詞：〜の仕方が…だ）",
     "icon": "🏃",
-    "difficulty": 3
+    "difficulty": 3,
+    "pinyin": "de"
   },
   {
     "id": "hsk3_yi_bian_yi_bian",
@@ -344,11 +370,12 @@
     "order": 27,
     "zh_name": "一边……一边……",
     "formula": "[Chủ ngữ] + 一边 + [V1]，一边 + [V2]",
-    "vi_name": "Vừa làm việc này vừa làm việc kia: 一边...一边...",
-    "en_name": "Doing two actions simultaneously with 一边……一边……",
+    "vi_name": "Vừa làm việc này vừa làm việc kia (Đồng thời: 一边...一边...)",
+    "en_name": "Simultaneous Actions: While doing... (一边...一边...)",
     "ja_name": "動作の同時進行「一边…一边…」（〜しながら…する）",
     "icon": "🎧",
-    "difficulty": 3
+    "difficulty": 3,
+    "pinyin": "yìbiān...yìbiān..."
   },
   {
     "id": "hsk3_yue_yue",
@@ -357,11 +384,12 @@
     "order": 28,
     "zh_name": "越……越……",
     "formula": "[Chủ ngữ] + 越 + [V1] + 越 + [Tính từ / V2]",
-    "vi_name": "Càng... càng... (Tương quan tăng dần: 越...越...)",
-    "en_name": "The more... the more... with 越……越……",
-    "ja_name": "相関を表す「越…越…」（〜すればするほど…）",
+    "vi_name": "Càng... càng... (Tương quan tỉ lệ thuận: 越...越...)",
+    "en_name": "The more... the more... (Proportional change: 越...越...)",
+    "ja_name": "相関変化「越…越…」（〜すればするほど…）",
     "icon": "📈",
-    "difficulty": 3
+    "difficulty": 3,
+    "pinyin": "yuè...yuè..."
   },
   {
     "id": "hsk3_chu_le_yi_wai",
@@ -370,11 +398,12 @@
     "order": 29,
     "zh_name": "除了……以外",
     "formula": "除了 + [N/V] + 以外，[Chủ ngữ] + 还/都 + [V]",
-    "vi_name": "Ngoài... ra (Còn... / Đều...): 除了...以外",
-    "en_name": "Besides / Except with 除了……以外",
-    "ja_name": "除外・付加を表す「除了…以外」（〜のほかに／〜を除いて）",
+    "vi_name": "Ngoài... ra (Bổ sung hoặc loại trừ: 除了...以外)",
+    "en_name": "Besides / Except for (Inclusion or Exclusion: 除了...以外)",
+    "ja_name": "付加と除外「除了…以外」（〜のほかに／〜を除いて）",
     "icon": "🎁",
-    "difficulty": 3
+    "difficulty": 3,
+    "pinyin": "chúle...yǐwài"
   },
   {
     "id": "hsk3_yi_jiu",
@@ -383,10 +412,11 @@
     "order": 30,
     "zh_name": "一……就……",
     "formula": "[Chủ ngữ] + 一 + [V1]，就 + [V2]",
-    "vi_name": "Hễ... là liền... (Hành động vừa xảy ra là kế tiếp ngay: 一...就...)",
-    "en_name": "As soon as... then... with 一……就……",
+    "vi_name": "Hễ... là liền... (Hành động kế tiếp ngay: 一...就...)",
+    "en_name": "As soon as... then... (Immediate action: 一...就...)",
     "ja_name": "即時完了「一…就…」（〜するとすぐ…）",
     "icon": "⚡",
-    "difficulty": 3
+    "difficulty": 3,
+    "pinyin": "yī...jiù..."
   }
 ]

@@ -19,16 +19,42 @@
       ? locale
       : (typeof state !== 'undefined' && state.uiLang ? state.uiLang : 'vi');
 
+    // 1. Catalog item localized names (vi_name, en_name, ja_name)
+    const nameKey = `${lang}_name`;
+    if (obj[nameKey] && typeof obj[nameKey] === 'string' && obj[nameKey].trim() !== '') {
+      return obj[nameKey];
+    }
+
+    // 2. Direct locale key { vi: '...', en: '...', ja: '...' }
     if (obj[lang] && typeof obj[lang] === 'string' && obj[lang].trim() !== '') {
       return obj[lang];
     }
-    // Fallback cascade
+
+    // 3. Nested localizations { localizations: { vi: { title: '...' } } }
+    if (obj.localizations && obj.localizations[lang]) {
+      const locObj = obj.localizations[lang];
+      if (typeof locObj === 'string' && locObj.trim()) return locObj;
+      if (locObj.title && typeof locObj.title === 'string' && locObj.title.trim()) return locObj.title;
+    }
+
+    // 4. Fallback cascade
+    if (obj.vi_name && typeof obj.vi_name === 'string' && obj.vi_name.trim() !== '') return obj.vi_name;
+    if (obj.en_name && typeof obj.en_name === 'string' && obj.en_name.trim() !== '') return obj.en_name;
+    if (obj.ja_name && typeof obj.ja_name === 'string' && obj.ja_name.trim() !== '') return obj.ja_name;
     if (obj.vi && typeof obj.vi === 'string' && obj.vi.trim() !== '') return obj.vi;
     if (obj.en && typeof obj.en === 'string' && obj.en.trim() !== '') return obj.en;
     if (obj.ja && typeof obj.ja === 'string' && obj.ja.trim() !== '') return obj.ja;
 
-    const firstKey = Object.keys(obj)[0];
-    return firstKey ? String(obj[firstKey] || '') : '';
+    // 5. Check other textual properties, strictly ignoring technical IDs
+    for (const k of Object.keys(obj)) {
+      if (!['id', 'stage', 'level', 'order', 'difficulty', 'icon', 'formula', 'pinyin'].includes(k)) {
+        if (typeof obj[k] === 'string' && obj[k].trim() !== '') {
+          return obj[k];
+        }
+      }
+    }
+
+    return '';
   }
 
   /**

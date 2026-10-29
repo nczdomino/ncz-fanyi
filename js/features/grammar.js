@@ -12,13 +12,88 @@
   function getLocText(obj, lang) {
     if (!obj) return '';
     if (typeof obj === 'string') return obj;
-    const l = lang || getLang();
-    if (obj[l] && typeof obj[l] === 'string' && obj[l].trim()) return obj[l];
-    if (obj.vi) return obj.vi;
-    if (obj.en) return obj.en;
-    if (obj.ja) return obj.ja;
-    const firstKey = Object.keys(obj)[0];
-    return firstKey ? String(obj[firstKey] || '') : '';
+    const l = (lang === 'vi' || lang === 'en' || lang === 'ja') ? lang : getLang();
+
+    // 1. Catalog item localized names (vi_name, en_name, ja_name)
+    const nameKey = `${l}_name`;
+    if (obj[nameKey] && typeof obj[nameKey] === 'string' && obj[nameKey].trim() !== '') {
+      return obj[nameKey];
+    }
+
+    // 2. Direct locale key { vi: '...', en: '...', ja: '...' }
+    if (obj[l] && typeof obj[l] === 'string' && obj[l].trim() !== '') {
+      return obj[l];
+    }
+
+    // 3. Nested localizations { localizations: { vi: { title: '...' } } }
+    if (obj.localizations && obj.localizations[l]) {
+      const locObj = obj.localizations[l];
+      if (typeof locObj === 'string' && locObj.trim()) return locObj;
+      if (locObj.title && typeof locObj.title === 'string' && locObj.title.trim()) return locObj.title;
+      if (locObj.quick_rule && typeof locObj.quick_rule === 'string') return locObj.quick_rule;
+    }
+
+    // 4. Cascade fallbacks
+    if (obj.vi_name && typeof obj.vi_name === 'string' && obj.vi_name.trim() !== '') return obj.vi_name;
+    if (obj.en_name && typeof obj.en_name === 'string' && obj.en_name.trim() !== '') return obj.en_name;
+    if (obj.ja_name && typeof obj.ja_name === 'string' && obj.ja_name.trim() !== '') return obj.ja_name;
+    if (obj.vi && typeof obj.vi === 'string' && obj.vi.trim() !== '') return obj.vi;
+    if (obj.en && typeof obj.en === 'string' && obj.en.trim() !== '') return obj.en;
+    if (obj.ja && typeof obj.ja === 'string' && obj.ja.trim() !== '') return obj.ja;
+
+    // 5. Check other textual properties, strictly ignoring technical IDs
+    for (const k of Object.keys(obj)) {
+      if (!['id', 'stage', 'level', 'order', 'difficulty', 'icon', 'formula', 'pinyin'].includes(k)) {
+        if (typeof obj[k] === 'string' && obj[k].trim() !== '') {
+          return obj[k];
+        }
+      }
+    }
+
+    return '';
+  }
+
+  const FORMULA_ROLE_TRANSLATIONS = {
+    '[Chủ ngữ]': { en: '[Subject]', ja: '[主語]', vi: '[Chủ ngữ]' },
+    '[Danh từ]': { en: '[Noun]', ja: '[名詞]', vi: '[Danh từ]' },
+    '[Động từ]': { en: '[Verb]', ja: '[動詞]', vi: '[Động từ]' },
+    '[Hành động]': { en: '[Action / Verb]', ja: '[動作／動詞]', vi: '[Hành động]' },
+    '[Tân ngữ]': { en: '[Object]', ja: '[目的語]', vi: '[Tân ngữ]' },
+    '[Tính từ]': { en: '[Adjective]', ja: '[形容詞]', vi: '[Tính từ]' },
+    '[Tính từ 1]': { en: '[Adj 1]', ja: '[形容詞1]', vi: '[Tính từ 1]' },
+    '[Tính từ 2]': { en: '[Adj 2]', ja: '[形容詞2]', vi: '[Tính từ 2]' },
+    '[Nơi chốn]': { en: '[Place]', ja: '[場所]', vi: '[Nơi chốn]' },
+    '[Thời gian]': { en: '[Time]', ja: '[時間]', vi: '[Thời gian]' },
+    '[Thời gian cụ thể]': { en: '[Specific Time]', ja: '[特定の日時]', vi: '[Thời gian cụ thể]' },
+    '[Khoảng thời gian]': { en: '[Duration]', ja: '[期間]', vi: '[Khoảng thời gian]' },
+    '[Người]': { en: '[Person]', ja: '[人]', vi: '[Người]' },
+    '[Đồ vật]': { en: '[Item / Object]', ja: '[物]', vi: '[Đồ vật]' },
+    '[Người / Đồ vật]': { en: '[Person / Item]', ja: '[人／物]', vi: '[Người / Đồ vật]' },
+    '[Kỹ năng]': { en: '[Skill]', ja: '[スキル]', vi: '[Kỹ năng]' },
+    '[Chủ sở hữu / Tính chất]': { en: '[Owner / Modifier]', ja: '[所有者／修飾語]', vi: '[Chủ sở hữu / Tính chất]' },
+    '[Câu khẳng định]': { en: '[Statement]', ja: '[平叙文]', vi: '[Câu khẳng định]' },
+    '[Sự vật]': { en: '[Subject / Thing]', ja: '[事物]', vi: '[Sự vật]' },
+    '[Vế 1]': { en: '[Clause 1]', ja: '[節1]', vi: '[Vế 1]' },
+    '[Vế 2]': { en: '[Clause 2]', ja: '[節2]', vi: '[Vế 2]' },
+    '[Kết quả/Thành phần khác]': { en: '[Result / State]', ja: '[結果／その他]', vi: '[Kết quả/Thành phần khác]' },
+    '[Kết quả]': { en: '[Result]', ja: '[結果]', vi: '[Kết quả]' },
+    '[Tác nhân]': { en: '[Agent / Doer]', ja: '[動作主]', vi: '[Tác nhân]' },
+    '[Thời gian/Địa điểm/Phương thức]': { en: '[Time / Place / Manner]', ja: '[時間／場所／方法]', vi: '[Thời gian/Địa điểm/Phương thức]' },
+    '[Thời gian/Nơi chốn/Cách thức]': { en: '[Time / Place / Manner]', ja: '[時間／場所／方法]', vi: '[Thời gian/Nơi chốn/Cách thức]' }
+  };
+
+  function localizeFormula(formula, lang) {
+    if (!formula || typeof formula !== 'string') return '';
+    const l = (lang === 'vi' || lang === 'en' || lang === 'ja') ? lang : getLang();
+    if (l === 'vi') return formula;
+
+    let res = formula;
+    for (const [bracket, trans] of Object.entries(FORMULA_ROLE_TRANSLATIONS)) {
+      if (res.includes(bracket) && trans[l]) {
+        res = res.split(bracket).join(trans[l]);
+      }
+    }
+    return res;
   }
 
   function t(key) {
@@ -496,21 +571,24 @@
           const isDone = completedList.includes(item.id);
           const titleLocal = getLocText(item, loc) || item.zh_name;
           const orderNum = String(item.order || 1).padStart(2, '0');
-          const stMeta = STAGE_META[item.stage] || {};
+          const pinyinText = item.pinyin || '';
 
           return `
             <div class="grammar-canvas-card ${isDone ? 'is-completed' : ''}" onclick="openGrammarCanvas('${escapeQuotes(item.id)}')">
               <div class="canvas-card-top">
-                <span class="canvas-order-badge">${loc === 'ja' ? `駅 ${item.stage}` : (loc === 'en' ? `Stage ${item.stage}` : `Chặng ${item.stage}`)} • #${orderNum}</span>
+                <span class="canvas-order-badge">${loc === 'ja' ? `第${item.stage}駅 • #${orderNum}` : (loc === 'en' ? `Stage ${item.stage} • #${orderNum}` : `Chặng ${item.stage} • #${orderNum}`)}</span>
                 <span class="canvas-level-pill">${escapeHtml(item.level)}</span>
                 ${isDone ? `<span class="canvas-done-badge">✅ ${loc === 'ja' ? '完了' : (loc === 'en' ? 'Done' : 'Đã học')}</span>` : ''}
               </div>
 
-              <div class="canvas-card-zh">${escapeHtml(item.zh_name)}</div>
+              <div class="canvas-card-zh-row">
+                <span class="canvas-card-zh">${escapeHtml(item.zh_name)}</span>
+                ${pinyinText ? `<span class="canvas-card-py">(${escapeHtml(pinyinText)})</span>` : ''}
+              </div>
               <div class="canvas-card-title">${escapeHtml(titleLocal)}</div>
 
               <div class="canvas-lego-preview">
-                <span class="lego-pill">${escapeHtml(item.formula)}</span>
+                <span class="lego-pill">${escapeHtml(localizeFormula(item.formula, loc))}</span>
               </div>
 
               <div class="canvas-card-footer">
@@ -605,6 +683,7 @@
       const isNextUp = (item.id === nextUnfinishedItem?.id);
       const titleLocal = getLocText(item, loc) || item.zh_name;
       const orderNum = String(item.order || (idx + 1)).padStart(2, '0');
+      const pinyinText = item.pinyin || '';
 
       let nodeHtml = '';
       if (isDone) {
@@ -628,20 +707,23 @@
             </div>
 
             <div class="timeline-card-body">
-              <div class="timeline-card-zh">${escapeHtml(item.zh_name)}</div>
+              <div class="timeline-card-zh-row">
+                <span class="timeline-card-zh">${escapeHtml(item.zh_name)}</span>
+                ${pinyinText ? `<span class="timeline-card-py">(${escapeHtml(pinyinText)})</span>` : ''}
+              </div>
               <div class="timeline-card-title">${escapeHtml(titleLocal)}</div>
             </div>
 
             <div class="timeline-lego-strip">
               <div class="timeline-lego-pill">
                 <span class="lego-icon">🧩</span>
-                <span class="lego-formula">${escapeHtml(item.formula)}</span>
+                <span class="lego-formula">${escapeHtml(localizeFormula(item.formula, loc))}</span>
               </div>
             </div>
 
             <div class="timeline-card-footer">
               <button type="button" class="timeline-action-btn ${isDone ? 'is-review' : 'is-start'}">
-                <span>${isDone ? (loc === 'ja' ? '復習する' : (loc === 'en' ? 'Review' : 'Ôn tập lại')) : (loc === 'ja' ? '学習スタート' : (loc === 'en' ? 'Start' : 'Khám phá ngay'))}</span>
+                <span>${isDone ? (loc === 'ja' ? '復習する' : (loc === 'en' ? 'Review' : 'Ôn tập lại')) : (loc === 'ja' ? '学習スタート' : (loc === 'en' ? 'Start Lesson' : 'Khám phá ngay'))}</span>
                 <span class="btn-arrow">→</span>
               </button>
             </div>
@@ -691,9 +773,9 @@
             <div class="continue-card-left">
               <span class="continue-icon">🎯</span>
               <div class="continue-text-wrap">
-                <div class="continue-tag">${loc === 'ja' ? '次のレッスン' : (loc === 'en' ? 'Next Up' : 'Chặng đang chinh phục')} • ${loc === 'ja' ? `駅 ${nextUnfinishedItem.stage}` : (loc === 'en' ? `Stage ${nextUnfinishedItem.stage}` : `Chặng ${nextUnfinishedItem.stage}`)}</div>
+                <div class="continue-tag">${loc === 'ja' ? '次のレッスン' : (loc === 'en' ? 'Next Up' : 'Chặng đang chinh phục')} • ${loc === 'ja' ? `第${nextUnfinishedItem.stage}駅` : (loc === 'en' ? `Stage ${nextUnfinishedItem.stage}` : `Chặng ${nextUnfinishedItem.stage}`)}</div>
                 <div class="continue-title">
-                  <b>${escapeHtml(nextUnfinishedItem.zh_name)}</b> — ${escapeHtml(getLocText(nextUnfinishedItem, loc))}
+                  <b>${escapeHtml(nextUnfinishedItem.zh_name)}</b> ${nextUnfinishedItem.pinyin ? `<span class="continue-py">(${escapeHtml(nextUnfinishedItem.pinyin)})</span>` : ''} — ${escapeHtml(getLocText(nextUnfinishedItem, loc))}
                 </div>
               </div>
             </div>
@@ -717,12 +799,12 @@
         <div class="grammar-master-bar">
           <div class="master-bar-left">
             <div class="master-progress-label">
-              🏆 ${loc === 'ja' ? '全体の進捗' : (loc === 'en' ? 'Overall Mastery' : 'Tổng tiến độ toàn lộ trình')}: <b>${completedCount}/${allCatalog.length} cấu trúc</b> (${allCatalog.length ? Math.round((completedCount / allCatalog.length) * 100) : 0}%)
+              🏆 ${loc === 'ja' ? '全体の進捗' : (loc === 'en' ? 'Overall Mastery' : 'Tổng tiến độ toàn lộ trình')}: <b>${completedCount}/${allCatalog.length} ${loc === 'ja' ? '項目' : (loc === 'en' ? 'patterns' : 'cấu trúc')}</b> (${allCatalog.length ? Math.round((completedCount / allCatalog.length) * 100) : 0}%)
             </div>
           </div>
           <div class="master-bar-right">
             <div class="master-stage-indicator">
-              ${loc === 'ja' ? `選択中: 第${selectedStageNum}駅` : (loc === 'en' ? `Stage: ${selectedStageNum}/6` : `Đang xem: Chặng ${selectedStageNum}/6`)}
+              ${loc === 'ja' ? `選択中: 第${selectedStageNum}駅` : (loc === 'en' ? `Viewing: Stage ${selectedStageNum}/6` : `Đang xem: Chặng ${selectedStageNum}/6`)}
             </div>
           </div>
         </div>
@@ -733,13 +815,13 @@
             🌟 ${loc === 'ja' ? 'すべて (6ステージ)' : (loc === 'en' ? 'All (6 Stages)' : 'Tất cả (6 Chặng)')}
           </button>
           <button type="button" class="level-tab-btn ${selectedLevel === 'HSK1' ? 'active' : ''}" onclick="setGrammarLevelFilter('HSK1')">
-            🟢 HSK 1 (Chặng 1-2)
+            🟢 HSK 1 (${loc === 'ja' ? '第1-2駅' : (loc === 'en' ? 'Stages 1-2' : 'Chặng 1-2')})
           </button>
           <button type="button" class="level-tab-btn ${selectedLevel === 'HSK2' ? 'active' : ''}" onclick="setGrammarLevelFilter('HSK2')">
-            🔵 HSK 2 (Chặng 3-4)
+            🔵 HSK 2 (${loc === 'ja' ? '第3-4駅' : (loc === 'en' ? 'Stages 3-4' : 'Chặng 3-4')})
           </button>
           <button type="button" class="level-tab-btn ${selectedLevel === 'HSK3' ? 'active' : ''}" onclick="setGrammarLevelFilter('HSK3')">
-            🟣 HSK 3 (Chặng 5-6)
+            🟣 HSK 3 (${loc === 'ja' ? '第5-6駅' : (loc === 'en' ? 'Stages 5-6' : 'Chặng 5-6')})
           </button>
         </div>
 
@@ -885,7 +967,7 @@
               ← <span>${loc === 'ja' ? '一覧へ戻る' : (loc === 'en' ? 'Back' : 'Quay lại lộ trình')}</span>
             </button>
             <div class="canvas-item-pill">
-              <span>${escapeHtml(detail.level)}</span> • <b>${escapeHtml(detail.zh_name)}</b>
+              <span>${escapeHtml(detail.level)}</span> • <b>${escapeHtml(detail.zh_name)}</b> ${detail.pinyin ? `<span class="detail-py-badge">(${escapeHtml(detail.pinyin)})</span>` : ''}
             </div>
           </div>
           
@@ -941,7 +1023,7 @@
         <h1 class="canvas-hero-title">${escapeHtml(locData.title || detail.zh_name)}</h1>
         
         <div class="canvas-formula-box">
-          <code>${escapeHtml(detail.formula)}</code>
+          <code>${escapeHtml(localizeFormula(detail.formula, loc))}</code>
         </div>
 
         <!-- 1-Line Explanation -->

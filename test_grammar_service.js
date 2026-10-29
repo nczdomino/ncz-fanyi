@@ -103,7 +103,19 @@ assert.strictEqual(getLocalizedText(sampleLocObj, 'en'), 'The "是" Sentence', '
 assert.strictEqual(getLocalizedText({ ja: 'テスト' }, 'vi'), 'テスト', 'Fallback to available language when target missing');
 assert.strictEqual(getLocalizedText('Plain String', 'vi'), 'Plain String', 'Handles raw strings safely');
 assert.strictEqual(getLocalizedText(null, 'vi'), '', 'Handles null gracefully');
-console.log('  ✅ getLocalizedText handles all 3 locales and edge cases');
+
+// Critical regression check: Catalog items with vi_name, en_name, ja_name must never leak raw id
+const huiCatalogItem = catalogRaw.find(c => c.id === 'hsk1_hui_ability');
+assert(huiCatalogItem, 'hsk1_hui_ability exists in catalog');
+assert.strictEqual(huiCatalogItem.pinyin, 'huì', 'Pinyin is huì');
+assert.notStrictEqual(getLocalizedText(huiCatalogItem, 'vi'), 'hsk1_hui_ability', 'Never leaks id as title in VI');
+assert.notStrictEqual(getLocalizedText(huiCatalogItem, 'en'), 'hsk1_hui_ability', 'Never leaks id as title in EN');
+assert.notStrictEqual(getLocalizedText(huiCatalogItem, 'ja'), 'hsk1_hui_ability', 'Never leaks id as title in JA');
+assert(getLocalizedText(huiCatalogItem, 'vi').includes('kỹ năng') || getLocalizedText(huiCatalogItem, 'vi').includes('rèn luyện'), 'VI title matches meaning');
+assert(getLocalizedText(huiCatalogItem, 'en').includes('Skills'), 'EN title matches meaning');
+assert(getLocalizedText(huiCatalogItem, 'ja').includes('スキル') || getLocalizedText(huiCatalogItem, 'ja').includes('能力'), 'JA title matches meaning');
+
+console.log('  ✅ getLocalizedText handles all 3 locales and edge cases without ID leaks');
 
 // 4. Filtering Engine on Stages 1 to 6 Data
 console.log('\n--- 4. Grammar Catalog Filtering & Search ---');

@@ -3,6 +3,7 @@
  * 
  * Auto-generated bundled HSK Grammar dataset for Halou.
  * Contains 30 curated grammar structures across Stages 1 to 6 (HSK 1, 2, 3).
+ * Fully synchronized with Pinyin and tri-lingual definitions (vi, en, ja).
  */
 
 const HSK_GRAMMAR_CATALOG = [
@@ -14,10 +15,11 @@ const HSK_GRAMMAR_CATALOG = [
     "zh_name": "是",
     "formula": "[Chủ ngữ] + 是 + [Danh từ]",
     "vi_name": "Câu chữ 是 (A là B)",
-    "en_name": "The 是 (shì) Sentence (A is B)",
-    "ja_name": "「是」構文（AはBです）",
+    "en_name": "The 是 (shì) Sentence: A is B",
+    "ja_name": "「是」構文：AはBです",
     "icon": "👤",
-    "difficulty": 1
+    "difficulty": 1,
+    "pinyin": "shì"
   },
   {
     "id": "hsk1_you",
@@ -27,10 +29,11 @@ const HSK_GRAMMAR_CATALOG = [
     "zh_name": "有 / 没有",
     "formula": "[Chủ ngữ] + 有/没有 + [Đồ vật]",
     "vi_name": "Có & Không có (有 / 没有)",
-    "en_name": "Possession with 有 and 没有",
-    "ja_name": "所有を表す「有／没有」（〜がある／ない）",
+    "en_name": "Possession with 有 & 没有",
+    "ja_name": "所有を表す「有／没有」",
     "icon": "📦",
-    "difficulty": 1
+    "difficulty": 1,
+    "pinyin": "yǒu / méiyǒu"
   },
   {
     "id": "hsk1_zai_location",
@@ -39,11 +42,12 @@ const HSK_GRAMMAR_CATALOG = [
     "order": 3,
     "zh_name": "在 + Nơi chốn + V",
     "formula": "[Chủ ngữ] + 在 [Nơi chốn] + [Hành động]",
-    "vi_name": "Ở đâu làm gì? (在 + Nơi chốn + Động từ)",
-    "en_name": "Actions at a location (在 + Place + Verb)",
-    "ja_name": "「在＋場所＋動詞」（〜で〜をする）",
+    "vi_name": "Ở đâu làm gì (在 + Địa điểm + Động từ)",
+    "en_name": "Action at a Place (在 + Location + Verb)",
+    "ja_name": "場所で行う動作（在＋場所＋動詞）",
     "icon": "📍",
-    "difficulty": 1
+    "difficulty": 1,
+    "pinyin": "zài"
   },
   {
     "id": "hsk1_ma_question",
@@ -54,9 +58,10 @@ const HSK_GRAMMAR_CATALOG = [
     "formula": "[Câu khẳng định] + 吗？",
     "vi_name": "Câu hỏi Có/Không với trợ từ 吗",
     "en_name": "Yes-No Questions with 吗 (ma)",
-    "ja_name": "語気助詞「吗」による疑問文",
+    "ja_name": "疑問助詞「吗」（〜ですか？）",
     "icon": "❓",
-    "difficulty": 1
+    "difficulty": 1,
+    "pinyin": "ma"
   },
   {
     "id": "hsk1_tai_le",
@@ -65,11 +70,12 @@ const HSK_GRAMMAR_CATALOG = [
     "order": 5,
     "zh_name": "太……了！",
     "formula": "太 + [Tính từ] + 了！",
-    "vi_name": "Cảm thán: Quá... rồi! (太...了)",
-    "en_name": "Exclamations: Too / Extremely! (太...了)",
-    "ja_name": "感嘆文「太＋形容詞＋了」（〜すぎる！）",
+    "vi_name": "Câu cảm thán: Quá... rồi! (太...了)",
+    "en_name": "Exclamations: Too / Extremely (太...了)",
+    "ja_name": "感嘆表現（太＋形容詞＋了）",
     "icon": "✨",
-    "difficulty": 1
+    "difficulty": 1,
+    "pinyin": "tài...le"
   },
   {
     "id": "hsk1_time_order",
@@ -78,11 +84,12 @@ const HSK_GRAMMAR_CATALOG = [
     "order": 6,
     "zh_name": "时间 + 动作",
     "formula": "[Chủ ngữ] + [Thời gian] + [Hành động]",
-    "vi_name": "Khi nào làm gì? (Thời gian trước hành động)",
-    "en_name": "Time before Verb word order",
-    "ja_name": "時間詞の位置（時間の後に動作）",
+    "vi_name": "Trật tự từ: Thời gian đứng trước hành động",
+    "en_name": "Word Order: Time before action",
+    "ja_name": "語順ルール：時間詞を動詞の前に置く",
     "icon": "⏰",
-    "difficulty": 1
+    "difficulty": 1,
+    "pinyin": "shíjiān"
   },
   {
     "id": "hsk1_gen_with",
@@ -91,11 +98,12 @@ const HSK_GRAMMAR_CATALOG = [
     "order": 7,
     "zh_name": "跟……一起 + V",
     "formula": "[Chủ ngữ] + 跟 [Người] + 一起 + [Hành động]",
-    "vi_name": "Cùng ai làm gì? (跟 / 和 + Người + Động từ)",
-    "en_name": "Doing actions with someone (跟 / 和 + Someone + Verb)",
-    "ja_name": "「跟／和＋人＋一起＋動詞」（〜と一緒に〜する）",
+    "vi_name": "Làm gì cùng ai (跟 / 和 + Ai + 一起 + Động từ)",
+    "en_name": "Doing things with someone (跟...一起)",
+    "ja_name": "誰かと一緒に行う動作（跟…一起）",
     "icon": "🤝",
-    "difficulty": 1
+    "difficulty": 1,
+    "pinyin": "gēn...yìqǐ"
   },
   {
     "id": "hsk1_ne_question",
@@ -104,11 +112,12 @@ const HSK_GRAMMAR_CATALOG = [
     "order": 8,
     "zh_name": "……呢？",
     "formula": "[Người / Đồ vật] + 呢？",
-    "vi_name": "Câu hỏi tỉnh lược (Còn... thì sao? / ...đâu rồi?)",
-    "en_name": "Elliptical follow-up questions with 呢 (ne)",
-    "ja_name": "省略疑問文を作る「呢」（〜は？）",
+    "vi_name": "Câu hỏi tỉnh lược (Còn... thì sao? / ...ở đâu?)",
+    "en_name": "Follow-up Questions (How about...? / Where is...?)",
+    "ja_name": "簡潔な聞き返し（〜は？／〜はどこ？）",
     "icon": "💬",
-    "difficulty": 1
+    "difficulty": 1,
+    "pinyin": "ne"
   },
   {
     "id": "hsk1_hui_ability",
@@ -117,11 +126,12 @@ const HSK_GRAMMAR_CATALOG = [
     "order": 9,
     "zh_name": "会 + V",
     "formula": "[Chủ ngữ] + 会 / 不会 + [Kỹ năng]",
-    "vi_name": "Diễn tả kỹ năng học mới biết (会 + Động từ)",
-    "en_name": "Learned skills and abilities with 会 (huì)",
-    "ja_name": "習得能力を表す「会」（〜できる）",
+    "vi_name": "Biết làm gì qua rèn luyện (会 + Động từ)",
+    "en_name": "Learned Skills & Abilities (会 + Verb)",
+    "ja_name": "習得したスキルを表す（会＋動詞）",
     "icon": "🧠",
-    "difficulty": 1
+    "difficulty": 1,
+    "pinyin": "huì"
   },
   {
     "id": "hsk1_de_possessive",
@@ -131,10 +141,11 @@ const HSK_GRAMMAR_CATALOG = [
     "zh_name": "……的 + N",
     "formula": "[Chủ sở hữu / Tính chất] + 的 + [Danh từ]",
     "vi_name": "Sở hữu & Bổ nghĩa danh từ (...的 + Danh từ)",
-    "en_name": "Possession and modification with 的 (de)",
-    "ja_name": "修飾・所有の構造助詞「的」（〜の…）",
+    "en_name": "Possession & Modification with 的 (de)",
+    "ja_name": "所有・修飾の構造助詞「的」（〜の…）",
     "icon": "🏷️",
-    "difficulty": 1
+    "difficulty": 1,
+    "pinyin": "de"
   },
   {
     "id": "hsk2_guo_experience",
@@ -143,11 +154,12 @@ const HSK_GRAMMAR_CATALOG = [
     "order": 11,
     "zh_name": "V + 过",
     "formula": "[Chủ ngữ] + 没/没有 + [V] + 过 + [Tân ngữ]",
-    "vi_name": "Đã từng làm việc gì (Động từ + 过)",
-    "en_name": "Past experience with particle 过 (guò)",
-    "ja_name": "経験を表すアスペクト助詞「过」（〜したことがある）",
+    "vi_name": "Từng làm gì trong quá khứ (V + 过)",
+    "en_name": "Past Experience: Have done before (V + 过)",
+    "ja_name": "過去の経験（動詞＋过：〜したことがある）",
     "icon": "🚀",
-    "difficulty": 2
+    "difficulty": 2,
+    "pinyin": "guò"
   },
   {
     "id": "hsk2_bi_comparison",
@@ -156,11 +168,12 @@ const HSK_GRAMMAR_CATALOG = [
     "order": 12,
     "zh_name": "A + 比 + B + Adj",
     "formula": "[A] + 比 + [B] + [Tính từ]",
-    "vi_name": "Câu so sánh hơn với chữ 比 (A hơn B)",
-    "en_name": "Comparisons using 比 (bǐ - A is more than B)",
-    "ja_name": "「比」を用いた比較文（AはBより〜）",
+    "vi_name": "So sánh hơn kém với chữ 比 (A hơn B)",
+    "en_name": "Comparisons with 比 (A is more... than B)",
+    "ja_name": "比較文「A 比 B ＋形容詞」（AはBより〜）",
     "icon": "⚖️",
-    "difficulty": 2
+    "difficulty": 2,
+    "pinyin": "bǐ"
   },
   {
     "id": "hsk2_zhe_state",
@@ -170,10 +183,11 @@ const HSK_GRAMMAR_CATALOG = [
     "zh_name": "V + 着",
     "formula": "[Chủ ngữ / Nơi chốn] + [V] + 着",
     "vi_name": "Trạng thái đang duy trì (Động từ + 着)",
-    "en_name": "Continuous state particle 着 (zhe)",
-    "ja_name": "状態の持続を表す「着」（〜している／〜てある）",
+    "en_name": "Ongoing States with 着 (zhe)",
+    "ja_name": "状態の持続（動詞＋着：〜している）",
     "icon": "🚪",
-    "difficulty": 2
+    "difficulty": 2,
+    "pinyin": "zhe"
   },
   {
     "id": "hsk2_kuai_le",
@@ -182,11 +196,12 @@ const HSK_GRAMMAR_CATALOG = [
     "order": 14,
     "zh_name": "快要……了！",
     "formula": "[Chủ ngữ] + 快要 + [Hành động] + 了！",
-    "vi_name": "Sắp sửa diễn ra (快要...了 / 要...了)",
-    "en_name": "Imminent actions: About to happen! (快要...了)",
-    "ja_name": "近未来を表す「快要…了」（もうすぐ〜する）",
+    "vi_name": "Sắp sửa xảy ra (快要...了 / 要...了)",
+    "en_name": "Imminent Actions: About to happen (快要...了)",
+    "ja_name": "近未来の出来事（もうすぐ〜する：快要…了）",
     "icon": "⚡",
-    "difficulty": 2
+    "difficulty": 2,
+    "pinyin": "kuàiyào...le"
   },
   {
     "id": "hsk2_yue_lai_yue",
@@ -196,10 +211,11 @@ const HSK_GRAMMAR_CATALOG = [
     "zh_name": "越来越 + Adj",
     "formula": "[Sự vật] + 越来越 + [Tính từ]",
     "vi_name": "Càng ngày càng... (越来越 + Tính từ)",
-    "en_name": "More and more with 越来越 (yuèláiyuè)",
-    "ja_name": "漸進を表す「越来越…」（ますます〜）",
+    "en_name": "More and More: Progressive Change (越来越)",
+    "ja_name": "漸進的な変化（ますます〜：越来越）",
     "icon": "📈",
-    "difficulty": 2
+    "difficulty": 2,
+    "pinyin": "yuèláiyuè"
   },
   {
     "id": "hsk2_dong_jie_guo",
@@ -208,11 +224,12 @@ const HSK_GRAMMAR_CATALOG = [
     "order": 16,
     "zh_name": "V + 结果补语 (完/懂/见/到)",
     "formula": "[Chủ ngữ] + [V] + 完/懂/见/到 + [Tân ngữ]",
-    "vi_name": "Bổ ngữ kết quả: Làm xong, hiểu, nhìn thấy (V + 完/懂/见/到)",
-    "en_name": "Resultative Verb Complements (完, 懂, 见, 到)",
-    "ja_name": "結果補語「完・懂・见・到」（〜し終わる／分かる／見える）",
+    "vi_name": "Bổ ngữ kết quả: Làm xong, hiểu, đạt được (完/懂/见/到)",
+    "en_name": "Result Complements: Finished, understood (完/懂/见/到)",
+    "ja_name": "結果補語（〜し終わる・分かる・届く：完/懂/见/到）",
     "icon": "🎯",
-    "difficulty": 2
+    "difficulty": 2,
+    "pinyin": "wán / dǒng / dào"
   },
   {
     "id": "hsk2_lai_qu_direction",
@@ -221,11 +238,12 @@ const HSK_GRAMMAR_CATALOG = [
     "order": 17,
     "zh_name": "V + 来 / 去",
     "formula": "[Chủ ngữ] + [V] + (Nơi chốn) + 来 / 去",
-    "vi_name": "Bổ ngữ xu hướng đơn: Lại đây / Đi ra xa (V + 来/去)",
-    "en_name": "Simple Directional Complements with 来 (lái) & 去 (qù)",
-    "ja_name": "単純方向補語「来／去」（話者に近づくか遠ざかるか）",
+    "vi_name": "Bổ ngữ xu hướng đơn: Lại gần / Đi xa (V + 来/去)",
+    "en_name": "Directional Complements: Coming / Going (来 / 去)",
+    "ja_name": "単純方向補語（話者に近づく「来」・遠ざかる「去」）",
     "icon": "🧭",
-    "difficulty": 2
+    "difficulty": 2,
+    "pinyin": "lái / qù"
   },
   {
     "id": "hsk2_shi_de_emphasis",
@@ -234,11 +252,12 @@ const HSK_GRAMMAR_CATALOG = [
     "order": 18,
     "zh_name": "是……的 (强调句)",
     "formula": "[Chủ ngữ] + 是 + [Thời gian/Nơi chốn/Cách thức] + [V] + 的",
-    "vi_name": "Cấu trúc nhấn mạnh thời gian, nơi chốn: 是……的",
-    "en_name": "The 是……的 (shì...de) construction for emphasis",
-    "ja_name": "時間・場所・方式を強調する「是…的」構文",
+    "vi_name": "Nhấn mạnh thời gian, địa điểm, cách thức (是...的)",
+    "en_name": "Emphasis on Time, Place, or Manner (是...的)",
+    "ja_name": "時間・場所・手段の強調「是…的」構文",
     "icon": "🔦",
-    "difficulty": 2
+    "difficulty": 2,
+    "pinyin": "shì...de"
   },
   {
     "id": "hsk2_shi_jian_duan",
@@ -247,11 +266,12 @@ const HSK_GRAMMAR_CATALOG = [
     "order": 19,
     "zh_name": "V + 了 + 时间段 (时量补语)",
     "formula": "[Chủ ngữ] + [V] + 了 + [Khoảng thời gian] + (的 + [Tân ngữ])",
-    "vi_name": "Bổ ngữ thời lượng: Làm gì trong bao lâu (V + 了 + Khoảng thời gian)",
-    "en_name": "Duration of action: Verb + 了 + Time Duration",
+    "vi_name": "Thời lượng hành động: Đã làm trong bao lâu (时量补语)",
+    "en_name": "Action Duration: How long an action lasted",
     "ja_name": "動作の継続時間を表す時量補語（〜時間〜した）",
     "icon": "⏳",
-    "difficulty": 2
+    "difficulty": 2,
+    "pinyin": "shíjiānduàn"
   },
   {
     "id": "hsk2_yao_le_immediate",
@@ -260,11 +280,12 @@ const HSK_GRAMMAR_CATALOG = [
     "order": 20,
     "zh_name": "就要……了 (即将发生)",
     "formula": "[Chủ ngữ] + (Thời gian cụ thể) + 就要 + [V] + 了",
-    "vi_name": "Sắp sửa diễn ra ngay (就要...了 / 快要...了)",
-    "en_name": "Imminent action with 就要……了 / 快要……了",
-    "ja_name": "近未来「就要…了」（時間が明示される場合にも使える）",
+    "vi_name": "Sắp sửa diễn ra ngay (Có mốc thời gian cụ thể: 就要...了)",
+    "en_name": "Action about to happen at a specific time (就要...了)",
+    "ja_name": "特定の日時を伴う近未来表現（もうすぐ〜する：就要…了）",
     "icon": "⚡",
-    "difficulty": 2
+    "difficulty": 2,
+    "pinyin": "jiùyào...le"
   },
   {
     "id": "hsk3_ba_sentence",
@@ -273,11 +294,12 @@ const HSK_GRAMMAR_CATALOG = [
     "order": 21,
     "zh_name": "把字句 (处置式)",
     "formula": "[Chủ ngữ] + 把 + [Tân ngữ] + [V] + [Kết quả/Thành phần khác]",
-    "vi_name": "Câu chữ 把: Tác động xử lý vật (S + 把 + O + V + Kết quả)",
-    "en_name": "The 把 (bǎ) disposal sentence structure",
-    "ja_name": "処置を表す「把」構文（〜を…する）",
+    "vi_name": "Câu chữ 把: Tác động xử lý vật (把字句)",
+    "en_name": "The 把 (bǎ) Disposal Sentence Structure",
+    "ja_name": "処置を表す「把」構文（目的語を〜する）",
     "icon": "📦",
-    "difficulty": 3
+    "difficulty": 3,
+    "pinyin": "bǎ"
   },
   {
     "id": "hsk3_bei_passive",
@@ -286,11 +308,12 @@ const HSK_GRAMMAR_CATALOG = [
     "order": 22,
     "zh_name": "被字句 (被动句)",
     "formula": "[Chủ ngữ] + 被 + (Tác nhân) + [V] + (Kết quả/了)",
-    "vi_name": "Câu bị động chữ 被: Bị / Được tác động (S + 被 + Tác nhân + V)",
-    "en_name": "Passive voice with 被 (bèi)",
-    "ja_name": "受身（パッシブ）を表す「被」構文（〜に…される）",
+    "vi_name": "Câu bị động chữ 被: Bị / Được tác động (被字句)",
+    "en_name": "Passive Voice with 被 (bèi)",
+    "ja_name": "受身を表す「被」構文（〜に…される）",
     "icon": "🛡️",
-    "difficulty": 3
+    "difficulty": 3,
+    "pinyin": "bèi"
   },
   {
     "id": "hsk3_you_you",
@@ -299,11 +322,12 @@ const HSK_GRAMMAR_CATALOG = [
     "order": 23,
     "zh_name": "又……又……",
     "formula": "[Chủ ngữ] + 又 + [Tính từ 1] + 又 + [Tính từ 2]",
-    "vi_name": "Vừa... lại vừa... (Cùng lúc có 2 đặc tính: 又...又...)",
-    "en_name": "Both... and... with 又……又……",
-    "ja_name": "並列を表す「又…又…」（〜でもあり〜でもある）",
+    "vi_name": "Vừa... lại vừa... (Đồng thời có 2 đặc tính: 又...又...)",
+    "en_name": "Both... and... (Dual characteristics: 又...又...)",
+    "ja_name": "並列を表す「又…又…」（〜でもあり…でもある）",
     "icon": "🍉",
-    "difficulty": 3
+    "difficulty": 3,
+    "pinyin": "yòu...yòu..."
   },
   {
     "id": "hsk3_sui_ran_dan_shi",
@@ -313,10 +337,11 @@ const HSK_GRAMMAR_CATALOG = [
     "zh_name": "虽然……但是……",
     "formula": "虽然 + [Vế 1]，但是 + [Vế 2]",
     "vi_name": "Tuy rằng... nhưng mà... (Quan hệ chuyển ngoặt: 虽然...但是...)",
-    "en_name": "Although... but... with 虽然……但是……",
-    "ja_name": "逆接を表す「虽然…但是…」（〜だけれども…）",
+    "en_name": "Although... but... (Contrast: 虽然...但是...)",
+    "ja_name": "逆接の接続「虽然…但是…」（〜だけれども…）",
     "icon": "🌦️",
-    "difficulty": 3
+    "difficulty": 3,
+    "pinyin": "suīrán...dànshì..."
   },
   {
     "id": "hsk3_bu_dan_er_qie",
@@ -326,10 +351,11 @@ const HSK_GRAMMAR_CATALOG = [
     "zh_name": "不但……而且……",
     "formula": "[Chủ ngữ] + 不但 + [Vế 1]，而且 + [Vế 2]",
     "vi_name": "Không những... mà còn... (Tăng tiến: 不但...而且...)",
-    "en_name": "Not only... but also... with 不但……而且……",
-    "ja_name": "累加を表す「不但…而且…」（〜だけでなく…も）",
+    "en_name": "Not only... but also... (Progression: 不但...而且...)",
+    "ja_name": "累加の接続「不但…而且…」（〜だけでなく…も）",
     "icon": "🚀",
-    "difficulty": 3
+    "difficulty": 3,
+    "pinyin": "búdàn...érqiě..."
   },
   {
     "id": "hsk3_de_degree",
@@ -339,10 +365,11 @@ const HSK_GRAMMAR_CATALOG = [
     "zh_name": "动词 + 得 (状态补语)",
     "formula": "[Chủ ngữ] + [V] + 得 + 很 / 非常 + [Tính từ]",
     "vi_name": "Bổ ngữ trạng thái: Đánh giá cách làm (V + 得 + Tính từ)",
-    "en_name": "State/Degree Complements with 得 (V + 得 + Adj)",
-    "ja_name": "様態補語「動詞＋得＋形容詞」（〜の仕方が…だ）",
+    "en_name": "State/Degree Complements: Evaluating action (V + 得 + Adj)",
+    "ja_name": "様態補語（動詞＋得＋形容詞：〜の仕方が…だ）",
     "icon": "🏃",
-    "difficulty": 3
+    "difficulty": 3,
+    "pinyin": "de"
   },
   {
     "id": "hsk3_yi_bian_yi_bian",
@@ -351,11 +378,12 @@ const HSK_GRAMMAR_CATALOG = [
     "order": 27,
     "zh_name": "一边……一边……",
     "formula": "[Chủ ngữ] + 一边 + [V1]，一边 + [V2]",
-    "vi_name": "Vừa làm việc này vừa làm việc kia: 一边...一边...",
-    "en_name": "Doing two actions simultaneously with 一边……一边……",
+    "vi_name": "Vừa làm việc này vừa làm việc kia (Đồng thời: 一边...一边...)",
+    "en_name": "Simultaneous Actions: While doing... (一边...一边...)",
     "ja_name": "動作の同時進行「一边…一边…」（〜しながら…する）",
     "icon": "🎧",
-    "difficulty": 3
+    "difficulty": 3,
+    "pinyin": "yìbiān...yìbiān..."
   },
   {
     "id": "hsk3_yue_yue",
@@ -364,11 +392,12 @@ const HSK_GRAMMAR_CATALOG = [
     "order": 28,
     "zh_name": "越……越……",
     "formula": "[Chủ ngữ] + 越 + [V1] + 越 + [Tính từ / V2]",
-    "vi_name": "Càng... càng... (Tương quan tăng dần: 越...越...)",
-    "en_name": "The more... the more... with 越……越……",
-    "ja_name": "相関を表す「越…越…」（〜すればするほど…）",
+    "vi_name": "Càng... càng... (Tương quan tỉ lệ thuận: 越...越...)",
+    "en_name": "The more... the more... (Proportional change: 越...越...)",
+    "ja_name": "相関変化「越…越…」（〜すればするほど…）",
     "icon": "📈",
-    "difficulty": 3
+    "difficulty": 3,
+    "pinyin": "yuè...yuè..."
   },
   {
     "id": "hsk3_chu_le_yi_wai",
@@ -377,11 +406,12 @@ const HSK_GRAMMAR_CATALOG = [
     "order": 29,
     "zh_name": "除了……以外",
     "formula": "除了 + [N/V] + 以外，[Chủ ngữ] + 还/都 + [V]",
-    "vi_name": "Ngoài... ra (Còn... / Đều...): 除了...以外",
-    "en_name": "Besides / Except with 除了……以外",
-    "ja_name": "除外・付加を表す「除了…以外」（〜のほかに／〜を除いて）",
+    "vi_name": "Ngoài... ra (Bổ sung hoặc loại trừ: 除了...以外)",
+    "en_name": "Besides / Except for (Inclusion or Exclusion: 除了...以外)",
+    "ja_name": "付加と除外「除了…以外」（〜のほかに／〜を除いて）",
     "icon": "🎁",
-    "difficulty": 3
+    "difficulty": 3,
+    "pinyin": "chúle...yǐwài"
   },
   {
     "id": "hsk3_yi_jiu",
@@ -390,11 +420,12 @@ const HSK_GRAMMAR_CATALOG = [
     "order": 30,
     "zh_name": "一……就……",
     "formula": "[Chủ ngữ] + 一 + [V1]，就 + [V2]",
-    "vi_name": "Hễ... là liền... (Hành động vừa xảy ra là kế tiếp ngay: 一...就...)",
-    "en_name": "As soon as... then... with 一……就……",
+    "vi_name": "Hễ... là liền... (Hành động kế tiếp ngay: 一...就...)",
+    "en_name": "As soon as... then... (Immediate action: 一...就...)",
     "ja_name": "即時完了「一…就…」（〜するとすぐ…）",
     "icon": "⚡",
-    "difficulty": 3
+    "difficulty": 3,
+    "pinyin": "yī...jiù..."
   }
 ];
 
@@ -413,14 +444,14 @@ const HSK_GRAMMAR_SAMPLES = [
         "trap_why": "Tiếng Trung không dùng 是 trước tính từ miêu tả thông thường (dùng 很 thay thế)."
       },
       "en": {
-        "title": "The 是 (shì) Sentence (A is B)",
+        "title": "The 是 (shì) Sentence: A is B",
         "quick_rule": "Connects two nouns to identify who or what someone is (A = B).",
         "trap_wrong": "她是很漂亮。",
         "trap_correct": "她很漂亮。",
         "trap_why": "In Chinese, standalone adjectives act as verbs with 很 and do NOT use 是."
       },
       "ja": {
-        "title": "「是」構文（AはBです）",
+        "title": "「是」構文：AはBです",
         "quick_rule": "主語と名詞を結び、「AはBです」と身分・職業・国籍を紹介する超基本構文です。",
         "trap_wrong": "她是很漂亮。",
         "trap_correct": "她很漂亮。",
@@ -575,7 +606,8 @@ const HSK_GRAMMAR_SAMPLES = [
         "是",
         "老师"
       ]
-    }
+    },
+    "pinyin": "shì"
   },
   {
     "id": "hsk1_you",
@@ -591,14 +623,14 @@ const HSK_GRAMMAR_SAMPLES = [
         "trap_why": "Phủ định của động từ '有' luôn luôn là '没' hoặc '没有', không bao giờ dùng '不'."
       },
       "en": {
-        "title": "Possession with 有 and 没有",
+        "title": "Possession with 有 & 没有",
         "quick_rule": "Use '有' (yǒu) to express having something. The negative form is always '没有' (never 不有).",
         "trap_wrong": "我不有钱。",
         "trap_correct": "我没有钱。",
         "trap_why": "The verb '有' can only be negated by '没' or '没有', never by '不'."
       },
       "ja": {
-        "title": "所有を表す「有／没有」（〜がある／ない）",
+        "title": "所有を表す「有／没有」",
         "quick_rule": "「有」で所有を表し、否定は必ず「没有」を用います（「不有」とは決して言いません）。",
         "trap_wrong": "我不有钱。",
         "trap_correct": "我没有钱。",
@@ -744,7 +776,8 @@ const HSK_GRAMMAR_SAMPLES = [
         "没有",
         "钱"
       ]
-    }
+    },
+    "pinyin": "yǒu / méiyǒu"
   },
   {
     "id": "hsk1_zai_location",
@@ -753,21 +786,21 @@ const HSK_GRAMMAR_SAMPLES = [
     "formula": "[Chủ ngữ] + 在 [Nơi chốn] + [Hành động]",
     "localizations": {
       "vi": {
-        "title": "Ở đâu làm gì? (在 + Nơi chốn + Động từ)",
+        "title": "Ở đâu làm gì (在 + Địa điểm + Động từ)",
         "quick_rule": "Quy tắc vàng: Phải ĐẾN ĐỊA ĐIỂM trước rồi mới LÀM HÀNH ĐỘNG (ngược với tiếng Việt 'học ở trường').",
         "trap_wrong": "我看书在学校。",
         "trap_correct": "我在学校看书。",
         "trap_why": "Trong tiếng Trung, trạng ngữ chỉ nơi chốn (在 + địa điểm) luôn đứng TRƯỚC động từ, không đứng sau."
       },
       "en": {
-        "title": "Actions at a location (在 + Place + Verb)",
+        "title": "Action at a Place (在 + Location + Verb)",
         "quick_rule": "Golden rule: Express the location BEFORE the verb (opposite to English 'I study at school').",
         "trap_wrong": "我看书在学校。",
         "trap_correct": "我在学校看书。",
         "trap_why": "Location phrases with '在' must be placed BEFORE the action verb, not at the end of the sentence."
       },
       "ja": {
-        "title": "「在＋場所＋動詞」（〜で〜をする）",
+        "title": "場所で行う動作（在＋場所＋動詞）",
         "quick_rule": "黄金ルール：場所を表す「在＋場所」を必ず動詞の「前」に置きます（日本語と同じ語順です）。",
         "trap_wrong": "我看书在学校。",
         "trap_correct": "我在学校看书。",
@@ -922,7 +955,8 @@ const HSK_GRAMMAR_SAMPLES = [
         "在家",
         "做饭"
       ]
-    }
+    },
+    "pinyin": "zài"
   },
   {
     "id": "hsk1_ma_question",
@@ -945,7 +979,7 @@ const HSK_GRAMMAR_SAMPLES = [
         "trap_why": "If a sentence already has a question pronoun (who, what, where), do NOT add 吗."
       },
       "ja": {
-        "title": "語気助詞「吗」による疑問文",
+        "title": "疑問助詞「吗」（〜ですか？）",
         "quick_rule": "普通の平叙文の語順のまま、文末に「吗」を添えるだけで「〜ですか？」の疑問文になります。",
         "trap_wrong": "你是谁吗？",
         "trap_correct": "你是谁？",
@@ -1046,7 +1080,8 @@ const HSK_GRAMMAR_SAMPLES = [
         "去",
         "吗"
       ]
-    }
+    },
+    "pinyin": "ma"
   },
   {
     "id": "hsk1_tai_le",
@@ -1055,21 +1090,21 @@ const HSK_GRAMMAR_SAMPLES = [
     "formula": "太 + [Tính từ] + 了！",
     "localizations": {
       "vi": {
-        "title": "Cảm thán: Quá... rồi! (太...了)",
+        "title": "Câu cảm thán: Quá... rồi! (太...了)",
         "quick_rule": "Kẹp tính từ vào giữa '太' và '了' để thốt lên khen ngợi hoặc than phiền (quá... rồi!).",
         "trap_wrong": "太好！",
         "trap_correct": "太好了！",
         "trap_why": "Cấu trúc cảm thán '太' thường bắt buộc phải có trợ từ '了' ở cuối câu đi kèm."
       },
       "en": {
-        "title": "Exclamations: Too / Extremely! (太...了)",
+        "title": "Exclamations: Too / Extremely (太...了)",
         "quick_rule": "Enclose an adjective between '太' and '了' to express an intense reaction or exclamation.",
         "trap_wrong": "太好！",
         "trap_correct": "太好了！",
         "trap_why": "The exclamation structure '太...' almost always pairs with '了' at the end."
       },
       "ja": {
-        "title": "感嘆文「太＋形容詞＋了」（〜すぎる！）",
+        "title": "感嘆表現（太＋形容詞＋了）",
         "quick_rule": "「太」と「了」で形容詞を挟み込み、「〜すぎる！」「とても〜だ！」と感情を込めて感嘆します。",
         "trap_wrong": "太好！",
         "trap_correct": "太好了！",
@@ -1197,7 +1232,8 @@ const HSK_GRAMMAR_SAMPLES = [
         "好",
         "了"
       ]
-    }
+    },
+    "pinyin": "tài...le"
   },
   {
     "id": "hsk1_time_order",
@@ -1206,21 +1242,21 @@ const HSK_GRAMMAR_SAMPLES = [
     "formula": "[Chủ ngữ] + [Thời gian] + [Hành động]",
     "localizations": {
       "vi": {
-        "title": "Khi nào làm gì? (Thời gian trước hành động)",
+        "title": "Trật tự từ: Thời gian đứng trước hành động",
         "quick_rule": "Quy tắc vàng: Thời gian luôn đặt TRƯỚC hành động (ngược với tiếng Việt 'tôi đi ngủ lúc 10h' -> tiếng Trung 'tôi 10h đi ngủ').",
         "trap_wrong": "我去学校早上八点。",
         "trap_correct": "我早上八点去学校。",
         "trap_why": "Từ chỉ thời gian tuyệt đối không đứng ở cuối câu sau động từ trong tiếng Trung."
       },
       "en": {
-        "title": "Time before Verb word order",
+        "title": "Word Order: Time before action",
         "quick_rule": "Golden Rule: Time phrases must come BEFORE the action verb (opposite to English 'I go to bed at 10 PM').",
         "trap_wrong": "我去学校早上八点。",
         "trap_correct": "我早上八点去学校。",
         "trap_why": "In Chinese, time expressions can never be tacked on at the end after the verb."
       },
       "ja": {
-        "title": "時間詞の位置（時間の後に動作）",
+        "title": "語順ルール：時間詞を動詞の前に置く",
         "quick_rule": "時間詞は必ず動詞の「前」に置きます（日本語と同じで『私は8時に学校へ行く』の語順です）。",
         "trap_wrong": "我去学校早上八点。",
         "trap_correct": "我早上八点去学校。",
@@ -1375,7 +1411,8 @@ const HSK_GRAMMAR_SAMPLES = [
         "明天",
         "去北京"
       ]
-    }
+    },
+    "pinyin": "shíjiān"
   },
   {
     "id": "hsk1_gen_with",
@@ -1384,21 +1421,21 @@ const HSK_GRAMMAR_SAMPLES = [
     "formula": "[Chủ ngữ] + 跟 [Người] + 一起 + [Hành động]",
     "localizations": {
       "vi": {
-        "title": "Cùng ai làm gì? (跟 / 和 + Người + Động từ)",
+        "title": "Làm gì cùng ai (跟 / 和 + Ai + 一起 + Động từ)",
         "quick_rule": "Phải nói 'Cùng ai' trước rồi mới nói 'Làm gì' (ngược với tiếng Việt 'tôi xem phim với bạn').",
         "trap_wrong": "我看电影跟朋友。",
         "trap_correct": "我跟朋友看电影。",
         "trap_why": "Cụm giới từ chỉ đối tượng (跟/和 + người) luôn đứng TRƯỚC động từ."
       },
       "en": {
-        "title": "Doing actions with someone (跟 / 和 + Someone + Verb)",
+        "title": "Doing things with someone (跟...一起)",
         "quick_rule": "Express 'with whom' BEFORE the action verb (opposite to English 'I watch movies with my friend').",
         "trap_wrong": "我看电影跟朋友。",
         "trap_correct": "我跟朋友看电影。",
         "trap_why": "Prepositional phrases with 跟/和 must precede the verb."
       },
       "ja": {
-        "title": "「跟／和＋人＋一起＋動詞」（〜と一緒に〜する）",
+        "title": "誰かと一緒に行う動作（跟…一起）",
         "quick_rule": "「誰と一緒に」を表す言葉を動詞の「前」に置きます（日本語と同じ語順です）。",
         "trap_wrong": "我看电影跟朋友。",
         "trap_correct": "我跟朋友看电影。",
@@ -1553,7 +1590,8 @@ const HSK_GRAMMAR_SAMPLES = [
         "跟朋友",
         "看电影"
       ]
-    }
+    },
+    "pinyin": "gēn...yìqǐ"
   },
   {
     "id": "hsk1_ne_question",
@@ -1562,21 +1600,21 @@ const HSK_GRAMMAR_SAMPLES = [
     "formula": "[Người / Đồ vật] + 呢？",
     "localizations": {
       "vi": {
-        "title": "Câu hỏi tỉnh lược (Còn... thì sao? / ...đâu rồi?)",
+        "title": "Câu hỏi tỉnh lược (Còn... thì sao? / ...ở đâu?)",
         "quick_rule": "Dùng để hỏi tiếp ý vừa nhắc: 'Còn... thì sao?' hoặc hỏi vị trí '...đâu rồi?'.",
         "trap_wrong": "你呢好吗？",
         "trap_correct": "你呢？",
         "trap_why": "Chữ 呢 đã tự mang nghĩa câu hỏi tỉnh lược hoàn chỉnh, không ghép thêm tính từ hay trợ từ 吗."
       },
       "en": {
-        "title": "Elliptical follow-up questions with 呢 (ne)",
+        "title": "Follow-up Questions (How about...? / Where is...?)",
         "quick_rule": "Ask 'How about...?' or 'Where is...?' simply by placing 呢 after a noun or pronoun.",
         "trap_wrong": "你呢好吗？",
         "trap_correct": "你呢？",
         "trap_why": "呢 already forms a complete bounce-back question; do not attach other question words."
       },
       "ja": {
-        "title": "省略疑問文を作る「呢」（〜は？）",
+        "title": "簡潔な聞き返し（〜は？／〜はどこ？）",
         "quick_rule": "名詞や代名詞の後に「呢」を添えるだけで、「〜は？」「〜はどこ？」と簡潔に問い返せます。",
         "trap_wrong": "你呢好吗？",
         "trap_correct": "你呢？",
@@ -1677,7 +1715,8 @@ const HSK_GRAMMAR_SAMPLES = [
         "手机",
         "呢？"
       ]
-    }
+    },
+    "pinyin": "ne"
   },
   {
     "id": "hsk1_hui_ability",
@@ -1686,21 +1725,21 @@ const HSK_GRAMMAR_SAMPLES = [
     "formula": "[Chủ ngữ] + 会 / 不会 + [Kỹ năng]",
     "localizations": {
       "vi": {
-        "title": "Diễn tả kỹ năng học mới biết (会 + Động từ)",
+        "title": "Biết làm gì qua rèn luyện (会 + Động từ)",
         "quick_rule": "Dùng '会' khi diễn tả kỹ năng phải qua học hỏi, tập luyện mới biết làm (nói tiếng Trung, lái xe, nấu ăn).",
         "trap_wrong": "我能说汉语。(chỉ khả năng hoàn cảnh)",
         "trap_correct": "我会说汉语。(học mới biết)",
         "trap_why": "Để nói về kỹ năng tiếp thu qua học tập, tiếng Trung luôn dùng '会'."
       },
       "en": {
-        "title": "Learned skills and abilities with 会 (huì)",
+        "title": "Learned Skills & Abilities (会 + Verb)",
         "quick_rule": "Use '会' to express skills acquired through practice or study (speaking a language, driving, cooking).",
         "trap_wrong": "我能说汉语。",
         "trap_correct": "我会说汉语。",
         "trap_why": "Skills learned through study require '会', not '能'."
       },
       "ja": {
-        "title": "習得能力を表す「会」（〜できる）",
+        "title": "習得したスキルを表す（会＋動詞）",
         "quick_rule": "学習や訓練を通して習得したスキル（外国語、料理、運転など）には「会」を用います。",
         "trap_wrong": "我能说汉语。",
         "trap_correct": "我会说汉语。",
@@ -1846,7 +1885,8 @@ const HSK_GRAMMAR_SAMPLES = [
         "会",
         "说汉语"
       ]
-    }
+    },
+    "pinyin": "huì"
   },
   {
     "id": "hsk1_de_possessive",
@@ -1862,14 +1902,14 @@ const HSK_GRAMMAR_SAMPLES = [
         "trap_why": "Người sở hữu hoặc phần bổ nghĩa luôn đứng TRƯỚC danh từ chính."
       },
       "en": {
-        "title": "Possession and modification with 的 (de)",
+        "title": "Possession & Modification with 的 (de)",
         "quick_rule": "Attach '的' between the owner/modifier and the noun (Owner + 的 + Noun).",
         "trap_wrong": "书我的。",
         "trap_correct": "我的书。",
         "trap_why": "The modifier/owner must come BEFORE the noun it modifies."
       },
       "ja": {
-        "title": "修飾・所有の構造助詞「的」（〜の…）",
+        "title": "所有・修飾の構造助詞「的」（〜の…）",
         "quick_rule": "所有者や修飾語の後ろに「的」を置き、名詞を修飾します（日本語の「私の本」と同じ語順です）。",
         "trap_wrong": "书我的。",
         "trap_correct": "我的书。",
@@ -2006,7 +2046,8 @@ const HSK_GRAMMAR_SAMPLES = [
         "的",
         "电脑"
       ]
-    }
+    },
+    "pinyin": "de"
   },
   {
     "id": "hsk2_guo_experience",
@@ -2015,21 +2056,21 @@ const HSK_GRAMMAR_SAMPLES = [
     "formula": "[Chủ ngữ] + 没/没有 + [V] + 过 + [Tân ngữ]",
     "localizations": {
       "vi": {
-        "title": "Đã từng làm việc gì (Động từ + 过)",
+        "title": "Từng làm gì trong quá khứ (V + 过)",
         "quick_rule": "Đặt '过' sau động từ để nói đã từng làm gì. Phủ định là '没/没有...过' (chưa từng).",
         "trap_wrong": "我不去过北京。",
         "trap_correct": "我没去过北京。",
         "trap_why": "Phủ định của trải nghiệm '过' luôn dùng '没' hoặc '没有', không dùng '不'."
       },
       "en": {
-        "title": "Past experience with particle 过 (guò)",
+        "title": "Past Experience: Have done before (V + 过)",
         "quick_rule": "Place '过' right after the verb to express having experienced something. Negate with 没/没有.",
         "trap_wrong": "我不去过北京。",
         "trap_correct": "我没去过北京。",
         "trap_why": "Past experience with 过 must be negated with 没/没有, never 不."
       },
       "ja": {
-        "title": "経験を表すアスペクト助詞「过」（〜したことがある）",
+        "title": "過去の経験（動詞＋过：〜したことがある）",
         "quick_rule": "動詞の後ろに「过」を付けて「〜したことがある」と経験を述べます。否定は必ず「没／没有」を用います。",
         "trap_wrong": "我不去过北京。",
         "trap_correct": "我没去过北京。",
@@ -2175,7 +2216,8 @@ const HSK_GRAMMAR_SAMPLES = [
         "吃过",
         "烤鸭"
       ]
-    }
+    },
+    "pinyin": "guò"
   },
   {
     "id": "hsk2_bi_comparison",
@@ -2184,21 +2226,21 @@ const HSK_GRAMMAR_SAMPLES = [
     "formula": "[A] + 比 + [B] + [Tính từ]",
     "localizations": {
       "vi": {
-        "title": "Câu so sánh hơn với chữ 比 (A hơn B)",
+        "title": "So sánh hơn kém với chữ 比 (A hơn B)",
         "quick_rule": "Dùng '比' để nói A hơn B. Quy tắc sống còn: Cấm dùng 很/非常 trước tính từ!",
         "trap_wrong": "他比我很忙。",
         "trap_correct": "他比我忙。",
         "trap_why": "Trong câu so sánh '比', trước tính từ không dùng phó từ mức độ như 很, 非常."
       },
       "en": {
-        "title": "Comparisons using 比 (bǐ - A is more than B)",
+        "title": "Comparisons with 比 (A is more... than B)",
         "quick_rule": "Use '比' to compare two entities. Critical rule: Degree adverbs like 很/非常 cannot precede the adjective!",
         "trap_wrong": "他比我很忙。",
         "trap_correct": "他比我忙。",
         "trap_why": "In 比 comparisons, degree adverbs like 很 or 非常 are strictly forbidden before the adjective."
       },
       "ja": {
-        "title": "「比」を用いた比較文（AはBより〜）",
+        "title": "比較文「A 比 B ＋形容詞」（AはBより〜）",
         "quick_rule": "「比」を用いて「AはBより〜だ」と比べます。形容詞の前に「很」「非常」などの程度副詞を置いてはいけません！",
         "trap_wrong": "他比我很忙。",
         "trap_correct": "他比我忙。",
@@ -2373,7 +2415,8 @@ const HSK_GRAMMAR_SAMPLES = [
         "我",
         "高"
       ]
-    }
+    },
+    "pinyin": "bǐ"
   },
   {
     "id": "hsk2_zhe_state",
@@ -2389,14 +2432,14 @@ const HSK_GRAMMAR_SAMPLES = [
         "trap_why": "Trợ từ 着 đứng ngay sát sau động từ để biểu thị trạng thái duy trì."
       },
       "en": {
-        "title": "Continuous state particle 着 (zhe)",
+        "title": "Ongoing States with 着 (zhe)",
         "quick_rule": "Attach '着' directly after a verb to express an ongoing static state (door is open, wearing clothes).",
         "trap_wrong": "他写着汉字在。",
         "trap_correct": "门开着呢。",
         "trap_why": "The aspect particle 着 must directly follow the verb, indicating an ongoing state."
       },
       "ja": {
-        "title": "状態の持続を表す「着」（〜している／〜てある）",
+        "title": "状態の持続（動詞＋着：〜している）",
         "quick_rule": "動詞の直後に「着」を添え、「ドアが開いている」「服を着ている」など状態の持続を表します。",
         "trap_wrong": "他写着汉字在。",
         "trap_correct": "门开着呢。",
@@ -2515,7 +2558,8 @@ const HSK_GRAMMAR_SAMPLES = [
         "开",
         "着"
       ]
-    }
+    },
+    "pinyin": "zhe"
   },
   {
     "id": "hsk2_kuai_le",
@@ -2524,21 +2568,21 @@ const HSK_GRAMMAR_SAMPLES = [
     "formula": "[Chủ ngữ] + 快要 + [Hành động] + 了！",
     "localizations": {
       "vi": {
-        "title": "Sắp sửa diễn ra (快要...了 / 要...了)",
+        "title": "Sắp sửa xảy ra (快要...了 / 要...了)",
         "quick_rule": "Diễn tả hành động sắp xảy ra trong chốc lát ('sắp... rồi!').",
         "trap_wrong": "快要下雨昨天。",
         "trap_correct": "快要下雨了！",
         "trap_why": "Cấu trúc 快要... bắt buộc phải có 了 ở cuối câu."
       },
       "en": {
-        "title": "Imminent actions: About to happen! (快要...了)",
+        "title": "Imminent Actions: About to happen (快要...了)",
         "quick_rule": "Express that an event is about to happen in moments (about to / soon).",
         "trap_wrong": "快要下雨昨天。",
         "trap_correct": "快要下雨了！",
         "trap_why": "The construction 快要... must pair with 了 at sentence end."
       },
       "ja": {
-        "title": "近未来を表す「快要…了」（もうすぐ〜する）",
+        "title": "近未来の出来事（もうすぐ〜する：快要…了）",
         "quick_rule": "事態が間もなく発生することを「快要…了」（もうすぐ〜する）と表します。",
         "trap_wrong": "快要下雨昨天。",
         "trap_correct": "快要下雨了！",
@@ -2677,7 +2721,8 @@ const HSK_GRAMMAR_SAMPLES = [
         "下雨",
         "了"
       ]
-    }
+    },
+    "pinyin": "kuàiyào...le"
   },
   {
     "id": "hsk2_yue_lai_yue",
@@ -2693,14 +2738,14 @@ const HSK_GRAMMAR_SAMPLES = [
         "trap_why": "Bản thân '越来越' đã mang nghĩa so sánh tăng tiến cao độ, cấm chèn thêm '很'."
       },
       "en": {
-        "title": "More and more with 越来越 (yuèláiyuè)",
+        "title": "More and More: Progressive Change (越来越)",
         "quick_rule": "Express an increasing degree over time (more and more). Never add 很 after 越来越.",
         "trap_wrong": "中文越来越很难。",
         "trap_correct": "中文越来越难。",
         "trap_why": "越来越 already conveys increasing intensity; degree adverbs like 很 are prohibited."
       },
       "ja": {
-        "title": "漸進を表す「越来越…」（ますます〜）",
+        "title": "漸進的な変化（ますます〜：越来越）",
         "quick_rule": "時間の経過とともに度合いが増すことを「越来越…」（ますます〜）と表します。「很」を後ろに付けてはいけません。",
         "trap_wrong": "中文越来越很难。",
         "trap_correct": "中文越来越难。",
@@ -2837,7 +2882,8 @@ const HSK_GRAMMAR_SAMPLES = [
         "越来越",
         "冷"
       ]
-    }
+    },
+    "pinyin": "yuèláiyuè"
   },
   {
     "id": "hsk2_dong_jie_guo",
@@ -2846,21 +2892,21 @@ const HSK_GRAMMAR_SAMPLES = [
     "formula": "[Chủ ngữ] + [V] + 完/懂/见/到 + [Tân ngữ]",
     "localizations": {
       "vi": {
-        "title": "Bổ ngữ kết quả: Làm xong, hiểu, nhìn thấy (V + 完/懂/见/到)",
+        "title": "Bổ ngữ kết quả: Làm xong, hiểu, đạt được (完/懂/见/到)",
         "quick_rule": "Thêm '完' (xong), '懂' (hiểu), '见' (thấy), '到' (được) ngay sau động từ để chỉ kết quả của hành động.",
         "trap_wrong": "我没做完不了作业。",
         "trap_correct": "我没做完作业。",
         "trap_why": "Phủ định của bổ ngữ kết quả đặt '没' hoặc '没有' trước động từ, không dùng '不'."
       },
       "en": {
-        "title": "Resultative Verb Complements (完, 懂, 见, 到)",
+        "title": "Result Complements: Finished, understood (完/懂/见/到)",
         "quick_rule": "Attach result words like 完 (finish), 懂 (understand), 见 (perceive), 到 (reach) directly after verbs.",
         "trap_wrong": "我没做完不了作业。",
         "trap_correct": "我没做完作业。",
         "trap_why": "Negate resultative complements with 没/没有 before the verb, never 不."
       },
       "ja": {
-        "title": "結果補語「完・懂・见・到」（〜し終わる／分かる／見える）",
+        "title": "結果補語（〜し終わる・分かる・届く：完/懂/见/到）",
         "quick_rule": "動詞の直後に結果補語（完・懂・见・到など）を置いて動作の結果を表します。",
         "trap_wrong": "我没做完不了作业。",
         "trap_correct": "我没做完作业。",
@@ -3006,7 +3052,8 @@ const HSK_GRAMMAR_SAMPLES = [
         "做完了",
         "作业"
       ]
-    }
+    },
+    "pinyin": "wán / dǒng / dào"
   },
   {
     "id": "hsk2_lai_qu_direction",
@@ -3015,21 +3062,21 @@ const HSK_GRAMMAR_SAMPLES = [
     "formula": "[Chủ ngữ] + [V] + (Nơi chốn) + 来 / 去",
     "localizations": {
       "vi": {
-        "title": "Bổ ngữ xu hướng đơn: Lại đây / Đi ra xa (V + 来/去)",
+        "title": "Bổ ngữ xu hướng đơn: Lại gần / Đi xa (V + 来/去)",
         "quick_rule": "Dùng '来' khi hành động hướng về phía người nói; dùng '去' khi rời xa người nói.",
         "trap_wrong": "他回家去来。",
         "trap_correct": "他回家去了。",
         "trap_why": "Nếu người nói đang ở ngoài nhà, phải dùng '去'; nếu ở trong nhà đón, dùng '来'."
       },
       "en": {
-        "title": "Simple Directional Complements with 来 (lái) & 去 (qù)",
+        "title": "Directional Complements: Coming / Going (来 / 去)",
         "quick_rule": "Use 来 when movement is towards the speaker; use 去 when movement is away from the speaker.",
         "trap_wrong": "他回家去来。",
         "trap_correct": "他回家去了。",
         "trap_why": "Direction words 来 and 去 indicate orientation relative to where the speaker is located."
       },
       "ja": {
-        "title": "単純方向補語「来／去」（話者に近づくか遠ざかるか）",
+        "title": "単純方向補語（話者に近づく「来」・遠ざかる「去」）",
         "quick_rule": "動作が話者に近づくときは「来」、遠ざかるときは「去」を動詞の後ろに付けます。",
         "trap_wrong": "他回家去来。",
         "trap_correct": "他回家去了。",
@@ -3166,7 +3213,8 @@ const HSK_GRAMMAR_SAMPLES = [
         "走",
         "进来了"
       ]
-    }
+    },
+    "pinyin": "lái / qù"
   },
   {
     "id": "hsk2_shi_de_emphasis",
@@ -3175,21 +3223,21 @@ const HSK_GRAMMAR_SAMPLES = [
     "formula": "[Chủ ngữ] + 是 + [Thời gian/Địa điểm/Phương thức] + [V] + 的",
     "localizations": {
       "vi": {
-        "title": "Cấu trúc nhấn mạnh thời gian, nơi chốn: 是……的",
+        "title": "Nhấn mạnh thời gian, địa điểm, cách thức (是...的)",
         "quick_rule": "Dùng '是...的' khi sự việc đã xảy ra, nhằm nhấn mạnh 'khi nào', 'ở đâu' hoặc 'bằng cách nào'.",
         "trap_wrong": "我是明天来的。",
         "trap_correct": "我是昨天来的。",
         "trap_why": "Cấu trúc '是...的' chỉ dùng để nhấn mạnh sự việc ĐÃ XẢY RA, không dùng cho tương lai."
       },
       "en": {
-        "title": "The 是……的 (shì...de) construction for emphasis",
+        "title": "Emphasis on Time, Place, or Manner (是...的)",
         "quick_rule": "Used to emphasize WHEN, WHERE, or HOW a past completed event took place.",
         "trap_wrong": "我是明天来的。",
         "trap_correct": "我是昨天来的。",
         "trap_why": "The 是...的 structure only emphasizes events that ALREADY happened in the past."
       },
       "ja": {
-        "title": "時間・場所・方式を強調する「是…的」構文",
+        "title": "時間・場所・手段の強調「是…的」構文",
         "quick_rule": "既に行われた出来事について、時間・場所・手段などを強調するときに「是…的」で挟みます。",
         "trap_wrong": "我是明天来的。",
         "trap_correct": "我是昨天来的。",
@@ -3335,7 +3383,8 @@ const HSK_GRAMMAR_SAMPLES = [
         "是昨天",
         "来的"
       ]
-    }
+    },
+    "pinyin": "shì...de"
   },
   {
     "id": "hsk2_shi_jian_duan",
@@ -3344,14 +3393,14 @@ const HSK_GRAMMAR_SAMPLES = [
     "formula": "[Chủ ngữ] + [V] + 了 + [Khoảng thời gian] + (的 + [Tân ngữ])",
     "localizations": {
       "vi": {
-        "title": "Bổ ngữ thời lượng: Làm gì trong bao lâu (V + 了 + Khoảng thời gian)",
+        "title": "Thời lượng hành động: Đã làm trong bao lâu (时量补语)",
         "quick_rule": "Nêu khoảng thời gian hành động diễn ra (ví dụ: 'ngủ 8 tiếng', 'học 2 năm').",
         "trap_wrong": "我学了汉语两年。",
         "trap_correct": "我学了两年汉语。",
         "trap_why": "Khoảng thời gian đặt trước tân ngữ (V + 了 + Thời gian + 的 + Tân ngữ) hoặc lặp lại động từ."
       },
       "en": {
-        "title": "Duration of action: Verb + 了 + Time Duration",
+        "title": "Action Duration: How long an action lasted",
         "quick_rule": "Specify how long an action lasted (e.g. 'slept for 8 hours', 'studied for 2 years').",
         "trap_wrong": "我学了汉语两年。",
         "trap_correct": "我学了两年汉语。",
@@ -3504,7 +3553,8 @@ const HSK_GRAMMAR_SAMPLES = [
         "睡了",
         "八个小时"
       ]
-    }
+    },
+    "pinyin": "shíjiānduàn"
   },
   {
     "id": "hsk2_yao_le_immediate",
@@ -3513,21 +3563,21 @@ const HSK_GRAMMAR_SAMPLES = [
     "formula": "[Chủ ngữ] + (Thời gian cụ thể) + 就要 + [V] + 了",
     "localizations": {
       "vi": {
-        "title": "Sắp sửa diễn ra ngay (就要...了 / 快要...了)",
+        "title": "Sắp sửa diễn ra ngay (Có mốc thời gian cụ thể: 就要...了)",
         "quick_rule": "Dùng để báo hiệu hành động sắp xảy ra. Khi có mốc thời gian cụ thể (ngày mai, tuần sau), PHẢI dùng '就要...了'.",
         "trap_wrong": "明天快要考试了。",
         "trap_correct": "明天就要考试了。",
         "trap_why": "Khi có từ chỉ thời gian cụ thể như '明天' (ngày mai), bắt buộc dùng '就要...了', không dùng '快要...了'."
       },
       "en": {
-        "title": "Imminent action with 就要……了 / 快要……了",
+        "title": "Action about to happen at a specific time (就要...了)",
         "quick_rule": "Expresses that something is about to happen soon. When an exact time is given, use 就要...了.",
         "trap_wrong": "明天快要考试了。",
         "trap_correct": "明天就要考试了。",
         "trap_why": "When a specific time adverbial like 明天 is present, use 就要...了 instead of 快要...了."
       },
       "ja": {
-        "title": "近未来「就要…了」（時間が明示される場合にも使える）",
+        "title": "特定の日時を伴う近未来表現（もうすぐ〜する：就要…了）",
         "quick_rule": "「もうすぐ〜する」と間近に迫った事柄を表します。具体的な時間（明日、来週など）がある時は「就要…了」を用います。",
         "trap_wrong": "明天快要考试了。",
         "trap_correct": "明天就要考试了。",
@@ -3673,7 +3723,8 @@ const HSK_GRAMMAR_SAMPLES = [
         "快要",
         "吃饭了"
       ]
-    }
+    },
+    "pinyin": "jiùyào...le"
   },
   {
     "id": "hsk3_ba_sentence",
@@ -3682,21 +3733,21 @@ const HSK_GRAMMAR_SAMPLES = [
     "formula": "[Chủ ngữ] + 把 + [Tân ngữ] + [V] + [Kết quả/Thành phần khác]",
     "localizations": {
       "vi": {
-        "title": "Câu chữ 把: Tác động xử lý vật (S + 把 + O + V + Kết quả)",
+        "title": "Câu chữ 把: Tác động xử lý vật (把字句)",
         "quick_rule": "Dùng để diễn tả chủ ngữ tác động làm thay đổi vị trí, trạng thái của một vật cụ thể.",
         "trap_wrong": "我把书看了。",
         "trap_correct": "我把书看完了。",
         "trap_why": "Động từ trong câu chữ 把 không bao giờ đứng trơ trọi một mình, phải có bổ ngữ kết quả, '了', hoặc phương hướng."
       },
       "en": {
-        "title": "The 把 (bǎ) disposal sentence structure",
+        "title": "The 把 (bǎ) Disposal Sentence Structure",
         "quick_rule": "Focuses on how an action affects or handles a specific object and what happens to it.",
         "trap_wrong": "我把书看了。",
         "trap_correct": "我把书看完了。",
         "trap_why": "The verb in a 把 sentence cannot stand bare; it requires an outcome, completion marker, or direction."
       },
       "ja": {
-        "title": "処置を表す「把」構文（〜を…する）",
+        "title": "処置を表す「把」構文（目的語を〜する）",
         "quick_rule": "特定の対象に対して働きかけ、その結果や位置の変化をもたらすときに用います。",
         "trap_wrong": "我把书看了。",
         "trap_correct": "我把书看完了。",
@@ -3842,7 +3893,8 @@ const HSK_GRAMMAR_SAMPLES = [
         "门",
         "关上"
       ]
-    }
+    },
+    "pinyin": "bǎ"
   },
   {
     "id": "hsk3_bei_passive",
@@ -3851,21 +3903,21 @@ const HSK_GRAMMAR_SAMPLES = [
     "formula": "[Chủ ngữ] + 被 + (Tác nhân) + [V] + (Kết quả/了)",
     "localizations": {
       "vi": {
-        "title": "Câu bị động chữ 被: Bị / Được tác động (S + 被 + Tác nhân + V)",
+        "title": "Câu bị động chữ 被: Bị / Được tác động (被字句)",
         "quick_rule": "Dùng để diễn đạt chủ ngữ là nạn nhân hoặc tiếp nhận hành động (thường mang nghĩa không may mắn).",
         "trap_wrong": "蛋糕不被他吃了。",
         "trap_correct": "蛋糕没被他吃。",
         "trap_why": "Phủ định của câu chữ 被 dùng '没' hoặc '没有' đặt trước '被', không dùng '不'."
       },
       "en": {
-        "title": "Passive voice with 被 (bèi)",
+        "title": "Passive Voice with 被 (bèi)",
         "quick_rule": "Expresses that the subject is acted upon by an agent (often with adverse consequences).",
         "trap_wrong": "蛋糕不被他吃了。",
         "trap_correct": "蛋糕没被他吃。",
         "trap_why": "Negate 被 passive sentences with 没/没有 placed BEFORE 被, never 不."
       },
       "ja": {
-        "title": "受身（パッシブ）を表す「被」構文（〜に…される）",
+        "title": "受身を表す「被」構文（〜に…される）",
         "quick_rule": "主語が動作を受ける受身文を作ります。好ましくない事態に用いられることが多いです。",
         "trap_wrong": "蛋糕不被他吃了。",
         "trap_correct": "蛋糕没被他吃。",
@@ -4011,7 +4063,8 @@ const HSK_GRAMMAR_SAMPLES = [
         "被他",
         "吃掉了"
       ]
-    }
+    },
+    "pinyin": "bèi"
   },
   {
     "id": "hsk3_you_you",
@@ -4020,21 +4073,21 @@ const HSK_GRAMMAR_SAMPLES = [
     "formula": "[Chủ ngữ] + 又 + [Tính từ 1] + 又 + [Tính từ 2]",
     "localizations": {
       "vi": {
-        "title": "Vừa... lại vừa... (Cùng lúc có 2 đặc tính: 又...又...)",
+        "title": "Vừa... lại vừa... (Đồng thời có 2 đặc tính: 又...又...)",
         "quick_rule": "Dùng để miêu tả người hoặc sự vật đồng thời có cả 2 tính chất (cùng tốt hoặc cùng xấu).",
         "trap_wrong": "这个西瓜又大又贵。",
         "trap_correct": "这个西瓜又大又甜。",
         "trap_why": "Hai tính từ sau '又...又...' phải đồng điệu (cùng khen ngợi hoặc cùng chê bai)."
       },
       "en": {
-        "title": "Both... and... with 又……又……",
+        "title": "Both... and... (Dual characteristics: 又...又...)",
         "quick_rule": "Describes two characteristics coexisting simultaneously (both positive or both negative).",
         "trap_wrong": "这个西瓜又大又贵。",
         "trap_correct": "这个西瓜又大又甜。",
         "trap_why": "The two adjectives in 又...又... should match in sentiment (both positive or both negative)."
       },
       "ja": {
-        "title": "並列を表す「又…又…」（〜でもあり〜でもある）",
+        "title": "並列を表す「又…又…」（〜でもあり…でもある）",
         "quick_rule": "二つの性質が同時に存在することを表します（良い面同士、または悪い面同士を並べます）。",
         "trap_wrong": "这个西瓜又大又贵。",
         "trap_correct": "这个西瓜又大又甜。",
@@ -4189,7 +4242,8 @@ const HSK_GRAMMAR_SAMPLES = [
         "又大",
         "又甜"
       ]
-    }
+    },
+    "pinyin": "yòu...yòu..."
   },
   {
     "id": "hsk3_sui_ran_dan_shi",
@@ -4205,14 +4259,14 @@ const HSK_GRAMMAR_SAMPLES = [
         "trap_why": "Vế '但是' phải mang nghĩa tương phản/vượt qua trở ngại, không dùng để khẳng định thuận chiều."
       },
       "en": {
-        "title": "Although... but... with 虽然……但是……",
+        "title": "Although... but... (Contrast: 虽然...但是...)",
         "quick_rule": "Connects contrasting clauses where the second clause introduces an unexpected counterpoint.",
         "trap_wrong": "虽然下雨，但是我们不去。",
         "trap_correct": "虽然下雨，但是我们还是去了。",
         "trap_why": "The second clause must present a contrasting or unexpected result."
       },
       "ja": {
-        "title": "逆接を表す「虽然…但是…」（〜だけれども…）",
+        "title": "逆接の接続「虽然…但是…」（〜だけれども…）",
         "quick_rule": "譲歩と逆接を表し、「〜であるけれども、しかし…」と前後の対比を強調します。",
         "trap_wrong": "虽然下雨，但是我们不去。",
         "trap_correct": "虽然下雨，但是我们还是去了。",
@@ -4340,7 +4394,8 @@ const HSK_GRAMMAR_SAMPLES = [
         "但是我",
         "很高兴"
       ]
-    }
+    },
+    "pinyin": "suīrán...dànshì..."
   },
   {
     "id": "hsk3_bu_dan_er_qie",
@@ -4356,14 +4411,14 @@ const HSK_GRAMMAR_SAMPLES = [
         "trap_why": "Nếu cùng 1 chủ ngữ, chủ ngữ phải đặt TRƯỚC chữ '不但'."
       },
       "en": {
-        "title": "Not only... but also... with 不但……而且……",
+        "title": "Not only... but also... (Progression: 不但...而且...)",
         "quick_rule": "Adds an additional progressive point that reinforces the first statement.",
         "trap_wrong": "不但他会中文，而且会英语。",
         "trap_correct": "他不但会中文，而且会英语。",
         "trap_why": "When both clauses share the same subject, place the subject BEFORE 不但."
       },
       "ja": {
-        "title": "累加を表す「不但…而且…」（〜だけでなく…も）",
+        "title": "累加の接続「不但…而且…」（〜だけでなく…も）",
         "quick_rule": "前述の内容にさらに情報を付け加え、「〜だけでなく、その上…」と累加を表します。",
         "trap_wrong": "不但他会中文，而且会英语。",
         "trap_correct": "他不但会中文，而且会英语。",
@@ -4489,7 +4544,8 @@ const HSK_GRAMMAR_SAMPLES = [
         "他不但很聪明",
         "而且非常努力"
       ]
-    }
+    },
+    "pinyin": "búdàn...érqiě..."
   },
   {
     "id": "hsk3_de_degree",
@@ -4505,14 +4561,14 @@ const HSK_GRAMMAR_SAMPLES = [
         "trap_why": "Nếu có tân ngữ, bắt buộc phải lặp lại động từ trước chữ '得' (S + V + O + V + 得 + Adj)."
       },
       "en": {
-        "title": "State/Degree Complements with 得 (V + 得 + Adj)",
+        "title": "State/Degree Complements: Evaluating action (V + 得 + Adj)",
         "quick_rule": "Use 得 after a verb to evaluate or describe how well/in what manner an action is done.",
         "trap_wrong": "他说汉语得很好。",
         "trap_correct": "他说汉语说得很好。",
         "trap_why": "When an object is present, repeat the verb before 得 (S + V + O + V + 得 + Adj)."
       },
       "ja": {
-        "title": "様態補語「動詞＋得＋形容詞」（〜の仕方が…だ）",
+        "title": "様態補語（動詞＋得＋形容詞：〜の仕方が…だ）",
         "quick_rule": "動詞の後ろに「得」を置き、その動作の仕上がりや様子を評価・描写します。",
         "trap_wrong": "他说汉语得很好。",
         "trap_correct": "他说汉语说得很好。",
@@ -4640,7 +4696,8 @@ const HSK_GRAMMAR_SAMPLES = [
         "说得",
         "非常流利"
       ]
-    }
+    },
+    "pinyin": "de"
   },
   {
     "id": "hsk3_yi_bian_yi_bian",
@@ -4649,14 +4706,14 @@ const HSK_GRAMMAR_SAMPLES = [
     "formula": "[Chủ ngữ] + 一边 + [V1]，一边 + [V2]",
     "localizations": {
       "vi": {
-        "title": "Vừa làm việc này vừa làm việc kia: 一边...一边...",
+        "title": "Vừa làm việc này vừa làm việc kia (Đồng thời: 一边...一边...)",
         "quick_rule": "Dùng để diễn tả một người đang đồng thời thực hiện hai hành động song song.",
         "trap_wrong": "我一边睡觉一边吃饭。",
         "trap_correct": "我一边吃饭一边看电视。",
         "trap_why": "Hai hành động phải có tính khả thi diễn ra cùng lúc ngoài thực tế."
       },
       "en": {
-        "title": "Doing two actions simultaneously with 一边……一边……",
+        "title": "Simultaneous Actions: While doing... (一边...一边...)",
         "quick_rule": "Expresses doing two activities at the exact same time.",
         "trap_wrong": "我一边睡觉一边吃饭。",
         "trap_correct": "我一边吃饭一边看电视。",
@@ -4791,7 +4848,8 @@ const HSK_GRAMMAR_SAMPLES = [
         "一边听音乐",
         "一边做作业"
       ]
-    }
+    },
+    "pinyin": "yìbiān...yìbiān..."
   },
   {
     "id": "hsk3_yue_yue",
@@ -4800,21 +4858,21 @@ const HSK_GRAMMAR_SAMPLES = [
     "formula": "[Chủ ngữ] + 越 + [V1] + 越 + [Tính từ / V2]",
     "localizations": {
       "vi": {
-        "title": "Càng... càng... (Tương quan tăng dần: 越...越...)",
+        "title": "Càng... càng... (Tương quan tỉ lệ thuận: 越...越...)",
         "quick_rule": "Dùng để diễn tả một mức độ tăng tiến theo sự gia tăng của hành động.",
         "trap_wrong": "他越学越很好。",
         "trap_correct": "他越学越好。",
         "trap_why": "Sau '越...越...' không dùng các phó từ chỉ mức độ như '很', '非常'."
       },
       "en": {
-        "title": "The more... the more... with 越……越……",
+        "title": "The more... the more... (Proportional change: 越...越...)",
         "quick_rule": "Describes two conditions changing proportionally in degree.",
         "trap_wrong": "他越学越很好。",
         "trap_correct": "他越学越好。",
         "trap_why": "Do not use degree adverbs like 很 or 非常 after 越."
       },
       "ja": {
-        "title": "相関を表す「越…越…」（〜すればするほど…）",
+        "title": "相関変化「越…越…」（〜すればするほど…）",
         "quick_rule": "ある条件の深まりに比例して、もう一方の程度が増すことを表します。",
         "trap_wrong": "他越学越很好。",
         "trap_correct": "他越学越好。",
@@ -4942,7 +5000,8 @@ const HSK_GRAMMAR_SAMPLES = [
         "越下",
         "越大了"
       ]
-    }
+    },
+    "pinyin": "yuè...yuè..."
   },
   {
     "id": "hsk3_chu_le_yi_wai",
@@ -4951,21 +5010,21 @@ const HSK_GRAMMAR_SAMPLES = [
     "formula": "除了 + [N/V] + 以外，[Chủ ngữ] + 还/都 + [V]",
     "localizations": {
       "vi": {
-        "title": "Ngoài... ra (Còn... / Đều...): 除了...以外",
+        "title": "Ngoài... ra (Bổ sung hoặc loại trừ: 除了...以外)",
         "quick_rule": "Đi với '还/也' mang nghĩa bổ sung (ngoài A còn có B); đi với '都' mang nghĩa loại trừ (trừ A ra tất cả đều...).",
         "trap_wrong": "除了他以外，大家也去了。",
         "trap_correct": "除了他以外，大家都去了。",
         "trap_why": "Nghĩa loại trừ (ai cũng... trừ anh ấy) phải dùng '都', không dùng '也'."
       },
       "en": {
-        "title": "Besides / Except with 除了……以外",
+        "title": "Besides / Except for (Inclusion or Exclusion: 除了...以外)",
         "quick_rule": "Use with 还/也 for inclusion (in addition to A, also B); use with 都 for exclusion (except for A, all...).",
         "trap_wrong": "除了他以外，大家也去了。",
         "trap_correct": "除了他以外，大家都去了。",
         "trap_why": "When indicating exclusion (everyone went EXCEPT him), pair with 都, not 也."
       },
       "ja": {
-        "title": "除外・付加を表す「除了…以外」（〜のほかに／〜を除いて）",
+        "title": "付加と除外「除了…以外」（〜のほかに／〜を除いて）",
         "quick_rule": "「还／也」と呼応して「〜のほかに…も」（付加）、「都」と呼応して「〜を除いて全て」（除外）を表します。",
         "trap_wrong": "除了他以外，大家也去了。",
         "trap_correct": "除了他以外，大家都去了。",
@@ -5091,7 +5150,8 @@ const HSK_GRAMMAR_SAMPLES = [
         "除了英语以外",
         "我还会说汉语"
       ]
-    }
+    },
+    "pinyin": "chúle...yǐwài"
   },
   {
     "id": "hsk3_yi_jiu",
@@ -5100,14 +5160,14 @@ const HSK_GRAMMAR_SAMPLES = [
     "formula": "[Chủ ngữ] + 一 + [V1]，就 + [V2]",
     "localizations": {
       "vi": {
-        "title": "Hễ... là liền... (Hành động vừa xảy ra là kế tiếp ngay: 一...就...)",
+        "title": "Hễ... là liền... (Hành động kế tiếp ngay: 一...就...)",
         "quick_rule": "Dùng để diễn tả hành động 2 xảy ra ngay lập tức sau khi hành động 1 diễn ra.",
         "trap_wrong": "我下班一回家就。",
         "trap_correct": "我一下班就回家。",
         "trap_why": "'一' đứng trước động từ 1 (tan sở), '就' đứng trước động từ 2 (về nhà)."
       },
       "en": {
-        "title": "As soon as... then... with 一……就……",
+        "title": "As soon as... then... (Immediate action: 一...就...)",
         "quick_rule": "Indicates that action 2 occurs immediately upon the completion of action 1.",
         "trap_wrong": "我下班一回家就。",
         "trap_correct": "我一下班就回家。",
@@ -5242,7 +5302,8 @@ const HSK_GRAMMAR_SAMPLES = [
         "一回到家",
         "就睡觉了"
       ]
-    }
+    },
+    "pinyin": "yī...jiù..."
   }
 ];
 
