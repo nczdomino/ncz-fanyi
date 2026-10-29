@@ -647,10 +647,23 @@
     });
 
     if (!list.length) {
+      if (activeState.query) {
+        return `
+          <div style="grid-column:1/-1; text-align:center; padding:50px 20px; color:var(--text-muted);">
+            <div style="font-size:32px; margin-bottom:8px;">🔍</div>
+            <div style="font-size:15px; font-weight:600;">${t('grammarNoResults')}</div>
+          </div>
+        `;
+      }
       return `
-        <div style="grid-column:1/-1; text-align:center; padding:50px 20px; color:var(--text-muted);">
-          <div style="font-size:32px; margin-bottom:8px;">🔍</div>
-          <div style="font-size:15px; font-weight:600;">${t('grammarNoResults')}</div>
+        <div style="grid-column:1/-1; text-align:center; padding:60px 24px; background:var(--bg-surface); border:1.5px dashed var(--border-color); border-radius:18px;">
+          <div style="font-size:48px; margin-bottom:14px;">📚</div>
+          <div style="font-size:18px; font-weight:800; color:var(--text-primary); margin-bottom:8px;">
+            ${currentLoc === 'ja' ? '文法データは現在空です' : (currentLoc === 'en' ? 'No Grammar Data Available' : 'Chưa có dữ liệu ngữ pháp')}
+          </div>
+          <div style="font-size:14px; color:var(--text-secondary); max-width:480px; margin:0 auto; line-height:1.6;">
+            ${currentLoc === 'ja' ? 'すべての旧データが正常に削除されました。新しい文法システムをいつでも構築・登録できます。' : (currentLoc === 'en' ? 'All previous grammar records have been cleared cleanly. The system is ready for your new dataset.' : 'Toàn bộ dữ liệu ngữ pháp cũ đã được xoá sạch sẽ. Hệ thống đã sẵn sàng để bạn nạp bộ dữ liệu mới.')}
+          </div>
         </div>
       `;
     }
@@ -705,12 +718,13 @@
 
     // Catalog Mode: Minimalist, Fast, No Category, No HSK 2.0/3.0
     const levels = grammarService.getGrammarLevels();
+    const activeLevels = levels.filter(l => l.count > 0);
 
     const levelPillsHtml = `
       <div class="grammar-filter-chip ${gState.level === 'all' ? 'active' : ''}" onclick="setGrammarFilterLevel('all')">
         ${t('grammarAllLevels')}
       </div>
-      ${levels.map(l => `
+      ${activeLevels.map(l => `
         <div class="grammar-filter-chip ${gState.level === l.level ? 'active' : ''}" onclick="setGrammarFilterLevel('${l.level}')">
           ${l.level} (${l.count})
         </div>

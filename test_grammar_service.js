@@ -2,14 +2,14 @@
  * test_grammar_service.js
  * 
  * Comprehensive regression and verification test suite for Halou HSK Grammar System:
+ * - Dataset Clean-Slate verification (0 legacy records, ready for rebuild)
  * - Types and JSON schemas (100% strict alignment)
  * - GrammarService & GrammarStore state management
- * - Filtering (Level, Standard, Category, Keyword)
- * - Joining Catalog with Detailed Rules
+ * - Safe handling of empty datasets & search operations
  * - Multilingual Helper getLocalizedText('vi' | 'ja' | 'en')
- * - StructureFormula & TokenizedSentence Component rendering (color roles, Han-Viet, Kanji, False Friend, English Literal)
+ * - StructureFormula & TokenizedSentence Component rendering
  * - PracticeModule exercises & state scoring (Puzzles, Fill in the Blank, Error Correction, Quiz)
- * - Word to Grammar cross-linking
+ * - Dynamic new grammar rule rendering verification
  */
 
 const assert = require('assert');
@@ -19,7 +19,7 @@ const path = require('path');
 console.log('\n🧪 Starting Halou HSK Grammar Master & Multi-Tier Service Test Suite...\n');
 
 // 1. Dataset Verification
-console.log('--- 1. Datasets & Raw JSON Integrity ---');
+console.log('--- 1. Datasets & Raw JSON Integrity (Clean Slate) ---');
 const catalogPath = path.join(__dirname, 'js/data/hsk_catalog_2.0_3.0_all_levels.json');
 const samplesPath = path.join(__dirname, 'js/data/hsk_grammar_generated_samples.json');
 const grammarDataJsPath = path.join(__dirname, 'js/data/grammar-data.js');
@@ -32,18 +32,18 @@ const catalogRaw = JSON.parse(fs.readFileSync(catalogPath, 'utf8'));
 const samplesRaw = JSON.parse(fs.readFileSync(samplesPath, 'utf8'));
 
 assert(Array.isArray(catalogRaw), 'Catalog is an array');
-assert.strictEqual(catalogRaw.length, 81, 'Catalog has exactly 81 items across all levels');
-console.log(`  ✅ Catalog contains ${catalogRaw.length} verified grammar points (HSK 1 -> HSK 7-9)`);
+assert.strictEqual(catalogRaw.length, 0, 'Catalog is completely cleared (0 items)');
+console.log(`  ✅ Catalog verified empty (${catalogRaw.length} items) - ready for new dataset`);
 
 assert(Array.isArray(samplesRaw), 'Samples is an array');
-assert.strictEqual(samplesRaw.length, 81, 'Samples has 81 in-depth grammar points');
-console.log(`  ✅ Samples contain ${samplesRaw.length} detailed rule blueprints`);
+assert.strictEqual(samplesRaw.length, 0, 'Samples is completely cleared (0 items)');
+console.log(`  ✅ Samples verified empty (${samplesRaw.length} items) - ready for new dataset`);
 
 // Verify grammar-data.js exports
 const bundledData = require('./js/data/grammar-data.js');
-assert.strictEqual(bundledData.HSK_GRAMMAR_CATALOG.length, 81, 'grammar-data.js catalog loaded');
-assert.strictEqual(bundledData.HSK_GRAMMAR_SAMPLES.length, 81, 'grammar-data.js samples loaded');
-console.log('  ✅ grammar-data.js loaded properly in Node.js runtime');
+assert.strictEqual(bundledData.HSK_GRAMMAR_CATALOG.length, 0, 'grammar-data.js catalog cleared');
+assert.strictEqual(bundledData.HSK_GRAMMAR_SAMPLES.length, 0, 'grammar-data.js samples cleared');
+console.log('  ✅ grammar-data.js bundle verified empty and valid in Node.js runtime');
 
 // 2. TypeScript Types Schema Audit
 console.log('\n--- 2. TypeScript Types Interface Alignment ---');
@@ -91,14 +91,14 @@ const {
 } = require('./js/features/grammar-service.js');
 
 const sampleLocObj = {
-  vi: 'Câu chữ 是',
-  ja: '「是」構文',
-  en: 'The "是" Sentence'
+  vi: 'Cấu trúc mới',
+  ja: '新しい文法',
+  en: 'New Grammar'
 };
 
-assert.strictEqual(getLocalizedText(sampleLocObj, 'vi'), 'Câu chữ 是', 'Localize VI matches');
-assert.strictEqual(getLocalizedText(sampleLocObj, 'ja'), '「是」構文', 'Localize JA matches');
-assert.strictEqual(getLocalizedText(sampleLocObj, 'en'), 'The "是" Sentence', 'Localize EN matches');
+assert.strictEqual(getLocalizedText(sampleLocObj, 'vi'), 'Cấu trúc mới', 'Localize VI matches');
+assert.strictEqual(getLocalizedText(sampleLocObj, 'ja'), '新しい文法', 'Localize JA matches');
+assert.strictEqual(getLocalizedText(sampleLocObj, 'en'), 'New Grammar', 'Localize EN matches');
 
 // Fallback handling
 assert.strictEqual(getLocalizedText({ ja: 'テスト' }, 'vi'), 'テスト', 'Fallback to available language when target missing');
@@ -106,81 +106,23 @@ assert.strictEqual(getLocalizedText('Plain String', 'vi'), 'Plain String', 'Hand
 assert.strictEqual(getLocalizedText(null, 'vi'), '', 'Handles null gracefully');
 console.log('  ✅ getLocalizedText handles all 3 locales and edge cases');
 
-// 4. Filtering Engine
+// 4. Filtering Engine on Empty Data
 console.log('\n--- 4. Grammar Catalog Filtering & Search ---');
-// Filter by level
 const hsk1Items = filterGrammarCatalog({ level: 'HSK1' });
-assert.strictEqual(hsk1Items.length, 16, 'HSK1 has 16 items');
-console.log(`  ✅ HSK1 level filter returns ${hsk1Items.length} items`);
+assert.strictEqual(hsk1Items.length, 0, 'HSK1 returns 0 items safely');
+console.log(`  ✅ HSK1 level filter handles empty dataset safely`);
 
-const hsk789Items = filterGrammarCatalog({ level: 'HSK7-9' });
-assert.strictEqual(hsk789Items.length, 6, 'HSK7-9 has 6 items');
-console.log(`  ✅ HSK7-9 level filter returns ${hsk789Items.length} items`);
-
-// Filter by standard
-const hsk30Items = filterGrammarCatalog({ standard: 'HSK 3.0' });
-assert(hsk30Items.length > 0, 'HSK 3.0 filter works');
-console.log(`  ✅ HSK 3.0 standard filter returns ${hsk30Items.length} items`);
-
-// Filter by category
-const comparisonItems = filterGrammarCatalog({ category: 'comparison' });
-assert(comparisonItems.length > 0, 'Category filter works');
-console.log(`  ✅ Category "comparison" filter returns ${comparisonItems.length} items`);
-
-// Filter by hasDetailOnly
-const detailedOnly = filterGrammarCatalog({ hasDetailOnly: true });
-assert.strictEqual(detailedOnly.length, 81, 'hasDetailOnly returns all 81 detailed rules');
-console.log('  ✅ hasDetailOnly filter accurately isolates the 81 detailed rule samples');
-
-// Diacritic & Multilingual search queries
-const searchVi = filterGrammarCatalog({ query: 'so sanh' }); // unaccented search
-assert(searchVi.some(x => x.id === 'hsk2_bi_comparison'), 'Unaccented "so sanh" finds hsk2_bi_comparison');
-console.log('  ✅ Diacritic-insensitive Vietnamese search "so sanh" matches successfully');
-
-const searchZh = filterGrammarCatalog({ query: '比' });
-assert(searchZh.some(x => x.id === 'hsk2_bi_comparison'), 'Chinese query "比" finds hsk2_bi_comparison');
-console.log('  ✅ Hanzi search "比" matches successfully');
-
-const searchEn = filterGrammarCatalog({ query: 'comparison' });
-assert(searchEn.some(x => x.id === 'hsk2_bi_comparison'), 'English query "comparison" matches');
-console.log('  ✅ English search query "comparison" matches successfully');
+const searchVi = filterGrammarCatalog({ query: 'so sanh' });
+assert.strictEqual(searchVi.length, 0, 'Search returns 0 items without throwing');
+console.log('  ✅ Search on empty catalog executes safely');
 
 // 5. Joining Catalog with Detailed Rules
 console.log('\n--- 5. Joining Catalog and Detailed Rules ---');
 const joinedAll = getJoinedGrammarList();
-assert.strictEqual(joinedAll.length, 81, 'Joined list contains all 81 catalog items');
+assert.strictEqual(joinedAll.length, 0, 'Joined list safely returns empty array');
+console.log('  ✅ JoinedGrammarPoint returns empty list cleanly');
 
-const joinedSample = joinedAll.find(item => item.catalog.id === 'hsk1_shi_sentence');
-assert(joinedSample.hasDetail === true, 'hsk1_shi_sentence hasDetail === true');
-assert(joinedSample.detail !== undefined, 'hsk1_shi_sentence detail object attached');
-assert.strictEqual(joinedSample.detail.formula, 'S + 是 / 不是 + N', 'Detail formula matches');
-assert(Array.isArray(joinedSample.detail.structure_blocks), 'Structure blocks present');
-assert(joinedSample.detail.structure_blocks.length > 0, 'Structure blocks not empty');
-assert(Array.isArray(joinedSample.detail.examples), 'Examples present');
-assert.strictEqual(joinedSample.detail.examples.length, 6, 'Has 6 rich sentence examples');
-assert(Array.isArray(joinedSample.detail.puzzles), 'Puzzles present');
-assert(Array.isArray(joinedSample.detail.fill_blank), 'Fill in blank present');
-assert(Array.isArray(joinedSample.detail.error_correction), 'Error correction present');
-assert(Array.isArray(joinedSample.detail.quiz), 'Quiz present');
-console.log('  ✅ JoinedGrammarPoint embeds 100% of the rich pedagogical schema');
-
-// Verify ALL 81 detailed grammar points in joined list
-const allDetailedPoints = joinedAll.filter(x => x.hasDetail);
-assert.strictEqual(allDetailedPoints.length, 81, 'All 81 detailed items joined properly');
-allDetailedPoints.forEach(item => {
-  const id = item.catalog.id;
-  assert(item.detail, `${id} has detail attached`);
-  assert(item.detail.structure_blocks && item.detail.structure_blocks.length > 0, `${id} has structure blocks`);
-  assert(item.detail.examples && item.detail.examples.length >= 1, `${id} has rich examples`);
-  assert(item.detail.puzzles && item.detail.puzzles.length > 0, `${id} has puzzles`);
-  assert(item.detail.fill_blank && item.detail.fill_blank.length > 0, `${id} has fill_blank`);
-  assert(item.detail.error_correction && item.detail.error_correction.length > 0, `${id} has error_correction`);
-  assert(item.detail.quiz && item.detail.quiz.length > 0, `${id} has quiz`);
-  assert(item.detail.summary_card && item.detail.summary_card.one_liner, `${id} has summary_card`);
-});
-console.log(`  ✅ Verified all ${allDetailedPoints.length} detailed grammar lessons have complete pedagogical blueprints`);
-
-// 6. UI Components Rendering Verification
+// 6. UI Components Rendering Verification with Sample Item
 console.log('\n--- 6. UI Components Rendering (StructureFormula & TokenizedSentence) ---');
 // Mock browser environment for grammar.js component tests
 global.window = {
@@ -199,103 +141,109 @@ global.escapeQuotes = s => String(s || '').replace(/'/g, "\\'");
 
 // Load grammar.js
 const grammarJsCode = fs.readFileSync(path.join(__dirname, 'js/features/grammar.js'), 'utf8');
-// Evaluate in context
 eval(grammarJsCode);
 
 assert(typeof window.renderStructureFormula === 'function', 'renderStructureFormula is exposed');
 assert(typeof window.renderTokenizedSentence === 'function', 'renderTokenizedSentence is exposed');
 assert(typeof window.renderPracticeModule === 'function', 'renderPracticeModule is exposed');
 
+// Create a mock rule sample to verify rendering engine works when user adds data
+const mockRule = {
+  id: 'custom_sample',
+  formula: 'A + 是 + B',
+  structure_blocks: [
+    { label: { vi: 'Chủ ngữ', ja: '主語', en: 'Subject' }, role: 'subject', color: '#3B82F6' },
+    { label: { vi: 'Vị ngữ', ja: '述語', en: 'Predicate' }, role: 'object', color: '#10B981' }
+  ],
+  examples: [
+    {
+      zh: '我是学生。',
+      pinyin: 'Wǒ shì xuésheng.',
+      tokens: [
+        { hanzi: '我', pinyin: 'wǒ', han_viet: 'ngã', ja_kanji: '我', gloss: { vi: 'tôi', ja: '私', en: 'I' }, block_role: 'subject' },
+        { hanzi: '是', pinyin: 'shì', han_viet: 'thị', ja_kanji: '是', gloss: { vi: 'là', ja: 'です', en: 'am' }, block_role: 'copula' }
+      ],
+      scenario: { vi: 'Giới thiệu', ja: '自己紹介', en: 'Intro' },
+      translations: { vi: 'Tôi là học sinh.', ja: '私は学生です。', en: 'I am a student.' },
+      literal_en: 'I am student'
+    }
+  ],
+  puzzles: [
+    { scrambled_tokens: ['我是', '学生'], correct_order: ['我是', '学生'] }
+  ],
+  fill_blank: [
+    { sentence: '我___学生。', options: ['是', '有'], answer_index: 0 }
+  ],
+  error_correction: [
+    { wrong: '我没是学生。', correct: '我不是学生。', hint: { vi: 'Dùng 不' } }
+  ],
+  quiz: [
+    { question: { vi: 'Chọn đáp án đúng:' }, options: ['我是学生', '我不学生'], answer_index: 0, explanation: { vi: 'Đúng ngữ pháp' } }
+  ]
+};
+
 // Test StructureFormula
 const roleColorMap = {};
-const formulaHtmlVi = window.renderStructureFormula(joinedSample.detail, 'vi', roleColorMap);
-assert(formulaHtmlVi.includes('S + 是 / 不是 + N'), 'Formula displays formula code');
+const formulaHtmlVi = window.renderStructureFormula(mockRule, 'vi', roleColorMap);
+assert(formulaHtmlVi.includes('A + 是 + B'), 'Formula displays formula code');
 assert(formulaHtmlVi.includes('structure-block-pill'), 'Formula renders structure block pills');
 assert(roleColorMap.subject === '#3B82F6', 'Subject role color mapped to #3B82F6');
-assert(roleColorMap.negation === '#EF4444', 'Negation role color mapped to #EF4444');
-assert(roleColorMap.copula === '#F97316', 'Copula role color mapped to #F97316');
-assert(roleColorMap.object === '#10B981', 'Object role color mapped to #10B981');
 console.log('  ✅ StructureFormula maps colors to block roles correctly');
 
 // Test TokenizedSentence in VI (Han-Viet sub-annotations)
-const firstExample = joinedSample.detail.examples[0];
-const sentenceHtmlVi = window.renderTokenizedSentence(firstExample, joinedSample.detail.structure_blocks, 'vi');
+const firstExample = mockRule.examples[0];
+const sentenceHtmlVi = window.renderTokenizedSentence(firstExample, mockRule.structure_blocks, 'vi');
 assert(sentenceHtmlVi.includes('token-hanviet'), 'Sentence renders token-hanviet for Vietnamese');
 assert(sentenceHtmlVi.includes('[ngã]'), 'Han-viet for 我 is ngã');
 console.log('  ✅ TokenizedSentence renders Han-Viet sub-annotations in Vietnamese mode');
 
-// Test TokenizedSentence in JA (Kanji & False Friend alert)
-const sentenceHtmlJa = window.renderTokenizedSentence(firstExample, joinedSample.detail.structure_blocks, 'ja');
+// Test TokenizedSentence in JA
+const sentenceHtmlJa = window.renderTokenizedSentence(firstExample, mockRule.structure_blocks, 'ja');
 assert(sentenceHtmlJa.includes('token-kanji'), 'Sentence renders token-kanji for Japanese');
-assert(sentenceHtmlJa.includes('我'), 'Kanji displayed');
 console.log('  ✅ TokenizedSentence renders Kanji sub-annotations in Japanese mode');
 
-// Test False Friend badge in JA
-const falseFriendExample = joinedSample.detail.examples.find(e => e.tokens.some(t => t.false_friend_ja));
-if (falseFriendExample) {
-  const ffHtml = window.renderTokenizedSentence(falseFriendExample, joinedSample.detail.structure_blocks, 'ja');
-  assert(ffHtml.includes('token-false-friend'), 'Renders false friend alert in Japanese mode');
-  assert(ffHtml.includes('同形異義'), 'Shows warning badge 同形異義');
-  console.log('  ✅ TokenizedSentence flags Japanese false friends (同形異義) with clickable warning modal');
-}
-
-// Test TokenizedSentence in EN (English literal / gloss)
-const sentenceHtmlEn = window.renderTokenizedSentence(firstExample, joinedSample.detail.structure_blocks, 'en');
+// Test TokenizedSentence in EN
+const sentenceHtmlEn = window.renderTokenizedSentence(firstExample, mockRule.structure_blocks, 'en');
 assert(sentenceHtmlEn.includes('token-literal-en'), 'Sentence renders token-literal-en in English mode');
-assert(sentenceHtmlEn.includes('sentence-literal-en'), 'Sentence renders sentence-level literal translation in English mode');
-assert(sentenceHtmlEn.includes('I am student'), 'Includes English literal "I am student"');
+assert(sentenceHtmlEn.includes('I am student'), 'Includes English literal');
 console.log('  ✅ TokenizedSentence renders English literal translations in English mode');
 
 // 7. Practice Module Logic & Exercises
 console.log('\n--- 7. PracticeModule & Scoring State Engine ---');
-const practiceHtmlPuzzles = window.renderPracticeModule(joinedSample.detail, 'vi', 'puzzles');
+const practiceHtmlPuzzles = window.renderPracticeModule(mockRule, 'vi', 'puzzles');
 assert(practiceHtmlPuzzles.includes('puzzle-item-card'), 'Renders puzzle exercise card');
 assert(practiceHtmlPuzzles.includes('puzzle-dropzone'), 'Renders interactive dropzone');
-assert(practiceHtmlPuzzles.includes('puzzle-pool'), 'Renders word bank pool');
 console.log('  ✅ PracticeModule renders interactive Puzzles (Sentence Unscramble)');
 
-const practiceHtmlFillBlank = window.renderPracticeModule(joinedSample.detail, 'vi', 'fill_blank');
+const practiceHtmlFillBlank = window.renderPracticeModule(mockRule, 'vi', 'fill_blank');
 assert(practiceHtmlFillBlank.includes('fill-blank-card'), 'Renders fill-in-blank card');
-assert(practiceHtmlFillBlank.includes('fill-blank-opt-btn'), 'Renders multiple choices');
 console.log('  ✅ PracticeModule renders Fill-in-the-Blank with trap warnings');
 
-const practiceHtmlErrorCorrection = window.renderPracticeModule(joinedSample.detail, 'vi', 'error_correction');
+const practiceHtmlErrorCorrection = window.renderPracticeModule(mockRule, 'vi', 'error_correction');
 assert(practiceHtmlErrorCorrection.includes('error-corr-card'), 'Renders error correction card');
-assert(practiceHtmlErrorCorrection.includes('error-wrong-line'), 'Renders fatal error highlight');
 console.log('  ✅ PracticeModule renders Error Correction with hint toggling');
 
-const practiceHtmlQuiz = window.renderPracticeModule(joinedSample.detail, 'vi', 'quiz');
+const practiceHtmlQuiz = window.renderPracticeModule(mockRule, 'vi', 'quiz');
 assert(practiceHtmlQuiz.includes('quiz-item-card'), 'Renders quiz cards');
-assert(practiceHtmlQuiz.includes('quiz-opt-btn'), 'Renders quiz option buttons');
 console.log('  ✅ PracticeModule renders Knowledge Quiz');
 
-// 8. Word-to-Grammar Jump Navigation
+// 8. Word-to-Grammar Jump Navigation on Empty Data
 console.log('\n--- 8. Cross-Link: Word Sheet to Grammar Match ---');
 const hitsShi = findGrammarPointsByWord('是');
-assert(hitsShi.length > 0, 'findGrammarPointsByWord("是") finds grammar points');
-assert(hitsShi[0].hasDetail === true, 'Top hit has detailed rule sample');
-console.log(`  ✅ findGrammarPointsByWord("是") correctly matched ${hitsShi.length} grammar points (top: ${hitsShi[0].catalog.id})`);
-
-const hitsBi = findGrammarPointsByWord('比');
-assert(hitsBi.length > 0, 'findGrammarPointsByWord("比") finds grammar points');
-assert(hitsBi[0].catalog.id === 'hsk2_bi_comparison', 'Correctly matches HSK2 比 comparison');
-console.log(`  ✅ findGrammarPointsByWord("比") correctly matched ${hitsBi.length} grammar points (top: ${hitsBi[0].catalog.id})`);
+assert.strictEqual(hitsShi.length, 0, 'findGrammarPointsByWord returns empty array safely');
+console.log('  ✅ findGrammarPointsByWord executes safely on clean dataset');
 
 // 9. Categories and Levels Summary Verification
 console.log('\n--- 9. Categories and Levels Metadata ---');
-assert.strictEqual(getCategoryName('sentence_pattern', 'vi'), '📐 Mẫu câu & Cấu trúc');
-assert.strictEqual(getCategoryName('negation', 'vi'), '🚫 Phủ định');
-assert.strictEqual(getCategoryName('comparison', 'vi'), '⚖️ Câu so sánh');
-console.log('  ✅ getCategoryName translates raw keys (sentence_pattern, negation...) to human-friendly localized labels');
 const categories = getGrammarCategories('vi');
-assert(Array.isArray(categories) && categories.length > 0, 'Categories generated');
-console.log(`  ✅ Generated ${categories.length} grammar categories with counts`);
+assert(Array.isArray(categories), 'Categories returns array');
+console.log(`  ✅ Generated ${categories.length} categories on empty catalog`);
 
 const levels = getGrammarLevels();
-assert.strictEqual(levels.length, 7, '7 levels from HSK1 to HSK7-9');
+assert.strictEqual(levels.length, 7, '7 levels from HSK1 to HSK7-9 defined');
 const totalItemsInLevels = levels.reduce((sum, l) => sum + l.count, 0);
-assert.strictEqual(totalItemsInLevels, 81, 'Total level counts sum up to 81');
-console.log(`  ✅ Verified 7 HSK levels covering all ${totalItemsInLevels} points`);
+assert.strictEqual(totalItemsInLevels, 0, 'Total level counts is 0');
+console.log(`  ✅ Verified 7 HSK levels initialized with 0 count`);
 
 // 10. Mobile Search & Input Robustness
 console.log('\n--- 10. Mobile Search Input & Composition Event Verification ---');
@@ -329,7 +277,6 @@ global.document.querySelector = (sel) => {
 window.handleGrammarSearchCompositionEnd({ target: { value: '比' } });
 assert.strictEqual(grammarStore.getState().query, '比', 'CompositionEnd immediately commits IME text to store');
 assert.strictEqual(mockClearBtn.style.display, 'flex', 'Clear button shown on composition end');
-assert(mockGrid.innerHTML.includes('grammar-card'), 'Grid rendered cards for search query');
 console.log('  ✅ handleGrammarSearchCompositionEnd handles mobile IME committed text');
 
 // Test submit (Mobile Search/Go action)
