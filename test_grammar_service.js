@@ -36,13 +36,13 @@ assert.strictEqual(catalogRaw.length, 81, 'Catalog has exactly 81 items across a
 console.log(`  ✅ Catalog contains ${catalogRaw.length} verified grammar points (HSK 1 -> HSK 7-9)`);
 
 assert(Array.isArray(samplesRaw), 'Samples is an array');
-assert.strictEqual(samplesRaw.length, 67, 'Samples has 67 in-depth grammar points');
+assert.strictEqual(samplesRaw.length, 81, 'Samples has 81 in-depth grammar points');
 console.log(`  ✅ Samples contain ${samplesRaw.length} detailed rule blueprints`);
 
 // Verify grammar-data.js exports
 const bundledData = require('./js/data/grammar-data.js');
 assert.strictEqual(bundledData.HSK_GRAMMAR_CATALOG.length, 81, 'grammar-data.js catalog loaded');
-assert.strictEqual(bundledData.HSK_GRAMMAR_SAMPLES.length, 67, 'grammar-data.js samples loaded');
+assert.strictEqual(bundledData.HSK_GRAMMAR_SAMPLES.length, 81, 'grammar-data.js samples loaded');
 console.log('  ✅ grammar-data.js loaded properly in Node.js runtime');
 
 // 2. TypeScript Types Schema Audit
@@ -129,8 +129,8 @@ console.log(`  ✅ Category "comparison" filter returns ${comparisonItems.length
 
 // Filter by hasDetailOnly
 const detailedOnly = filterGrammarCatalog({ hasDetailOnly: true });
-assert.strictEqual(detailedOnly.length, 67, 'hasDetailOnly returns exactly 67 detailed rules');
-console.log('  ✅ hasDetailOnly filter accurately isolates the 67 detailed rule samples');
+assert.strictEqual(detailedOnly.length, 81, 'hasDetailOnly returns all 81 detailed rules');
+console.log('  ✅ hasDetailOnly filter accurately isolates the 81 detailed rule samples');
 
 // Diacritic & Multilingual search queries
 const searchVi = filterGrammarCatalog({ query: 'so sanh' }); // unaccented search
@@ -164,9 +164,9 @@ assert(Array.isArray(joinedSample.detail.error_correction), 'Error correction pr
 assert(Array.isArray(joinedSample.detail.quiz), 'Quiz present');
 console.log('  ✅ JoinedGrammarPoint embeds 100% of the rich pedagogical schema');
 
-// Verify ALL 67 detailed grammar points in joined list
+// Verify ALL 81 detailed grammar points in joined list
 const allDetailedPoints = joinedAll.filter(x => x.hasDetail);
-assert.strictEqual(allDetailedPoints.length, 67, 'All 67 detailed items joined properly');
+assert.strictEqual(allDetailedPoints.length, 81, 'All 81 detailed items joined properly');
 allDetailedPoints.forEach(item => {
   const id = item.catalog.id;
   assert(item.detail, `${id} has detail attached`);

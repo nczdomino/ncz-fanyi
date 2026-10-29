@@ -297,7 +297,7 @@
             </button>
             ${isDone ? (isRight ? `
               <span style="color:#059669; font-weight:700; display:flex; align-items:center; gap:4px; font-size:14px;">
-                 ${loc === 'ja' ? '正解！' : (loc === 'en' ? 'Correct!' : 'Chính xác!')}
+                ✅ ${loc === 'ja' ? '正解！' : (loc === 'en' ? 'Correct!' : 'Chính xác!')}
               </span>
             ` : `
               <span style="color:#DC2626; font-weight:600; display:flex; align-items:center; gap:4px; font-size:13px;">
@@ -384,16 +384,16 @@
 
           ${eState.showHint ? `
             <div class="explanation-box" style="margin-bottom:10px;">
-               <b>${loc === 'ja' ? 'ヒント' : (loc === 'en' ? 'Hint' : 'Gợi ý')}:</b> ${escapeHtml(hintText)}
+              💡 <b>${loc === 'ja' ? 'ヒント' : (loc === 'en' ? 'Hint' : 'Gợi ý')}:</b> ${escapeHtml(hintText)}
             </div>
           ` : ''}
 
           <div style="display:flex; gap:8px;">
             <button class="btn btn-secondary btn-sm" onclick="toggleErrorCorrectionHint(${eIdx})">
-               ${eState.showHint ? (loc === 'ja' ? 'ヒントを隠す' : 'Ẩn gợi ý') : (loc === 'ja' ? 'ヒントを見る' : 'Xem gợi ý')}
+              🔍 ${eState.showHint ? (loc === 'ja' ? 'ヒントを隠す' : 'Ẩn gợi ý') : (loc === 'ja' ? 'ヒントを見る' : 'Xem gợi ý')}
             </button>
             <button class="btn btn-primary btn-sm" onclick="revealErrorCorrection(${eIdx})">
-               ${eState.revealed ? (loc === 'ja' ? '正解を表示中' : 'Đã hiển thị đáp án') : (loc === 'ja' ? '正解を見る' : 'Xem đáp án')}
+              👁️ ${eState.revealed ? (loc === 'ja' ? '正解を表示中' : 'Đã hiển thị đáp án') : (loc === 'ja' ? '正解を見る' : 'Xem đáp án')}
             </button>
           </div>
         </div>
@@ -438,7 +438,7 @@
           ${hasAnswered ? `
             <div class="explanation-box">
               <div style="font-weight:700; color:${qState.isCorrect ? '#059669' : '#DC2626'}; margin-bottom:4px;">
-                ${qState.isCorrect ? ' ' + (loc === 'ja' ? '正解！素晴らしい！' : (loc === 'en' ? 'Correct!' : 'Chính xác!')) : '❌ ' + (loc === 'ja' ? '不正解' : (loc === 'en' ? 'Incorrect' : 'Chưa chính xác'))}
+                ${qState.isCorrect ? '✅ ' + (loc === 'ja' ? '正解！素晴らしい！' : (loc === 'en' ? 'Correct!' : 'Chính xác!')) : '❌ ' + (loc === 'ja' ? '不正解' : (loc === 'en' ? 'Incorrect' : 'Chưa chính xác'))}
               </div>
               <div>${escapeHtml(expText)}</div>
             </div>
@@ -581,7 +581,7 @@
 
     overlay.innerHTML = `
       <div class="grammar-modal-box">
-        <div style="font-size:28px; margin-bottom:8px; text-align:center;"></div>
+        <div style="font-size:28px; margin-bottom:8px; text-align:center;">⚠️</div>
         <div style="font-size:18px; font-weight:800; text-align:center; color:#DC2626; margin-bottom:12px;">
           ${loc === 'ja' ? '日中同形異義語アラート' : (loc === 'en' ? 'False Friend Warning' : 'Cảnh báo từ đồng hình khác nghĩa!')}
         </div>
@@ -589,11 +589,11 @@
           「${escapeHtml(hanzi)}」
         </div>
         <div style="background:var(--bg-muted); border-radius:12px; padding:12px 16px; margin-bottom:12px;">
-          <div style="font-weight:700; color:#B45309; font-size:13px; margin-bottom:4px;"> ${loc === 'ja' ? '日本語の意味' : 'Nghĩa trong tiếng Nhật'}:</div>
+          <div style="font-weight:700; color:#B45309; font-size:13px; margin-bottom:4px;">🇯🇵 ${loc === 'ja' ? '日本語の意味' : 'Nghĩa trong tiếng Nhật'}:</div>
           <div style="font-size:14px; color:var(--text-primary);">${escapeHtml(jaMeaning)}</div>
         </div>
         <div style="background:rgba(16, 185, 129, 0.08); border-radius:12px; padding:12px 16px; margin-bottom:16px;">
-          <div style="font-weight:700; color:#059669; font-size:13px; margin-bottom:4px;"> ${loc === 'ja' ? '中国語の意味' : 'Nghĩa trong tiếng Trung'}:</div>
+          <div style="font-weight:700; color:#059669; font-size:13px; margin-bottom:4px;">🇨🇳 ${loc === 'ja' ? '中国語の意味' : 'Nghĩa trong tiếng Trung'}:</div>
           <div style="font-size:14px; color:var(--text-primary); font-weight:600;">${escapeHtml(zhMeaning)}</div>
         </div>
         <button class="btn btn-primary" style="width:100%;" onclick="closeFalseFriendModal()">

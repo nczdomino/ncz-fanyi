@@ -264,14 +264,16 @@
         <!-- Pinyin Quiz Interactive Banner -->
         <div style="background:var(--bg-surface); border:1px solid var(--border-color); border-radius:var(--radius-xl, 18px); padding:16px 20px; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; box-shadow:0 2px 8px rgba(0,0,0,0.02);">
           <div style="display:flex; align-items:center; gap:12px;">
-            <div style="width:42px; height:42px; border-radius:50%; background:var(--accent-subtle); display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;"></div>
+            <div style="width:42px; height:42px; border-radius:50%; background:var(--accent-subtle); display:flex; align-items:center; justify-content:center; color:var(--accent); flex-shrink:0;">
+              <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke-width="1.8"/><circle cx="12" cy="12" r="5" stroke-width="1.8"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>
+            </div>
             <div>
               <div style="font-weight:700; font-size:14.5px; color:var(--text-primary);">${lang === 'vi' ? 'Kiểm tra phản xạ Pinyin & Thanh điệu' : (lang === 'ja' ? 'ピンイン・声調判定テスト' : 'Pinyin Tone Mastery Quiz')}</div>
               <div style="font-size:13px; color:var(--text-secondary); margin-top:2px;">${lang === 'vi' ? 'Thử thách chọn Pinyin chính xác của 144 thuật ngữ ngoại thương' : (lang === 'ja' ? '144の貿易専門用語のピンインと声調をテスト' : 'Challenge your pronunciation and tone recognition across 144 trade terms')}</div>
             </div>
           </div>
           <button class="bc-pinyin-action-btn" onclick="bcSwitchSubTab('pinyin-quiz')" style="padding:10px 20px; font-size:13.5px;">
-            <span>${lang === 'vi' ? 'Bắt đầu Test ngay' : (lang === 'ja' ? '今すぐテスト' : 'Start Pinyin Quiz')}</span> 
+            <span>${lang === 'vi' ? 'Bắt đầu Test ngay →' : (lang === 'ja' ? '今すぐテスト →' : 'Start Pinyin Quiz →')}</span> 
           </button>
         </div>
 
@@ -338,7 +340,9 @@
         return `
           <div class="bc-example-row">
             <div class="bc-ex-zh">
-              <span class="bc-ex-speaker" onclick="bcPlayAudio('${escapeHtml(ex.zh)}', event)" title="Nghe câu này"></span>
+              <span class="bc-ex-speaker" onclick="bcPlayAudio('${escapeQuotes(ex.zh)}', event)" title="Nghe câu này" aria-label="Phát âm">
+                <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+              </span>
               <span>${escapeHtml(ex.zh)}</span>
             </div>
             <div class="bc-ex-py">${escapeHtml(ex.pinyin)}</div>
@@ -761,22 +765,22 @@
         <!-- Rating Buttons Bar (Only visible when card is flipped) -->
         <div class="bc-srs-actions-bar ${businessState.srsIsFlipped ? 'visible' : ''}">
           <button class="bc-srs-rate-btn rate-again" onclick="bcRateSRSCard('${currentCard.id}', 'again')">
-            <span class="rate-icon"></span>
+            <span class="rate-icon">↺</span>
             <span class="rate-label">${t('bcAgain') || 'Chưa nhớ'}</span>
             <span class="rate-time">1d</span>
           </button>
           <button class="bc-srs-rate-btn rate-hard" onclick="bcRateSRSCard('${currentCard.id}', 'hard')">
-            <span class="rate-icon"></span>
+            <span class="rate-icon">⚡</span>
             <span class="rate-label">${t('bcHard') || 'Khó'}</span>
             <span class="rate-time">~2d</span>
           </button>
           <button class="bc-srs-rate-btn rate-good" onclick="bcRateSRSCard('${currentCard.id}', 'good')">
-            <span class="rate-icon"></span>
+            <span class="rate-icon">✓</span>
             <span class="rate-label">${t('bcGood') || 'Tốt'}</span>
             <span class="rate-time">~6d</span>
           </button>
           <button class="bc-srs-rate-btn rate-easy" onclick="bcRateSRSCard('${currentCard.id}', 'easy')">
-            <span class="rate-icon"></span>
+            <span class="rate-icon">★</span>
             <span class="rate-label">${t('bcEasy') || 'Rất dễ'}</span>
             <span class="rate-time">~10d</span>
           </button>
@@ -892,9 +896,12 @@
         <!-- Speaker Prompt Bubble -->
         <div class="bc-dialogue-card">
           <div class="bc-dialogue-speaker">
-            <span class="bc-avatar"></span>
+            <span class="bc-avatar"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg></span>
             <span class="bc-speaker-role">${escapeHtml(getLocText(currentStep.speakerRole, lang))}</span>
-            <button class="bc-mini-speaker" onclick="bcPlayAudio('${escapeHtml(currentStep.promptZh)}', event)"> Nghe</button>
+            <button class="bc-mini-speaker" onclick="bcPlayAudio('${escapeQuotes(currentStep.promptZh)}', event)">
+              <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+              <span>Nghe</span>
+            </button>
           </div>
           <div class="bc-dialogue-prompt-zh">${escapeHtml(currentStep.promptZh)}</div>
           <div class="bc-dialogue-prompt-py">${escapeHtml(currentStep.promptPinyin)}</div>
@@ -957,7 +964,9 @@
         ${quiz.contextSentence ? `
           <div class="bc-quiz-context-card">
             <div class="bc-quiz-ctx-zh">
-              <span class="bc-mini-speaker" onclick="bcPlayAudio('${escapeHtml(quiz.contextSentence.zh)}', event)"></span>
+              <span class="bc-mini-speaker" onclick="bcPlayAudio('${escapeQuotes(quiz.contextSentence.zh)}', event)" title="Nghe câu này" aria-label="Phát âm">
+                <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+              </span>
               <span>${escapeHtml(quiz.contextSentence.zh)}</span>
             </div>
             <div class="bc-quiz-ctx-py">${escapeHtml(quiz.contextSentence.pinyin)}</div>
@@ -1004,6 +1013,12 @@
   window.bcSelectQuiz = function (id) {
     businessState.activeQuizId = id;
     businessState.quizUserAnswer = null;
+    renderActiveSubView();
+  };
+
+  window.bcAnswerQuiz = function (quizId, optIdx, isCorrect) {
+    businessState.quizUserAnswer = optIdx;
+    BusinessService.recordQuizCompleted(quizId, isCorrect);
     renderActiveSubView();
   };
 
