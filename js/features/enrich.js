@@ -498,7 +498,7 @@ async function enrichWordSheet(word) {
   // 1. Chiết tự & Phân tích cấu tạo từng chữ Hán (chạy ngay 0ms)
   const decomp = getWordDecomposition(word, lang);
   if (decomp && decomp.length >= 2) {
-    html += sectionTitle('🧩 ' + (t('wordDecomp') || tx('Chiết tự & Cấu tạo từ', 'Word Breakdown & Morphemes', '構成漢字と語源')));
+    html += sectionTitle(t('wordDecomp') || tx('Chiết tự & Cấu tạo từ', 'Word Breakdown & Morphemes', '構成漢字と語源'));
     html += `<div class="word-decomp-card"><div class="decomp-items">` +
       decomp.map((p, idx) => {
         let sub = '';
@@ -516,18 +516,18 @@ async function enrichWordSheet(word) {
   // 2. Slang / Từ lóng với ngữ cảnh cụ thể
   const slang = slangLookup(word);
   if (slang.length) {
-    html += sectionTitle('🔥 ' + tx('Từ lóng / ngôn ngữ mạng', 'Slang / internet language', 'ネットスラング'));
+    html += sectionTitle(tx('Từ lóng / ngôn ngữ mạng', 'Slang / internet language', 'ネットスラング'));
     html += slang.map(s => {
       const m = s[lang] || s.vi || s.en || s.ja || '';
       const m2 = (lang !== 'en' && s.en) ? `<div style="font-size:12px;color:var(--text-muted);">EN: ${escapeHtml(s.en)}</div>` : '';
-      return `<div class="slang-card"><b lang="zh-CN">${escapeHtml(s.w)}</b> <span style="color:var(--text-muted);font-size:12px;">${escapeHtml(s.py || '')}</span><div>${escapeHtml(m)}</div>${m2}${s.n ? `<div class="slang-nuance-box">💡 <b>${tx('Ngữ cảnh & Lưu ý', 'Usage & Context', '使い方とニュアンス')}:</b> ${escapeHtml(s.n)}</div>` : ''}</div>`;
+      return `<div class="slang-card"><b lang="zh-CN">${escapeHtml(s.w)}</b> <span style="color:var(--text-muted);font-size:12px;">${escapeHtml(s.py || '')}</span><div>${escapeHtml(m)}</div>${m2}${s.n ? `<div class="slang-nuance-box"><b>${tx('Ngữ cảnh & Lưu ý', 'Usage & Context', '使い方とニュアンス')}:</b> ${escapeHtml(s.n)}</div>` : ''}</div>`;
     }).join('');
   }
   html += `<div id="enrich-syn"></div><div id="enrich-wik"></div><div id="enrich-media"></div>`;
   html += `<div class="enrich-footer">
-    <a href="https://search.bilibili.com/all?keyword=${enc}%20%E6%84%8F%E6%80%9D%20%E7%94%A8%E6%B3%95" target="_blank" rel="noopener noreferrer">▶ Bilibili</a>
-    <a href="https://www.youtube.com/results?search_query=${enc}%20%E6%B1%89%E8%AF%AD%20%E6%84%8F%E6%80%9D%20%E7%94%A8%E6%B3%95" target="_blank" rel="noopener noreferrer">▶ YouTube</a>
-    <a href="https://www.xiaohongshu.com/search_result?keyword=${enc}" target="_blank" rel="noopener noreferrer">📕 小红书</a>
+    <a href="https://search.bilibili.com/all?keyword=${enc}%20%E6%84%8F%E6%80%9D%20%E7%94%A8%E6%B3%95" target="_blank" rel="noopener noreferrer">Bilibili</a>
+    <a href="https://www.youtube.com/results?search_query=${enc}%20%E6%B1%89%E8%AF%AD%20%E6%84%8F%E6%80%9D%20%E7%94%A8%E6%B3%95" target="_blank" rel="noopener noreferrer">YouTube</a>
+    <a href="https://www.xiaohongshu.com/search_result?keyword=${enc}" target="_blank" rel="noopener noreferrer">小红书</a>
     <a href="https://www.zhihu.com/search?q=${enc}" target="_blank" rel="noopener noreferrer">知乎</a>
   </div>
   <div class="enrich-footer" style="opacity:.8;">
@@ -546,9 +546,9 @@ async function enrichWordSheet(word) {
     const el = document.getElementById('enrich-syn'); if (!el) return;
     const flat = [];
     res.groups.forEach(g => g.words.forEach(w => { if (!flat.includes(w)) flat.push(w); }));
-    el.innerHTML = sectionTitle('🔎 ' + tx('Nghĩa mở rộng', 'More meanings', '関連する意味') + ` (${getLangName(usedLang)})`) +
+    el.innerHTML = sectionTitle(tx('Nghĩa mở rộng', 'More meanings', '関連する意味') + ` (${getLangName(usedLang)})`) +
       res.groups.map(g => `<div class="syn-row"><span class="syn-pos">${escapeHtml(posName(g.pos))}</span>${g.words.map(w => `<span class="syn-chip">${escapeHtml(w)}</span>`).join('')}</div>`).join('') +
-      `<button class="btn btn-outline btn-sm" style="font-size:12px;padding:4px 10px;margin-top:6px;" id="btn-save-syn">💾 ${tx('Lưu các nghĩa này', 'Save these meanings', 'これらの意味を保存')}</button>`;
+      `<button class="btn btn-outline btn-sm" style="font-size:12px;padding:4px 10px;margin-top:6px;" id="btn-save-syn">${tx('Lưu các nghĩa này', 'Save these meanings', 'これらの意味を保存')}</button>`;
     const b = document.getElementById('btn-save-syn');
     if (b) b.onclick = () => enrichSaveMeanings(word, usedLang, flat.slice(0, 6).join(', '));
     state._enrichMainEn = state._enrichMainEn || {};
@@ -580,7 +580,7 @@ async function enrichWordSheet(word) {
 
     if (!still()) return;
     const title = t('detailedDef') || tx('Giải thích chi tiết (Từ điển)', 'Detailed Definitions (Dictionary)', '詳細な解説（辞書）');
-    el.innerHTML = sectionTitle('📖 ' + title) +
+    el.innerHTML = sectionTitle(title) +
       `<div class="wik-card">` +
       rendered.map((d, idx) => `
         <div class="wik-item">
@@ -604,7 +604,7 @@ async function enrichWordSheet(word) {
       const el = document.getElementById('enrich-media');
       if (!el) return;
 
-      let h = sectionTitle('🖼 ' + tx('Minh họa ý nghĩa', 'Illustration of the meaning', '意味の図解') +
+      let h = sectionTitle(tx('Minh họa ý nghĩa', 'Illustration of the meaning', '意味の図解') +
         ` <span class="badge" style="text-transform:none;">${escapeHtml(m.term)}</span>`);
 
       if (wiki) {

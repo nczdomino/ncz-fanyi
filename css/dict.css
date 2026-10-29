@@ -898,11 +898,11 @@
 .dict-search-badge-bar {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   gap: 8px;
-  margin-top: 8px;
+  margin-top: 10px;
   width: 100%;
-  animation: fadeIn 0.2s ease-in-out;
+  flex-wrap: wrap;
 }
 
 /* Dictionary meaning-language switch: VI / JA / EN / 中文 */

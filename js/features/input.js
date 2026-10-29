@@ -13,7 +13,7 @@ function renderInputView() {
   updateInputClearBtn();
 
   if (!state.recentTexts || state.recentTexts.length === 0) {
-    recentListEl.innerHTML = '<div style="color:var(--text-muted); font-size:13px; padding:8px;">' + t('noHistory') + '</div>';
+    recentListEl.innerHTML = '<div class="recent-empty"><span class="recent-empty-mark" lang="zh-CN">文</span><span>' + t('noHistory') + '</span></div>';
     return;
   }
   let html = '';

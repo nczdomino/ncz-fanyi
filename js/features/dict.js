@@ -131,7 +131,7 @@ function renderWordCompounds(word) {
   const lang = typeof dictMeaningLang === 'function' ? dictMeaningLang() : (state.meaningLang || 'vi');
   let html = `
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-      <div class="def-label" style="margin-bottom:0;">🌳 ${t('relatedCompounds') || tx('Từ ghép liên quan (Họ từ vựng)', 'Related Compound Words', '関連する複合語')}</div>
+      <div class="def-label" style="margin-bottom:0;">${t('relatedCompounds') || tx('Từ ghép liên quan (Họ từ vựng)', 'Related Compound Words', '関連する複合語')}</div>
       <span style="font-size:11px; color:var(--text-muted);">${compounds.length} ${tx('từ ghép', 'compounds', '語')}</span>
     </div>
     <div class="dict-compounds-grid">
@@ -331,7 +331,12 @@ function renderDictItemCard(item) {
 
   let subReadingHtml = '';
   if (lang === 'vi' && item.hanviet) {
-    subReadingHtml = `<span class="dict-hanviet">${escapeHtml(item.hanviet)}</span>`;
+    // Skip the Hán Việt reading when it is identical to the meaning (e.g. 学习
+    // is both "học tập"), which otherwise prints the same word twice.
+    const norm = (s) => String(s || '').trim().toLowerCase();
+    if (!meaning || norm(item.hanviet) !== norm(meaning)) {
+      subReadingHtml = `<span class="dict-hanviet">${escapeHtml(item.hanviet)}</span>`;
+    }
   } else if (lang === 'ja') {
     const kj = KANJI_DATA[word];
     if (kj) {
@@ -605,7 +610,7 @@ function renderDictView() {
           <div id="dict-ai-fallback-container">${aiEligible && typeof aiLookupPlaceholderHtml === 'function' ? aiLookupPlaceholderHtml(meaningLang) : ''}</div>
         ` : `
           <div class="dict-no-match-header">
-            <img src="assets/icons/ui-icons/search.png" width="48" height="48" style="margin-bottom:8px; display:inline-block; object-fit:contain;" alt="Search">
+            <div class="dict-empty-mark" lang="zh-CN">查</div>
             <div style="font-size:16px; font-weight:700; color:var(--text-primary);">${t('noResults')}</div>
             <div style="font-size:13px; color:var(--text-muted); margin-top:4px;">${noMatchSub}</div>
           </div>
@@ -619,7 +624,7 @@ function renderDictView() {
         ${aiCanAnswer ? '' : `
         <div class="dict-semantic-action-bar" style="margin-top:14px;">
           <div>
-            <div class="dict-semantic-action-text">✨ ${t('dictSemanticTitle') || 'Tra cứu theo ngữ cảnh thông minh (AI)'}</div>
+            <div class="dict-semantic-action-text">${t('dictSemanticTitle') || 'Tra cứu theo ngữ cảnh thông minh (AI)'}</div>
             <div class="dict-semantic-action-sub">${t('dictSemanticDesc') || 'AI tìm từ tiếng Trung phù hợp nhất dựa trên mô tả'}</div>
           </div>
           <button id="dict-semantic-trigger-btn" class="dict-semantic-btn" onclick="executeSemanticSearch('${escapeQuotes(query)}')">
@@ -633,9 +638,9 @@ function renderDictView() {
         <div class="dict-ext-section" style="margin-top:14px;">
           <div class="dict-ext-label">${t('externalDicts') || 'Tra trên từ điển chuyên sâu'}</div>
           <div class="dict-ext-chips">
-            <a class="dict-ext-chip" href="${lineDictUrl}" target="_blank" rel="noopener noreferrer">📖 Line Dict</a>
-            <a class="dict-ext-chip" href="plecoapi://x-callback-url/s?q=${encodeURIComponent(query)}">📱 Pleco</a>
-            <a class="dict-ext-chip" href="https://baike.baidu.com/item/${encodeURIComponent(query)}" target="_blank" rel="noopener noreferrer">📚 百度百科</a>
+            <a class="dict-ext-chip" href="${lineDictUrl}" target="_blank" rel="noopener noreferrer">Line Dict</a>
+            <a class="dict-ext-chip" href="plecoapi://x-callback-url/s?q=${encodeURIComponent(query)}">Pleco</a>
+            <a class="dict-ext-chip" href="https://baike.baidu.com/item/${encodeURIComponent(query)}" target="_blank" rel="noopener noreferrer">百度百科</a>
             <a class="dict-ext-chip" href="https://hanzii.net/search/word/${encodeURIComponent(query)}" target="_blank" rel="noopener noreferrer">Hanzii</a>
             <a class="dict-ext-chip" href="https://www.mdbg.net/chinese/dictionary?page=worddict&wdrst=0&wdqb=${encodeURIComponent(query)}" target="_blank" rel="noopener noreferrer">MDBG</a>
           </div>
@@ -652,6 +657,20 @@ function renderDictView() {
   }
 
   let html = '';
+  if (state.selectedRadical && !query) {
+    const radItem = (typeof RADICALS_DATA !== 'undefined') ? RADICALS_DATA.find(r => r.r === state.selectedRadical) : null;
+    const radName = radItem ? radItem.name : state.selectedRadical;
+    html += `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding:8px 14px; background:var(--accent-subtle); border:1px solid var(--accent); border-radius:10px;">
+        <span style="font-size:13px; font-weight:600; color:var(--accent);">
+          ${tx('Đang lọc theo Bộ', 'Filtered by Radical', '部首で絞り込み')}: <b>${escapeHtml(radName)}</b> (${matches.length} ${tx('từ', 'words', '語')})
+        </span>
+        <button class="btn btn-secondary btn-sm" style="font-size:11px; padding:3px 10px; border-radius:12px;" onclick="selectRadicalFilter(null)">
+          ✕ ${tx('Bỏ lọc', 'Clear filter', '解除')}
+        </button>
+      </div>
+    `;
+  }
   // Split confident matches from loosely related words. Rendering them as two
   // groups is what stops a one-syllable query ("ăn") from looking like a wall of noise.
   const primaryItems = query ? matches.filter(m => m.tier !== 'related' && m.tier !== 'suggestion') : matches;
@@ -676,14 +695,14 @@ function renderDictView() {
       if (relatedCount) countText += ` · <b>${relatedCount}</b> từ liên quan`;
       if (suggestionCount) countText += ` · <b>${suggestionCount}</b> gợi ý`;
     }
-    const closeSearchText = state.uiLang === 'ja' ? '✕ 検索を閉じる' : (state.uiLang === 'en' ? '✕ Close search' : '✕ Đóng tìm kiếm');
+    const closeSearchText = '✕';
 
     html += `
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding:0 4px;">
         <span style="font-size:13px; color:var(--text-muted); font-weight:500;">
           ${countText}
         </span>
-        <button class="btn btn-secondary btn-sm" style="font-size:11.5px; padding:3px 10px; border-radius:14px;" onclick="clearDictSearch()">
+        <button class="btn btn-secondary btn-sm" style="font-size:11.5px; padding:3px 10px; border-radius:14px;" onclick="clearDictSearch()" title="${t('close') || 'Đóng'}" aria-label="${t('close') || 'Đóng'}">
           ${closeSearchText}
         </button>
       </div>
@@ -754,7 +773,7 @@ function renderDictView() {
       ${aiAutoAnswers ? '' : `
       <div class="dict-semantic-action-bar" style="margin-top:14px;">
         <div>
-          <div class="dict-semantic-action-text">✨ ${t('dictSemanticTitle') || 'Tra cứu theo ngữ cảnh thông minh (AI)'}</div>
+          <div class="dict-semantic-action-text">${t('dictSemanticTitle') || 'Tra cứu theo ngữ cảnh thông minh (AI)'}</div>
           <div class="dict-semantic-action-sub">${t('dictSemanticDesc') || 'Phân tích ngữ cảnh và tình huống hội thoại'}</div>
         </div>
         <button id="dict-semantic-trigger-btn" class="dict-semantic-btn" onclick="executeSemanticSearch('${escapeQuotes(query)}')">
@@ -768,9 +787,9 @@ function renderDictView() {
       <div class="dict-ext-section" style="margin-top:14px;">
         <div class="dict-ext-label">${t('externalDicts') || 'Tra trên từ điển chuyên sâu'}</div>
         <div class="dict-ext-chips">
-          <a class="dict-ext-chip" href="${lineDictUrl}" target="_blank" rel="noopener noreferrer">📖 Line Dict</a>
-          <a class="dict-ext-chip" href="plecoapi://x-callback-url/s?q=${encodeURIComponent(query)}">📱 Pleco</a>
-          <a class="dict-ext-chip" href="https://baike.baidu.com/item/${encodeURIComponent(query)}" target="_blank" rel="noopener noreferrer">📚 百度百科</a>
+          <a class="dict-ext-chip" href="${lineDictUrl}" target="_blank" rel="noopener noreferrer">Line Dict</a>
+          <a class="dict-ext-chip" href="plecoapi://x-callback-url/s?q=${encodeURIComponent(query)}">Pleco</a>
+          <a class="dict-ext-chip" href="https://baike.baidu.com/item/${encodeURIComponent(query)}" target="_blank" rel="noopener noreferrer">百度百科</a>
           <a class="dict-ext-chip" href="https://hanzii.net/search/word/${encodeURIComponent(query)}" target="_blank" rel="noopener noreferrer">Hanzii</a>
           <a class="dict-ext-chip" href="https://www.mdbg.net/chinese/dictionary?page=worddict&wdrst=0&wdqb=${encodeURIComponent(query)}" target="_blank" rel="noopener noreferrer">MDBG</a>
         </div>
@@ -820,10 +839,7 @@ function renderMindmapCard(synset) {
   return `
     <div class="dict-mindmap-accordion">
       <button class="dict-mindmap-toggle-btn" onclick="toggleMindmapDetails(this)">
-        <div style="display:flex; align-items:center; gap:8px;">
-          <span style="font-size:16px;">${escapeHtml(synset.icon || '🌳')}</span>
-          <span style="font-weight:700; font-size:13px;">${t('dictMindmapTitle') || 'Bản đồ sắc thái HSK & Slang'}: <b style="color:var(--accent);">${escapeHtml(title)}</b></span>
-        </div>
+        <span style="font-weight:700; font-size:13px;">${t('dictMindmapTitle') || 'Bản đồ sắc thái HSK & Slang'}: <b style="color:var(--accent);">${escapeHtml(title)}</b></span>
         <div style="display:flex; align-items:center; gap:6px;">
           <span class="dict-mindmap-tag">${escapeHtml(exploreLabel)}</span>
           <span class="chevron" style="transition:transform 0.2s; font-size:11px;">▼</span>
@@ -936,8 +952,8 @@ function renderSemanticResults(concept, matches) {
           ${m.hsk ? `<span class="dict-semantic-hsk-badge">${escapeHtml(m.hsk)}</span>` : ''}
         </div>
         <div class="dict-semantic-meaning">${escapeHtml(m.meaning || '')}</div>
-        ${m.nuance ? `<div class="dict-semantic-nuance">💡 ${escapeHtml(m.nuance)}</div>` : ''}
-        ${m.example ? `<div class="dict-semantic-example">💬 ${escapeHtml(m.example)}</div>` : ''}
+        ${m.nuance ? `<div class="dict-semantic-nuance">${escapeHtml(m.nuance)}</div>` : ''}
+        ${m.example ? `<div class="dict-semantic-example">${escapeHtml(m.example)}</div>` : ''}
       </div>
     `;
   }
@@ -946,7 +962,6 @@ function renderSemanticResults(concept, matches) {
     <div class="dict-semantic-results-box">
       <div class="dict-semantic-results-head">
         <div class="dict-semantic-concept-title">
-          <span>✨</span>
           <span>${t('dictSemanticMatches') || 'Gợi ý từ ngữ cảnh'}: <b>${escapeHtml(concept)}</b></span>
         </div>
         <span style="font-size:11px; color:var(--text-muted);">${matches.length} ${tx('từ đề xuất', 'suggestions', '件の提案')}</span>

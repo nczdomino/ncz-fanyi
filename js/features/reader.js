@@ -147,13 +147,19 @@ function renderSentenceMode(container) {
         <span class="sentence-index">${t('sentence')} ${currIdx + 1} / ${total}</span>
         <div style="display:flex; gap:6px; align-items:center;">
           <button class="icon-btn" onclick="toggleReadAll()" title="${tx('Đọc liên tục từ câu này', 'Play all from here', 'ここから連続再生')}" aria-label="${tx('Đọc liên tục', 'Play all', '連続再生')}" style="width:34px; height:34px; ${isReadAllActive() ? 'background:var(--accent); color:#fff;' : ''}">
-            ${isReadAllActive() ? '⏸' : '▶▶'}
+            ${isReadAllActive()
+              ? '<svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>'
+              : '<svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>'}
           </button>
           <button class="icon-btn" onclick="speakText('${escapeQuotes(sentence)}')" onmouseenter="typeof preloadSpeech==='function'&&preloadSpeech('${escapeQuotes(sentence)}')" onfocus="typeof preloadSpeech==='function'&&preloadSpeech('${escapeQuotes(sentence)}')" title="${t('play') || 'Phát âm'}">
             <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
           </button>
-          <button class="icon-btn" onclick="repeatSpeak('${escapeQuotes(sentence)}', 3, 1200)" title="${tx('Nghe lặp 3 lần (luyện nói theo)', 'Repeat 3× (shadowing)', '3回リピート（シャドーイング）')}" style="width:32px; height:32px; font-size:13px;" aria-label="${tx('Lặp 3 lần', 'Repeat 3×', '3回リピート')}">
-            🔁
+          <button class="icon-btn" onclick="speakText('${escapeQuotes(sentence)}', this, 0.75)" title="${t('playSlow') || tx('Nghe chậm (0.75x)', 'Slow audio (0.75x)', 'スロー再生 (0.75x)')}" style="width:34px; height:34px;" aria-label="${t('playSlow') || tx('Nghe chậm', 'Slow audio', 'スロー再生')}">
+            <span style="font-size:10px; font-weight:700; letter-spacing:0.02em;">0.75×</span>
+          </button>
+          <button class="icon-btn" onclick="repeatSpeak('${escapeQuotes(sentence)}', 3, 1200)" title="${tx('Nghe lặp 3 lần (luyện nói theo)', 'Repeat 3× (shadowing)', '3回リピート（シャドーイング）')}" style="width:34px; height:34px;" aria-label="${tx('Lặp 3 lần', 'Repeat 3×', '3回リピート')}">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 2l4 4-4 4"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 11V9a4 4 0 014-4h14M7 22l-4-4 4-4"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M21 13v2a4 4 0 01-4 4H3"/></svg>
+          </button>
           </button>
           <button class="btn btn-secondary btn-sm" onclick="translateCurrentSentence()">
             <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>

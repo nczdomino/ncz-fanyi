@@ -39,22 +39,22 @@ async function openWordSheet(word) {
   if (dictEntry && dictEntry.hsk) {
     const isHsk789 = String(dictEntry.hsk).includes('7') || String(dictEntry.hsk).includes('8') || String(dictEntry.hsk).includes('9');
     badgesContainer.innerHTML += isHsk789
-      ? `<span class="badge badge-hsk-pro">👑 HSK ${dictEntry.hsk} (${tx('Cao cấp', 'Advanced', '上級')})</span>`
+      ? `<span class="badge badge-hsk-pro">HSK ${dictEntry.hsk} (${tx('Cao cấp', 'Advanced', '上級')})</span>`
       : `<span class="badge badge-hsk">HSK ${dictEntry.hsk}</span>`;
   }
   const sheetSlang = getSlangEntry(word);
   if (sheetSlang) {
-    badgesContainer.innerHTML += `<span class="badge" style="background:rgba(232,52,78,0.15); color:var(--accent); border:1px solid rgba(232,52,78,0.3); font-weight:700;">🔥 ${tx('Từ lóng', 'Slang', '流行語')}</span>`;
+    badgesContainer.innerHTML += `<span class="badge badge-slang">${tx('Từ lóng', 'Slang', '流行語')}</span>`;
   } else if (dictEntry && dictEntry.type) {
     badgesContainer.innerHTML += `<span class="badge">${escapeHtml(dictEntry.type)}</span>`;
   }
   const radInfo = word.length === 1 ? getWordRadical(word) : null;
   if (radInfo) {
-    badgesContainer.innerHTML += `<span class="badge" style="background:var(--bg-muted); border:1px solid var(--border-color); color:var(--text-secondary);">🏮 ${escapeHtml(radInfo.name)}</span>`;
+    badgesContainer.innerHTML += `<span class="badge badge-radical">${escapeHtml(radInfo.name)}</span>`;
   }
   const mwInfo = getWordMeasureWord(word);
   if (mwInfo) {
-    badgesContainer.innerHTML += `<span class="badge" style="background:rgba(46,160,67,0.12); color:#2EA043; border:1px solid rgba(46,160,67,0.3); font-weight:600;">📏 ${escapeHtml(mwInfo.label)}</span>`;
+    badgesContainer.innerHTML += `<span class="badge badge-mw">${escapeHtml(mwInfo.label)}</span>`;
   }
 
   // Grammar Match Badge (Links directly to HSK Grammar View)
@@ -231,10 +231,10 @@ async function openWordSheet(word) {
         : `https://dict.naver.com/linedict/zhendict/#/cnen/search?query=${encodeURIComponent(word)}`);
     
     extContainer.innerHTML = `
-      <a class="btn btn-secondary btn-sm" href="${lineDictUrl}" target="_blank" rel="noopener noreferrer" title="Line Dict">📖 Line Dict</a>
-      <a class="btn btn-secondary btn-sm" href="plecoapi://x-callback-url/s?q=${encodeURIComponent(word)}" title="Pleco (Mobile App)">📱 Pleco</a>
-      <a class="btn btn-secondary btn-sm" href="https://baike.baidu.com/item/${encodeURIComponent(word)}" target="_blank" rel="noopener noreferrer" title="Baidu Baike">📚 百度百科</a>
-      <a class="btn btn-secondary btn-sm" href="https://www.moedict.tw/${encodeURIComponent(word)}" target="_blank" rel="noopener noreferrer" title="MoEDict 萌典">🏮 萌典</a>
+      <a class="btn btn-secondary btn-sm" href="${lineDictUrl}" target="_blank" rel="noopener noreferrer" title="Line Dict">Line Dict</a>
+      <a class="btn btn-secondary btn-sm" href="plecoapi://x-callback-url/s?q=${encodeURIComponent(word)}" title="Pleco (Mobile App)">Pleco</a>
+      <a class="btn btn-secondary btn-sm" href="https://baike.baidu.com/item/${encodeURIComponent(word)}" target="_blank" rel="noopener noreferrer" title="Baidu Baike">百度百科</a>
+      <a class="btn btn-secondary btn-sm" href="https://www.moedict.tw/${encodeURIComponent(word)}" target="_blank" rel="noopener noreferrer" title="MoEDict 萌典">萌典</a>
       <a class="btn btn-secondary btn-sm" href="https://hanzii.net/search/word/${encodeURIComponent(word)}" target="_blank" rel="noopener noreferrer">Hanzii</a>
       <a class="btn btn-secondary btn-sm" href="https://www.mdbg.net/chinese/dictionary?page=worddict&wdrst=0&wdqb=${encodeURIComponent(word)}" target="_blank" rel="noopener noreferrer">MDBG</a>
     `;
@@ -485,18 +485,18 @@ async function renderWordSheetAiSection(word) {
   // 3. Chưa có cache -> Hiện khung mời gọi phân tích
   const teaserTexts = {
     vi: {
-      title: 'AI Phân Tích Chuyên Sâu (AI 解析)',
-      btn: '✨ Phân tích từ này',
+      title: 'Phân tích AI',
+      btn: 'Phân tích từ này',
       desc: 'Phân tích chuyên sâu sắc thái ngữ cảnh, khẩu ngữ/tiếng lóng mạng, câu ví dụ thực tế và phân biệt từ gần nghĩa cùng AI.'
     },
     ja: {
-      title: 'AI 詳細分析 (AI 解析)',
-      btn: '✨ AIで詳しく分析',
+      title: 'AI 詳細分析',
+      btn: 'AIで分析',
       desc: 'ニュアンス、ネットスラング/口語表現、実用例文、類義語の使い分けをAIが徹底解説します。'
     },
     en: {
-      title: 'AI Deep Analysis (AI 解析)',
-      btn: '✨ Analyze with AI',
+      title: 'AI analysis',
+      btn: 'Analyze with AI',
       desc: 'Deep dive into nuances, colloquial/internet slang, real-life examples, and synonym distinctions with AI.'
     }
   };
@@ -506,7 +506,6 @@ async function renderWordSheetAiSection(word) {
     <div class="ai-word-card">
       <div class="ai-word-header">
         <div class="ai-word-title">
-          <span>✨</span>
           <span>${escapeHtml(tInfo.title)}</span>
         </div>
         <button id="btn-trigger-ai-word" class="btn btn-primary btn-sm" onclick="analyzeActiveWordWithAi('${escapeQuotes(word)}')">
@@ -891,40 +890,40 @@ function renderAiAnalysisCard(container, word, data) {
 
   const i18nTitles = {
     vi: {
-      header: 'AI Phân Tích Chuyên Sâu (AI 解析)',
+      header: 'Phân tích AI',
       refresh: 'Làm mới phân tích',
       listen: 'Phát âm',
-      examples: '💡 Ví dụ thực tế',
-      synonyms: '⚖️ Phân biệt từ gần nghĩa & Sắc thái',
-      meaning: '📖 Nghĩa tiếng Việt',
+      examples: 'Ví dụ thực tế',
+      synonyms: 'Phân biệt từ gần nghĩa',
+      meaning: 'Nghĩa tiếng Việt',
       secondary: 'Nghĩa phụ:',
-      nuance: '🎭 Sắc thái & Cách dùng',
-      mistakes: '⚠️ Lưu ý & Lỗi thường gặp',
-      tip: '🧠 Mẹo ghi nhớ từ vựng'
+      nuance: 'Sắc thái & cách dùng',
+      mistakes: 'Lưu ý thường gặp',
+      tip: 'Mẹo ghi nhớ'
     },
     ja: {
-      header: 'AI 詳細分析 (AI 解析)',
+      header: 'AI 詳細分析',
       refresh: '分析を更新',
       listen: '発音',
-      examples: '💡 実用例文',
-      synonyms: '⚖️ 類義語の使い分けとニュアンス',
-      meaning: '📖 日本語の意味',
+      examples: '実用例文',
+      synonyms: '類義語との使い分け',
+      meaning: '日本語の意味',
       secondary: '副次的意味:',
-      nuance: '🎭 ニュアンス・使用場面',
-      mistakes: '⚠️ 注意点・よくある間違い',
-      tip: '🧠 記憶のコツ・語源'
+      nuance: 'ニュアンス・使用場面',
+      mistakes: '注意点・よくある間違い',
+      tip: '記憶のコツ'
     },
     en: {
-      header: 'AI Deep Analysis (AI 解析)',
+      header: 'AI analysis',
       refresh: 'Refresh analysis',
       listen: 'Listen',
-      examples: '💡 Practical Examples',
-      synonyms: '⚖️ Synonyms & Usage Nuances',
-      meaning: '📖 English Meaning',
+      examples: 'Practical examples',
+      synonyms: 'Synonyms & usage',
+      meaning: 'English meaning',
       secondary: 'Secondary meanings:',
-      nuance: '🎭 Nuance & Context',
-      mistakes: '⚠️ Common Mistakes & Pitfalls',
-      tip: '🧠 Memory Tip & Mnemonics'
+      nuance: 'Nuance & context',
+      mistakes: 'Common mistakes',
+      tip: 'Memory tip'
     }
   };
   const labels = i18nTitles[currentLang] || i18nTitles.vi;
@@ -941,8 +940,8 @@ function renderAiAnalysisCard(container, word, data) {
             <div class="ai-word-example-item">
               <div class="ai-word-ex-zh">
                 <span>${escapeHtml(ex.zh)}</span>
-                <button type="button" class="icon-btn" style="width:26px; height:26px; font-size:13px;" onclick="speakText('${escapeQuotes(ex.zh)}')" title="${escapeHtml(labels.listen)}">
-                  🔊
+                <button type="button" class="icon-btn" style="width:26px; height:26px;" onclick="speakText('${escapeQuotes(ex.zh)}')" title="${escapeHtml(labels.listen)}" aria-label="${escapeHtml(labels.listen)}">
+                  <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
                 </button>
               </div>
               ${ex.pinyin ? `<div class="ai-word-ex-py">${escapeHtml(ex.pinyin)}</div>` : ''}
@@ -975,11 +974,10 @@ function renderAiAnalysisCard(container, word, data) {
     <div class="ai-word-card">
       <div class="ai-word-header">
         <div class="ai-word-title">
-          <span>✨</span>
           <span>${escapeHtml(labels.header)}</span>
         </div>
         <div style="display:flex; align-items:center; gap:6px;">
-          ${data.formality ? `<span class="badge" style="background:rgba(59,130,246,0.12); color:#2563EB; font-weight:600;">${escapeHtml(data.formality)}</span>` : ''}
+          ${data.formality ? `<span class="badge badge-formality">${escapeHtml(data.formality)}</span>` : ''}
           <button type="button" class="icon-btn" style="width:26px; height:26px; font-size:11px;" onclick="analyzeActiveWordWithAi('${escapeQuotes(word)}')" title="${escapeHtml(labels.refresh)}">
             ↺
           </button>

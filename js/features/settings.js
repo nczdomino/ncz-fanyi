@@ -176,6 +176,13 @@ function clearAllAppData() {
 
 
 // --- Module: Settings View ---
+function ttsMuteIcon(muted) {
+  const paths = muted
+    ? '<path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="m16.5 9.5 5 5m0-5-5 5"/>'
+    : '<path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/>';
+  return `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg>`;
+}
+
 function renderSettingsView() {
   const uiSelect = document.getElementById('setting-ui-lang');
   if (uiSelect) uiSelect.value = state.uiLang;
@@ -208,7 +215,8 @@ function renderSettingsView() {
   if (volLabel) volLabel.textContent = Math.round((typeof state.ttsVolume === 'number' ? state.ttsVolume : 1) * 100) + '%';
   const muteBtn = document.getElementById('tts-mute-btn');
   if (muteBtn) {
-    muteBtn.textContent = state.ttsMuted ? '🔇' : '🔊';
+    muteBtn.innerHTML = ttsMuteIcon(state.ttsMuted);
+    muteBtn.setAttribute('aria-pressed', String(!!state.ttsMuted));
     muteBtn.title = state.ttsMuted ? (t('ttsUnmute') || 'Bật tiếng') : (t('ttsMute') || 'Tắt tiếng');
   }
 }
@@ -231,7 +239,10 @@ function setTtsVolume(value) {
   const label = document.getElementById('tts-volume-label');
   if (label) label.textContent = Math.round(state.ttsVolume * 100) + '%';
   const muteBtn = document.getElementById('tts-mute-btn');
-  if (muteBtn) muteBtn.textContent = state.ttsMuted ? '🔇' : '🔊';
+  if (muteBtn) {
+    muteBtn.innerHTML = ttsMuteIcon(state.ttsMuted);
+    muteBtn.setAttribute('aria-pressed', String(!!state.ttsMuted));
+  }
   saveSettings();
 }
 
@@ -239,7 +250,8 @@ function toggleTtsMute() {
   state.ttsMuted = !state.ttsMuted;
   const muteBtn = document.getElementById('tts-mute-btn');
   if (muteBtn) {
-    muteBtn.textContent = state.ttsMuted ? '🔇' : '🔊';
+    muteBtn.innerHTML = ttsMuteIcon(state.ttsMuted);
+    muteBtn.setAttribute('aria-pressed', String(!!state.ttsMuted));
     muteBtn.title = state.ttsMuted ? (t('ttsUnmute') || 'Bật tiếng') : (t('ttsMute') || 'Tắt tiếng');
   }
   if (state.ttsMuted && typeof stopSpeech === 'function') {

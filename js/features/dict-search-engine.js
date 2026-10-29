@@ -350,31 +350,31 @@ function getLanguageBadgeInfo(langCode, query, uiLang = 'vi') {
   switch (langCode) {
     case 'zh':
       return {
-        badge: '🇨🇳 中文 → 🇻🇳/🇯🇵/🇬🇧',
+        badge: '中文',
         class: 'zh',
         desc: isJa ? '漢字・ピンイン検索' : (isEn ? 'Chinese Hanzi Lookup' : 'Tra chữ Hán & Pinyin')
       };
     case 'vi':
       return {
-        badge: '🇻🇳 Tiếng Việt → 🇨🇳 中文',
+        badge: 'Tiếng Việt',
         class: 'vi',
         desc: isJa ? 'ベトナム語逆引き' : (isEn ? 'Vietnamese Reverse Lookup' : 'Tra ngược tiếng Việt (có dấu)')
       };
     case 'ja':
       return {
-        badge: '🇯🇵 日本語 → 🇨🇳 中文',
+        badge: '日本語',
         class: 'ja',
         desc: isJa ? '日本語逆引き (かな・ローマ字)' : (isEn ? 'Japanese Reverse Lookup' : 'Tra ngược tiếng Nhật (Kana / Romaji)')
       };
     case 'pinyin':
       return {
-        badge: '🔤 Pinyin → 🇨🇳 中文',
+        badge: 'Pinyin',
         class: 'pinyin',
         desc: isJa ? 'ピンイン発音記号検索' : (isEn ? 'Toned Pinyin Lookup' : 'Tra theo phiên âm có dấu')
       };
     default:
       return {
-        badge: '🌐 Multi-Lingual → 🇨🇳 中文',
+        badge: 'Đa ngôn ngữ',
         class: 'multi',
         desc: isJa
           ? '自動認識 (ベトナム語・英語・ピンイン・ローマ字)'
