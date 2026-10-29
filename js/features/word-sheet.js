@@ -397,7 +397,7 @@ function renderHanziWriterForWord(word) {
           showOutline: true,
           strokeAnimationSpeed: 1.2,
           delayBetweenStrokes: 120,
-          strokeColor: '#E8344E',
+          strokeColor: '#D92D43',
           outlineColor: '#DDD',
           drawingColor: '#2EA043'
         });
@@ -414,7 +414,7 @@ function renderHanziWriterForWord(word) {
           <line x1="120" y1="0" x2="0" y2="120" stroke="#eee" stroke-dasharray="3,3"/>
           <line x1="60" y1="0" x2="60" y2="120" stroke="#eee" stroke-dasharray="3,3"/>
           <line x1="0" y1="60" x2="120" y2="60" stroke="#eee" stroke-dasharray="3,3"/>
-          <text x="60" y="80" font-size="64" font-family="Noto Sans SC, sans-serif" text-anchor="middle" fill="#E8344E">${escapeHtml(ch)}</text>
+          <text x="60" y="80" font-size="64" font-family="Noto Sans SC, sans-serif" text-anchor="middle" fill="#D92D43">${escapeHtml(ch)}</text>
         </svg>
       `;
     }

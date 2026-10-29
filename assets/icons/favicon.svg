@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#EB3349"/>
+      <stop offset="50%" stop-color="#D92D43"/>
+      <stop offset="100%" stop-color="#B81B34"/>
+    </linearGradient>
+    <linearGradient id="whiteGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F6F6F8"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="125%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#700B1A" flood-opacity="0.32"/>
+    </filter>
+  </defs>
+  <!-- Apple-inspired Squircle Container -->
+  <rect width="512" height="512" rx="115" fill="url(#bgGrad)"/>
+  <rect x="3" y="3" width="506" height="506" rx="112" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="3"/>
+  
+  <!-- Central Emblem: Chinese '中' intersecting Open Book & Learning Star -->
+  <g filter="url(#shadow)" fill="url(#whiteGrad)">
+    <!-- Central Vertical Axis (Pillar & Bookmark Spine) -->
+    <path d="M256,86 C264,86 271,93 271,102 L271,396 C271,406 261,414 256,418 C251,414 241,406 241,396 L241,102 C241,93 248,86 256,86 Z"/>
+    
+    <!-- Outer Rounded Enclosure of '中' -->
+    <path fill-rule="evenodd" d="M174,166 C150,166 132,184 132,208 L132,268 C132,292 150,310 174,310 L338,310 C362,310 380,292 380,268 L380,208 C380,184 362,166 338,166 L174,166 Z M174,196 L338,196 C344,196 350,202 350,208 L350,268 C350,274 344,280 338,280 L174,280 C168,280 162,274 162,268 L162,208 C162,202 168,196 174,196 Z"/>
+    
+    <!-- Open Book Foundation Wings -->
+    <path d="M140,336 C180,336 220,348 245,364 L245,384 C216,368 175,356 136,356 C131,356 128,351 128,346 C128,340 132,336 140,336 Z" opacity="0.95"/>
+    <path d="M372,336 C332,336 292,348 267,364 L267,384 C296,368 337,356 376,356 C381,356 384,351 384,346 C384,340 380,336 372,336 Z" opacity="0.95"/>
+    
+    <!-- Golden Accent Spark (Wisdom & Bilingual Intelligence) -->
+    <circle cx="372" cy="142" r="11" fill="#FFE082"/>
+  </g>
+</svg>

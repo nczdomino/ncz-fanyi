@@ -78,15 +78,15 @@
   width: 100%;
   height: 50px;
   background: var(--bg-muted);
-  border: 1.5px solid var(--border-color);
-  border-radius: 14px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-pill);
   padding: 12px 44px 12px 48px;
   font-size: 16px; /* 16px required on iOS Safari to prevent auto-zoom */
   font-weight: 500;
   color: var(--text-primary);
   outline: none;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
-  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
   box-sizing: border-box;
   -webkit-appearance: none;
   appearance: none;
@@ -107,7 +107,7 @@
 .grammar-search-input:focus {
   border-color: var(--accent);
   background: var(--bg-surface);
-  box-shadow: 0 0 0 3.5px var(--accent-subtle), 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 0 0 3px var(--accent-subtle);
 }
 
 .grammar-search-icon,
@@ -369,9 +369,9 @@
 .grammar-detail-view {
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
-  border-radius: 20px;
+  border-radius: var(--radius-lg);
   padding: 24px 20px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--card-shadow);
 }
 
 .grammar-back-btn {
@@ -381,17 +381,17 @@
   background: var(--bg-muted);
   border: 1px solid var(--border-color);
   padding: 6px 14px;
-  border-radius: 10px;
+  border-radius: var(--radius-pill);
   font-size: 13px;
   font-weight: 600;
   color: var(--text-primary);
   cursor: pointer;
   margin-bottom: 16px;
-  transition: all 0.15s;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .grammar-back-btn:hover {
-  background: var(--accent-subtle);
+  background: var(--bg-surface);
   color: var(--accent);
   border-color: var(--accent);
 }

@@ -1,0 +1,35 @@
+{
+  "name": "Halou – Chinese Dictionary & Smart Translator with Pinyin",
+  "short_name": "Halou",
+  "description": "The ultimate Chinese smart dictionary and context-aware translator with instant Pinyin annotation for learners and readers.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#F8F9FA",
+  "theme_color": "#D92D43",
+  "icons": [
+    {
+      "src": "assets/icons/favicon-48x48.png",
+      "sizes": "48x48",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icons/favicon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

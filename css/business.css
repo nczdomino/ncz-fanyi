@@ -226,12 +226,18 @@
   padding: 0 12px;
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   color: var(--text-primary);
   font-size: 13.5px;
   font-weight: 500;
   outline: none;
   cursor: pointer;
+  transition: border-color 0.18s, box-shadow 0.18s;
+}
+
+.bc-select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-subtle);
 }
 
 .bc-select-sm {
@@ -303,19 +309,20 @@
   border: 1px solid var(--border-color);
   color: var(--text-primary);
   border-radius: var(--radius-sm);
-  padding: 6px 10px;
-  font-size: 14px;
+  padding: 5px 9px;
+  font-size: 13.5px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  transition: background 0.2s;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .bc-audio-btn:hover, .bc-mini-speaker:hover {
   background: var(--accent-subtle);
   border-color: var(--accent);
   color: var(--accent);
+  transform: scale(1.03);
 }
 
 .bc-fav-btn {
@@ -323,10 +330,16 @@
   border: 1px solid var(--border-color);
   color: var(--text-muted);
   border-radius: var(--radius-sm);
-  padding: 6px 10px;
-  font-size: 16px;
+  padding: 5px 9px;
+  font-size: 15px;
   cursor: pointer;
   line-height: 1;
+  transition: all 0.18s ease;
+}
+
+.bc-fav-btn:hover {
+  border-color: #f59e0b;
+  color: #f59e0b;
 }
 
 .bc-fav-btn.active {
@@ -345,13 +358,14 @@
   font-size: 11px;
   font-weight: 600;
   padding: 3px 8px;
-  border-radius: 6px;
+  border-radius: var(--radius-pill);
+  letter-spacing: 0.1px;
 }
 
 .bc-badge-cat {
   background: var(--bg-muted);
   color: var(--text-secondary);
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-subtle);
 }
 
 .bc-badge-level {
