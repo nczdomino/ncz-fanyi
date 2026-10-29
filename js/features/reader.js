@@ -160,7 +160,6 @@ function renderSentenceMode(container) {
           <button class="icon-btn" onclick="repeatSpeak('${escapeQuotes(sentence)}', 3, 1200)" title="${tx('Nghe lặp 3 lần (luyện nói theo)', 'Repeat 3× (shadowing)', '3回リピート（シャドーイング）')}" style="width:34px; height:34px;" aria-label="${tx('Lặp 3 lần', 'Repeat 3×', '3回リピート')}">
             <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 2l4 4-4 4"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 11V9a4 4 0 014-4h14M7 22l-4-4 4-4"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M21 13v2a4 4 0 01-4 4H3"/></svg>
           </button>
-          </button>
           <button class="btn btn-secondary btn-sm" onclick="translateCurrentSentence()">
             <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>
             ${t('translateSentence')}

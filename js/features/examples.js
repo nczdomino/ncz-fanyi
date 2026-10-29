@@ -375,7 +375,6 @@ function renderExampleListItems(container, countBadge, word, list) {
               <button class="example-audio-btn" onclick="repeatSpeak('${escapeQuotes(item.zh)}', 3, 1200)" title="${tx('Nghe lặp 3 lần', 'Repeat 3×', '3回リピート')}" aria-label="${tx('Lặp lại', 'Repeat', 'リピート')}">
                 <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 2l4 4-4 4"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 11V9a4 4 0 014-4h14M7 22l-4-4 4-4"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M21 13v2a4 4 0 01-4 4H3"/></svg>
               </button>
-              </button>
             </div>
           </div>
         </div>

@@ -89,7 +89,7 @@
         const ff = token.false_friend_ja;
         falseFriendHtml = `
           <div class="token-false-friend" onclick="showFalseFriendModal('${escapeQuotes(token.hanzi)}', '${escapeQuotes(ff.zh_meaning)}', '${escapeQuotes(ff.ja_meaning)}')" title="Nhấn để xem khác biệt nghĩa">
-            <span></span> <span>同形異義</span>
+            <span>⚠️</span> <span>同形異義</span>
           </div>
         `;
       }
@@ -114,9 +114,10 @@
     return `
       <div class="example-sentence-card">
         <div class="example-sentence-header">
-          <span class="example-scenario-tag"> ${escapeHtml(scenarioText || (loc === 'ja' ? '用例' : (loc === 'en' ? 'Example' : 'Ví dụ')))}</span>
+          <span class="example-scenario-tag">${escapeHtml(scenarioText || (loc === 'ja' ? '用例' : (loc === 'en' ? 'Example' : 'Ví dụ')))}</span>
           <button class="example-audio-button" onclick="speakGrammarText('${escapeQuotes(example.zh)}')">
-            <span></span> <span>${loc === 'ja' ? '再生' : (loc === 'en' ? 'Listen' : 'Phát âm')}</span>
+            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+            <span>${loc === 'ja' ? '再生' : (loc === 'en' ? 'Listen' : 'Phát âm')}</span>
           </button>
         </div>
 
@@ -223,28 +224,28 @@
       <div class="practice-module-card" id="practice-module-root">
         <div class="practice-header">
           <div class="practice-title-box">
-            <span style="font-size:22px;"></span>
+            <span style="font-size:22px;">🎯</span>
             <div style="font-size:17px; font-weight:800; color:var(--text-primary);">
               ${loc === 'ja' ? '実践練習 & スコア判定' : (loc === 'en' ? 'Interactive Practice & Quiz' : 'Luyện tập thực hành & Chấm điểm')}
             </div>
           </div>
           <div class="practice-score-badge">
-             ${loc === 'ja' ? '正解率' : (loc === 'en' ? 'Score' : 'Điểm')}: ${correctAnswers}/${totalQuestions} (${percent}%)
+            🏆 ${loc === 'ja' ? '正解率' : (loc === 'en' ? 'Score' : 'Điểm')}: ${correctAnswers}/${totalQuestions} (${percent}%)
           </div>
         </div>
 
         <div class="practice-tabs-bar">
           <button class="practice-tab-btn ${tab === 'puzzles' ? 'active' : ''}" onclick="switchPracticeTab('puzzles')">
-             ${loc === 'ja' ? '並べ替え' : (loc === 'en' ? 'Sentence Puzzle' : 'Xếp câu')} (${(detail.puzzles || []).length})
+            🧩 ${loc === 'ja' ? '並べ替え' : (loc === 'en' ? 'Sentence Puzzle' : 'Xếp câu')} (${(detail.puzzles || []).length})
           </button>
           <button class="practice-tab-btn ${tab === 'fill_blank' ? 'active' : ''}" onclick="switchPracticeTab('fill_blank')">
-             ${loc === 'ja' ? '空欄補充' : (loc === 'en' ? 'Fill Blank' : 'Điền chỗ trống')} (${(detail.fill_blank || []).length})
+            ✍️ ${loc === 'ja' ? '空欄補充' : (loc === 'en' ? 'Fill Blank' : 'Điền chỗ trống')} (${(detail.fill_blank || []).length})
           </button>
           <button class="practice-tab-btn ${tab === 'error_correction' ? 'active' : ''}" onclick="switchPracticeTab('error_correction')">
-             ${loc === 'ja' ? '誤文訂正' : (loc === 'en' ? 'Error Spot' : 'Sửa lỗi sai')} (${(detail.error_correction || []).length})
+            🔍 ${loc === 'ja' ? '誤文訂正' : (loc === 'en' ? 'Error Spot' : 'Sửa lỗi sai')} (${(detail.error_correction || []).length})
           </button>
           <button class="practice-tab-btn ${tab === 'quiz' ? 'active' : ''}" onclick="switchPracticeTab('quiz')">
-             ${loc === 'ja' ? 'クイズ' : (loc === 'en' ? 'Mastery Quiz' : 'Trắc nghiệm')} (${(detail.quiz || []).length})
+            🎯 ${loc === 'ja' ? 'クイズ' : (loc === 'en' ? 'Mastery Quiz' : 'Trắc nghiệm')} (${(detail.quiz || []).length})
           </button>
         </div>
 
@@ -731,7 +732,9 @@
           <!-- Row 1: Large & Prominent Search Bar -->
           <form class="grammar-search-row" action="javascript:void(0)" onsubmit="handleGrammarSearchSubmit(event)" role="search">
             <div class="grammar-search-input-box">
-              <button type="submit" class="grammar-search-icon-btn" title="${loc === 'ja' ? '検索' : (loc === 'en' ? 'Search' : 'Tìm kiếm')}" aria-label="${loc === 'ja' ? '検索' : (loc === 'en' ? 'Search' : 'Tìm kiếm')}"></button>
+              <button type="submit" class="grammar-search-icon-btn" title="${loc === 'ja' ? '検索' : (loc === 'en' ? 'Search' : 'Tìm kiếm')}" aria-label="${loc === 'ja' ? '検索' : (loc === 'en' ? 'Search' : 'Tìm kiếm')}">
+                <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-5.2-5.2m1.7-4.3a7.5 7.5 0 11-15 0 7.5 7.5 0 0115 0z"/></svg>
+              </button>
               <input type="search" id="grammar-search-input" class="grammar-search-input" 
                 placeholder="${loc === 'ja' ? '文法名、ピンイン、キーワードで検索...' : (loc === 'en' ? 'Search grammar by name, pinyin, formula...' : 'Tìm kiếm ngữ pháp, pinyin, cấu trúc...')}" 
                 value="${escapeHtml(gState.query)}" 

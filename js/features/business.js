@@ -136,28 +136,28 @@
         <!-- Sub-Navigation Navigation Tabs -->
         <nav class="bc-subnav" role="tablist">
           <button class="bc-subnav-btn ${businessState.activeSubTab === 'vocab' ? 'active' : ''}" onclick="bcSwitchSubTab('vocab')">
-            <span class="bc-tab-icon"></span>
+            <span class="bc-tab-icon"><svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg></span>
             <span>${t('bcTabVocab') || 'Từ vựng'}</span>
           </button>
           <button class="bc-subnav-btn ${businessState.activeSubTab === 'pinyin-quiz' ? 'active' : ''}" onclick="bcSwitchSubTab('pinyin-quiz')">
-            <span class="bc-tab-icon"></span>
+            <span class="bc-tab-icon"><svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke-width="1.8"/><circle cx="12" cy="12" r="5" stroke-width="1.8"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg></span>
             <span>${lang === 'vi' ? 'Kiểm tra Pinyin' : (lang === 'ja' ? 'ピンインテスト' : 'Pinyin Test')}</span>
           </button>
           <button class="bc-subnav-btn ${businessState.activeSubTab === 'srs' ? 'active' : ''}" onclick="bcSwitchSubTab('srs')">
-            <span class="bc-tab-icon"></span>
+            <span class="bc-tab-icon"><svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg></span>
             <span>${t('bcTabSRS') || 'Flashcards'}</span>
             ${stats.dueToday > 0 ? `<span class="bc-srs-badge">${stats.dueToday}</span>` : ''}
           </button>
           <button class="bc-subnav-btn ${businessState.activeSubTab === 'emails' ? 'active' : ''}" onclick="bcSwitchSubTab('emails')">
-            <span class="bc-tab-icon"></span>
+            <span class="bc-tab-icon"><svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></span>
             <span>${t('bcTabEmails') || 'Mẫu Email'}</span>
           </button>
           <button class="bc-subnav-btn ${businessState.activeSubTab === 'documents' ? 'active' : ''}" onclick="bcSwitchSubTab('documents')">
-            <span class="bc-tab-icon"></span>
+            <span class="bc-tab-icon"><svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></span>
             <span>${t('bcTabDocs') || 'Chứng từ'}</span>
           </button>
           <button class="bc-subnav-btn ${businessState.activeSubTab === 'practice' ? 'active' : ''}" onclick="bcSwitchSubTab('practice')">
-            <span class="bc-tab-icon"></span>
+            <span class="bc-tab-icon"><svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></span>
             <span>${t('bcTabPractice') || 'Tình huống'}</span>
           </button>
         </nav>
@@ -217,7 +217,7 @@
         <div class="bc-search-panel">
           <form class="bc-search-form" action="javascript:void(0)" role="search" onsubmit="event.preventDefault()">
             <div class="bc-search-input-wrap">
-              <span class="bc-search-lens"></span>
+              <span class="bc-search-lens"><svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-5.2-5.2m1.7-4.3a7.5 7.5 0 11-15 0 7.5 7.5 0 0115 0z"/></svg></span>
               <input 
                 type="search" 
                 id="bc-vocab-search-input" 
@@ -358,9 +358,12 @@
             </div>
             <div class="bc-card-actions">
               <button class="bc-test-pinyin-btn" onclick="bcStartPinyinQuizWithTerm('${item.id}', event)" title="${lang === 'vi' ? 'Kiểm tra Pinyin từ này' : 'Test Pinyin'}">
-                 <span>${lang === 'vi' ? 'Test Pinyin' : 'Quiz'}</span>
+                <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" stroke-width="1.8"/><circle cx="12" cy="12" r="3" stroke-width="1.8"/></svg>
+                <span>${lang === 'vi' ? 'Test Pinyin' : 'Quiz'}</span>
               </button>
-              <button class="bc-audio-btn" onclick="bcPlayAudio('${escapeHtml(item.term)}', event)" title="Phát âm"></button>
+              <button class="bc-audio-btn" onclick="bcPlayAudio('${escapeHtml(item.term)}', event)" title="Phát âm" aria-label="Phát âm">
+                <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+              </button>
               <button class="bc-fav-btn ${isFav ? 'active' : ''}" data-id="${item.id}" onclick="bcToggleFavorite('${item.id}', event)" title="Lưu từ này">
                 ${isFav ? '★' : '☆'}
               </button>
@@ -590,8 +593,11 @@
           <!-- Document Hero Header -->
           <div class="bc-doc-header-card">
             <div class="bc-doc-badge-row">
-              <span class="bc-badge bc-badge-cat"> Core Trade Document</span>
-              <button class="bc-audio-btn" onclick="bcPlayAudio('${escapeHtml(currentDoc.nameZh)}', event)"> Nghe tên chứng từ</button>
+              <span class="bc-badge bc-badge-cat">Core Trade Document</span>
+              <button class="bc-audio-btn" onclick="bcPlayAudio('${escapeHtml(currentDoc.nameZh)}', event)" title="Nghe phát âm" style="gap:5px; padding:6px 12px; width:auto;">
+                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+                <span>Nghe tên chứng từ</span>
+              </button>
             </div>
             <h2 class="bc-doc-name-zh">${escapeHtml(currentDoc.nameZh)} <small>(${escapeHtml(currentDoc.pinyin)})</small></h2>
             <div class="bc-doc-name-local">${escapeHtml(currentDoc['name' + lang.charAt(0).toUpperCase() + lang.slice(1)] || currentDoc.nameVi)}</div>
@@ -620,7 +626,9 @@
                   <div class="bc-field-card-header">
                     <span class="bc-field-tag">Box 0${fIdx + 1}</span>
                     <span class="bc-field-zh">${escapeHtml(fld.fieldZh)}</span>
-                    <button class="bc-mini-speaker" onclick="bcPlayAudio('${escapeHtml(fld.fieldZh.split('(')[0])}', event)"></button>
+                    <button class="bc-mini-speaker" onclick="bcPlayAudio('${escapeHtml(fld.fieldZh.split('(')[0])}', event)" title="Nghe phát âm" aria-label="Phát âm">
+                      <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+                    </button>
                   </div>
                   <div class="bc-field-en">${escapeHtml(fld.fieldEn)}</div>
                   <div class="bc-field-desc">${escapeHtml(getLocText(fld.explanation, lang))}</div>
@@ -711,8 +719,10 @@
               </div>
               <div class="bc-front-hanzi">${escapeHtml(currentCard.term)}</div>
               <div class="bc-front-pinyin">${escapeHtml(currentCard.pinyin)}</div>
-              <button class="bc-front-audio" onclick="bcPlayAudio('${escapeHtml(currentCard.term)}', event)" title="Nghe phát âm"></button>
-              <div class="bc-flip-hint"> ${t('bcFlipCard') || 'Chạm để lật xem nghĩa & bí kíp'}</div>
+              <button class="bc-front-audio" onclick="bcPlayAudio('${escapeHtml(currentCard.term)}', event)" title="Nghe phát âm" aria-label="Nghe phát âm">
+                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+              </button>
+              <div class="bc-flip-hint">${t('bcFlipCard') || 'Chạm để lật xem nghĩa & bí kíp'}</div>
             </div>
 
             <!-- Card Back -->
@@ -720,7 +730,9 @@
               <div class="bc-back-term-summary">
                 <span class="bc-back-hanzi">${escapeHtml(currentCard.term)}</span>
                 <span class="bc-back-pinyin">${escapeHtml(currentCard.pinyin)}</span>
-                <button class="bc-mini-speaker" onclick="bcPlayAudio('${escapeHtml(currentCard.term)}', event)"></button>
+                <button class="bc-mini-speaker" onclick="bcPlayAudio('${escapeHtml(currentCard.term)}', event)" title="Nghe phát âm" aria-label="Phát âm">
+                  <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+                </button>
               </div>
 
               <div class="bc-back-meaning">
@@ -1121,11 +1133,11 @@
       const score = qState.score;
       const percent = Math.round((score / total) * 100);
       let title = lang === 'vi' ? 'Hoàn thành bài kiểm tra Pinyin!' : (lang === 'ja' ? 'テスト完了！' : 'Pinyin Quiz Completed!');
-      let badge = '';
-      if (percent === 100) badge = '';
-      else if (percent >= 80) badge = '';
-      else if (percent >= 50) badge = '';
-      else badge = '';
+      let badge = '🎉';
+      if (percent === 100) badge = '🏆';
+      else if (percent >= 80) badge = '🌟';
+      else if (percent >= 50) badge = '👍';
+      else badge = '💪';
 
       mount.innerHTML = `
         <div class="bc-pinyin-quiz-layout">
@@ -1133,14 +1145,14 @@
             <div class="bc-pinyin-summary-badge">${badge}</div>
             <h2 class="bc-pinyin-summary-title">${title}</h2>
             <p class="bc-pinyin-summary-desc">
-              ${lang === 'vi' ? `Bạn trả lời đúng <b>${score}/${total}</b> câu (${percent}%). Chuỗi đúng tốt nhất:  <b>${qState.bestStreak || qState.streak}</b> câu.` : (lang === 'ja' ? `スコア: <b>${score}/${total}</b> (${percent}%)。最高連続正解:  <b>${qState.bestStreak || qState.streak}</b> 問。` : `You scored <b>${score}/${total}</b> (${percent}%). Best streak:  <b>${qState.bestStreak || qState.streak}</b>.`)}
+              ${lang === 'vi' ? `Bạn trả lời đúng <b>${score}/${total}</b> câu (${percent}%). Chuỗi đúng tốt nhất: 🔥 <b>${qState.bestStreak || qState.streak}</b> câu.` : (lang === 'ja' ? `スコア: <b>${score}/${total}</b> (${percent}%)。最高連続正解: 🔥 <b>${qState.bestStreak || qState.streak}</b> 問。` : `You scored <b>${score}/${total}</b> (${percent}%). Best streak: 🔥 <b>${qState.bestStreak || qState.streak}</b>.`)}
             </p>
             <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
               <button class="bc-pinyin-action-btn" onclick="bcRestartPinyinQuiz()">
-                 ${lang === 'vi' ? 'Làm bài kiểm tra mới' : (lang === 'ja' ? 'もう一度挑戦' : 'Try Another Quiz')}
+                🔄 ${lang === 'vi' ? 'Làm bài kiểm tra mới' : (lang === 'ja' ? 'もう一度挑戦' : 'Try Another Quiz')}
               </button>
               <button class="btn btn-secondary" onclick="bcSwitchSubTab('vocab')" style="border-radius:var(--radius-pill); padding:14px 24px; font-weight:700;">
-                 ${lang === 'vi' ? 'Xem lại bảng từ vựng' : (lang === 'ja' ? '用語集に戻る' : 'Back to Vocab')}
+                📖 ${lang === 'vi' ? 'Xem lại bảng từ vựng' : (lang === 'ja' ? '用語集に戻る' : 'Back to Vocab')}
               </button>
             </div>
           </div>
@@ -1181,9 +1193,9 @@
           <!-- Top Bar -->
           <div class="bc-pinyin-quiz-top-bar">
             <div class="bc-pinyin-quiz-meta">
-              <span class="bc-pinyin-score-badge"> ${lang === 'vi' ? 'Câu' : 'Question'} <b>${qState.currentIndex + 1}</b> / ${qState.items.length}</span>
+              <span class="bc-pinyin-score-badge">📝 ${lang === 'vi' ? 'Câu' : 'Question'} <b>${qState.currentIndex + 1}</b> / ${qState.items.length}</span>
               <span class="bc-pinyin-score-badge">✅ ${lang === 'vi' ? 'Điểm:' : 'Score:'} <b>${qState.score}</b></span>
-              ${qState.streak > 1 ? `<span class="bc-pinyin-streak-badge"> ${qState.streak} ${lang === 'vi' ? 'chuỗi' : 'streak'}</span>` : ''}
+              ${qState.streak > 1 ? `<span class="bc-pinyin-streak-badge">🔥 ${qState.streak} ${lang === 'vi' ? 'chuỗi' : 'streak'}</span>` : ''}
             </div>
 
             <!-- Category selector -->
@@ -1203,7 +1215,9 @@
           <!-- Hanzi and speaker -->
           <div class="bc-pinyin-quiz-hanzi-wrap">
             <div class="bc-pinyin-quiz-hanzi">${escapeHtml(v.term)}</div>
-            <button class="bc-pinyin-quiz-speaker-btn" onclick="bcPlayAudio('${escapeHtml(v.term)}', event)" title="Nghe phát âm"></button>
+            <button class="bc-pinyin-quiz-speaker-btn" onclick="bcPlayAudio('${escapeHtml(v.term)}', event)" title="Nghe phát âm" aria-label="Phát âm">
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+            </button>
           </div>
 
           <div style="margin-bottom:14px;">
@@ -1243,8 +1257,8 @@
             <div>
               <button class="bc-pinyin-action-btn" onclick="bcNextPinyinQuestion()">
                 ${qState.currentIndex + 1 < qState.items.length 
-                  ? (lang === 'vi' ? 'Câu tiếp theo ' : (lang === 'ja' ? '次の問題へ ' : 'Next Question '))
-                  : (lang === 'vi' ? 'Xem kết quả tổng kết ' : (lang === 'ja' ? '結果を見る ' : 'View Results '))}
+                  ? (lang === 'vi' ? 'Câu tiếp theo →' : (lang === 'ja' ? '次の問題へ →' : 'Next Question →'))
+                  : (lang === 'vi' ? 'Xem kết quả tổng kết →' : (lang === 'ja' ? '結果を見る →' : 'View Results →'))}
               </button>
             </div>
           ` : ''}

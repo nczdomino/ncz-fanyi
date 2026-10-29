@@ -180,7 +180,7 @@
   <!-- Google Fonts: Noto Sans SC (Simplified Chinese) & Noto Sans JP (Japanese Kanji) & Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700;800&family=Noto+Serif+SC:wght@500;600;700&display=swap" rel="stylesheet">
 
     <!-- CDN Libraries (Core instant dependencies with defer) -->
   <script defer src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
@@ -195,6 +195,7 @@
   <link rel="stylesheet" href="css/grammar.css">
   <link rel="stylesheet" href="css/business.css">
   <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/redesign.css">
 
   <!-- Critical Above-The-Fold Anti-CLS & Layout Shield -->
   <style>
@@ -209,6 +210,53 @@
 <body>
 
 <div id="app-shell">
+  <!-- Desktop Side Rail -->
+  <aside id="side-rail" aria-label="Halou">
+    <div class="rail-brand" onclick="switchView('input')">
+      <div class="rail-seal" lang="zh-CN">哈</div>
+      <div class="rail-brand-text">
+        <div class="rail-name">Halou</div>
+        <div class="rail-tag" lang="zh-CN">哈喽中文</div>
+      </div>
+    </div>
+
+    <nav class="rail-nav">
+      <button class="nav-tab rail-tab" data-view="input" onclick="switchView('input')">
+        <svg width="19" height="19" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+        <span data-i18n="tabRead">Đọc</span>
+      </button>
+      <button class="nav-tab rail-tab" data-view="dict" onclick="switchView('dict')">
+        <svg width="19" height="19" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <span data-i18n="tabDict">Từ điển</span>
+      </button>
+      <button class="nav-tab rail-tab" data-view="grammar" onclick="switchView('grammar')">
+        <svg width="19" height="19" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+        <span data-i18n="tabGrammar">Ngữ pháp</span>
+      </button>
+      <button class="nav-tab rail-tab" data-view="business" onclick="switchView('business')">
+        <svg width="19" height="19" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        <span data-i18n="tabBusiness">Thương mại</span>
+      </button>
+      <button class="nav-tab rail-tab" data-view="settings" onclick="switchView('settings')">
+        <svg width="19" height="19" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3" stroke-width="1.8"/></svg>
+        <span data-i18n="tabSettings">Cài đặt</span>
+      </button>
+    </nav>
+
+    <div class="rail-foot">
+      <div class="rail-lang top-lang-group" role="group" aria-label="Ngôn ngữ giao diện" data-i18n-aria-label="titleUiLanguage">
+        <button type="button" class="top-lang-btn" data-lang="vi" onclick="setUiLang('vi')" title="Tiếng Việt">VI</button>
+        <button type="button" class="top-lang-btn" data-lang="ja" onclick="setUiLang('ja')" title="日本語">JA</button>
+        <button type="button" class="top-lang-btn" data-lang="en" onclick="setUiLang('en')" title="English">EN</button>
+      </div>
+      <button class="rail-theme" onclick="toggleTheme()" title="Đổi giao diện" data-i18n-title="titleToggleTheme" aria-label="Toggle theme">
+        <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+        <span data-i18n="darkMode">Chế độ tối</span>
+      </button>
+      <div class="rail-version">Halou · v1.4.2</div>
+    </div>
+  </aside>
+
   <!-- Top Bar -->
   <header id="top-bar">
     <div class="brand-badge" onclick="switchView('input')" title="Halou" data-i18n-title="appName">
@@ -234,67 +282,80 @@
     
     <!-- VIEW: Input -->
     <section id="view-input" class="view active">
-      <div class="card">
-        <div class="input-header">
-          <div class="input-title" data-i18n="inputTitle">Nhập văn bản</div>
-          <div class="input-subtitle" data-i18n="onboarding2Desc">Dán văn bản tiếng Trung hoặc chụp ảnh chứa chữ Hán. App sẽ nhận diện và phân tích cho bạn.</div>
+      <div class="home-hero">
+        <div class="home-eyebrow" data-i18n="homeEyebrow">Góc học tập</div>
+        <h1 class="home-title" data-i18n="homeTitle">Hôm nay bạn muốn đọc gì?</h1>
+        <p class="home-sub" data-i18n="homeSub">Dán văn bản, mở ảnh hay tài liệu — Halou sẽ thêm pinyin và giải nghĩa ngay cho bạn.</p>
+      </div>
+
+      <div class="card composer">
+        <div class="composer-head">
+          <div class="composer-label">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 6h16M4 12h10M4 18h7"/></svg>
+            <span data-i18n="inputTitle">Nhập văn bản</span>
+          </div>
+          <div class="composer-hint" data-i18n="composerHint">Hán · Pinyin · Nghĩa</div>
         </div>
-        
+
         <div class="textarea-wrapper">
           <textarea id="input-textarea" class="textarea-box" lang="zh-CN" data-i18n-ph="pasteText" placeholder="Dán văn bản tiếng Trung vào đây..." oninput="updateInputClearBtn()"></textarea>
-          <button type="button" id="textarea-clear-btn" class="textarea-clear-btn" onclick="clearInputText()" title="Xóa nội dung" data-i18n-title="btnClearInput" style="display:none;">
+          <button type="button" id="textarea-clear-btn" class="textarea-clear-btn" onclick="clearInputText()" title="Xóa nội dung" data-i18n-title="btnClearInput">
             ✕ <span data-i18n="clear">Xóa</span>
           </button>
         </div>
-        
+
         <input type="file" id="ocr-file-input" accept="image/*" style="display:none;" onchange="handleImageUpload(this.files[0])">
-        
-        <div class="action-row">
-          <button class="btn btn-primary" id="btn-analyze" onclick="analyzeText()">
-            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
-            <span data-i18n="btnAnalyze">Phân tích văn bản</span>
-          </button>
-          
-          <button class="btn btn-secondary" onclick="pasteFromClipboard()">
-            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
-            <span data-i18n="btnPaste">Dán từ clipboard</span>
-          </button>
-          
-          <button class="btn btn-secondary" id="btn-clear-input" onclick="clearInputText()" title="Xóa nội dung văn bản" data-i18n-title="btnClearInput">
-            <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-            <span data-i18n="btnClearInput">Xóa nội dung</span>
-          </button>
-          
-          <button class="btn btn-secondary" onclick="document.getElementById('ocr-file-input').click()">
-            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-            <span data-i18n="btnCamera">Chụp / Chọn ảnh</span>
-          </button>
 
-          <button class="btn btn-secondary" onclick="openHandwritingForTextInput()" title="Vẽ chữ viết tay tra từ" data-i18n-title="btnHandwriting">
-            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
-            <span data-i18n="btnHandwriting">Vẽ chữ Hán</span>
-          </button>
+        <div class="composer-tools">
+          <div class="composer-primary">
+            <button class="btn btn-primary" id="btn-analyze" onclick="analyzeText()">
+              <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+              <span data-i18n="btnAnalyze">Phân tích văn bản</span>
+            </button>
 
-          <input type="file" id="pdf-file-input" accept=".pdf,application/pdf" style="display:none;" onchange="handlePdfUpload(this.files[0])">
-          <button class="btn btn-secondary" onclick="document.getElementById('pdf-file-input').click()">
-            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-            <span data-i18n="btnPdf">Tải tệp PDF</span>
-          </button>
+            <button class="btn btn-ghost" onclick="pasteFromClipboard()">
+              <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3"/></svg>
+              <span data-i18n="btnPaste">Dán từ clipboard</span>
+            </button>
+          </div>
 
-          <input type="file" id="word-file-input" accept=".docx,.doc,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword" style="display:none;" onchange="handleWordUpload(this.files[0])">
-          <button class="btn btn-secondary" onclick="document.getElementById('word-file-input').click()">
-            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2zM9 9h1m-1 4h6m-6 4h6"/></svg>
-            <span data-i18n="btnWord">Tệp Word</span>
-          </button>
+          <div class="composer-extra">
+            <button class="tool-btn" onclick="document.getElementById('ocr-file-input').click()" title="Chụp / Chọn ảnh" data-i18n-title="btnCamera">
+              <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              <span data-i18n="toolImage">Ảnh</span>
+            </button>
+
+            <input type="file" id="pdf-file-input" accept=".pdf,application/pdf" style="display:none;" onchange="handlePdfUpload(this.files[0])">
+            <button class="tool-btn" onclick="document.getElementById('pdf-file-input').click()" title="Tải tệp PDF" data-i18n-title="btnPdf">
+              <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              <span>PDF</span>
+            </button>
+
+            <input type="file" id="word-file-input" accept=".docx,.doc,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword" style="display:none;" onchange="handleWordUpload(this.files[0])">
+            <button class="tool-btn" onclick="document.getElementById('word-file-input').click()" title="Tệp Word" data-i18n-title="btnWord">
+              <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+              <span>Word</span>
+            </button>
+
+            <button class="tool-btn" onclick="openHandwritingForTextInput()" title="Vẽ chữ viết tay tra từ" data-i18n-title="btnHandwriting">
+              <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+              <span data-i18n="toolDraw">Vẽ</span>
+            </button>
+
+            <button class="tool-btn tool-danger" id="btn-clear-input" onclick="clearInputText()" title="Xóa nội dung văn bản" data-i18n-title="btnClearInput">
+              <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              <span data-i18n="clear">Xóa</span>
+            </button>
+          </div>
         </div>
       </div>
 
       <!-- Recent Texts -->
       <div class="samples-container">
-        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
-          <div class="section-title" style="margin-bottom:0;" data-i18n="recentTexts">Văn bản gần đây</div>
-          <button class="btn btn-secondary btn-sm" id="btn-clear-history" onclick="clearRecentTexts()" style="font-size:12px; padding:4px 10px; opacity:0.7;">
-            🗑️ <span data-i18n="clearHistory">Xóa lịch sử</span>
+        <div class="section-head">
+          <div class="section-title" data-i18n="recentTexts">Văn bản gần đây</div>
+          <button class="btn-text" id="btn-clear-history" onclick="clearRecentTexts()">
+            <span data-i18n="clearHistory">Xóa lịch sử</span>
           </button>
         </div>
         <div id="recent-texts-list" class="recent-list"></div>
@@ -336,7 +397,6 @@
         <!-- Hero Header ở trung tâm -->
         <div id="dict-hero-header" class="dict-hero-header">
           <div class="dict-hero-badge">
-            <img src="assets/icons/extras/sparkle.png" width="16" height="16" alt="Sparkle" style="object-fit:contain; vertical-align:middle; margin-right:4px;">
             <span data-i18n="dictHeroBadge">Halou 词典 · AI Dictionary</span>
           </div>
           <div class="dict-hero-title" data-i18n="dictHeroTitle">Tra cứu từ điển tiếng Trung</div>
@@ -351,7 +411,9 @@
             </svg>
           </button>
           <input type="search" id="dict-search-input" class="ai-search-input" data-i18n-ph="searchHint" placeholder="Nhập chữ Hán, pinyin, hoặc nghĩa..." oninput="handleDictSearchInput(event)" oncompositionend="handleDictSearchCompositionEnd(event)" onkeydown="handleDictSearchKeydown(event)" onfocus="handleDictSearchFocus()" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search">
-          <button type="button" id="dict-search-handwriting" class="ai-search-clear" onclick="openHandwritingForDictSearch()" title="Vẽ chữ Hán tra từ" data-i18n-title="btnDrawSearch" style="display:flex; margin-right:4px; font-size:16px;">✍️</button>
+          <button type="button" id="dict-search-handwriting" class="ai-search-clear" onclick="openHandwritingForDictSearch()" title="Vẽ chữ Hán tra từ" data-i18n-title="btnDrawSearch" style="display:flex; margin-right:4px;" aria-label="Vẽ chữ Hán tra từ">
+            <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+          </button>
           <button type="button" id="dict-search-clear" class="ai-search-clear" onclick="clearDictSearch()" style="display:none;" title="Xóa tìm kiếm" data-i18n-title="btnClear">✕</button>
         </form>
 
@@ -395,7 +457,6 @@
         <div id="dict-hsk-accordion" class="dict-hsk-accordion">
           <button id="dict-hsk-toggle-btn" class="dict-hsk-toggle-btn" onclick="toggleHskBrowser()">
             <div style="display:flex; align-items:center; gap:8px;">
-              <span>📂</span>
               <span id="dict-hsk-toggle-text" data-i18n="browseHsk">Khám phá từ vựng HSK 1 - 9 (Chạm để mở)</span>
             </div>
             <span id="dict-hsk-chevron" class="chevron">▼</span>
@@ -410,13 +471,26 @@
               <div class="filter-chip dict-filter-chip" data-hsk="4" onclick="setDictFilter('4')">HSK 4</div>
               <div class="filter-chip dict-filter-chip" data-hsk="5" onclick="setDictFilter('5')">HSK 5</div>
               <div class="filter-chip dict-filter-chip" data-hsk="6" onclick="setDictFilter('6')">HSK 6</div>
-              <div class="filter-chip dict-filter-chip" data-hsk="7-9" onclick="setDictFilter('7-9')" style="background:rgba(139,92,246,0.1); border-color:rgba(139,92,246,0.3); color:#8B5CF6; font-weight:700;">👑 HSK 7-9</div>
-              <div class="filter-chip dict-filter-chip" data-hsk="slang" onclick="setDictFilter('slang')" style="background:rgba(232,52,78,0.08); border-color:rgba(232,52,78,0.25); color:var(--accent); font-weight:600;" data-i18n="hskSlang">🔥 Từ lóng Slang</div>
+              <div class="filter-chip dict-filter-chip" data-hsk="7-9" onclick="setDictFilter('7-9')">HSK 7-9</div>
+              <div class="filter-chip dict-filter-chip" data-hsk="slang" onclick="setDictFilter('slang')" data-i18n="hskSlang">Từ lóng</div>
             </div>
             <div id="dict-hsk-count" style="font-size:12px; color:var(--text-muted); margin-bottom:8px;"></div>
           </div>
         </div>
 
+        <!-- Accordion Tra cứu theo 28 Bộ Thủ (mặc định ẩn) -->
+        <div id="dict-radical-accordion" class="dict-hsk-accordion" style="margin-top:10px;">
+          <button id="dict-radical-toggle-btn" class="dict-hsk-toggle-btn" onclick="toggleRadicalBrowser()">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span id="dict-radical-toggle-text" data-i18n="browseRadicals">Tra cứu theo 28 Bộ Thủ thông dụng (Chạm để mở)</span>
+            </div>
+            <span id="dict-radical-chevron" class="chevron">▼</span>
+          </button>
+          
+          <div id="dict-radical-content" class="dict-hsk-content" style="display:none; padding-top:10px;">
+            <div id="dict-radical-grid" class="dict-radical-grid"></div>
+          </div>
+        </div>
         <!-- Vùng hiển thị kết quả tìm kiếm hoặc danh sách từ khi mở HSK -->
         <div id="dict-results-container" style="width:100%; margin-top:20px;"></div>
 
@@ -431,6 +505,9 @@
 
     <!-- VIEW: Settings -->
     <section id="view-settings" class="view">
+      <div class="page-head">
+        <h1 class="page-title" data-i18n="tabSettings">Cài đặt</h1>
+      </div>
       <div class="settings-section">
         <div class="settings-row">
           <div>
@@ -540,7 +617,9 @@
                      oninput="setTtsVolume(this.value)" aria-label="Volume" style="width:95px;">
               <span id="tts-volume-label" style="font-size:12px; font-weight:700; min-width:42px; text-align:right;">100%</span>
               <button class="btn btn-secondary btn-sm" id="tts-mute-btn" onclick="toggleTtsMute()"
-                      data-i18n-title="ttsMute" title="Tắt tiếng" style="min-width:38px;">🔊</button>
+                      data-i18n-title="ttsMute" title="Tắt tiếng" aria-pressed="false" style="min-width:38px; padding:7px 9px;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+              </button>
             </div>
           </div>
         </div>
@@ -552,7 +631,8 @@
           </div>
           <div class="settings-control">
             <button class="btn btn-secondary btn-sm" onclick="testSpeechVoices()">
-              🔊 <span data-i18n="testVoiceBtn">Kiểm tra</span>
+              <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M11 5 6 9H3v6h3l5 4V5z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15.5 8.5a5 5 0 0 1 0 7"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+              <span data-i18n="testVoiceBtn">Kiểm tra</span>
             </button>
           </div>
         </div>
@@ -591,7 +671,7 @@
         <div class="settings-row" style="cursor:pointer;" onclick="shareApp()">
           <div>
             <div class="settings-label" style="display:flex; align-items:center; gap:6px;">
-              <span>🚀</span> <span data-i18n="shareAppTitle">Chia sẻ ứng dụng Halou (哈喽中文)</span>
+              <span data-i18n="shareAppTitle">Chia sẻ ứng dụng Halou (哈喽中文)</span>
             </div>
             <div class="settings-sublabel" data-i18n="shareAppDesc">Gửi link giới thiệu cho bạn bè cùng học tiếng Trung qua Zalo, Messenger, Facebook</div>
           </div>
@@ -606,7 +686,7 @@
         <div class="settings-row" style="cursor:pointer;" onclick="openLegalModal('privacy')">
           <div>
             <div class="settings-label" style="display:flex; align-items:center; gap:6px;">
-              <span>⚖️</span> <span data-i18n="legalRowLabel">Điều khoản & Quyền riêng tư</span>
+              <span data-i18n="legalRowLabel">Điều khoản & Quyền riêng tư</span>
             </div>
             <div class="settings-sublabel" data-i18n="legalRowSublabel">Quyền riêng tư, điều khoản dịch vụ và nguồn dữ liệu mở</div>
           </div>
@@ -625,7 +705,7 @@
         </div>
         <div style="font-size:22px; font-weight:800; color:var(--text-primary); letter-spacing:-0.3px;" data-i18n="appName">Halou</div>
         <div style="font-size:13px; font-weight:500; color:var(--text-secondary); margin-top:4px; max-width:420px; margin-left:auto; margin-right:auto; line-height:1.4;" data-i18n="appSlogan">Tra từ chuẩn xác, dịch mượt ngữ cảnh, gắn Pinyin tức thì.</div>
-        <div id="app-version-badge" style="font-size:12px; font-weight:600; color:var(--accent); margin-top:4px;">Version 1.4.1 Pro</div>
+        <div id="app-version-badge" style="font-size:12px; font-weight:600; color:var(--accent); margin-top:4px;">Version 1.4.2 Pro</div>
 
         <!-- Product Core Highlights -->
         <div style="margin:18px auto 14px; max-width:420px; display:grid; grid-template-columns:1fr; gap:8px; text-align:left;">
@@ -655,13 +735,16 @@
         <!-- Quick Access Legal Badges -->
         <div style="display:flex; justify-content:center; gap:8px; flex-wrap:wrap; margin:14px 0;">
           <button class="legal-pill-link" onclick="openLegalModal('privacy')">
-            <span>🛡️</span> <span data-i18n="legalTabPrivacy">Quyền riêng tư</span>
+            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3l7 3v5.5c0 4.4-3 7.4-7 8.9-4-1.5-7-4.5-7-8.9V6l7-3z"/></svg>
+            <span data-i18n="legalTabPrivacy">Quyền riêng tư</span>
           </button>
           <button class="legal-pill-link" onclick="openLegalModal('terms')">
-            <span>⚖️</span> <span data-i18n="legalTabTerms">Giấy phép & Sử dụng</span>
+            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8l-5-5z"/><path stroke-linecap="round" stroke-linejoin="round" d="M14 3v5h5M9 13h6M9 17h4"/></svg>
+            <span data-i18n="legalTabTerms">Giấy phép & Sử dụng</span>
           </button>
           <button class="legal-pill-link" onclick="openLegalModal('sources')">
-            <span>📚</span> <span data-i18n="legalTabSources">Nguồn dữ liệu & Giấy phép</span>
+            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 5.5A2.5 2.5 0 016.5 3H20v15H6.5A2.5 2.5 0 004 20.5v-15z"/><path stroke-linecap="round" stroke-linejoin="round" d="M4 18.5A2.5 2.5 0 016.5 16H20"/></svg>
+            <span data-i18n="legalTabSources">Nguồn dữ liệu & Giấy phép</span>
           </button>
         </div>
 
@@ -721,8 +804,11 @@
       <button class="icon-btn" onclick="speakText(state.activeWord)" title="Phát âm chuẩn (1.0x)" data-i18n-title="titlePlayAudio">
         <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
       </button>
-      <button class="icon-btn" onclick="speakActiveMeaning()" title="Nghe nghĩa theo ngôn ngữ đang xem" data-i18n-title="ttsSpeakMeaning" aria-label="Nghe nghĩa" style="font-size:14px;">
-        🗣
+      <button class="icon-btn" onclick="speakText(state.activeWord, this, 0.75)" title="Nghe chậm (0.75x) - Luyện thanh điệu" data-i18n-title="playSlow" aria-label="Phát âm chậm">
+        <span style="font-size:10.5px; font-weight:700; letter-spacing:0.02em;">0.75×</span>
+      </button>
+      <button class="icon-btn" onclick="speakActiveMeaning()" title="Nghe nghĩa theo ngôn ngữ đang xem" data-i18n-title="ttsSpeakMeaning" aria-label="Nghe nghĩa">
+        <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/><path stroke-linecap="round" stroke-width="1.8" d="M8 9h8M8 13h5"/></svg>
       </button>
       <button class="icon-btn" onclick="closeWordSheet()" title="Đóng" data-i18n-title="titleClose">✕</button>
     </div>
@@ -737,10 +823,11 @@
       
       <div class="writer-controls">
         <button class="btn btn-secondary btn-sm" onclick="animateActiveWriters()">
-          ▶ <span data-i18n="animateStrokes">Phát nét</span>
+          <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          <span data-i18n="animateStrokes">Phát nét</span>
         </button>
         <button class="btn btn-outline btn-sm" onclick="splitActiveWord()">
-          🔤 <span data-i18n="splitWord">Tách thành chữ đơn</span>
+          <span data-i18n="splitWord">Tách thành chữ đơn</span>
         </button>
       </div>
 
@@ -761,7 +848,7 @@
         <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
           <button class="btn btn-outline btn-sm" id="sheet-btn-add-lang" onclick="toggleParallelLang()" style="font-size:12px; padding:4px 10px;"></button>
           <button class="btn btn-outline btn-sm" onclick="openEditMeaning()" style="font-size:12px; padding:4px 10px;">
-            ✏️ <span data-i18n="editMeaning">Sửa nghĩa</span>
+            <span data-i18n="editMeaning">Sửa nghĩa</span>
           </button>
         </div>
       </div>
@@ -860,16 +947,19 @@
     <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-top:14px; flex-wrap:wrap;">
       <div style="display:flex; gap:6px; flex-wrap:wrap;">
         <button class="btn btn-secondary btn-sm" id="btn-ocr-clean" onclick="ocrCleanNow()" title="Ghép dòng và sắp xếp lại không dùng AI (0 Token)" data-i18n-title="ocrCleanTitle">
-          <span>🧹</span> <span data-i18n="ocrReorganize">Sắp xếp đoạn (0 Token)</span>
+          <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 6h16M4 12h16M4 18h10"/></svg>
+          <span data-i18n="ocrReorganize">Sắp xếp đoạn (0 Token)</span>
         </button>
         <button class="btn btn-outline btn-sm" id="btn-ocr-repair" onclick="ocrRepairWithAi()" title="Chỉ gửi đoạn cần sửa đến AI để tiết kiệm token" data-i18n-title="ocrRepairTitle">
-          <span>✨</span> <span data-i18n="ocrRepairAi">Sửa lỗi bằng AI</span>
+          <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M12 3.5l1.7 4.6 4.6 1.7-4.6 1.7L12 16.1l-1.7-4.6-4.6-1.7 4.6-1.7L12 3.5z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M18.5 15.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8.8-2.2z"/></svg>
+          <span data-i18n="ocrRepairAi">Sửa lỗi bằng AI</span>
         </button>
       </div>
 
       <div style="display:flex; gap:8px; margin-left:auto;">
         <button class="btn btn-secondary btn-sm" onclick="rescanLastImage()" title="Quét lại ảnh" data-i18n-title="ocrRescanTitle">
-          ↺ <span data-i18n="ocrRescan">Quét lại</span>
+          <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 11a8 8 0 10-2.6 6.2M20 5v6h-6"/></svg>
+          <span data-i18n="ocrRescan">Quét lại</span>
         </button>
         <button class="btn btn-secondary btn-sm" onclick="closeOcrModal()">
           <span data-i18n="cancel">Hủy</span>
@@ -945,7 +1035,8 @@
   <div class="modal-card legal-modal-card">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
       <div style="font-size:17px; font-weight:700; display:flex; align-items:center; gap:7px;">
-        <span>📜</span> <span data-i18n="legalModalTitle">Điều khoản, Quyền riêng tư & Bản quyền</span>
+        <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8l-5-5z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M14 3v5h5M9 13h6M9 17h4"/></svg>
+        <span data-i18n="legalModalTitle">Điều khoản, Quyền riêng tư & Bản quyền</span>
       </div>
       <button class="icon-btn" onclick="closeLegalModal()" title="Đóng" data-i18n-title="titleClose">✕</button>
     </div>
@@ -953,13 +1044,16 @@
     <!-- Tabs -->
     <div class="legal-tabs">
       <button class="legal-tab-btn active" data-tab="privacy" onclick="switchLegalTab('privacy')">
-        <span>🛡️</span> <span data-i18n="legalTabPrivacy">Quyền riêng tư</span>
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3l7 3v5.5c0 4.4-3 7.4-7 8.9-4-1.5-7-4.5-7-8.9V6l7-3z"/></svg>
+        <span data-i18n="legalTabPrivacy">Quyền riêng tư</span>
       </button>
       <button class="legal-tab-btn" data-tab="terms" onclick="switchLegalTab('terms')">
-        <span>⚖️</span> <span data-i18n="legalTabTerms">Giấy phép & Sử dụng</span>
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8l-5-5z"/><path stroke-linecap="round" stroke-linejoin="round" d="M14 3v5h5M9 13h6M9 17h4"/></svg>
+        <span data-i18n="legalTabTerms">Giấy phép & Sử dụng</span>
       </button>
       <button class="legal-tab-btn" data-tab="sources" onclick="switchLegalTab('sources')">
-        <span>📚</span> <span data-i18n="legalTabSources">Nguồn dữ liệu & Giấy phép</span>
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 5.5A2.5 2.5 0 016.5 3H20v15H6.5A2.5 2.5 0 004 20.5v-15z"/><path stroke-linecap="round" stroke-linejoin="round" d="M4 18.5A2.5 2.5 0 016.5 16H20"/></svg>
+        <span data-i18n="legalTabSources">Nguồn dữ liệu & Giấy phép</span>
       </button>
     </div>
 
