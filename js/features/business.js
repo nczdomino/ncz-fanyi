@@ -19,7 +19,7 @@
 
   // Internal module state
   const businessState = {
-    activeSubTab: 'vocab', // 'vocab' | 'emails' | 'documents' | 'srs' | 'practice'
+    activeSubTab: 'vocab', // 'vocab' | 'pinyin-quiz' | 'emails' | 'documents' | 'srs' | 'practice'
     searchQuery: '',
     selectedCategory: 'all',
     selectedLevel: 'all',
@@ -34,7 +34,16 @@
     scenarioStepIndex: 0,
     scenarioUserChoices: {},
     activeQuizId: 'quiz_001_incoterms_cif_vs_fob',
-    quizUserAnswer: null
+    quizUserAnswer: null,
+    pinyinQuiz: {
+      items: [],
+      currentIndex: 0,
+      score: 0,
+      streak: 0,
+      bestStreak: 0,
+      categoryFilter: 'all',
+      currentQuestion: null
+    }
   };
 
   function getLang() {
@@ -130,6 +139,15 @@
             <span class="bc-tab-icon">📖</span>
             <span>${t('bcTabVocab') || 'Từ vựng'}</span>
           </button>
+          <button class="bc-subnav-btn ${businessState.activeSubTab === 'pinyin-quiz' ? 'active' : ''}" onclick="bcSwitchSubTab('pinyin-quiz')">
+            <span class="bc-tab-icon">🎯</span>
+            <span>${lang === 'vi' ? 'Kiểm tra Pinyin' : (lang === 'ja' ? 'ピンインテスト' : 'Pinyin Test')}</span>
+          </button>
+          <button class="bc-subnav-btn ${businessState.activeSubTab === 'srs' ? 'active' : ''}" onclick="bcSwitchSubTab('srs')">
+            <span class="bc-tab-icon">🗂️</span>
+            <span>${t('bcTabSRS') || 'Flashcards'}</span>
+            ${stats.dueToday > 0 ? `<span class="bc-srs-badge">${stats.dueToday}</span>` : ''}
+          </button>
           <button class="bc-subnav-btn ${businessState.activeSubTab === 'emails' ? 'active' : ''}" onclick="bcSwitchSubTab('emails')">
             <span class="bc-tab-icon">✉️</span>
             <span>${t('bcTabEmails') || 'Mẫu Email'}</span>
@@ -138,14 +156,9 @@
             <span class="bc-tab-icon">📑</span>
             <span>${t('bcTabDocs') || 'Chứng từ'}</span>
           </button>
-          <button class="bc-subnav-btn ${businessState.activeSubTab === 'srs' ? 'active' : ''}" onclick="bcSwitchSubTab('srs')">
-            <span class="bc-tab-icon">🗂️</span>
-            <span>${t('bcTabSRS') || 'Flashcards'}</span>
-            ${stats.dueToday > 0 ? `<span class="bc-srs-badge">${stats.dueToday}</span>` : ''}
-          </button>
           <button class="bc-subnav-btn ${businessState.activeSubTab === 'practice' ? 'active' : ''}" onclick="bcSwitchSubTab('practice')">
-            <span class="bc-tab-icon">🎯</span>
-            <span>${t('bcTabPractice') || 'Luyện tập'}</span>
+            <span class="bc-tab-icon">💼</span>
+            <span>${t('bcTabPractice') || 'Tình huống'}</span>
           </button>
         </nav>
 
@@ -172,6 +185,9 @@
     switch (businessState.activeSubTab) {
       case 'vocab':
         renderVocabSubView(mount);
+        break;
+      case 'pinyin-quiz':
+        renderPinyinQuizSubView(mount);
         break;
       case 'emails':
         renderEmailsSubView(mount);
@@ -243,6 +259,20 @@
               </select>
             </div>
           </div>
+        </div>
+
+        <!-- Pinyin Quiz Interactive Banner -->
+        <div style="background:var(--bg-surface); border:1px solid var(--border-color); border-radius:var(--radius-xl, 18px); padding:16px 20px; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; box-shadow:0 2px 8px rgba(0,0,0,0.02);">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div style="width:42px; height:42px; border-radius:50%; background:var(--accent-subtle); display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;">🎯</div>
+            <div>
+              <div style="font-weight:700; font-size:14.5px; color:var(--text-primary);">${lang === 'vi' ? 'Kiểm tra phản xạ Pinyin & Thanh điệu' : (lang === 'ja' ? 'ピンイン・声調判定テスト' : 'Pinyin Tone Mastery Quiz')}</div>
+              <div style="font-size:13px; color:var(--text-secondary); margin-top:2px;">${lang === 'vi' ? 'Thử thách chọn Pinyin chính xác của 144 thuật ngữ ngoại thương' : (lang === 'ja' ? '144の貿易専門用語のピンインと声調をテスト' : 'Challenge your pronunciation and tone recognition across 144 trade terms')}</div>
+            </div>
+          </div>
+          <button class="bc-pinyin-action-btn" onclick="bcSwitchSubTab('pinyin-quiz')" style="padding:10px 20px; font-size:13.5px;">
+            <span>${lang === 'vi' ? 'Bắt đầu Test ngay' : (lang === 'ja' ? '今すぐテスト' : 'Start Pinyin Quiz')}</span> ➔
+          </button>
         </div>
 
         <!-- Vocab Cards List Mount -->
@@ -327,6 +357,9 @@
               <span class="bc-card-pinyin">${escapeHtml(item.pinyin)}</span>
             </div>
             <div class="bc-card-actions">
+              <button class="bc-test-pinyin-btn" onclick="bcStartPinyinQuizWithTerm('${item.id}', event)" title="${lang === 'vi' ? 'Kiểm tra Pinyin từ này' : 'Test Pinyin'}">
+                🎯 <span>${lang === 'vi' ? 'Test Pinyin' : 'Quiz'}</span>
+              </button>
               <button class="bc-audio-btn" onclick="bcPlayAudio('${escapeHtml(item.term)}', event)" title="Phát âm">🔊</button>
               <button class="bc-fav-btn ${isFav ? 'active' : ''}" data-id="${item.id}" onclick="bcToggleFavorite('${item.id}', event)" title="Lưu từ này">
                 ${isFav ? '★' : '☆'}
@@ -962,9 +995,304 @@
     renderActiveSubView();
   };
 
-  window.bcAnswerQuiz = function (quizId, optIdx, isCorrect) {
-    businessState.quizUserAnswer = optIdx;
-    BusinessService.recordQuizCompleted(quizId, isCorrect);
+  // ========================================================
+  // SUB-TAB 6: PINYIN TEST & MASTERY QUIZ ENGINE
+  // ========================================================
+  const PINYIN_TONE_FAMILIES = {
+    'a': ['ā', 'á', 'ǎ', 'à'],
+    'e': ['ē', 'é', 'ě', 'è'],
+    'i': ['ī', 'í', 'ǐ', 'ì'],
+    'o': ['ō', 'ó', 'ǒ', 'ò'],
+    'u': ['ū', 'ú', 'ǔ', 'ù'],
+    'ü': ['ǖ', 'ǘ', 'ǚ', 'ǜ']
+  };
+
+  function alterPinyinTone(pinyinStr, variationIndex) {
+    const tones = ['ā','á','ǎ','à','ē','é','ě','è','ī','í','ǐ','ì','ō','ó','ǒ','ò','ū','ú','ǔ','ù','ǖ','ǘ','ǚ','ǜ'];
+    let found = [];
+    for (let i = 0; i < pinyinStr.length; i++) {
+      if (tones.includes(pinyinStr[i])) {
+        found.push({ index: i, char: pinyinStr[i] });
+      }
+    }
+    if (!found.length) return pinyinStr;
+    const target = found[variationIndex % found.length];
+    let baseVowel = null;
+    for (const [v, arr] of Object.entries(PINYIN_TONE_FAMILIES)) {
+      if (arr.includes(target.char)) { baseVowel = v; break; }
+    }
+    if (!baseVowel) return pinyinStr;
+    const family = PINYIN_TONE_FAMILIES[baseVowel];
+    const curTone = family.indexOf(target.char);
+    const newTone = (curTone + 1 + (variationIndex % 3)) % 4;
+    return pinyinStr.slice(0, target.index) + family[newTone] + pinyinStr.slice(target.index + 1);
+  }
+
+  function generatePinyinQuestion(vocabItem, allVocab) {
+    const correct = vocabItem.pinyin;
+    const optionsSet = new Set([correct]);
+
+    for (let i = 0; i < 8 && optionsSet.size < 4; i++) {
+      const alt = alterPinyinTone(correct, i);
+      if (alt && alt !== correct) optionsSet.add(alt);
+    }
+
+    if (optionsSet.size < 4) {
+      const otherVocab = allVocab.filter(v => v.id !== vocabItem.id);
+      for (let i = 0; i < otherVocab.length && optionsSet.size < 4; i++) {
+        if (otherVocab[i].pinyin && !optionsSet.has(otherVocab[i].pinyin)) {
+          optionsSet.add(otherVocab[i].pinyin);
+        }
+      }
+    }
+
+    const shuffled = Array.from(optionsSet);
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+
+    return {
+      vocab: vocabItem,
+      options: shuffled,
+      correctIndex: shuffled.indexOf(correct),
+      chosenIndex: null,
+      isAnswered: false
+    };
+  }
+
+  window.bcStartPinyinQuizWithTerm = function (termId, evt) {
+    if (evt) evt.stopPropagation();
+    const allVocab = BusinessService.getVocabulary();
+    const target = allVocab.find(v => v.id === termId);
+    if (!target) return;
+
+    businessState.pinyinQuiz.categoryFilter = target.category || 'all';
+    initPinyinQuizList(termId);
+    bcSwitchSubTab('pinyin-quiz');
+  };
+
+  window.bcStartPinyinQuiz = function (catId) {
+    businessState.pinyinQuiz.categoryFilter = catId || 'all';
+    initPinyinQuizList();
+    renderActiveSubView();
+  };
+
+  function initPinyinQuizList(startWithId) {
+    const allVocab = BusinessService.getVocabulary();
+    let pool = businessState.pinyinQuiz.categoryFilter === 'all'
+      ? [...allVocab]
+      : allVocab.filter(v => v.category === businessState.pinyinQuiz.categoryFilter);
+
+    if (!pool.length) pool = [...allVocab];
+
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+
+    if (startWithId) {
+      const startIdx = pool.findIndex(v => v.id === startWithId);
+      if (startIdx > -1) {
+        const item = pool.splice(startIdx, 1)[0];
+        pool.unshift(item);
+      }
+    }
+
+    businessState.pinyinQuiz.items = pool.slice(0, 10);
+    businessState.pinyinQuiz.currentIndex = 0;
+    businessState.pinyinQuiz.score = 0;
+    businessState.pinyinQuiz.streak = 0;
+    businessState.pinyinQuiz.currentQuestion = generatePinyinQuestion(businessState.pinyinQuiz.items[0], allVocab);
+  }
+
+  function renderPinyinQuizSubView(mount) {
+    const lang = getLang();
+    const qState = businessState.pinyinQuiz;
+
+    if (!qState.items || !qState.items.length) {
+      initPinyinQuizList();
+    }
+
+    const categories = BusinessService.getCategories();
+
+    if (qState.currentIndex >= qState.items.length) {
+      const total = qState.items.length;
+      const score = qState.score;
+      const percent = Math.round((score / total) * 100);
+      let title = lang === 'vi' ? 'Hoàn thành bài kiểm tra Pinyin!' : (lang === 'ja' ? 'テスト完了！' : 'Pinyin Quiz Completed!');
+      let badge = '🎉';
+      if (percent === 100) badge = '🏆';
+      else if (percent >= 80) badge = '🌟';
+      else if (percent >= 50) badge = '👍';
+      else badge = '💪';
+
+      mount.innerHTML = `
+        <div class="bc-pinyin-quiz-layout">
+          <div class="bc-pinyin-quiz-card bc-pinyin-summary-box">
+            <div class="bc-pinyin-summary-badge">${badge}</div>
+            <h2 class="bc-pinyin-summary-title">${title}</h2>
+            <p class="bc-pinyin-summary-desc">
+              ${lang === 'vi' ? `Bạn trả lời đúng <b>${score}/${total}</b> câu (${percent}%). Chuỗi đúng tốt nhất: 🔥 <b>${qState.bestStreak || qState.streak}</b> câu.` : (lang === 'ja' ? `スコア: <b>${score}/${total}</b> (${percent}%)。最高連続正解: 🔥 <b>${qState.bestStreak || qState.streak}</b> 問。` : `You scored <b>${score}/${total}</b> (${percent}%). Best streak: 🔥 <b>${qState.bestStreak || qState.streak}</b>.`)}
+            </p>
+            <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
+              <button class="bc-pinyin-action-btn" onclick="bcRestartPinyinQuiz()">
+                🔄 ${lang === 'vi' ? 'Làm bài kiểm tra mới' : (lang === 'ja' ? 'もう一度挑戦' : 'Try Another Quiz')}
+              </button>
+              <button class="btn btn-secondary" onclick="bcSwitchSubTab('vocab')" style="border-radius:var(--radius-pill); padding:14px 24px; font-weight:700;">
+                📖 ${lang === 'vi' ? 'Xem lại bảng từ vựng' : (lang === 'ja' ? '用語集に戻る' : 'Back to Vocab')}
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    const curQ = qState.currentQuestion;
+    const v = curQ.vocab;
+    const catObj = BusinessService.getCategoryById(v.category);
+    const transObj = (v.translations && v.translations[lang]) || (v.translations && v.translations['vi']) || {};
+    const meaning = transObj.meaning || '';
+    const progressPercent = Math.round(((qState.currentIndex) / qState.items.length) * 100);
+
+    const optionsHtml = curQ.options.map((opt, idx) => {
+      let statusCls = '';
+      if (curQ.isAnswered) {
+        if (idx === curQ.correctIndex) statusCls = 'correct';
+        else if (idx === curQ.chosenIndex) statusCls = 'wrong';
+      }
+      return `
+        <button 
+          type="button" 
+          class="bc-pinyin-option-btn ${statusCls}" 
+          ${curQ.isAnswered ? 'disabled' : ''} 
+          onclick="bcAnswerPinyinQuiz(${idx})">
+          <span>${escapeHtml(opt)}</span>
+          ${curQ.isAnswered && idx === curQ.correctIndex ? '<span>✅</span>' : ''}
+          ${curQ.isAnswered && idx === curQ.chosenIndex && idx !== curQ.correctIndex ? '<span>❌</span>' : ''}
+        </button>
+      `;
+    }).join('');
+
+    mount.innerHTML = `
+      <div class="bc-pinyin-quiz-layout">
+        <div class="bc-pinyin-quiz-card">
+          <!-- Top Bar -->
+          <div class="bc-pinyin-quiz-top-bar">
+            <div class="bc-pinyin-quiz-meta">
+              <span class="bc-pinyin-score-badge">📝 ${lang === 'vi' ? 'Câu' : 'Question'} <b>${qState.currentIndex + 1}</b> / ${qState.items.length}</span>
+              <span class="bc-pinyin-score-badge">✅ ${lang === 'vi' ? 'Điểm:' : 'Score:'} <b>${qState.score}</b></span>
+              ${qState.streak > 1 ? `<span class="bc-pinyin-streak-badge">🔥 ${qState.streak} ${lang === 'vi' ? 'chuỗi' : 'streak'}</span>` : ''}
+            </div>
+
+            <!-- Category selector -->
+            <div style="display:flex; align-items:center; gap:6px;">
+              <select class="bc-select bc-select-sm" onchange="bcChangePinyinQuizCategory(this.value)" style="max-width:180px;">
+                <option value="all" ${qState.categoryFilter === 'all' ? 'selected' : ''}>${lang === 'vi' ? 'Tất cả danh mục' : 'All Categories'}</option>
+                ${categories.map(c => `<option value="${c.id}" ${qState.categoryFilter === c.id ? 'selected' : ''}>${c.icon} ${escapeHtml(c.zhName)}</option>`).join('')}
+              </select>
+            </div>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="bc-pinyin-quiz-progress">
+            <div class="bc-pinyin-quiz-progress-fill" style="width:${progressPercent}%;"></div>
+          </div>
+
+          <!-- Hanzi and speaker -->
+          <div class="bc-pinyin-quiz-hanzi-wrap">
+            <div class="bc-pinyin-quiz-hanzi">${escapeHtml(v.term)}</div>
+            <button class="bc-pinyin-quiz-speaker-btn" onclick="bcPlayAudio('${escapeHtml(v.term)}', event)" title="Nghe phát âm">🔊</button>
+          </div>
+
+          <div style="margin-bottom:14px;">
+            ${catObj ? `<span class="bc-badge bc-badge-cat">${catObj.icon} ${escapeHtml(catObj.zhName)} (${escapeHtml(getLocText(catObj.name, lang))})</span>` : ''}
+            <span class="bc-badge bc-badge-level bc-level-${v.level}">${escapeHtml(v.level)}</span>
+          </div>
+
+          <p class="bc-pinyin-quiz-prompt">
+            ${lang === 'vi' ? 'Chọn phiên âm Pinyin chuẩn xác kèm thanh điệu của từ trên:' : (lang === 'ja' ? '正しいピンイン（声調付き）を選択してください：' : 'Select the correct Pinyin with proper tones for this word:')}
+          </p>
+
+          <!-- 4 Options -->
+          <div class="bc-pinyin-options-grid">
+            ${optionsHtml}
+          </div>
+
+          <!-- Feedback Box if answered -->
+          ${curQ.isAnswered ? `
+            <div class="bc-pinyin-feedback-box">
+              <div class="bc-pinyin-fb-header ${curQ.chosenIndex === curQ.correctIndex ? 'success' : 'failure'}">
+                <span>${curQ.chosenIndex === curQ.correctIndex ? '✅' : '❌'}</span>
+                <span>${curQ.chosenIndex === curQ.correctIndex 
+                  ? (lang === 'vi' ? 'Chính xác tuyệt vời!' : (lang === 'ja' ? '正解です！' : 'Excellent, correct!')) 
+                  : (lang === 'vi' ? `Chưa đúng! Đáp án chuẩn là: ${escapeHtml(v.pinyin)}` : (lang === 'ja' ? `不正解。正しいピンイン: ${escapeHtml(v.pinyin)}` : `Incorrect! Correct answer: ${escapeHtml(v.pinyin)}`))}</span>
+              </div>
+              <div class="bc-pinyin-fb-meaning">
+                <b>${escapeHtml(v.term)}</b> [${escapeHtml(v.pinyin)}]: ${escapeHtml(meaning)}
+              </div>
+              ${(v.examples && v.examples[0]) ? `
+                <div class="bc-pinyin-fb-example">
+                  <div><b>Ví dụ:</b> ${escapeHtml(v.examples[0].zh)} (${escapeHtml(v.examples[0].pinyin)})</div>
+                  <div style="margin-top:2px; font-style:italic;">“${escapeHtml((v.examples[0].translations && v.examples[0].translations[lang]) || v.examples[0].translations?.vi || '')}”</div>
+                </div>
+              ` : ''}
+            </div>
+
+            <div>
+              <button class="bc-pinyin-action-btn" onclick="bcNextPinyinQuestion()">
+                ${qState.currentIndex + 1 < qState.items.length 
+                  ? (lang === 'vi' ? 'Câu tiếp theo ➔' : (lang === 'ja' ? '次の問題へ ➔' : 'Next Question ➔'))
+                  : (lang === 'vi' ? 'Xem kết quả tổng kết ➔' : (lang === 'ja' ? '結果を見る ➔' : 'View Results ➔'))}
+              </button>
+            </div>
+          ` : ''}
+        </div>
+      </div>
+    `;
+  }
+
+  window.bcAnswerPinyinQuiz = function (optionIdx) {
+    const qState = businessState.pinyinQuiz;
+    const curQ = qState.currentQuestion;
+    if (!curQ || curQ.isAnswered) return;
+
+    curQ.isAnswered = true;
+    curQ.chosenIndex = optionIdx;
+
+    if (optionIdx === curQ.correctIndex) {
+      qState.score++;
+      qState.streak++;
+      if (qState.streak > (qState.bestStreak || 0)) {
+        qState.bestStreak = qState.streak;
+      }
+      bcPlayAudio(curQ.vocab.term);
+    } else {
+      qState.streak = 0;
+    }
+
+    renderActiveSubView();
+  };
+
+  window.bcNextPinyinQuestion = function () {
+    const qState = businessState.pinyinQuiz;
+    qState.currentIndex++;
+    if (qState.currentIndex < qState.items.length) {
+      const allVocab = BusinessService.getVocabulary();
+      qState.currentQuestion = generatePinyinQuestion(qState.items[qState.currentIndex], allVocab);
+    }
+    renderActiveSubView();
+  };
+
+  window.bcRestartPinyinQuiz = function () {
+    initPinyinQuizList();
+    renderActiveSubView();
+  };
+
+  window.bcChangePinyinQuizCategory = function (catId) {
+    businessState.pinyinQuiz.categoryFilter = catId;
+    initPinyinQuizList();
     renderActiveSubView();
   };
 

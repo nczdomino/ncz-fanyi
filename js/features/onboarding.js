@@ -6,7 +6,10 @@ function checkOnboarding() {
   const seen = localStorage.getItem('cr_onboarding_seen');
   if (!seen) {
     const overlay = document.getElementById('onboarding-overlay');
-    if (overlay) overlay.classList.add('active');
+    if (overlay) {
+      overlay.style.display = 'flex';
+      overlay.classList.add('active');
+    }
     showOnboardingStep(1);
   }
 }
@@ -33,5 +36,8 @@ function nextOnboarding() {
 function finishOnboarding() {
   localStorage.setItem('cr_onboarding_seen', 'true');
   const overlay = document.getElementById('onboarding-overlay');
-  if (overlay) overlay.classList.remove('active');
+  if (overlay) {
+    overlay.classList.remove('active');
+    setTimeout(() => { overlay.style.display = 'none'; }, 260);
+  }
 }
