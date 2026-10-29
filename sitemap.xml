@@ -1,36 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://halouzhongwen.com/</loc>
-    <lastmod>2026-10-26</lastmod>
+    <lastmod>2026-10-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://halouzhongwen.com/"/>
     <xhtml:link rel="alternate" hreflang="vi" href="https://halouzhongwen.com/vi/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://halouzhongwen.com/en/"/>
     <xhtml:link rel="alternate" hreflang="ja" href="https://halouzhongwen.com/ja/"/>
+    <image:image>
+      <image:loc>https://halouzhongwen.com/assets/icons/og-preview.png</image:loc>
+      <image:title>Halou Zhongwen - Smart Chinese Dictionary &amp; Translator</image:title>
+      <image:caption>Tra từ điển thông minh, gắn pinyin và dịch ngữ cảnh tiếng Trung</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://halouzhongwen.com/assets/icons/brand-logo.png</image:loc>
+      <image:title>Halou Logo</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://halouzhongwen.com/vi/</loc>
-    <lastmod>2026-10-26</lastmod>
+    <lastmod>2026-10-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://halouzhongwen.com/"/>
     <xhtml:link rel="alternate" hreflang="vi" href="https://halouzhongwen.com/vi/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://halouzhongwen.com/en/"/>
     <xhtml:link rel="alternate" hreflang="ja" href="https://halouzhongwen.com/ja/"/>
+    <image:image>
+      <image:loc>https://halouzhongwen.com/assets/icons/og-preview.png</image:loc>
+      <image:title>Halou: Từ Điển &amp; Dịch Tiếng Trung Thông Minh</image:title>
+      <image:caption>Ứng dụng học tiếng Trung, tra từ điển HSK, ngữ pháp và tiếng Trung thương mại</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://halouzhongwen.com/en/</loc>
-    <lastmod>2026-10-26</lastmod>
+    <lastmod>2026-10-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.90</priority>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://halouzhongwen.com/"/>
     <xhtml:link rel="alternate" hreflang="vi" href="https://halouzhongwen.com/vi/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://halouzhongwen.com/en/"/>
     <xhtml:link rel="alternate" hreflang="ja" href="https://halouzhongwen.com/ja/"/>
+    <image:image>
+      <image:loc>https://halouzhongwen.com/assets/icons/og-preview.png</image:loc>
+      <image:title>Halou – Chinese Dictionary &amp; Smart Translator with Pinyin</image:title>
+      <image:caption>The ultimate Chinese smart dictionary and context-aware translator</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://halouzhongwen.com/ja/</loc>
-    <lastmod>2026-10-26</lastmod>
+    <lastmod>2026-10-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.90</priority>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://halouzhongwen.com/"/>
     <xhtml:link rel="alternate" hreflang="vi" href="https://halouzhongwen.com/vi/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://halouzhongwen.com/en/"/>
     <xhtml:link rel="alternate" hreflang="ja" href="https://halouzhongwen.com/ja/"/>
+    <image:image>
+      <image:loc>https://halouzhongwen.com/assets/icons/og-preview.png</image:loc>
+      <image:title>Halou – ピンイン付きスマート中国語辞書＆AI翻訳</image:title>
+      <image:caption>漢字の読み方自動付与とニュアンスまで汲み取る文脈AI翻訳</image:caption>
+    </image:image>
   </url>
 </urlset>

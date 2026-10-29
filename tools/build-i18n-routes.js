@@ -96,9 +96,13 @@ for (const [code, meta] of Object.entries(LOCALES)) {
   html = html.replace(/<meta name="twitter:title" content="[^"]*">/, `<meta name="twitter:title" content="${meta.ogTitle}">`);
   html = html.replace(/<meta name="twitter:description" content="[^"]*">/, `<meta name="twitter:description" content="${meta.description}">`);
 
-  // 6. Update JSON-LD structured data description
-  html = html.replace(/"description": "[^"]*",\s*"author"/, `"description": "${meta.description.replace(/"/g, '\\"')}",\n    "author"`);
-  html = html.replace(/"url": "[^"]*",\s*"applicationCategory"/, `"url": "${meta.canonical}",\n    "applicationCategory"`);
+  // 6. Update JSON-LD structured data description & Canonical URLs
+  html = html.replace(/"@id": "https:\/\/halouzhongwen\.com\/#app",\s*"name": "([^"]*)",\s*"url": "https:\/\/halouzhongwen\.com\/"/,
+    `"@id": "${meta.canonical}#app",\n        "name": "$1",\n        "url": "${meta.canonical}"`);
+  html = html.replace(/"@id": "https:\/\/halouzhongwen\.com\/#website",\s*"url": "https:\/\/halouzhongwen\.com\/"/,
+    `"@id": "${meta.canonical}#website",\n        "url": "${meta.canonical}"`);
+  html = html.replace(/"description": "Smart Chinese dictionary[^"]*",\s*"image"/,
+    `"description": "${meta.description.replace(/"/g, '\\"')}",\n        "image"`);
 
   const destFile = path.join(destDir, 'index.html');
   fs.writeFileSync(destFile, html, 'utf8');
