@@ -38,11 +38,12 @@
     ? window.grammarStore
     : ((typeof grammarStore !== 'undefined') ? grammarStore : null);
 
-  // Canvas Runtime State (Lego selection, active step, challenge, accordion)
+  // Canvas Runtime State (Lego selection, active step, challenge, accordion, smart level filter)
   const canvasState = {
     activeStep: 1, // 1: Cốt lõi, 2: Lắp ghép, 3: Bẫy hay sai, 4: Thử tài
     detailViewMode: 'stepper', // 'stepper' (Từng bước) | 'accordion' (Mở rộng toàn bộ)
-    openStages: { 1: true, 2: true, 3: false }, // Collapsible stage accordions
+    selectedLevelFilter: 'ALL', // 'ALL' | 'HSK1' | 'HSK2' | 'HSK3'
+    openStages: {}, // Collapsible stage accordions (true | false)
     legoSelections: {}, // { [grammarId]: [slot0Index, slot1Index, slot2Index] }
     challenge: {} // { [grammarId]: { placed: [], completed: false, isCorrect: false } }
   };
@@ -55,6 +56,7 @@
         ja: "ステージ1：基本サバイバル・コア会話"
       },
       tag: { vi: "HSK 1 Cơ bản", en: "HSK 1 Beginner", ja: "HSK 1 初級" },
+      level: "HSK1",
       icon: "🟢",
       desc: {
         vi: "5 cấu trúc sống còn để tự giới thiệu, sở hữu, nơi chốn, hỏi đáp và cảm thán.",
@@ -69,6 +71,7 @@
         ja: "ステージ2：時間詞の語順と動作様態"
       },
       tag: { vi: "HSK 1 Nền tảng", en: "HSK 1 Core", ja: "HSK 1 コア" },
+      level: "HSK1",
       icon: "🟡",
       desc: {
         vi: "Quy tắc vàng về trật tự từ: Khi nào làm gì, cùng ai làm gì, kỹ năng học hỏi và sở hữu.",
@@ -83,11 +86,57 @@
         ja: "ステージ3：状態の持続と実践比較"
       },
       tag: { vi: "HSK 2 Nâng cao", en: "HSK 2 Intermediate", ja: "HSK 2 中級" },
-      icon: "🔴",
+      level: "HSK2",
+      icon: "🔵",
       desc: {
         vi: "Mô tả trải nghiệm từng làm (过), trạng thái duy trì (着), so sánh hơn (比), sắp xảy ra và biến chuyển.",
         en: "Express past experience (过), continuous states (着), comparisons (比), and changes over time.",
         ja: "経験（过）、状態の持続（着）、比較（比）、近未来（快要）や変化（越来越）の応用表現。"
+      }
+    },
+    4: {
+      title: {
+        vi: "Chặng 4: Bổ ngữ & Cấu trúc thời gian hành động",
+        en: "Stage 4: Complements & Action Timing",
+        ja: "ステージ4：結果・方向補語と時量構文"
+      },
+      tag: { vi: "HSK 2 Thực chiến", en: "HSK 2 Action", ja: "HSK 2 実践" },
+      level: "HSK2",
+      icon: "🟠",
+      desc: {
+        vi: "Bổ ngữ kết quả (完/懂/到), bổ ngữ xu hướng (来/去), nhấn mạnh (是...的) và thời lượng hành động.",
+        en: "Result complements (完/懂/到), directional (来/去), emphasis (是...的), and action duration.",
+        ja: "結果補語（完/懂/到）、方向補語（来/去）、強調構文（是…的）と動作の継続時間。"
+      }
+    },
+    5: {
+      title: {
+        vi: "Chặng 5: Cấu trúc câu then chốt (把 / 被) & Liên từ logic",
+        en: "Stage 5: Core Sentence Patterns (把 / 被) & Logic Connectors",
+        ja: "ステージ5：最重要構文（把／被）と論理接続詞"
+      },
+      tag: { vi: "HSK 3 Then chốt", en: "HSK 3 Pivotal", ja: "HSK 3 最重要" },
+      level: "HSK3",
+      icon: "🟣",
+      desc: {
+        vi: "Câu chữ 把 xử lý vật, câu bị động chữ 被, vừa... vừa (又...又...), tuy... nhưng và không những... mà còn.",
+        en: "Master 把 disposal, 被 passive, 又...又... dual traits, although/but, and not only/but also.",
+        ja: "処置の把構文、受身の被構文、並列（又…又…）、逆接（虽然…但是…）、累加（不但…而且…）。"
+      }
+    },
+    6: {
+      title: {
+        vi: "Chặng 6: Biểu đạt phức hợp & Bổ ngữ trình độ/trạng thái",
+        en: "Stage 6: Advanced Expressions & Degree Complements",
+        ja: "ステージ6：様態補語と複合実践表現"
+      },
+      tag: { vi: "HSK 3 Nâng cao", en: "HSK 3 Advanced", ja: "HSK 3 応用" },
+      level: "HSK3",
+      icon: "🔴",
+      desc: {
+        vi: "Bổ ngữ trạng thái (V + 得), hành động đồng thời (一边...一边...), càng... càng (越...越...), ngoài ra (除了...以外) và hễ... là (一...就...).",
+        en: "Degree complement (V + 得), simultaneous actions (一边...一边...), proportional change, besides/except, and immediate actions.",
+        ja: "様態補語（V＋得）、動作の同時進行、相関表現（越…越…）、除外・付加、即時完了（一…就…）。"
       }
     }
   };
@@ -184,16 +233,21 @@
     }
   };
 
-  // --- Stage Accordion Toggles ---
+  // --- Stage Accordion Toggles & Smart Level Filter ---
   window.toggleStageAccordion = function (stageNum) {
     canvasState.openStages[stageNum] = !canvasState.openStages[stageNum];
     renderCanvasCatalogView();
   };
 
   window.expandAllStages = function (shouldExpand) {
-    [1, 2, 3].forEach(st => {
+    [1, 2, 3, 4, 5, 6].forEach(st => {
       canvasState.openStages[st] = shouldExpand;
     });
+    renderCanvasCatalogView();
+  };
+
+  window.setGrammarLevelFilter = function (level) {
+    canvasState.selectedLevelFilter = level;
     renderCanvasCatalogView();
   };
 
@@ -304,7 +358,7 @@
     }
   };
 
-  // --- Catalog (Roadmap) Renderer with Collapsible Stages ---
+  // --- Catalog (Roadmap) Renderer with Smart Focus & Collapsible Stages ---
   function renderCanvasCatalogView() {
     const container = document.getElementById('view-grammar');
     if (!container) return;
@@ -317,20 +371,53 @@
     const completedList = getCompletedIds();
     const completedCount = allCatalog.filter(c => completedList.includes(c.id)).length;
 
-    // Render Stage Accordions
-    const stageGroups = [1, 2, 3];
+    // Detect the current active stage that the learner is currently working on
+    const allStageGroups = [1, 2, 3, 4, 5, 6];
+    let activeStageNum = 1;
+    for (const st of allStageGroups) {
+      const items = allCatalog.filter(c => c.stage === st);
+      const done = items.filter(it => completedList.includes(it.id)).length;
+      if (done < items.length) {
+        activeStageNum = st;
+        break;
+      }
+    }
+
+    const nextUnfinishedItem = allCatalog.find(c => !completedList.includes(c.id));
+
+    // Filter stages by Level Tab if not searching
+    const selectedLevel = canvasState.selectedLevelFilter || 'ALL';
+    const visibleStageGroups = allStageGroups.filter(st => {
+      if (query) return true;
+      if (selectedLevel === 'ALL') return true;
+      return STAGE_META[st]?.level === selectedLevel;
+    });
+
     let totalCardsRendered = 0;
 
-    const stageAccordionsHtml = stageGroups.map(stageNum => {
+    const stageAccordionsHtml = visibleStageGroups.map(stageNum => {
       const meta = STAGE_META[stageNum] || {};
       const stageItems = catalog.filter(c => c.stage === stageNum);
       if (!stageItems.length) return '';
 
       totalCardsRendered += stageItems.length;
-      // Auto-expand all matching stages during search, otherwise follow user's toggle state
-      const isExpanded = query ? true : (canvasState.openStages[stageNum] !== false);
       const doneInStage = stageItems.filter(it => completedList.includes(it.id)).length;
+      const isStageCompleted = doneInStage === stageItems.length && stageItems.length > 0;
+      const isStageCurrent = (stageNum === activeStageNum);
       const stagePercent = Math.round((doneInStage / stageItems.length) * 100);
+
+      // Intelligent auto-collapse logic:
+      // 1. Search query: auto-expand matching stages
+      // 2. User clicked explicitly: respect user choice in canvasState.openStages
+      // 3. Default state: ONLY expand the current active learning stage to prevent clutter!
+      let isExpanded = false;
+      if (query) {
+        isExpanded = true;
+      } else if (canvasState.openStages[stageNum] !== undefined) {
+        isExpanded = !!canvasState.openStages[stageNum];
+      } else {
+        isExpanded = isStageCurrent;
+      }
 
       const cardsHtml = stageItems.map(item => {
         const isDone = completedList.includes(item.id);
@@ -362,8 +449,17 @@
         `;
       }).join('');
 
+      let statusBadgeHtml = '';
+      if (isStageCompleted) {
+        statusBadgeHtml = `<span class="stage-status-badge is-completed">🏆 ${loc === 'ja' ? '修了' : (loc === 'en' ? 'Mastered' : 'Hoàn thành')}</span>`;
+      } else if (isStageCurrent) {
+        statusBadgeHtml = `<span class="stage-status-badge is-active">🎯 ${loc === 'ja' ? '学習中' : (loc === 'en' ? 'In Progress' : 'Đang học')}</span>`;
+      } else {
+        statusBadgeHtml = `<span class="stage-status-badge is-upcoming">⏳ ${loc === 'ja' ? '未着手' : (loc === 'en' ? 'Upcoming' : 'Sắp học')}</span>`;
+      }
+
       return `
-        <div class="stage-accordion-box ${isExpanded ? 'is-open' : 'is-collapsed'}">
+        <div class="stage-accordion-box ${isExpanded ? 'is-open' : 'is-collapsed'} ${isStageCurrent ? 'is-current-stage' : ''}">
           <div class="stage-accordion-header" onclick="toggleStageAccordion(${stageNum})" role="button" tabindex="0">
             <div class="stage-header-left">
               <span class="stage-icon-circle">${meta.icon}</span>
@@ -371,6 +467,7 @@
                 <div class="stage-title-row">
                   <span class="stage-main-title">${escapeHtml(getLocText(meta.title, loc))}</span>
                   <span class="stage-level-badge">${escapeHtml(getLocText(meta.tag, loc))}</span>
+                  ${statusBadgeHtml}
                 </div>
                 <div class="stage-desc-text">${escapeHtml(getLocText(meta.desc, loc))}</div>
               </div>
@@ -431,6 +528,34 @@
           </div>
         </div>
 
+        <!-- Smart Continue Learning Hero Card (If uncompleted items exist) -->
+        ${nextUnfinishedItem ? `
+          <div class="grammar-continue-card">
+            <div class="continue-card-left">
+              <span class="continue-icon">🎯</span>
+              <div class="continue-text-wrap">
+                <div class="continue-tag">${loc === 'ja' ? '次のレッスン' : (loc === 'en' ? 'Next Up' : 'Chặng đang chinh phục')} • Chặng ${nextUnfinishedItem.stage}</div>
+                <div class="continue-title">
+                  <b>${escapeHtml(nextUnfinishedItem.zh_name)}</b> — ${escapeHtml(getLocText(nextUnfinishedItem, loc))}
+                </div>
+              </div>
+            </div>
+            <button type="button" class="btn btn-primary btn-continue-jump" onclick="openGrammarCanvas('${escapeQuotes(nextUnfinishedItem.id)}')">
+              <span>${loc === 'ja' ? '今すぐ学ぶ' : (loc === 'en' ? 'Continue' : 'Học tiếp ngay')}</span> →
+            </button>
+          </div>
+        ` : `
+          <div class="grammar-continue-card is-completed-all">
+            <div class="continue-card-left">
+              <span class="continue-icon">🏆</span>
+              <div class="continue-text-wrap">
+                <div class="continue-tag">${loc === 'ja' ? '達成おめでとうございます！' : (loc === 'en' ? 'All Mastered!' : 'Xuất sắc!')}</div>
+                <div class="continue-title">${loc === 'ja' ? '全30文法パターンを完了しました！' : (loc === 'en' ? 'You completed all 30 grammar patterns!' : 'Bạn đã hoàn thành trọn bộ 30 cấu trúc ngữ pháp!')}</div>
+              </div>
+            </div>
+          </div>
+        `}
+
         <!-- Master Roadmap Progress & Controls -->
         <div class="grammar-master-bar">
           <div class="master-bar-left">
@@ -446,6 +571,22 @@
               📁 ${loc === 'ja' ? 'すべて折りたたむ' : (loc === 'en' ? 'Collapse All' : 'Thu gọn')}
             </button>
           </div>
+        </div>
+
+        <!-- Smart Level Segment Tabs -->
+        <div class="grammar-level-tabs">
+          <button type="button" class="level-tab-btn ${selectedLevel === 'ALL' ? 'active' : ''}" onclick="setGrammarLevelFilter('ALL')">
+            🌟 ${loc === 'ja' ? 'すべて (6ステージ)' : (loc === 'en' ? 'All (6 Stages)' : 'Tất cả (6 Chặng)')}
+          </button>
+          <button type="button" class="level-tab-btn ${selectedLevel === 'HSK1' ? 'active' : ''}" onclick="setGrammarLevelFilter('HSK1')">
+            🟢 HSK 1 (Chặng 1-2)
+          </button>
+          <button type="button" class="level-tab-btn ${selectedLevel === 'HSK2' ? 'active' : ''}" onclick="setGrammarLevelFilter('HSK2')">
+            🔵 HSK 2 (Chặng 3-4)
+          </button>
+          <button type="button" class="level-tab-btn ${selectedLevel === 'HSK3' ? 'active' : ''}" onclick="setGrammarLevelFilter('HSK3')">
+            🟣 HSK 3 (Chặng 5-6)
+          </button>
         </div>
 
         <!-- Stage Accordions or Empty State -->

@@ -1,1396 +1,5259 @@
 /**
  * grammar-data.js
  * 
- * Chinese Grammar Canvas - Multi-Stage Curated Interactive Datasets
- * Stage 1: Sinh tồn & Giao tiếp nền tảng (HSK 1 - 5 cấu trúc)
- * Stage 2: Trật tự thời gian & Phương thức hành động (HSK 1 - 5 cấu trúc)
- * Stage 3: Trạng thái & So sánh thực tế (HSK 2 - 5 cấu trúc)
+ * Auto-generated bundled HSK Grammar dataset for Halou.
+ * Contains 30 curated grammar structures across Stages 1 to 6 (HSK 1, 2, 3).
  */
 
-(function (root, factory) {
-  if (typeof module === 'object' && module.exports) {
-    module.exports = factory();
-  } else {
-    var data = factory();
-    root.HSK_GRAMMAR_CATALOG = data.HSK_GRAMMAR_CATALOG;
-    root.HSK_GRAMMAR_SAMPLES = data.HSK_GRAMMAR_SAMPLES;
+const HSK_GRAMMAR_CATALOG = [
+  {
+    "id": "hsk1_shi",
+    "level": "HSK1",
+    "stage": 1,
+    "order": 1,
+    "zh_name": "是",
+    "formula": "[Chủ ngữ] + 是 + [Danh từ]",
+    "vi_name": "Câu chữ 是 (A là B)",
+    "en_name": "The 是 (shì) Sentence (A is B)",
+    "ja_name": "「是」構文（AはBです）",
+    "icon": "👤",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_you",
+    "level": "HSK1",
+    "stage": 1,
+    "order": 2,
+    "zh_name": "有 / 没有",
+    "formula": "[Chủ ngữ] + 有/没有 + [Đồ vật]",
+    "vi_name": "Có & Không có (有 / 没有)",
+    "en_name": "Possession with 有 and 没有",
+    "ja_name": "所有を表す「有／没有」（〜がある／ない）",
+    "icon": "📦",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_zai_location",
+    "level": "HSK1",
+    "stage": 1,
+    "order": 3,
+    "zh_name": "在 + Nơi chốn + V",
+    "formula": "[Chủ ngữ] + 在 [Nơi chốn] + [Hành động]",
+    "vi_name": "Ở đâu làm gì? (在 + Nơi chốn + Động từ)",
+    "en_name": "Actions at a location (在 + Place + Verb)",
+    "ja_name": "「在＋場所＋動詞」（〜で〜をする）",
+    "icon": "📍",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_ma_question",
+    "level": "HSK1",
+    "stage": 1,
+    "order": 4,
+    "zh_name": "……吗？",
+    "formula": "[Câu khẳng định] + 吗？",
+    "vi_name": "Câu hỏi Có/Không với trợ từ 吗",
+    "en_name": "Yes-No Questions with 吗 (ma)",
+    "ja_name": "語気助詞「吗」による疑問文",
+    "icon": "❓",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_tai_le",
+    "level": "HSK1",
+    "stage": 1,
+    "order": 5,
+    "zh_name": "太……了！",
+    "formula": "太 + [Tính từ] + 了！",
+    "vi_name": "Cảm thán: Quá... rồi! (太...了)",
+    "en_name": "Exclamations: Too / Extremely! (太...了)",
+    "ja_name": "感嘆文「太＋形容詞＋了」（〜すぎる！）",
+    "icon": "✨",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_time_order",
+    "level": "HSK1",
+    "stage": 2,
+    "order": 6,
+    "zh_name": "时间 + 动作",
+    "formula": "[Chủ ngữ] + [Thời gian] + [Hành động]",
+    "vi_name": "Khi nào làm gì? (Thời gian trước hành động)",
+    "en_name": "Time before Verb word order",
+    "ja_name": "時間詞の位置（時間の後に動作）",
+    "icon": "⏰",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_gen_with",
+    "level": "HSK1",
+    "stage": 2,
+    "order": 7,
+    "zh_name": "跟……一起 + V",
+    "formula": "[Chủ ngữ] + 跟 [Người] + 一起 + [Hành động]",
+    "vi_name": "Cùng ai làm gì? (跟 / 和 + Người + Động từ)",
+    "en_name": "Doing actions with someone (跟 / 和 + Someone + Verb)",
+    "ja_name": "「跟／和＋人＋一起＋動詞」（〜と一緒に〜する）",
+    "icon": "🤝",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_ne_question",
+    "level": "HSK1",
+    "stage": 2,
+    "order": 8,
+    "zh_name": "……呢？",
+    "formula": "[Người / Đồ vật] + 呢？",
+    "vi_name": "Câu hỏi tỉnh lược (Còn... thì sao? / ...đâu rồi?)",
+    "en_name": "Elliptical follow-up questions with 呢 (ne)",
+    "ja_name": "省略疑問文を作る「呢」（〜は？）",
+    "icon": "💬",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_hui_ability",
+    "level": "HSK1",
+    "stage": 2,
+    "order": 9,
+    "zh_name": "会 + V",
+    "formula": "[Chủ ngữ] + 会 / 不会 + [Kỹ năng]",
+    "vi_name": "Diễn tả kỹ năng học mới biết (会 + Động từ)",
+    "en_name": "Learned skills and abilities with 会 (huì)",
+    "ja_name": "習得能力を表す「会」（〜できる）",
+    "icon": "🧠",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk1_de_possessive",
+    "level": "HSK1",
+    "stage": 2,
+    "order": 10,
+    "zh_name": "……的 + N",
+    "formula": "[Chủ sở hữu / Tính chất] + 的 + [Danh từ]",
+    "vi_name": "Sở hữu & Bổ nghĩa danh từ (...的 + Danh từ)",
+    "en_name": "Possession and modification with 的 (de)",
+    "ja_name": "修飾・所有の構造助詞「的」（〜の…）",
+    "icon": "🏷️",
+    "difficulty": 1
+  },
+  {
+    "id": "hsk2_guo_experience",
+    "level": "HSK2",
+    "stage": 3,
+    "order": 11,
+    "zh_name": "V + 过",
+    "formula": "[Chủ ngữ] + 没/没有 + [V] + 过 + [Tân ngữ]",
+    "vi_name": "Đã từng làm việc gì (Động từ + 过)",
+    "en_name": "Past experience with particle 过 (guò)",
+    "ja_name": "経験を表すアスペクト助詞「过」（〜したことがある）",
+    "icon": "🚀",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk2_bi_comparison",
+    "level": "HSK2",
+    "stage": 3,
+    "order": 12,
+    "zh_name": "A + 比 + B + Adj",
+    "formula": "[A] + 比 + [B] + [Tính từ]",
+    "vi_name": "Câu so sánh hơn với chữ 比 (A hơn B)",
+    "en_name": "Comparisons using 比 (bǐ - A is more than B)",
+    "ja_name": "「比」を用いた比較文（AはBより〜）",
+    "icon": "⚖️",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk2_zhe_state",
+    "level": "HSK2",
+    "stage": 3,
+    "order": 13,
+    "zh_name": "V + 着",
+    "formula": "[Chủ ngữ / Nơi chốn] + [V] + 着",
+    "vi_name": "Trạng thái đang duy trì (Động từ + 着)",
+    "en_name": "Continuous state particle 着 (zhe)",
+    "ja_name": "状態の持続を表す「着」（〜している／〜てある）",
+    "icon": "🚪",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk2_kuai_le",
+    "level": "HSK2",
+    "stage": 3,
+    "order": 14,
+    "zh_name": "快要……了！",
+    "formula": "[Chủ ngữ] + 快要 + [Hành động] + 了！",
+    "vi_name": "Sắp sửa diễn ra (快要...了 / 要...了)",
+    "en_name": "Imminent actions: About to happen! (快要...了)",
+    "ja_name": "近未来を表す「快要…了」（もうすぐ〜する）",
+    "icon": "⚡",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk2_yue_lai_yue",
+    "level": "HSK2",
+    "stage": 3,
+    "order": 15,
+    "zh_name": "越来越 + Adj",
+    "formula": "[Sự vật] + 越来越 + [Tính từ]",
+    "vi_name": "Càng ngày càng... (越来越 + Tính từ)",
+    "en_name": "More and more with 越来越 (yuèláiyuè)",
+    "ja_name": "漸進を表す「越来越…」（ますます〜）",
+    "icon": "📈",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk2_dong_jie_guo",
+    "level": "HSK2",
+    "stage": 4,
+    "order": 16,
+    "zh_name": "V + 结果补语 (完/懂/见/到)",
+    "formula": "[Chủ ngữ] + [V] + 完/懂/见/到 + [Tân ngữ]",
+    "vi_name": "Bổ ngữ kết quả: Làm xong, hiểu, nhìn thấy (V + 完/懂/见/到)",
+    "en_name": "Resultative Verb Complements (完, 懂, 见, 到)",
+    "ja_name": "結果補語「完・懂・见・到」（〜し終わる／分かる／見える）",
+    "icon": "🎯",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk2_lai_qu_direction",
+    "level": "HSK2",
+    "stage": 4,
+    "order": 17,
+    "zh_name": "V + 来 / 去",
+    "formula": "[Chủ ngữ] + [V] + (Nơi chốn) + 来 / 去",
+    "vi_name": "Bổ ngữ xu hướng đơn: Lại đây / Đi ra xa (V + 来/去)",
+    "en_name": "Simple Directional Complements with 来 (lái) & 去 (qù)",
+    "ja_name": "単純方向補語「来／去」（話者に近づくか遠ざかるか）",
+    "icon": "🧭",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk2_shi_de_emphasis",
+    "level": "HSK2",
+    "stage": 4,
+    "order": 18,
+    "zh_name": "是……的 (强调句)",
+    "formula": "[Chủ ngữ] + 是 + [Thời gian/Nơi chốn/Cách thức] + [V] + 的",
+    "vi_name": "Cấu trúc nhấn mạnh thời gian, nơi chốn: 是……的",
+    "en_name": "The 是……的 (shì...de) construction for emphasis",
+    "ja_name": "時間・場所・方式を強調する「是…的」構文",
+    "icon": "🔦",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk2_shi_jian_duan",
+    "level": "HSK2",
+    "stage": 4,
+    "order": 19,
+    "zh_name": "V + 了 + 时间段 (时量补语)",
+    "formula": "[Chủ ngữ] + [V] + 了 + [Khoảng thời gian] + (的 + [Tân ngữ])",
+    "vi_name": "Bổ ngữ thời lượng: Làm gì trong bao lâu (V + 了 + Khoảng thời gian)",
+    "en_name": "Duration of action: Verb + 了 + Time Duration",
+    "ja_name": "動作の継続時間を表す時量補語（〜時間〜した）",
+    "icon": "⏳",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk2_yao_le_immediate",
+    "level": "HSK2",
+    "stage": 4,
+    "order": 20,
+    "zh_name": "就要……了 (即将发生)",
+    "formula": "[Chủ ngữ] + (Thời gian cụ thể) + 就要 + [V] + 了",
+    "vi_name": "Sắp sửa diễn ra ngay (就要...了 / 快要...了)",
+    "en_name": "Imminent action with 就要……了 / 快要……了",
+    "ja_name": "近未来「就要…了」（時間が明示される場合にも使える）",
+    "icon": "⚡",
+    "difficulty": 2
+  },
+  {
+    "id": "hsk3_ba_sentence",
+    "level": "HSK3",
+    "stage": 5,
+    "order": 21,
+    "zh_name": "把字句 (处置式)",
+    "formula": "[Chủ ngữ] + 把 + [Tân ngữ] + [V] + [Kết quả/Thành phần khác]",
+    "vi_name": "Câu chữ 把: Tác động xử lý vật (S + 把 + O + V + Kết quả)",
+    "en_name": "The 把 (bǎ) disposal sentence structure",
+    "ja_name": "処置を表す「把」構文（〜を…する）",
+    "icon": "📦",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk3_bei_passive",
+    "level": "HSK3",
+    "stage": 5,
+    "order": 22,
+    "zh_name": "被字句 (被动句)",
+    "formula": "[Chủ ngữ] + 被 + (Tác nhân) + [V] + (Kết quả/了)",
+    "vi_name": "Câu bị động chữ 被: Bị / Được tác động (S + 被 + Tác nhân + V)",
+    "en_name": "Passive voice with 被 (bèi)",
+    "ja_name": "受身（パッシブ）を表す「被」構文（〜に…される）",
+    "icon": "🛡️",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk3_you_you",
+    "level": "HSK3",
+    "stage": 5,
+    "order": 23,
+    "zh_name": "又……又……",
+    "formula": "[Chủ ngữ] + 又 + [Tính từ 1] + 又 + [Tính từ 2]",
+    "vi_name": "Vừa... lại vừa... (Cùng lúc có 2 đặc tính: 又...又...)",
+    "en_name": "Both... and... with 又……又……",
+    "ja_name": "並列を表す「又…又…」（〜でもあり〜でもある）",
+    "icon": "🍉",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk3_sui_ran_dan_shi",
+    "level": "HSK3",
+    "stage": 5,
+    "order": 24,
+    "zh_name": "虽然……但是……",
+    "formula": "虽然 + [Vế 1]，但是 + [Vế 2]",
+    "vi_name": "Tuy rằng... nhưng mà... (Quan hệ chuyển ngoặt: 虽然...但是...)",
+    "en_name": "Although... but... with 虽然……但是……",
+    "ja_name": "逆接を表す「虽然…但是…」（〜だけれども…）",
+    "icon": "🌦️",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk3_bu_dan_er_qie",
+    "level": "HSK3",
+    "stage": 5,
+    "order": 25,
+    "zh_name": "不但……而且……",
+    "formula": "[Chủ ngữ] + 不但 + [Vế 1]，而且 + [Vế 2]",
+    "vi_name": "Không những... mà còn... (Tăng tiến: 不但...而且...)",
+    "en_name": "Not only... but also... with 不但……而且……",
+    "ja_name": "累加を表す「不但…而且…」（〜だけでなく…も）",
+    "icon": "🚀",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk3_de_degree",
+    "level": "HSK3",
+    "stage": 6,
+    "order": 26,
+    "zh_name": "动词 + 得 (状态补语)",
+    "formula": "[Chủ ngữ] + [V] + 得 + 很 / 非常 + [Tính từ]",
+    "vi_name": "Bổ ngữ trạng thái: Đánh giá cách làm (V + 得 + Tính từ)",
+    "en_name": "State/Degree Complements with 得 (V + 得 + Adj)",
+    "ja_name": "様態補語「動詞＋得＋形容詞」（〜の仕方が…だ）",
+    "icon": "🏃",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk3_yi_bian_yi_bian",
+    "level": "HSK3",
+    "stage": 6,
+    "order": 27,
+    "zh_name": "一边……一边……",
+    "formula": "[Chủ ngữ] + 一边 + [V1]，一边 + [V2]",
+    "vi_name": "Vừa làm việc này vừa làm việc kia: 一边...一边...",
+    "en_name": "Doing two actions simultaneously with 一边……一边……",
+    "ja_name": "動作の同時進行「一边…一边…」（〜しながら…する）",
+    "icon": "🎧",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk3_yue_yue",
+    "level": "HSK3",
+    "stage": 6,
+    "order": 28,
+    "zh_name": "越……越……",
+    "formula": "[Chủ ngữ] + 越 + [V1] + 越 + [Tính từ / V2]",
+    "vi_name": "Càng... càng... (Tương quan tăng dần: 越...越...)",
+    "en_name": "The more... the more... with 越……越……",
+    "ja_name": "相関を表す「越…越…」（〜すればするほど…）",
+    "icon": "📈",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk3_chu_le_yi_wai",
+    "level": "HSK3",
+    "stage": 6,
+    "order": 29,
+    "zh_name": "除了……以外",
+    "formula": "除了 + [N/V] + 以外，[Chủ ngữ] + 还/都 + [V]",
+    "vi_name": "Ngoài... ra (Còn... / Đều...): 除了...以外",
+    "en_name": "Besides / Except with 除了……以外",
+    "ja_name": "除外・付加を表す「除了…以外」（〜のほかに／〜を除いて）",
+    "icon": "🎁",
+    "difficulty": 3
+  },
+  {
+    "id": "hsk3_yi_jiu",
+    "level": "HSK3",
+    "stage": 6,
+    "order": 30,
+    "zh_name": "一……就……",
+    "formula": "[Chủ ngữ] + 一 + [V1]，就 + [V2]",
+    "vi_name": "Hễ... là liền... (Hành động vừa xảy ra là kế tiếp ngay: 一...就...)",
+    "en_name": "As soon as... then... with 一……就……",
+    "ja_name": "即時完了「一…就…」（〜するとすぐ…）",
+    "icon": "⚡",
+    "difficulty": 3
   }
-})(typeof window !== 'undefined' ? window : globalThis, function () {
-  var HSK_GRAMMAR_CATALOG = [
-    // --- STAGE 1: Sinh tồn & Giao tiếp nền tảng ---
-    {
-      id: "hsk1_shi",
-      level: "HSK1",
-      stage: 1,
-      order: 1,
-      zh_name: "是",
-      formula: "[Chủ ngữ] + 是 + [Danh từ]",
-      vi_name: "Câu chữ 是 (A là B)",
-      en_name: "The 是 (shì) Sentence (A is B)",
-      ja_name: "「是」構文（AはBです）",
-      icon: "👤",
-      difficulty: 1
-    },
-    {
-      id: "hsk1_you",
-      level: "HSK1",
-      stage: 1,
-      order: 2,
-      zh_name: "有 / 没有",
-      formula: "[Chủ ngữ] + 有/没有 + [Đồ vật]",
-      vi_name: "Có & Không có (有 / 没有)",
-      en_name: "Possession with 有 and 没有",
-      ja_name: "所有を表す「有／没有」（〜がある／ない）",
-      icon: "📦",
-      difficulty: 1
-    },
-    {
-      id: "hsk1_zai_location",
-      level: "HSK1",
-      stage: 1,
-      order: 3,
-      zh_name: "在 + Nơi chốn + V",
-      formula: "[Chủ ngữ] + 在 [Nơi chốn] + [Hành động]",
-      vi_name: "Ở đâu làm gì? (在 + Nơi chốn + Động từ)",
-      en_name: "Actions at a location (在 + Place + Verb)",
-      ja_name: "「在＋場所＋動詞」（〜で〜をする）",
-      icon: "📍",
-      difficulty: 1
-    },
-    {
-      id: "hsk1_ma_question",
-      level: "HSK1",
-      stage: 1,
-      order: 4,
-      zh_name: "……吗？",
-      formula: "[Câu khẳng định] + 吗？",
-      vi_name: "Câu hỏi Có/Không với trợ từ 吗",
-      en_name: "Yes-No Questions with 吗 (ma)",
-      ja_name: "語気助詞「吗」による疑問文",
-      icon: "❓",
-      difficulty: 1
-    },
-    {
-      id: "hsk1_tai_le",
-      level: "HSK1",
-      stage: 1,
-      order: 5,
-      zh_name: "太……了！",
-      formula: "太 + [Tính từ] + 了！",
-      vi_name: "Cảm thán: Quá... rồi! (太...了)",
-      en_name: "Exclamations: Too / Extremely! (太...了)",
-      ja_name: "感嘆文「太＋形容詞＋了」（〜すぎる！）",
-      icon: "✨",
-      difficulty: 1
-    },
+];
 
-    // --- STAGE 2: Trật tự thời gian & Phương thức hành động ---
-    {
-      id: "hsk1_time_order",
-      level: "HSK1",
-      stage: 2,
-      order: 6,
-      zh_name: "时间 + 动作",
-      formula: "[Chủ ngữ] + [Thời gian] + [Hành động]",
-      vi_name: "Khi nào làm gì? (Thời gian trước hành động)",
-      en_name: "Time before Verb word order",
-      ja_name: "時間詞の位置（時間の後に動作）",
-      icon: "⏰",
-      difficulty: 1
+const HSK_GRAMMAR_SAMPLES = [
+  {
+    "id": "hsk1_shi",
+    "level": "HSK1",
+    "zh_name": "是",
+    "formula": "[S] + 是 / 不是 + [N]",
+    "localizations": {
+      "vi": {
+        "title": "Câu chữ 是 (A là B)",
+        "quick_rule": "Dùng để giới thiệu danh tính, nghề nghiệp hoặc quốc tịch (A = B).",
+        "trap_wrong": "她是很漂亮。",
+        "trap_correct": "她很漂亮。",
+        "trap_why": "Tiếng Trung không dùng 是 trước tính từ miêu tả thông thường (dùng 很 thay thế)."
+      },
+      "en": {
+        "title": "The 是 (shì) Sentence (A is B)",
+        "quick_rule": "Connects two nouns to identify who or what someone is (A = B).",
+        "trap_wrong": "她是很漂亮。",
+        "trap_correct": "她很漂亮。",
+        "trap_why": "In Chinese, standalone adjectives act as verbs with 很 and do NOT use 是."
+      },
+      "ja": {
+        "title": "「是」構文（AはBです）",
+        "quick_rule": "主語と名詞を結び、「AはBです」と身分・職業・国籍を紹介する超基本構文です。",
+        "trap_wrong": "她是很漂亮。",
+        "trap_correct": "她很漂亮。",
+        "trap_why": "中国語では形容詞の前に「是」は使えません（「很」を用います）。"
+      }
     },
-    {
-      id: "hsk1_gen_with",
-      level: "HSK1",
-      stage: 2,
-      order: 7,
-      zh_name: "跟……一起 + V",
-      formula: "[Chủ ngữ] + 跟 [Người] + 一起 + [Hành động]",
-      vi_name: "Cùng ai làm gì? (跟 / 和 + Người + Động từ)",
-      en_name: "Doing actions with someone (跟 / 和 + Someone + Verb)",
-      ja_name: "「跟／和＋人＋一起＋動詞」（〜と一緒に〜する）",
-      icon: "🤝",
-      difficulty: 1
+    "lego_slots": [
+      {
+        "slot_label": {
+          "vi": "🧑 Chủ ngữ",
+          "en": "🧑 Subject",
+          "ja": "🧑 主語"
+        },
+        "options": [
+          {
+            "zh": "我",
+            "py": "wǒ",
+            "tr": {
+              "vi": "Tôi",
+              "en": "I",
+              "ja": "私"
+            }
+          },
+          {
+            "zh": "他",
+            "py": "tā",
+            "tr": {
+              "vi": "Anh ấy",
+              "en": "He",
+              "ja": "彼"
+            }
+          },
+          {
+            "zh": "这",
+            "py": "zhè",
+            "tr": {
+              "vi": "Đây",
+              "en": "This",
+              "ja": "これ"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "🔗 Từ nối",
+          "en": "🔗 Copula",
+          "ja": "🔗 繋辞"
+        },
+        "options": [
+          {
+            "zh": "是",
+            "py": "shì",
+            "tr": {
+              "vi": "là",
+              "en": "is/am",
+              "ja": "〜です"
+            }
+          },
+          {
+            "zh": "不是",
+            "py": "bú shì",
+            "tr": {
+              "vi": "không phải là",
+              "en": "is not",
+              "ja": "〜ではありません"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "🏷️ Là ai / Cái gì?",
+          "en": "🏷️ Identity",
+          "ja": "🏷️ 身分・名称"
+        },
+        "options": [
+          {
+            "zh": "学生",
+            "py": "xuésheng",
+            "tr": {
+              "vi": "học sinh",
+              "en": "student",
+              "ja": "学生"
+            }
+          },
+          {
+            "zh": "老师",
+            "py": "lǎoshī",
+            "tr": {
+              "vi": "giáo viên",
+              "en": "teacher",
+              "ja": "先生"
+            }
+          },
+          {
+            "zh": "中国人",
+            "py": "zhōngguórén",
+            "tr": {
+              "vi": "người Trung Quốc",
+              "en": "Chinese",
+              "ja": "中国人"
+            }
+          },
+          {
+            "zh": "汉语书",
+            "py": "hànyǔ shū",
+            "tr": {
+              "vi": "sách tiếng Trung",
+              "en": "Chinese book",
+              "ja": "中国語の本"
+            }
+          }
+        ]
+      }
+    ],
+    "dialogue": {
+      "speaker_a": {
+        "speaker": "A",
+        "zh": "你是学生吗？",
+        "py": "Nǐ shì xuésheng ma?",
+        "tr": {
+          "vi": "Bạn có phải là học sinh không?",
+          "en": "Are you a student?",
+          "ja": "あなたは学生ですか？"
+        }
+      },
+      "speaker_b": {
+        "speaker": "B",
+        "zh": "是的，我是学生。",
+        "py": "Shì de, wǒ shì xuésheng.",
+        "tr": {
+          "vi": "Đúng vậy, tôi là học sinh.",
+          "en": "Yes, I am a student.",
+          "ja": "はい、私は学生です。"
+        }
+      }
     },
-    {
-      id: "hsk1_ne_question",
-      level: "HSK1",
-      stage: 2,
-      order: 8,
-      zh_name: "……呢？",
-      formula: "[Người / Đồ vật] + 呢？",
-      vi_name: "Câu hỏi tỉnh lược (Còn... thì sao? / ...đâu rồi?)",
-      en_name: "Elliptical follow-up questions with 呢 (ne)",
-      ja_name: "省略疑問文を作る「呢」（〜は？）",
-      icon: "💬",
-      difficulty: 1
-    },
-    {
-      id: "hsk1_hui_ability",
-      level: "HSK1",
-      stage: 2,
-      order: 9,
-      zh_name: "会 + V",
-      formula: "[Chủ ngữ] + 会 / 不会 + [Kỹ năng]",
-      vi_name: "Diễn tả kỹ năng học mới biết (会 + Động từ)",
-      en_name: "Learned skills and abilities with 会 (huì)",
-      ja_name: "習得能力を表す「会」（〜できる）",
-      icon: "🧠",
-      difficulty: 1
-    },
-    {
-      id: "hsk1_de_possessive",
-      level: "HSK1",
-      stage: 2,
-      order: 10,
-      zh_name: "……的 + N",
-      formula: "[Chủ sở hữu / Tính chất] + 的 + [Danh từ]",
-      vi_name: "Sở hữu & Bổ nghĩa danh từ (...的 + Danh từ)",
-      en_name: "Possession and modification with 的 (de)",
-      ja_name: "修飾・所有の構造助詞「的」（〜の…）",
-      icon: "🏷️",
-      difficulty: 1
-    },
-
-    // --- STAGE 3: Trạng thái & So sánh thực tế (HSK 2) ---
-    {
-      id: "hsk2_guo_experience",
-      level: "HSK2",
-      stage: 3,
-      order: 11,
-      zh_name: "V + 过",
-      formula: "[Chủ ngữ] + 没/没有 + [V] + 过 + [Tân ngữ]",
-      vi_name: "Đã từng làm việc gì (Động từ + 过)",
-      en_name: "Past experience with particle 过 (guò)",
-      ja_name: "経験を表すアスペクト助詞「过」（〜したことがある）",
-      icon: "🚀",
-      difficulty: 2
-    },
-    {
-      id: "hsk2_bi_comparison",
-      level: "HSK2",
-      stage: 3,
-      order: 12,
-      zh_name: "A + 比 + B + Adj",
-      formula: "[A] + 比 + [B] + [Tính từ]",
-      vi_name: "Câu so sánh hơn với chữ 比 (A hơn B)",
-      en_name: "Comparisons using 比 (bǐ - A is more than B)",
-      ja_name: "「比」を用いた比較文（AはBより〜）",
-      icon: "⚖️",
-      difficulty: 2
-    },
-    {
-      id: "hsk2_zhe_state",
-      level: "HSK2",
-      stage: 3,
-      order: 13,
-      zh_name: "V + 着",
-      formula: "[Chủ ngữ / Nơi chốn] + [V] + 着",
-      vi_name: "Trạng thái đang duy trì (Động từ + 着)",
-      en_name: "Continuous state particle 着 (zhe)",
-      ja_name: "状態の持続を表す「着」（〜している／〜てある）",
-      icon: "🚪",
-      difficulty: 2
-    },
-    {
-      id: "hsk2_kuai_le",
-      level: "HSK2",
-      stage: 3,
-      order: 14,
-      zh_name: "快要……了！",
-      formula: "[Chủ ngữ] + 快要 + [Hành động] + 了！",
-      vi_name: "Sắp sửa diễn ra (快要...了 / 要...了)",
-      en_name: "Imminent actions: About to happen! (快要...了)",
-      ja_name: "近未来を表す「快要…了」（もうすぐ〜する）",
-      icon: "⚡",
-      difficulty: 2
-    },
-    {
-      id: "hsk2_yue_lai_yue",
-      level: "HSK2",
-      stage: 3,
-      order: 15,
-      zh_name: "越来越 + Adj",
-      formula: "[Sự vật] + 越来越 + [Tính từ]",
-      vi_name: "Càng ngày càng... (越来越 + Tính từ)",
-      en_name: "More and more with 越来越 (yuèláiyuè)",
-      ja_name: "漸進を表す「越来越…」（ますます〜）",
-      icon: "📈",
-      difficulty: 2
+    "challenge": {
+      "prompt": {
+        "vi": "Sắp xếp các từ thành câu: 'Tôi là giáo viên'",
+        "en": "Arrange the words to say: 'I am a teacher'",
+        "ja": "並べ替えて「私は先生です」を作ってください"
+      },
+      "tokens": [
+        "老师",
+        "我",
+        "是"
+      ],
+      "correct_order": [
+        "我",
+        "是",
+        "老师"
+      ]
     }
-  ];
-
-  var HSK_GRAMMAR_SAMPLES = [
-    // 1. hsk1_shi
-    {
-      id: "hsk1_shi",
-      level: "HSK1",
-      zh_name: "是",
-      formula: "[S] + 是 / 不是 + [N]",
-      localizations: {
-        vi: {
-          title: "Câu chữ 是 (A là B)",
-          quick_rule: "Dùng để giới thiệu danh tính, nghề nghiệp hoặc quốc tịch (A = B).",
-          trap_wrong: "她是很漂亮。",
-          trap_correct: "她很漂亮。",
-          trap_why: "Tiếng Trung không dùng 是 trước tính từ miêu tả thông thường (dùng 很 thay thế)."
-        },
-        en: {
-          title: "The 是 (shì) Sentence (A is B)",
-          quick_rule: "Connects two nouns to identify who or what someone is (A = B).",
-          trap_wrong: "她是很漂亮。",
-          trap_correct: "她很漂亮。",
-          trap_why: "In Chinese, standalone adjectives act as verbs with 很 and do NOT use 是."
-        },
-        ja: {
-          title: "「是」構文（AはBです）",
-          quick_rule: "主語と名詞を結び、「AはBです」と身分・職業・国籍を紹介する超基本構文です。",
-          trap_wrong: "她是很漂亮。",
-          trap_correct: "她很漂亮。",
-          trap_why: "中国語では形容詞の前に「是」は使えません（「很」を用います）。"
-        }
+  },
+  {
+    "id": "hsk1_you",
+    "level": "HSK1",
+    "zh_name": "有 / 没有",
+    "formula": "[S] + 有 / 没有 + [O]",
+    "localizations": {
+      "vi": {
+        "title": "Có & Không có (有 / 没有)",
+        "quick_rule": "Dùng '有' để nói có cái gì. Phủ định bắt buộc là '没有' (tuyệt đối không nói 不有).",
+        "trap_wrong": "我不有钱。",
+        "trap_correct": "我没有钱。",
+        "trap_why": "Phủ định của động từ '有' luôn luôn là '没' hoặc '没有', không bao giờ dùng '不'."
       },
-      lego_slots: [
-        {
-          slot_label: { vi: "🧑 Chủ ngữ", en: "🧑 Subject", ja: "🧑 主語" },
-          options: [
-            { zh: "我", py: "wǒ", tr: { vi: "Tôi", en: "I", ja: "私" } },
-            { zh: "他", py: "tā", tr: { vi: "Anh ấy", en: "He", ja: "彼" } },
-            { zh: "这", py: "zhè", tr: { vi: "Đây", en: "This", ja: "これ" } }
-          ]
-        },
-        {
-          slot_label: { vi: "🔗 Từ nối", en: "🔗 Copula", ja: "🔗 繋辞" },
-          options: [
-            { zh: "是", py: "shì", tr: { vi: "là", en: "is/am", ja: "〜です" } },
-            { zh: "不是", py: "bú shì", tr: { vi: "không phải là", en: "is not", ja: "〜ではありません" } }
-          ]
-        },
-        {
-          slot_label: { vi: "🏷️ Là ai / Cái gì?", en: "🏷️ Identity", ja: "🏷️ 身分・名称" },
-          options: [
-            { zh: "学生", py: "xuésheng", tr: { vi: "học sinh", en: "student", ja: "学生" } },
-            { zh: "老师", py: "lǎoshī", tr: { vi: "giáo viên", en: "teacher", ja: "先生" } },
-            { zh: "中国人", py: "zhōngguórén", tr: { vi: "người Trung Quốc", en: "Chinese", ja: "中国人" } },
-            { zh: "汉语书", py: "hànyǔ shū", tr: { vi: "sách tiếng Trung", en: "Chinese book", ja: "中国語の本" } }
-          ]
-        }
-      ],
-      dialogue: {
-        speaker_a: {
-          speaker: "A",
-          zh: "你是学生吗？",
-          py: "Nǐ shì xuésheng ma?",
-          tr: { vi: "Bạn có phải là học sinh không?", en: "Are you a student?", ja: "あなたは学生ですか？" }
-        },
-        speaker_b: {
-          speaker: "B",
-          zh: "是的，我是学生。",
-          py: "Shì de, wǒ shì xuésheng.",
-          tr: { vi: "Đúng vậy, tôi là học sinh.", en: "Yes, I am a student.", ja: "はい、私は学生です。" }
-        }
+      "en": {
+        "title": "Possession with 有 and 没有",
+        "quick_rule": "Use '有' (yǒu) to express having something. The negative form is always '没有' (never 不有).",
+        "trap_wrong": "我不有钱。",
+        "trap_correct": "我没有钱。",
+        "trap_why": "The verb '有' can only be negated by '没' or '没有', never by '不'."
       },
-      challenge: {
-        prompt: {
-          vi: "Sắp xếp các từ thành câu: 'Tôi là giáo viên'",
-          en: "Arrange the words to say: 'I am a teacher'",
-          ja: "並べ替えて「私は先生です」を作ってください"
-        },
-        tokens: ["老师", "我", "是"],
-        correct_order: ["我", "是", "老师"]
+      "ja": {
+        "title": "所有を表す「有／没有」（〜がある／ない）",
+        "quick_rule": "「有」で所有を表し、否定は必ず「没有」を用います（「不有」とは決して言いません）。",
+        "trap_wrong": "我不有钱。",
+        "trap_correct": "我没有钱。",
+        "trap_why": "動詞「有」の否定は必ず「没／没有」を使い、「不」で否定することはできません。"
       }
     },
-
-    // 2. hsk1_you
-    {
-      id: "hsk1_you",
-      level: "HSK1",
-      zh_name: "有 / 没有",
-      formula: "[S] + 有 / 没有 + [O]",
-      localizations: {
-        vi: {
-          title: "Có & Không có (有 / 没有)",
-          quick_rule: "Dùng '有' để nói có cái gì. Phủ định bắt buộc là '没有' (tuyệt đối không nói 不有).",
-          trap_wrong: "我不有钱。",
-          trap_correct: "我没有钱。",
-          trap_why: "Phủ định của động từ '有' luôn luôn là '没' hoặc '没有', không bao giờ dùng '不'."
+    "lego_slots": [
+      {
+        "slot_label": {
+          "vi": "🧑 Ai?",
+          "en": "🧑 Who?",
+          "ja": "🧑 誰が？"
         },
-        en: {
-          title: "Possession with 有 and 没有",
-          quick_rule: "Use '有' (yǒu) to express having something. The negative form is always '没有' (never 不有).",
-          trap_wrong: "我不有钱。",
-          trap_correct: "我没有钱。",
-          trap_why: "The verb '有' can only be negated by '没' or '没有', never by '不'."
+        "options": [
+          {
+            "zh": "我",
+            "py": "wǒ",
+            "tr": {
+              "vi": "Tôi",
+              "en": "I",
+              "ja": "私"
+            }
+          },
+          {
+            "zh": "他",
+            "py": "tā",
+            "tr": {
+              "vi": "Anh ấy",
+              "en": "He",
+              "ja": "彼"
+            }
+          },
+          {
+            "zh": "朋友",
+            "py": "péngyou",
+            "tr": {
+              "vi": "Bạn bè",
+              "en": "Friend",
+              "ja": "友達"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "📦 Có / Không có",
+          "en": "📦 Have / Not have",
+          "ja": "📦 ある／ない"
         },
-        ja: {
-          title: "所有を表す「有／没有」（〜がある／ない）",
-          quick_rule: "「有」で所有を表し、否定は必ず「没有」を用います（「不有」とは決して言いません）。",
-          trap_wrong: "我不有钱。",
-          trap_correct: "我没有钱。",
-          trap_why: "動詞「有」の否定は必ず「没／没有」を使い、「不」で否定することはできません。"
+        "options": [
+          {
+            "zh": "有",
+            "py": "yǒu",
+            "tr": {
+              "vi": "có",
+              "en": "have",
+              "ja": "ある・持っている"
+            }
+          },
+          {
+            "zh": "没有",
+            "py": "méiyǒu",
+            "tr": {
+              "vi": "không có",
+              "en": "do not have",
+              "ja": "ない・持っていない"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "✨ Cái gì?",
+          "en": "✨ What?",
+          "ja": "✨ 何を？"
+        },
+        "options": [
+          {
+            "zh": "时间",
+            "py": "shíjiān",
+            "tr": {
+              "vi": "thời gian",
+              "en": "time",
+              "ja": "時間"
+            }
+          },
+          {
+            "zh": "钱",
+            "py": "qián",
+            "tr": {
+              "vi": "tiền",
+              "en": "money",
+              "ja": "お金"
+            }
+          },
+          {
+            "zh": "问题",
+            "py": "wèntí",
+            "tr": {
+              "vi": "câu hỏi / vấn đề",
+              "en": "question/problem",
+              "ja": "質問・問題"
+            }
+          }
+        ]
+      }
+    ],
+    "dialogue": {
+      "speaker_a": {
+        "speaker": "A",
+        "zh": "你现在有时间吗？",
+        "py": "Nǐ xiànzài yǒu shíjiān ma?",
+        "tr": {
+          "vi": "Bây giờ bạn có thời gian không?",
+          "en": "Do you have time right now?",
+          "ja": "今、時間はありますか？"
         }
       },
-      lego_slots: [
-        {
-          slot_label: { vi: "🧑 Ai?", en: "🧑 Who?", ja: "🧑 誰が？" },
-          options: [
-            { zh: "我", py: "wǒ", tr: { vi: "Tôi", en: "I", ja: "私" } },
-            { zh: "他", py: "tā", tr: { vi: "Anh ấy", en: "He", ja: "彼" } },
-            { zh: "朋友", py: "péngyou", tr: { vi: "Bạn bè", en: "Friend", ja: "友達" } }
-          ]
-        },
-        {
-          slot_label: { vi: "📦 Có / Không có", en: "📦 Have / Not have", ja: "📦 ある／ない" },
-          options: [
-            { zh: "有", py: "yǒu", tr: { vi: "có", en: "have", ja: "ある・持っている" } },
-            { zh: "没有", py: "méiyǒu", tr: { vi: "không có", en: "do not have", ja: "ない・持っていない" } }
-          ]
-        },
-        {
-          slot_label: { vi: "✨ Cái gì?", en: "✨ What?", ja: "✨ 何を？" },
-          options: [
-            { zh: "时间", py: "shíjiān", tr: { vi: "thời gian", en: "time", ja: "時間" } },
-            { zh: "钱", py: "qián", tr: { vi: "tiền", en: "money", ja: "お金" } },
-            { zh: "问题", py: "wèntí", tr: { vi: "câu hỏi / vấn đề", en: "question/problem", ja: "質問・問題" } }
-          ]
+      "speaker_b": {
+        "speaker": "B",
+        "zh": "对不起，我没有时间。",
+        "py": "Duìbuqǐ, wǒ méiyǒu shíjiān.",
+        "tr": {
+          "vi": "Xin lỗi, tôi không có thời gian.",
+          "en": "Sorry, I don't have time.",
+          "ja": "すみません、時間がありません。"
         }
-      ],
-      dialogue: {
-        speaker_a: {
-          speaker: "A",
-          zh: "你现在有时间吗？",
-          py: "Nǐ xiànzài yǒu shíjiān ma?",
-          tr: { vi: "Bây giờ bạn có thời gian không?", en: "Do you have time right now?", ja: "今、時間はありますか？" }
-        },
-        speaker_b: {
-          speaker: "B",
-          zh: "对不起，我没有时间。",
-          py: "Duìbuqǐ, wǒ méiyǒu shíjiān.",
-          tr: { vi: "Xin lỗi, tôi không có thời gian.", en: "Sorry, I don't have time.", ja: "すみません、時間がありません。" }
-        }
-      },
-      challenge: {
-        prompt: {
-          vi: "Sắp xếp các từ thành câu: 'Tôi không có tiền'",
-          en: "Arrange the words to say: 'I don't have money'",
-          ja: "並べ替えて「私にはお金がありません」を作ってください"
-        },
-        tokens: ["钱", "我", "没有"],
-        correct_order: ["我", "没有", "钱"]
       }
     },
-
-    // 3. hsk1_zai_location
-    {
-      id: "hsk1_zai_location",
-      level: "HSK1",
-      zh_name: "在 + Nơi chốn + V",
-      formula: "[Chủ ngữ] + 在 [Nơi chốn] + [Hành động]",
-      localizations: {
-        vi: {
-          title: "Ở đâu làm gì? (在 + Nơi chốn + Động từ)",
-          quick_rule: "Quy tắc vàng: Phải ĐẾN ĐỊA ĐIỂM trước rồi mới LÀM HÀNH ĐỘNG (ngược với tiếng Việt 'học ở trường').",
-          trap_wrong: "我看书在学校。",
-          trap_correct: "我在学校看书。",
-          trap_why: "Trong tiếng Trung, trạng ngữ chỉ nơi chốn (在 + địa điểm) luôn đứng TRƯỚC động từ, không đứng sau."
-        },
-        en: {
-          title: "Actions at a location (在 + Place + Verb)",
-          quick_rule: "Golden rule: Express the location BEFORE the verb (opposite to English 'I study at school').",
-          trap_wrong: "我看书在学校。",
-          trap_correct: "我在学校看书。",
-          trap_why: "Location phrases with '在' must be placed BEFORE the action verb, not at the end of the sentence."
-        },
-        ja: {
-          title: "「在＋場所＋動詞」（〜で〜をする）",
-          quick_rule: "黄金ルール：場所を表す「在＋場所」を必ず動詞の「前」に置きます（日本語と同じ語順です）。",
-          trap_wrong: "我看书在学校。",
-          trap_correct: "我在学校看书。",
-          trap_why: "場所表現「在学校」を動詞の後ろに置くことはできません。必ず動詞の前に置きます。"
-        }
+    "challenge": {
+      "prompt": {
+        "vi": "Sắp xếp các từ thành câu: 'Tôi không có tiền'",
+        "en": "Arrange the words to say: 'I don't have money'",
+        "ja": "並べ替えて「私にはお金がありません」を作ってください"
       },
-      lego_slots: [
-        {
-          slot_label: { vi: "🧑 Ai?", en: "🧑 Who?", ja: "🧑 誰が？" },
-          options: [
-            { zh: "我", py: "wǒ", tr: { vi: "Tôi", en: "I", ja: "私" } },
-            { zh: "妈妈", py: "māma", tr: { vi: "Mẹ", en: "Mom", ja: "母" } },
-            { zh: "朋友", py: "péngyou", tr: { vi: "Bạn", en: "Friend", ja: "友達" } }
-          ]
-        },
-        {
-          slot_label: { vi: "📍 Ở đâu?", en: "📍 Where?", ja: "📍 どこで？" },
-          options: [
-            { zh: "在家", py: "zài jiā", tr: { vi: "ở nhà", en: "at home", ja: "家で" } },
-            { zh: "在学校", py: "zài xuéxiào", tr: { vi: "ở trường", en: "at school", ja: "学校で" } },
-            { zh: "在公司", py: "zài gōngsī", tr: { vi: "ở công ty", en: "at company", ja: "会社で" } }
-          ]
-        },
-        {
-          slot_label: { vi: "🎬 Làm gì?", en: "🎬 Action?", ja: "🎬 何をする？" },
-          options: [
-            { zh: "看书", py: "kàn shū", tr: { vi: "đọc sách", en: "read book", ja: "本を読む" } },
-            { zh: "睡觉", py: "shuìjiào", tr: { vi: "ngủ", en: "sleep", ja: "寝る" } },
-            { zh: "做饭", py: "zuò fàn", tr: { vi: "nấu ăn", en: "cook", ja: "ご飯を作る" } }
-          ]
-        }
+      "tokens": [
+        "钱",
+        "我",
+        "没有"
       ],
-      dialogue: {
-        speaker_a: {
-          speaker: "A",
-          zh: "你在哪儿呢？",
-          py: "Nǐ zài nǎr ne?",
-          tr: { vi: "Bạn đang ở đâu đấy?", en: "Where are you?", ja: "どこにいるの？" }
-        },
-        speaker_b: {
-          speaker: "B",
-          zh: "我在家看书呢。",
-          py: "Wǒ zài jiā kàn shū ne.",
-          tr: { vi: "Tôi đang ở nhà đọc sách.", en: "I am reading books at home.", ja: "家で本を読んでいるよ。" }
-        }
-      },
-      challenge: {
-        prompt: {
-          vi: "Sắp xếp câu: 'Mẹ nấu ăn ở nhà'",
-          en: "Arrange the words to say: 'Mom cooks at home'",
-          ja: "並べ替えて「母は家で料理をします」を作ってください"
-        },
-        tokens: ["在家", "做饭", "妈妈"],
-        correct_order: ["妈妈", "在家", "做饭"]
-      }
-    },
-
-    // 4. hsk1_ma_question
-    {
-      id: "hsk1_ma_question",
-      level: "HSK1",
-      zh_name: "……吗？",
-      formula: "[Câu khẳng định] + 吗？",
-      localizations: {
-        vi: {
-          title: "Câu hỏi Có/Không với trợ từ 吗",
-          quick_rule: "Giữ nguyên thứ tự câu khẳng định, chỉ cần thêm chữ '吗' ở cuối là thành câu hỏi.",
-          trap_wrong: "你是谁吗？",
-          trap_correct: "你是谁？",
-          trap_why: "Câu đã có từ để hỏi (như 谁, 什么, 哪儿) thì không được thêm 吗 ở cuối nữa."
-        },
-        en: {
-          title: "Yes-No Questions with 吗 (ma)",
-          quick_rule: "Take any normal statement and place '吗' at the end to turn it into a yes-no question.",
-          trap_wrong: "你是谁吗？",
-          trap_correct: "你是谁？",
-          trap_why: "If a sentence already has a question pronoun (who, what, where), do NOT add 吗."
-        },
-        ja: {
-          title: "語気助詞「吗」による疑問文",
-          quick_rule: "普通の平叙文の語順のまま、文末に「吗」を添えるだけで「〜ですか？」の疑問文になります。",
-          trap_wrong: "你是谁吗？",
-          trap_correct: "你是谁？",
-          trap_why: "文中に「谁」「什么」「哪儿」などの疑問詞がある文には、「吗」を重ねて使えません。"
-        }
-      },
-      lego_slots: [
-        {
-          slot_label: { vi: "💬 Câu kể", en: "💬 Statement", ja: "💬 平叙文" },
-          options: [
-            { zh: "你好", py: "nǐ hǎo", tr: { vi: "bạn khỏe", en: "you are good", ja: "元気だ" } },
-            { zh: "你去", py: "nǐ qù", tr: { vi: "bạn đi", en: "you go", ja: "行く" } },
-            { zh: "他喝茶", py: "tā hē chá", tr: { vi: "anh ấy uống trà", en: "he drinks tea", ja: "彼はお茶を飲む" } }
-          ]
-        },
-        {
-          slot_label: { vi: "❓ Trợ từ hỏi", en: "❓ Question particle", ja: "❓ 疑問助詞" },
-          options: [
-            { zh: "吗？", py: "ma?", tr: { vi: "không / à?", en: "?", ja: "〜ですか？" } }
-          ]
-        }
-      ],
-      dialogue: {
-        speaker_a: {
-          speaker: "A",
-          zh: "你好吗？",
-          py: "Nǐ hǎo ma?",
-          tr: { vi: "Bạn khỏe không?", en: "How are you?", ja: "お元気ですか？" }
-        },
-        speaker_b: {
-          speaker: "B",
-          zh: "我很好，你呢？",
-          py: "Wǒ hěn hǎo, nǐ ne?",
-          tr: { vi: "Tôi rất khỏe, còn bạn?", en: "I am fine, and you?", ja: "とても元気です、あなたは？" }
-        }
-      },
-      challenge: {
-        prompt: {
-          vi: "Sắp xếp thành câu hỏi: 'Bạn đi không?'",
-          en: "Arrange the words to ask: 'Are you going?'",
-          ja: "並べ替えて「あなたは行きますか？」を作ってください"
-        },
-        tokens: ["吗", "你", "去"],
-        correct_order: ["你", "去", "吗"]
-      }
-    },
-
-    // 5. hsk1_tai_le
-    {
-      id: "hsk1_tai_le",
-      level: "HSK1",
-      zh_name: "太……了！",
-      formula: "太 + [Tính từ] + 了！",
-      localizations: {
-        vi: {
-          title: "Cảm thán: Quá... rồi! (太...了)",
-          quick_rule: "Kẹp tính từ vào giữa '太' và '了' để thốt lên khen ngợi hoặc than phiền (quá... rồi!).",
-          trap_wrong: "太好！",
-          trap_correct: "太好了！",
-          trap_why: "Cấu trúc cảm thán '太' thường bắt buộc phải có trợ từ '了' ở cuối câu đi kèm."
-        },
-        en: {
-          title: "Exclamations: Too / Extremely! (太...了)",
-          quick_rule: "Enclose an adjective between '太' and '了' to express an intense reaction or exclamation.",
-          trap_wrong: "太好！",
-          trap_correct: "太好了！",
-          trap_why: "The exclamation structure '太...' almost always pairs with '了' at the end."
-        },
-        ja: {
-          title: "感嘆文「太＋形容詞＋了」（〜すぎる！）",
-          quick_rule: "「太」と「了」で形容詞を挟み込み、「〜すぎる！」「とても〜だ！」と感情を込めて感嘆します。",
-          trap_wrong: "太好！",
-          trap_correct: "太好了！",
-          trap_why: "「太」を用いた感嘆文では、文末の「了」とセットで用いるのが原則です。"
-        }
-      },
-      lego_slots: [
-        {
-          slot_label: { vi: "✨ Tiền tố cảm thán", en: "✨ Prefix", ja: "✨ 感嘆接頭詞" },
-          options: [
-            { zh: "太", py: "tài", tr: { vi: "quá / cực kỳ", en: "too / so", ja: "あまりに・とても" } }
-          ]
-        },
-        {
-          slot_label: { vi: "🎨 Tính từ", en: "🎨 Adjective", ja: "🎨 形容詞" },
-          options: [
-            { zh: "好", py: "hǎo", tr: { vi: "tốt / hay", en: "good", ja: "良い" } },
-            { zh: "贵", py: "guì", tr: { vi: "đắt", en: "expensive", ja: "高い" } },
-            { zh: "热", py: "rè", tr: { vi: "nóng", en: "hot", ja: "暑い" } },
-            { zh: "累", py: "lèi", tr: { vi: "mệt", en: "tired", ja: "疲れた" } }
-          ]
-        },
-        {
-          slot_label: { vi: "🎉 Hậu tố cảm thán", en: "🎉 Particle", ja: "🎉 感嘆語気詞" },
-          options: [
-            { zh: "了！", py: "le!", tr: { vi: "rồi!", en: "!", ja: "〜だ！" } }
-          ]
-        }
-      ],
-      dialogue: {
-        speaker_a: {
-          speaker: "A",
-          zh: "这个汉语词典多少钱？",
-          py: "Zhège hànyǔ cídiǎn duōshao qián?",
-          tr: { vi: "Cuốn từ điển tiếng Trung này bao nhiêu tiền?", en: "How much is this Chinese dictionary?", ja: "この中国語辞典はいくらですか？" }
-        },
-        speaker_b: {
-          speaker: "B",
-          zh: "二百块。太贵了！",
-          py: "Èrbǎi kuài. Tài guì le!",
-          tr: { vi: "200 tệ. Đắt quá rồi!", en: "200 RMB. Too expensive!", ja: "200元です。高すぎます！" }
-        }
-      },
-      challenge: {
-        prompt: {
-          vi: "Sắp xếp thành câu cảm thán: 'Tốt quá rồi!'",
-          en: "Arrange the words to say: 'That's great!'",
-          ja: "並べ替えて「素晴らしすぎる！」を作ってください"
-        },
-        tokens: ["了", "好", "太"],
-        correct_order: ["太", "好", "了"]
-      }
-    },
-
-    // --- STAGE 2 SAMPLES ---
-    // 6. hsk1_time_order
-    {
-      id: "hsk1_time_order",
-      level: "HSK1",
-      zh_name: "时间 + 动作",
-      formula: "[Chủ ngữ] + [Thời gian] + [Hành động]",
-      localizations: {
-        vi: {
-          title: "Khi nào làm gì? (Thời gian trước hành động)",
-          quick_rule: "Quy tắc vàng: Thời gian luôn đặt TRƯỚC hành động (ngược với tiếng Việt 'tôi đi ngủ lúc 10h' -> tiếng Trung 'tôi 10h đi ngủ').",
-          trap_wrong: "我去学校早上八点。",
-          trap_correct: "我早上八点去学校。",
-          trap_why: "Từ chỉ thời gian tuyệt đối không đứng ở cuối câu sau động từ trong tiếng Trung."
-        },
-        en: {
-          title: "Time before Verb word order",
-          quick_rule: "Golden Rule: Time phrases must come BEFORE the action verb (opposite to English 'I go to bed at 10 PM').",
-          trap_wrong: "我去学校早上八点。",
-          trap_correct: "我早上八点去学校。",
-          trap_why: "In Chinese, time expressions can never be tacked on at the end after the verb."
-        },
-        ja: {
-          title: "時間詞の位置（時間の後に動作）",
-          quick_rule: "時間詞は必ず動詞の「前」に置きます（日本語と同じで『私は8時に学校へ行く』の語順です）。",
-          trap_wrong: "我去学校早上八点。",
-          trap_correct: "我早上八点去学校。",
-          trap_why: "時間表現を動詞の後に置くことはできません。必ず動詞の前に置きます。"
-        }
-      },
-      lego_slots: [
-        {
-          slot_label: { vi: "🧑 Ai?", en: "🧑 Who?", ja: "🧑 誰が？" },
-          options: [
-            { zh: "我", py: "wǒ", tr: { vi: "Tôi", en: "I", ja: "私" } },
-            { zh: "他", py: "tā", tr: { vi: "Anh ấy", en: "He", ja: "彼" } },
-            { zh: "老师", py: "lǎoshī", tr: { vi: "Thầy giáo", en: "Teacher", ja: "先生" } }
-          ]
-        },
-        {
-          slot_label: { vi: "⏰ Khi nào?", en: "⏰ When?", ja: "⏰ いつ？" },
-          options: [
-            { zh: "早上八点", py: "zǎoshang bā diǎn", tr: { vi: "8h sáng", en: "8 AM", ja: "朝8時" } },
-            { zh: "明天", py: "míngtiān", tr: { vi: "ngày mai", en: "tomorrow", ja: "明日" } },
-            { zh: "星期天", py: "xīngqītiān", tr: { vi: "chủ nhật", en: "Sunday", ja: "日曜日" } }
-          ]
-        },
-        {
-          slot_label: { vi: "🎬 Làm gì?", en: "🎬 Action?", ja: "🎬 何をする？" },
-          options: [
-            { zh: "去学校", py: "qù xuéxiào", tr: { vi: "đến trường", en: "go to school", ja: "学校へ行く" } },
-            { zh: "去北京", py: "qù Běijīng", tr: { vi: "đi Bắc Kinh", en: "go to Beijing", ja: "北京へ行く" } },
-            { zh: "买东西", py: "mǎi dōngxi", tr: { vi: "mua sắm", en: "go shopping", ja: "買い物する" } }
-          ]
-        }
-      ],
-      dialogue: {
-        speaker_a: {
-          speaker: "A",
-          zh: "你明天去哪儿？",
-          py: "Nǐ míngtiān qù nǎr?",
-          tr: { vi: "Ngày mai bạn đi đâu?", en: "Where are you going tomorrow?", ja: "明日はどこへ行きますか？" }
-        },
-        speaker_b: {
-          speaker: "B",
-          zh: "我明天去北京。",
-          py: "Wǒ míngtiān qù Běijīng.",
-          tr: { vi: "Ngày mai tôi đi Bắc Kinh.", en: "I am going to Beijing tomorrow.", ja: "明日、北京へ行きます。" }
-        }
-      },
-      challenge: {
-        prompt: {
-          vi: "Sắp xếp câu: 'Tôi ngày mai đi Bắc Kinh'",
-          en: "Arrange the words to say: 'I go to Beijing tomorrow'",
-          ja: "並べ替えて「私は明日北京へ行きます」を作ってください"
-        },
-        tokens: ["去北京", "明天", "我"],
-        correct_order: ["我", "明天", "去北京"]
-      }
-    },
-
-    // 7. hsk1_gen_with
-    {
-      id: "hsk1_gen_with",
-      level: "HSK1",
-      zh_name: "跟……一起 + V",
-      formula: "[Chủ ngữ] + 跟 [Người] + 一起 + [Hành động]",
-      localizations: {
-        vi: {
-          title: "Cùng ai làm gì? (跟 / 和 + Người + Động từ)",
-          quick_rule: "Phải nói 'Cùng ai' trước rồi mới nói 'Làm gì' (ngược với tiếng Việt 'tôi xem phim với bạn').",
-          trap_wrong: "我看电影跟朋友。",
-          trap_correct: "我跟朋友看电影。",
-          trap_why: "Cụm giới từ chỉ đối tượng (跟/和 + người) luôn đứng TRƯỚC động từ."
-        },
-        en: {
-          title: "Doing actions with someone (跟 / 和 + Someone + Verb)",
-          quick_rule: "Express 'with whom' BEFORE the action verb (opposite to English 'I watch movies with my friend').",
-          trap_wrong: "我看电影跟朋友。",
-          trap_correct: "我跟朋友看电影。",
-          trap_why: "Prepositional phrases with 跟/和 must precede the verb."
-        },
-        ja: {
-          title: "「跟／和＋人＋一起＋動詞」（〜と一緒に〜する）",
-          quick_rule: "「誰と一緒に」を表す言葉を動詞の「前」に置きます（日本語と同じ語順です）。",
-          trap_wrong: "我看电影跟朋友。",
-          trap_correct: "我跟朋友看电影。",
-          trap_why: "「跟朋友」を動詞の後ろに置くことはできません。"
-        }
-      },
-      lego_slots: [
-        {
-          slot_label: { vi: "🧑 Ai?", en: "🧑 Who?", ja: "🧑 誰が？" },
-          options: [
-            { zh: "我", py: "wǒ", tr: { vi: "Tôi", en: "I", ja: "私" } },
-            { zh: "妹妹", py: "mèimei", tr: { vi: "Em gái", en: "Younger sister", ja: "妹" } },
-            { zh: "大卫", py: "Dàwèi", tr: { vi: "David", en: "David", ja: "デイビッド" } }
-          ]
-        },
-        {
-          slot_label: { vi: "🤝 Cùng ai?", en: "🤝 With whom?", ja: "🤝 誰と？" },
-          options: [
-            { zh: "跟朋友", py: "gēn péngyou", tr: { vi: "cùng bạn", en: "with friends", ja: "友達と" } },
-            { zh: "跟妈妈", py: "gēn māma", tr: { vi: "cùng mẹ", en: "with mom", ja: "母と" } },
-            { zh: "跟老师", py: "gēn lǎoshī", tr: { vi: "cùng thầy", en: "with teacher", ja: "先生と" } }
-          ]
-        },
-        {
-          slot_label: { vi: "🎬 Làm gì?", en: "🎬 Action?", ja: "🎬 何をする？" },
-          options: [
-            { zh: "看电影", py: "kàn diànyǐng", tr: { vi: "xem phim", en: "watch movies", ja: "映画を見る" } },
-            { zh: "去超市", py: "qù chāoshì", tr: { vi: "đi siêu thị", en: "go to supermarket", ja: "スーパーに行く" } },
-            { zh: "学汉语", py: "xué hànyǔ", tr: { vi: "học tiếng Trung", en: "study Chinese", ja: "中国語を学ぶ" } }
-          ]
-        }
-      ],
-      dialogue: {
-        speaker_a: {
-          speaker: "A",
-          zh: "你今天跟谁看电影？",
-          py: "Nǐ jīntiān gēn shéi kàn diànyǐng?",
-          tr: { vi: "Hôm nay bạn xem phim cùng ai?", en: "Who are you watching movies with today?", ja: "今日、誰と映画を見るの？" }
-        },
-        speaker_b: {
-          speaker: "B",
-          zh: "我跟朋友看电影。",
-          py: "Wǒ gēn péngyou kàn diànyǐng.",
-          tr: { vi: "Tôi xem phim cùng bạn.", en: "I am watching movies with my friend.", ja: "友達と映画を見るよ。" }
-        }
-      },
-      challenge: {
-        prompt: {
-          vi: "Sắp xếp câu: 'Tôi xem phim cùng bạn'",
-          en: "Arrange the words to say: 'I watch movies with my friend'",
-          ja: "並べ替えて「私は友達と映画を見ます」を作ってください"
-        },
-        tokens: ["看电影", "我", "跟朋友"],
-        correct_order: ["我", "跟朋友", "看电影"]
-      }
-    },
-
-    // 8. hsk1_ne_question
-    {
-      id: "hsk1_ne_question",
-      level: "HSK1",
-      zh_name: "……呢？",
-      formula: "[Người / Đồ vật] + 呢？",
-      localizations: {
-        vi: {
-          title: "Câu hỏi tỉnh lược (Còn... thì sao? / ...đâu rồi?)",
-          quick_rule: "Dùng để hỏi tiếp ý vừa nhắc: 'Còn... thì sao?' hoặc hỏi vị trí '...đâu rồi?'.",
-          trap_wrong: "你呢好吗？",
-          trap_correct: "你呢？",
-          trap_why: "Chữ 呢 đã tự mang nghĩa câu hỏi tỉnh lược hoàn chỉnh, không ghép thêm tính từ hay trợ từ 吗."
-        },
-        en: {
-          title: "Elliptical follow-up questions with 呢 (ne)",
-          quick_rule: "Ask 'How about...?' or 'Where is...?' simply by placing 呢 after a noun or pronoun.",
-          trap_wrong: "你呢好吗？",
-          trap_correct: "你呢？",
-          trap_why: "呢 already forms a complete bounce-back question; do not attach other question words."
-        },
-        ja: {
-          title: "省略疑問文を作る「呢」（〜は？）",
-          quick_rule: "名詞や代名詞の後に「呢」を添えるだけで、「〜は？」「〜はどこ？」と簡潔に問い返せます。",
-          trap_wrong: "你呢好吗？",
-          trap_correct: "你呢？",
-          trap_why: "「你呢？」だけで完全な質問文なので、余計な言葉を後ろに付け足してはいけません。"
-        }
-      },
-      lego_slots: [
-        {
-          slot_label: { vi: "💬 Vế hỏi", en: "💬 Target", ja: "💬 対象" },
-          options: [
-            { zh: "我很好，你", py: "Wǒ hěn hǎo, nǐ", tr: { vi: "Tôi rất khỏe, còn bạn", en: "I'm fine, how about you", ja: "元気です、あなたは" } },
-            { zh: "我的手机", py: "wǒ de shǒujī", tr: { vi: "Điện thoại của tôi", en: "my phone", ja: "私の携帯" } },
-            { zh: "你的书", py: "nǐ de shū", tr: { vi: "Sách của bạn", en: "your book", ja: "あなたの本" } }
-          ]
-        },
-        {
-          slot_label: { vi: "❓ Trợ từ 呢", en: "❓ Particle", ja: "❓ 助詞" },
-          options: [
-            { zh: "呢？", py: "ne?", tr: { vi: "thì sao? / đâu rồi?", en: "?", ja: "は？" } }
-          ]
-        }
-      ],
-      dialogue: {
-        speaker_a: {
-          speaker: "A",
-          zh: "我是越南人，你呢？",
-          py: "Wǒ shì Yuènánrén, nǐ ne?",
-          tr: { vi: "Tôi là người Việt Nam, còn bạn?", en: "I am Vietnamese, and you?", ja: "私はベトナム人です、あなたは？" }
-        },
-        speaker_b: {
-          speaker: "B",
-          zh: "我是中国人。",
-          py: "Wǒ shì Zhōngguórén.",
-          tr: { vi: "Tôi là người Trung Quốc.", en: "I am Chinese.", ja: "私は中国人です。" }
-        }
-      },
-      challenge: {
-        prompt: {
-          vi: "Ghép câu hỏi: 'Điện thoại của tôi đâu rồi?'",
-          en: "Arrange the words to ask: 'Where is my phone?'",
-          ja: "並べ替えて「私の携帯はどこ？」を作ってください"
-        },
-        tokens: ["呢？", "我的", "手机"],
-        correct_order: ["我的", "手机", "呢？"]
-      }
-    },
-
-    // 9. hsk1_hui_ability
-    {
-      id: "hsk1_hui_ability",
-      level: "HSK1",
-      zh_name: "会 + V",
-      formula: "[Chủ ngữ] + 会 / 不会 + [Kỹ năng]",
-      localizations: {
-        vi: {
-          title: "Diễn tả kỹ năng học mới biết (会 + Động từ)",
-          quick_rule: "Dùng '会' khi diễn tả kỹ năng phải qua học hỏi, tập luyện mới biết làm (nói tiếng Trung, lái xe, nấu ăn).",
-          trap_wrong: "我能说汉语。(chỉ khả năng hoàn cảnh)",
-          trap_correct: "我会说汉语。(học mới biết)",
-          trap_why: "Để nói về kỹ năng tiếp thu qua học tập, tiếng Trung luôn dùng '会'."
-        },
-        en: {
-          title: "Learned skills and abilities with 会 (huì)",
-          quick_rule: "Use '会' to express skills acquired through practice or study (speaking a language, driving, cooking).",
-          trap_wrong: "我能说汉语。",
-          trap_correct: "我会说汉语。",
-          trap_why: "Skills learned through study require '会', not '能'."
-        },
-        ja: {
-          title: "習得能力を表す「会」（〜できる）",
-          quick_rule: "学習や訓練を通して習得したスキル（外国語、料理、運転など）には「会」を用います。",
-          trap_wrong: "我能说汉语。",
-          trap_correct: "我会说汉语。",
-          trap_why: "勉強して身につけた能力には「能」ではなく必ず「会」を使います。"
-        }
-      },
-      lego_slots: [
-        {
-          slot_label: { vi: "🧑 Ai?", en: "🧑 Who?", ja: "🧑 誰が？" },
-          options: [
-            { zh: "我", py: "wǒ", tr: { vi: "Tôi", en: "I", ja: "私" } },
-            { zh: "他", py: "tā", tr: { vi: "Anh ấy", en: "He", ja: "彼" } },
-            { zh: "朋友", py: "péngyou", tr: { vi: "Bạn tôi", en: "Friend", ja: "友達" } }
-          ]
-        },
-        {
-          slot_label: { vi: "🧠 Biết / Không biết", en: "🧠 Can / Cannot", ja: "🧠 できる／できない" },
-          options: [
-            { zh: "会", py: "huì", tr: { vi: "biết", en: "can", ja: "できる" } },
-            { zh: "不会", py: "bú huì", tr: { vi: "không biết", en: "cannot", ja: "できない" } }
-          ]
-        },
-        {
-          slot_label: { vi: "🎯 Kỹ năng gì?", en: "🎯 Skill?", ja: "🎯 どんな特技？" },
-          options: [
-            { zh: "说汉语", py: "shuō hànyǔ", tr: { vi: "nói tiếng Trung", en: "speak Chinese", ja: "中国語を話す" } },
-            { zh: "开汽车", py: "kāi qìchē", tr: { vi: "lái ô tô", en: "drive a car", ja: "車を運転する" } },
-            { zh: "做中国菜", py: "zuò zhōngguócài", tr: { vi: "nấu món Trung", en: "cook Chinese food", ja: "中華料理を作る" } }
-          ]
-        }
-      ],
-      dialogue: {
-        speaker_a: {
-          speaker: "A",
-          zh: "你会说汉语吗？",
-          py: "Nǐ huì shuō hànyǔ ma?",
-          tr: { vi: "Bạn biết nói tiếng Trung không?", en: "Can you speak Chinese?", ja: "中国語を話せますか？" }
-        },
-        speaker_b: {
-          speaker: "B",
-          zh: "我会说一点儿。",
-          py: "Wǒ huì shuō yìdiǎnr.",
-          tr: { vi: "Tôi biết nói một chút.", en: "I can speak a little.", ja: "少し話せます。" }
-        }
-      },
-      challenge: {
-        prompt: {
-          vi: "Sắp xếp câu: 'Tôi biết nói tiếng Trung'",
-          en: "Arrange the words to say: 'I can speak Chinese'",
-          ja: "並べ替えて「私は中国語を話せます」を作ってください"
-        },
-        tokens: ["说汉语", "我", "会"],
-        correct_order: ["我", "会", "说汉语"]
-      }
-    },
-
-    // 10. hsk1_de_possessive
-    {
-      id: "hsk1_de_possessive",
-      level: "HSK1",
-      zh_name: "……的 + N",
-      formula: "[Chủ sở hữu / Tính chất] + 的 + [Danh từ]",
-      localizations: {
-        vi: {
-          title: "Sở hữu & Bổ nghĩa danh từ (...的 + Danh từ)",
-          quick_rule: "Cái gì của ai hoặc tính chất bổ nghĩa cho đồ vật thì đặt '的' ở giữa (Ngược trật tự tiếng Việt: A của B -> B 的 A).",
-          trap_wrong: "书我的。",
-          trap_correct: "我的书。",
-          trap_why: "Người sở hữu hoặc phần bổ nghĩa luôn đứng TRƯỚC danh từ chính."
-        },
-        en: {
-          title: "Possession and modification with 的 (de)",
-          quick_rule: "Attach '的' between the owner/modifier and the noun (Owner + 的 + Noun).",
-          trap_wrong: "书我的。",
-          trap_correct: "我的书。",
-          trap_why: "The modifier/owner must come BEFORE the noun it modifies."
-        },
-        ja: {
-          title: "修飾・所有の構造助詞「的」（〜の…）",
-          quick_rule: "所有者や修飾語の後ろに「的」を置き、名詞を修飾します（日本語の「私の本」と同じ語順です）。",
-          trap_wrong: "书我的。",
-          trap_correct: "我的书。",
-          trap_why: "所有者は必ず名詞の前に置きます。"
-        }
-      },
-      lego_slots: [
-        {
-          slot_label: { vi: "👤 Người sở hữu", en: "👤 Owner", ja: "👤 所有者" },
-          options: [
-            { zh: "我", py: "wǒ", tr: { vi: "tôi", en: "my", ja: "私" } },
-            { zh: "爸爸", py: "bàba", tr: { vi: "bố", en: "dad's", ja: "父" } },
-            { zh: "红", py: "hóng", tr: { vi: "màu đỏ", en: "red", ja: "赤い" } }
-          ]
-        },
-        {
-          slot_label: { vi: "🔗 Trợ từ 的", en: "🔗 Particle 的", ja: "🔗 助詞「的」" },
-          options: [
-            { zh: "的", py: "de", tr: { vi: "của", en: "of / 's", ja: "の" } }
-          ]
-        },
-        {
-          slot_label: { vi: "📦 Đồ vật", en: "📦 Noun", ja: "📦 名詞" },
-          options: [
-            { zh: "书", py: "shū", tr: { vi: "sách", en: "book", ja: "本" } },
-            { zh: "电脑", py: "diànnǎo", tr: { vi: "máy tính", en: "computer", ja: "パソコン" } },
-            { zh: "衣服", py: "yīfu", tr: { vi: "quần áo", en: "clothes", ja: "服" } }
-          ]
-        }
-      ],
-      dialogue: {
-        speaker_a: {
-          speaker: "A",
-          zh: "这是谁的电脑？",
-          py: "Zhè shì shéi de diànnǎo?",
-          tr: { vi: "Đây là máy tính của ai?", en: "Whose computer is this?", ja: "これは誰のパソコンですか？" }
-        },
-        speaker_b: {
-          speaker: "B",
-          zh: "这是爸爸的电脑。",
-          py: "Zhè shì bàba de diànnǎo.",
-          tr: { vi: "Đây là máy tính của bố.", en: "This is dad's computer.", ja: "これは父のパソコンです。" }
-        }
-      },
-      challenge: {
-        prompt: {
-          vi: "Sắp xếp cụm từ: 'Máy tính của bố'",
-          en: "Arrange the words to say: 'Dad's computer'",
-          ja: "並べ替えて「父のパソコン」を作ってください"
-        },
-        tokens: ["的", "电脑", "爸爸"],
-        correct_order: ["爸爸", "的", "电脑"]
-      }
-    },
-
-    // --- STAGE 3 SAMPLES ---
-    // 11. hsk2_guo_experience
-    {
-      id: "hsk2_guo_experience",
-      level: "HSK2",
-      zh_name: "V + 过",
-      formula: "[Chủ ngữ] + 没/没有 + [V] + 过 + [Tân ngữ]",
-      localizations: {
-        vi: {
-          title: "Đã từng làm việc gì (Động từ + 过)",
-          quick_rule: "Đặt '过' sau động từ để nói đã từng làm gì. Phủ định là '没/没有...过' (chưa từng).",
-          trap_wrong: "我不去过北京。",
-          trap_correct: "我没去过北京。",
-          trap_why: "Phủ định của trải nghiệm '过' luôn dùng '没' hoặc '没有', không dùng '不'."
-        },
-        en: {
-          title: "Past experience with particle 过 (guò)",
-          quick_rule: "Place '过' right after the verb to express having experienced something. Negate with 没/没有.",
-          trap_wrong: "我不去过北京。",
-          trap_correct: "我没去过北京。",
-          trap_why: "Past experience with 过 must be negated with 没/没有, never 不."
-        },
-        ja: {
-          title: "経験を表すアスペクト助詞「过」（〜したことがある）",
-          quick_rule: "動詞の後ろに「过」を付けて「〜したことがある」と経験を述べます。否定は必ず「没／没有」を用います。",
-          trap_wrong: "我不去过北京。",
-          trap_correct: "我没去过北京。",
-          trap_why: "経験の「过」を否定するときは「不」ではなく必ず「没／没有」を用います。"
-        }
-      },
-      lego_slots: [
-        {
-          slot_label: { vi: "🧑 Ai?", en: "🧑 Who?", ja: "🧑 誰が？" },
-          options: [
-            { zh: "我", py: "wǒ", tr: { vi: "Tôi", en: "I", ja: "私" } },
-            { zh: "他", py: "tā", tr: { vi: "Anh ấy", en: "He", ja: "彼" } }
-          ]
-        },
-        {
-          slot_label: { vi: "🚀 Đã từng / Chưa từng", en: "🚀 Experienced?", ja: "🚀 経験の有無" },
-          options: [
-            { zh: "去过", py: "qù guo", tr: { vi: "từng đi", en: "have been to", ja: "行ったことがある" } },
-            { zh: "没去过", py: "méi qù guo", tr: { vi: "chưa từng đi", en: "have never been to", ja: "行ったことがない" } },
-            { zh: "吃过", py: "chī guo", tr: { vi: "từng ăn", en: "have eaten", ja: "食べたことがある" } }
-          ]
-        },
-        {
-          slot_label: { vi: "✨ Nơi / Món gì?", en: "✨ Place / Food?", ja: "✨ どこ／何を？" },
-          options: [
-            { zh: "北京", py: "Běijīng", tr: { vi: "Bắc Kinh", en: "Beijing", ja: "北京" } },
-            { zh: "中国菜", py: "zhōngguócài", tr: { vi: "món Trung", en: "Chinese food", ja: "中華料理" } },
-            { zh: "烤鸭", py: "kǎoyā", tr: { vi: "vịt quay", en: "roast duck", ja: "北京ダック" } }
-          ]
-        }
-      ],
-      dialogue: {
-        speaker_a: {
-          speaker: "A",
-          zh: "你去过中国吗？",
-          py: "Nǐ qù guo Zhōngguó ma?",
-          tr: { vi: "Bạn từng đi Trung Quốc chưa?", en: "Have you been to China?", ja: "中国へ行ったことがありますか？" }
-        },
-        speaker_b: {
-          speaker: "B",
-          zh: "我去过两次。",
-          py: "Wǒ qù guo liǎng cì.",
-          tr: { vi: "Tôi từng đi hai lần rồi.", en: "I have been there twice.", ja: "2回行ったことがあります。" }
-        }
-      },
-      challenge: {
-        prompt: {
-          vi: "Sắp xếp câu: 'Tôi từng ăn vịt quay'",
-          en: "Arrange the words to say: 'I have eaten roast duck'",
-          ja: "並べ替えて「私は北京ダックを食べたことがあります」を作ってください"
-        },
-        tokens: ["烤鸭", "吃过", "我"],
-        correct_order: ["我", "吃过", "烤鸭"]
-      }
-    },
-
-    // 12. hsk2_bi_comparison
-    {
-      id: "hsk2_bi_comparison",
-      level: "HSK2",
-      zh_name: "A + 比 + B + Adj",
-      formula: "[A] + 比 + [B] + [Tính từ]",
-      localizations: {
-        vi: {
-          title: "Câu so sánh hơn với chữ 比 (A hơn B)",
-          quick_rule: "Dùng '比' để nói A hơn B. Quy tắc sống còn: Cấm dùng 很/非常 trước tính từ!",
-          trap_wrong: "他比我很忙。",
-          trap_correct: "他比我忙。",
-          trap_why: "Trong câu so sánh '比', trước tính từ không dùng phó từ mức độ như 很, 非常."
-        },
-        en: {
-          title: "Comparisons using 比 (bǐ - A is more than B)",
-          quick_rule: "Use '比' to compare two entities. Critical rule: Degree adverbs like 很/非常 cannot precede the adjective!",
-          trap_wrong: "他比我很忙。",
-          trap_correct: "他比我忙。",
-          trap_why: "In 比 comparisons, degree adverbs like 很 or 非常 are strictly forbidden before the adjective."
-        },
-        ja: {
-          title: "「比」を用いた比較文（AはBより〜）",
-          quick_rule: "「比」を用いて「AはBより〜だ」と比べます。形容詞の前に「很」「非常」などの程度副詞を置いてはいけません！",
-          trap_wrong: "他比我很忙。",
-          trap_correct: "他比我忙。",
-          trap_why: "「比」構文では形容詞の前に「很」や「非常」を置くことはできません。"
-        }
-      },
-      lego_slots: [
-        {
-          slot_label: { vi: "🅰️ Đối tượng A", en: "🅰️ Item A", ja: "🅰️ 主体A" },
-          options: [
-            { zh: "今天", py: "jīntiān", tr: { vi: "hôm nay", en: "today", ja: "今日" } },
-            { zh: "哥哥", py: "gēge", tr: { vi: "anh trai", en: "older brother", ja: "兄" } },
-            { zh: "西瓜", py: "xīguā", tr: { vi: "dưa hấu", en: "watermelon", ja: "スイカ" } }
-          ]
-        },
-        {
-          slot_label: { vi: "⚖️ So với (比)", en: "⚖️ Compared to", ja: "⚖️ 〜より（比）" },
-          options: [
-            { zh: "比", py: "bǐ", tr: { vi: "hơn / so với", en: "than", ja: "より" } }
-          ]
-        },
-        {
-          slot_label: { vi: "🅱️ Đối tượng B", en: "🅱️ Item B", ja: "🅱️ 比較対象B" },
-          options: [
-            { zh: "昨天", py: "zuótiān", tr: { vi: "hôm qua", en: "yesterday", ja: "昨日" } },
-            { zh: "我", py: "wǒ", tr: { vi: "tôi", en: "me", ja: "私" } },
-            { zh: "苹果", py: "píngguǒ", tr: { vi: "táo", en: "apple", ja: "リンゴ" } }
-          ]
-        },
-        {
-          slot_label: { vi: "🎨 Tính từ", en: "🎨 Adjective", ja: "🎨 性質" },
-          options: [
-            { zh: "冷", py: "lěng", tr: { vi: "lạnh", en: "cold", ja: "寒い" } },
-            { zh: "高", py: "gāo", tr: { vi: "cao", en: "tall", ja: "背が高い" } },
-            { zh: "贵", py: "guì", tr: { vi: "đắt", en: "expensive", ja: "高い" } }
-          ]
-        }
-      ],
-      dialogue: {
-        speaker_a: {
-          speaker: "A",
-          zh: "今天冷不冷？",
-          py: "Jīntiān lěng bu lěng?",
-          tr: { vi: "Hôm nay có lạnh không?", en: "Is it cold today?", ja: "今日寒くない？" }
-        },
-        speaker_b: {
-          speaker: "B",
-          zh: "今天比昨天冷多了。",
-          py: "Jīntiān bǐ zuótiān lěng duō le.",
-          tr: { vi: "Hôm nay lạnh hơn hôm qua nhiều.", en: "Today is much colder than yesterday.", ja: "今日の方が昨日よりずっと寒いよ。" }
-        }
-      },
-      challenge: {
-        prompt: {
-          vi: "Sắp xếp câu: 'Anh trai cao hơn tôi'",
-          en: "Arrange the words to say: 'Older brother is taller than me'",
-          ja: "並べ替えて「兄は私より背が高い」を作ってください"
-        },
-        tokens: ["我", "哥哥", "比", "高"],
-        correct_order: ["哥哥", "比", "我", "高"]
-      }
-    },
-
-    // 13. hsk2_zhe_state
-    {
-      id: "hsk2_zhe_state",
-      level: "HSK2",
-      zh_name: "V + 着",
-      formula: "[Chủ ngữ / Nơi chốn] + [V] + 着",
-      localizations: {
-        vi: {
-          title: "Trạng thái đang duy trì (Động từ + 着)",
-          quick_rule: "Diễn tả một trạng thái tĩnh đang duy trì liên tục (cửa đang mở, áo đang mặc, sách đang cầm).",
-          trap_wrong: "他写着汉字在。",
-          trap_correct: "门开着呢。",
-          trap_why: "Trợ từ 着 đứng ngay sát sau động từ để biểu thị trạng thái duy trì."
-        },
-        en: {
-          title: "Continuous state particle 着 (zhe)",
-          quick_rule: "Attach '着' directly after a verb to express an ongoing static state (door is open, wearing clothes).",
-          trap_wrong: "他写着汉字在。",
-          trap_correct: "门开着呢。",
-          trap_why: "The aspect particle 着 must directly follow the verb, indicating an ongoing state."
-        },
-        ja: {
-          title: "状態の持続を表す「着」（〜している／〜てある）",
-          quick_rule: "動詞の直後に「着」を添え、「ドアが開いている」「服を着ている」など状態の持続を表します。",
-          trap_wrong: "他写着汉字在。",
-          trap_correct: "门开着呢。",
-          trap_why: "「着」は必ず動詞の直後に置きます。"
-        }
-      },
-      lego_slots: [
-        {
-          slot_label: { vi: "🚪 Sự vật", en: "🚪 Subject", ja: "🚪 主体" },
-          options: [
-            { zh: "门", py: "mén", tr: { vi: "Cửa", en: "Door", ja: "ドア" } },
-            { zh: "窗户", py: "chuānghu", tr: { vi: "Cửa sổ", en: "Window", ja: "窓" } },
-            { zh: "老师", py: "lǎoshī", tr: { vi: "Thầy giáo", en: "Teacher", ja: "先生" } }
-          ]
-        },
-        {
-          slot_label: { vi: "🔄 Trạng thái (V + 着)", en: "🔄 State", ja: "🔄 状態（V＋着）" },
-          options: [
-            { zh: "开着", py: "kāi zhe", tr: { vi: "đang mở", en: "is open", ja: "開いている" } },
-            { zh: "关着", py: "guān zhe", tr: { vi: "đang đóng", en: "is closed", ja: "閉まっている" } },
-            { zh: "笑着", py: "xiào zhe", tr: { vi: "đang mỉm cười", en: "is smiling", ja: "笑っている" } }
-          ]
-        }
-      ],
-      dialogue: {
-        speaker_a: {
-          speaker: "A",
-          zh: "教室的门开着吗？",
-          py: "Jiàoshì de mén kāi zhe ma?",
-          tr: { vi: "Cửa phòng học có đang mở không?", en: "Is the classroom door open?", ja: "教室のドアは開いていますか？" }
-        },
-        speaker_b: {
-          speaker: "B",
-          zh: "门开着呢，请进吧。",
-          py: "Mén kāi zhe ne, qǐng jìn ba.",
-          tr: { vi: "Cửa đang mở đấy, xin mời vào.", en: "The door is open, please come in.", ja: "開いていますよ、どうぞお入りください。" }
-        }
-      },
-      challenge: {
-        prompt: {
-          vi: "Sắp xếp câu: 'Cửa đang mở'",
-          en: "Arrange the words to say: 'The door is open'",
-          ja: "並べ替えて「ドアが開いています」を作ってください"
-        },
-        tokens: ["着", "门", "开"],
-        correct_order: ["门", "开", "着"]
-      }
-    },
-
-    // 14. hsk2_kuai_le
-    {
-      id: "hsk2_kuai_le",
-      level: "HSK2",
-      zh_name: "快要……了！",
-      formula: "[Chủ ngữ] + 快要 + [Hành động] + 了！",
-      localizations: {
-        vi: {
-          title: "Sắp sửa diễn ra (快要...了 / 要...了)",
-          quick_rule: "Diễn tả hành động sắp xảy ra trong chốc lát ('sắp... rồi!').",
-          trap_wrong: "快要下雨昨天。",
-          trap_correct: "快要下雨了！",
-          trap_why: "Cấu trúc 快要... bắt buộc phải có 了 ở cuối câu."
-        },
-        en: {
-          title: "Imminent actions: About to happen! (快要...了)",
-          quick_rule: "Express that an event is about to happen in moments (about to / soon).",
-          trap_wrong: "快要下雨昨天。",
-          trap_correct: "快要下雨了！",
-          trap_why: "The construction 快要... must pair with 了 at sentence end."
-        },
-        ja: {
-          title: "近未来を表す「快要…了」（もうすぐ〜する）",
-          quick_rule: "事態が間もなく発生することを「快要…了」（もうすぐ〜する）と表します。",
-          trap_wrong: "快要下雨昨天。",
-          trap_correct: "快要下雨了！",
-          trap_why: "「快要…」構文では文末に「了」が不可欠です。"
-        }
-      },
-      lego_slots: [
-        {
-          slot_label: { vi: "✈️ Sự việc / Xe", en: "✈️ Subject", ja: "✈️ 主体" },
-          options: [
-            { zh: "飞机", py: "fēijī", tr: { vi: "Máy bay", en: "Airplane", ja: "飛行機" } },
-            { zh: "火车", py: "huǒchē", tr: { vi: "Tàu hỏa", en: "Train", ja: "電車" } },
-            { zh: "天", py: "tiān", tr: { vi: "Trời", en: "Sky/Weather", ja: "空" } }
-          ]
-        },
-        {
-          slot_label: { vi: "⚡ Sắp sửa", en: "⚡ Soon", ja: "⚡ まもなく" },
-          options: [
-            { zh: "快要", py: "kuàiyào", tr: { vi: "sắp sửa", en: "about to", ja: "もうすぐ" } }
-          ]
-        },
-        {
-          slot_label: { vi: "🎬 Hành động + 了", en: "🎬 Action + 了", ja: "🎬 動作＋了" },
-          options: [
-            { zh: "起飞了", py: "qǐfēi le", tr: { vi: "cất cánh rồi", en: "take off", ja: "離陸する" } },
-            { zh: "开走了", py: "kāi zǒu le", tr: { vi: "chạy rồi", en: "depart", ja: "出発する" } },
-            { zh: "下雨了", py: "xiàyǔ le", tr: { vi: "mưa rồi", en: "rain", ja: "雨が降る" } }
-          ]
-        }
-      ],
-      dialogue: {
-        speaker_a: {
-          speaker: "A",
-          zh: "快点儿，火车快要开了！",
-          py: "Kuài diǎnr, huǒchē kuàiyào kāi le!",
-          tr: { vi: "Nhanh lên, tàu hỏa sắp chạy rồi!", en: "Hurry up, the train is about to depart!", ja: "急いで、電車がもうすぐ出ちゃうよ！" }
-        },
-        speaker_b: {
-          speaker: "B",
-          zh: "好，我马上来！",
-          py: "Hǎo, wǒ mǎshàng lái!",
-          tr: { vi: "Được, tôi đến ngay đây!", en: "Okay, I'm coming right away!", ja: "分かった、すぐ行く！" }
-        }
-      },
-      challenge: {
-        prompt: {
-          vi: "Sắp xếp câu: 'Trời sắp mưa rồi!'",
-          en: "Arrange the words to say: 'It is about to rain!'",
-          ja: "並べ替えて「もうすぐ雨が降るよ！」を作ってください"
-        },
-        tokens: ["快要", "了", "天", "下雨"],
-        correct_order: ["天", "快要", "下雨", "了"]
-      }
-    },
-
-    // 15. hsk2_yue_lai_yue
-    {
-      id: "hsk2_yue_lai_yue",
-      level: "HSK2",
-      zh_name: "越来越 + Adj",
-      formula: "[Sự vật] + 越来越 + [Tính từ]",
-      localizations: {
-        vi: {
-          title: "Càng ngày càng... (越来越 + Tính từ)",
-          quick_rule: "Biểu thị mức độ biến chuyển tăng dần theo thời gian ('càng ngày càng...'). Cấm dùng 很 sau 越来越.",
-          trap_wrong: "中文越来越很难。",
-          trap_correct: "中文越来越难。",
-          trap_why: "Bản thân '越来越' đã mang nghĩa so sánh tăng tiến cao độ, cấm chèn thêm '很'."
-        },
-        en: {
-          title: "More and more with 越来越 (yuèláiyuè)",
-          quick_rule: "Express an increasing degree over time (more and more). Never add 很 after 越来越.",
-          trap_wrong: "中文越来越很难。",
-          trap_correct: "中文越来越难。",
-          trap_why: "越来越 already conveys increasing intensity; degree adverbs like 很 are prohibited."
-        },
-        ja: {
-          title: "漸進を表す「越来越…」（ますます〜）",
-          quick_rule: "時間の経過とともに度合いが増すことを「越来越…」（ますます〜）と表します。「很」を後ろに付けてはいけません。",
-          trap_wrong: "中文越来越很难。",
-          trap_correct: "中文越来越难。",
-          trap_why: "「越来越」自体が強調を含んでいるため、「很」を重ねることは禁物です。"
-        }
-      },
-      lego_slots: [
-        {
-          slot_label: { vi: "📈 Sự vật", en: "📈 Subject", ja: "📈 主体" },
-          options: [
-            { zh: "天气", py: "tiānqì", tr: { vi: "Thời tiết", en: "Weather", ja: "天気" } },
-            { zh: "汉语", py: "hànyǔ", tr: { vi: "Tiếng Trung", en: "Chinese", ja: "中国語" } },
-            { zh: "他", py: "tā", tr: { vi: "Anh ấy", en: "He", ja: "彼" } }
-          ]
-        },
-        {
-          slot_label: { vi: "🔄 Càng ngày càng", en: "🔄 More and more", ja: "🔄 ますます" },
-          options: [
-            { zh: "越来越", py: "yuèláiyuè", tr: { vi: "càng ngày càng", en: "more and more", ja: "ますます" } }
-          ]
-        },
-        {
-          slot_label: { vi: "🎨 Tính chất", en: "🎨 Adjective", ja: "🎨 性質" },
-          options: [
-            { zh: "冷", py: "lěng", tr: { vi: "lạnh", en: "cold", ja: "寒く" } },
-            { zh: "有意思", py: "yǒu yìsi", tr: { vi: "thú vị", en: "interesting", ja: "面白く" } },
-            { zh: "帅", py: "shuài", tr: { vi: "đẹp trai", en: "handsome", ja: "かっこよく" } }
-          ]
-        }
-      ],
-      dialogue: {
-        speaker_a: {
-          speaker: "A",
-          zh: "你觉得学汉语难吗？",
-          py: "Nǐ juéde xué hànyǔ nán ma?",
-          tr: { vi: "Bạn thấy học tiếng Trung có khó không?", en: "Do you find learning Chinese difficult?", ja: "中国語を学ぶのは難しいと思いますか？" }
-        },
-        speaker_b: {
-          speaker: "B",
-          zh: "我觉得越来越有意思了！",
-          py: "Wǒ juéde yuèláiyuè yǒu yìsi le!",
-          tr: { vi: "Tôi thấy càng ngày càng thú vị rồi!", en: "I think it gets more and more interesting!", ja: "ますます面白くなってきたと思います！" }
-        }
-      },
-      challenge: {
-        prompt: {
-          vi: "Sắp xếp câu: 'Thời tiết càng ngày càng lạnh'",
-          en: "Arrange the words to say: 'The weather is getting colder and colder'",
-          ja: "並べ替えて「天気はますます寒くなってきた」を作ってください"
-        },
-        tokens: ["天气", "冷", "越来越"],
-        correct_order: ["天气", "越来越", "冷"]
-      }
+      "correct_order": [
+        "我",
+        "没有",
+        "钱"
+      ]
     }
-  ];
+  },
+  {
+    "id": "hsk1_zai_location",
+    "level": "HSK1",
+    "zh_name": "在 + Nơi chốn + V",
+    "formula": "[Chủ ngữ] + 在 [Nơi chốn] + [Hành động]",
+    "localizations": {
+      "vi": {
+        "title": "Ở đâu làm gì? (在 + Nơi chốn + Động từ)",
+        "quick_rule": "Quy tắc vàng: Phải ĐẾN ĐỊA ĐIỂM trước rồi mới LÀM HÀNH ĐỘNG (ngược với tiếng Việt 'học ở trường').",
+        "trap_wrong": "我看书在学校。",
+        "trap_correct": "我在学校看书。",
+        "trap_why": "Trong tiếng Trung, trạng ngữ chỉ nơi chốn (在 + địa điểm) luôn đứng TRƯỚC động từ, không đứng sau."
+      },
+      "en": {
+        "title": "Actions at a location (在 + Place + Verb)",
+        "quick_rule": "Golden rule: Express the location BEFORE the verb (opposite to English 'I study at school').",
+        "trap_wrong": "我看书在学校。",
+        "trap_correct": "我在学校看书。",
+        "trap_why": "Location phrases with '在' must be placed BEFORE the action verb, not at the end of the sentence."
+      },
+      "ja": {
+        "title": "「在＋場所＋動詞」（〜で〜をする）",
+        "quick_rule": "黄金ルール：場所を表す「在＋場所」を必ず動詞の「前」に置きます（日本語と同じ語順です）。",
+        "trap_wrong": "我看书在学校。",
+        "trap_correct": "我在学校看书。",
+        "trap_why": "場所表現「在学校」を動詞の後ろに置くことはできません。必ず動詞の前に置きます。"
+      }
+    },
+    "lego_slots": [
+      {
+        "slot_label": {
+          "vi": "🧑 Ai?",
+          "en": "🧑 Who?",
+          "ja": "🧑 誰が？"
+        },
+        "options": [
+          {
+            "zh": "我",
+            "py": "wǒ",
+            "tr": {
+              "vi": "Tôi",
+              "en": "I",
+              "ja": "私"
+            }
+          },
+          {
+            "zh": "妈妈",
+            "py": "māma",
+            "tr": {
+              "vi": "Mẹ",
+              "en": "Mom",
+              "ja": "母"
+            }
+          },
+          {
+            "zh": "朋友",
+            "py": "péngyou",
+            "tr": {
+              "vi": "Bạn",
+              "en": "Friend",
+              "ja": "友達"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "📍 Ở đâu?",
+          "en": "📍 Where?",
+          "ja": "📍 どこで？"
+        },
+        "options": [
+          {
+            "zh": "在家",
+            "py": "zài jiā",
+            "tr": {
+              "vi": "ở nhà",
+              "en": "at home",
+              "ja": "家で"
+            }
+          },
+          {
+            "zh": "在学校",
+            "py": "zài xuéxiào",
+            "tr": {
+              "vi": "ở trường",
+              "en": "at school",
+              "ja": "学校で"
+            }
+          },
+          {
+            "zh": "在公司",
+            "py": "zài gōngsī",
+            "tr": {
+              "vi": "ở công ty",
+              "en": "at company",
+              "ja": "会社で"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "🎬 Làm gì?",
+          "en": "🎬 Action?",
+          "ja": "🎬 何をする？"
+        },
+        "options": [
+          {
+            "zh": "看书",
+            "py": "kàn shū",
+            "tr": {
+              "vi": "đọc sách",
+              "en": "read book",
+              "ja": "本を読む"
+            }
+          },
+          {
+            "zh": "睡觉",
+            "py": "shuìjiào",
+            "tr": {
+              "vi": "ngủ",
+              "en": "sleep",
+              "ja": "寝る"
+            }
+          },
+          {
+            "zh": "做饭",
+            "py": "zuò fàn",
+            "tr": {
+              "vi": "nấu ăn",
+              "en": "cook",
+              "ja": "ご飯を作る"
+            }
+          }
+        ]
+      }
+    ],
+    "dialogue": {
+      "speaker_a": {
+        "speaker": "A",
+        "zh": "你在哪儿呢？",
+        "py": "Nǐ zài nǎr ne?",
+        "tr": {
+          "vi": "Bạn đang ở đâu đấy?",
+          "en": "Where are you?",
+          "ja": "どこにいるの？"
+        }
+      },
+      "speaker_b": {
+        "speaker": "B",
+        "zh": "我在家看书呢。",
+        "py": "Wǒ zài jiā kàn shū ne.",
+        "tr": {
+          "vi": "Tôi đang ở nhà đọc sách.",
+          "en": "I am reading books at home.",
+          "ja": "家で本を読んでいるよ。"
+        }
+      }
+    },
+    "challenge": {
+      "prompt": {
+        "vi": "Sắp xếp câu: 'Mẹ nấu ăn ở nhà'",
+        "en": "Arrange the words to say: 'Mom cooks at home'",
+        "ja": "並べ替えて「母は家で料理をします」を作ってください"
+      },
+      "tokens": [
+        "在家",
+        "做饭",
+        "妈妈"
+      ],
+      "correct_order": [
+        "妈妈",
+        "在家",
+        "做饭"
+      ]
+    }
+  },
+  {
+    "id": "hsk1_ma_question",
+    "level": "HSK1",
+    "zh_name": "……吗？",
+    "formula": "[Câu khẳng định] + 吗？",
+    "localizations": {
+      "vi": {
+        "title": "Câu hỏi Có/Không với trợ từ 吗",
+        "quick_rule": "Giữ nguyên thứ tự câu khẳng định, chỉ cần thêm chữ '吗' ở cuối là thành câu hỏi.",
+        "trap_wrong": "你是谁吗？",
+        "trap_correct": "你是谁？",
+        "trap_why": "Câu đã có từ để hỏi (như 谁, 什么, 哪儿) thì không được thêm 吗 ở cuối nữa."
+      },
+      "en": {
+        "title": "Yes-No Questions with 吗 (ma)",
+        "quick_rule": "Take any normal statement and place '吗' at the end to turn it into a yes-no question.",
+        "trap_wrong": "你是谁吗？",
+        "trap_correct": "你是谁？",
+        "trap_why": "If a sentence already has a question pronoun (who, what, where), do NOT add 吗."
+      },
+      "ja": {
+        "title": "語気助詞「吗」による疑問文",
+        "quick_rule": "普通の平叙文の語順のまま、文末に「吗」を添えるだけで「〜ですか？」の疑問文になります。",
+        "trap_wrong": "你是谁吗？",
+        "trap_correct": "你是谁？",
+        "trap_why": "文中に「谁」「什么」「哪儿」などの疑問詞がある文には、「吗」を重ねて使えません。"
+      }
+    },
+    "lego_slots": [
+      {
+        "slot_label": {
+          "vi": "💬 Câu kể",
+          "en": "💬 Statement",
+          "ja": "💬 平叙文"
+        },
+        "options": [
+          {
+            "zh": "你好",
+            "py": "nǐ hǎo",
+            "tr": {
+              "vi": "bạn khỏe",
+              "en": "you are good",
+              "ja": "元気だ"
+            }
+          },
+          {
+            "zh": "你去",
+            "py": "nǐ qù",
+            "tr": {
+              "vi": "bạn đi",
+              "en": "you go",
+              "ja": "行く"
+            }
+          },
+          {
+            "zh": "他喝茶",
+            "py": "tā hē chá",
+            "tr": {
+              "vi": "anh ấy uống trà",
+              "en": "he drinks tea",
+              "ja": "彼はお茶を飲む"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "❓ Trợ từ hỏi",
+          "en": "❓ Question particle",
+          "ja": "❓ 疑問助詞"
+        },
+        "options": [
+          {
+            "zh": "吗？",
+            "py": "ma?",
+            "tr": {
+              "vi": "không / à?",
+              "en": "?",
+              "ja": "〜ですか？"
+            }
+          }
+        ]
+      }
+    ],
+    "dialogue": {
+      "speaker_a": {
+        "speaker": "A",
+        "zh": "你好吗？",
+        "py": "Nǐ hǎo ma?",
+        "tr": {
+          "vi": "Bạn khỏe không?",
+          "en": "How are you?",
+          "ja": "お元気ですか？"
+        }
+      },
+      "speaker_b": {
+        "speaker": "B",
+        "zh": "我很好，你呢？",
+        "py": "Wǒ hěn hǎo, nǐ ne?",
+        "tr": {
+          "vi": "Tôi rất khỏe, còn bạn?",
+          "en": "I am fine, and you?",
+          "ja": "とても元気です、あなたは？"
+        }
+      }
+    },
+    "challenge": {
+      "prompt": {
+        "vi": "Sắp xếp thành câu hỏi: 'Bạn đi không?'",
+        "en": "Arrange the words to ask: 'Are you going?'",
+        "ja": "並べ替えて「あなたは行きますか？」を作ってください"
+      },
+      "tokens": [
+        "吗",
+        "你",
+        "去"
+      ],
+      "correct_order": [
+        "你",
+        "去",
+        "吗"
+      ]
+    }
+  },
+  {
+    "id": "hsk1_tai_le",
+    "level": "HSK1",
+    "zh_name": "太……了！",
+    "formula": "太 + [Tính từ] + 了！",
+    "localizations": {
+      "vi": {
+        "title": "Cảm thán: Quá... rồi! (太...了)",
+        "quick_rule": "Kẹp tính từ vào giữa '太' và '了' để thốt lên khen ngợi hoặc than phiền (quá... rồi!).",
+        "trap_wrong": "太好！",
+        "trap_correct": "太好了！",
+        "trap_why": "Cấu trúc cảm thán '太' thường bắt buộc phải có trợ từ '了' ở cuối câu đi kèm."
+      },
+      "en": {
+        "title": "Exclamations: Too / Extremely! (太...了)",
+        "quick_rule": "Enclose an adjective between '太' and '了' to express an intense reaction or exclamation.",
+        "trap_wrong": "太好！",
+        "trap_correct": "太好了！",
+        "trap_why": "The exclamation structure '太...' almost always pairs with '了' at the end."
+      },
+      "ja": {
+        "title": "感嘆文「太＋形容詞＋了」（〜すぎる！）",
+        "quick_rule": "「太」と「了」で形容詞を挟み込み、「〜すぎる！」「とても〜だ！」と感情を込めて感嘆します。",
+        "trap_wrong": "太好！",
+        "trap_correct": "太好了！",
+        "trap_why": "「太」を用いた感嘆文では、文末の「了」とセットで用いるのが原則です。"
+      }
+    },
+    "lego_slots": [
+      {
+        "slot_label": {
+          "vi": "✨ Tiền tố cảm thán",
+          "en": "✨ Prefix",
+          "ja": "✨ 感嘆接頭詞"
+        },
+        "options": [
+          {
+            "zh": "太",
+            "py": "tài",
+            "tr": {
+              "vi": "quá / cực kỳ",
+              "en": "too / so",
+              "ja": "あまりに・とても"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "🎨 Tính từ",
+          "en": "🎨 Adjective",
+          "ja": "🎨 形容詞"
+        },
+        "options": [
+          {
+            "zh": "好",
+            "py": "hǎo",
+            "tr": {
+              "vi": "tốt / hay",
+              "en": "good",
+              "ja": "良い"
+            }
+          },
+          {
+            "zh": "贵",
+            "py": "guì",
+            "tr": {
+              "vi": "đắt",
+              "en": "expensive",
+              "ja": "高い"
+            }
+          },
+          {
+            "zh": "热",
+            "py": "rè",
+            "tr": {
+              "vi": "nóng",
+              "en": "hot",
+              "ja": "暑い"
+            }
+          },
+          {
+            "zh": "累",
+            "py": "lèi",
+            "tr": {
+              "vi": "mệt",
+              "en": "tired",
+              "ja": "疲れた"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "🎉 Hậu tố cảm thán",
+          "en": "🎉 Particle",
+          "ja": "🎉 感嘆語気詞"
+        },
+        "options": [
+          {
+            "zh": "了！",
+            "py": "le!",
+            "tr": {
+              "vi": "rồi!",
+              "en": "!",
+              "ja": "〜だ！"
+            }
+          }
+        ]
+      }
+    ],
+    "dialogue": {
+      "speaker_a": {
+        "speaker": "A",
+        "zh": "这个汉语词典多少钱？",
+        "py": "Zhège hànyǔ cídiǎn duōshao qián?",
+        "tr": {
+          "vi": "Cuốn từ điển tiếng Trung này bao nhiêu tiền?",
+          "en": "How much is this Chinese dictionary?",
+          "ja": "この中国語辞典はいくらですか？"
+        }
+      },
+      "speaker_b": {
+        "speaker": "B",
+        "zh": "二百块。太贵了！",
+        "py": "Èrbǎi kuài. Tài guì le!",
+        "tr": {
+          "vi": "200 tệ. Đắt quá rồi!",
+          "en": "200 RMB. Too expensive!",
+          "ja": "200元です。高すぎます！"
+        }
+      }
+    },
+    "challenge": {
+      "prompt": {
+        "vi": "Sắp xếp thành câu cảm thán: 'Tốt quá rồi!'",
+        "en": "Arrange the words to say: 'That's great!'",
+        "ja": "並べ替えて「素晴らしすぎる！」を作ってください"
+      },
+      "tokens": [
+        "了",
+        "好",
+        "太"
+      ],
+      "correct_order": [
+        "太",
+        "好",
+        "了"
+      ]
+    }
+  },
+  {
+    "id": "hsk1_time_order",
+    "level": "HSK1",
+    "zh_name": "时间 + 动作",
+    "formula": "[Chủ ngữ] + [Thời gian] + [Hành động]",
+    "localizations": {
+      "vi": {
+        "title": "Khi nào làm gì? (Thời gian trước hành động)",
+        "quick_rule": "Quy tắc vàng: Thời gian luôn đặt TRƯỚC hành động (ngược với tiếng Việt 'tôi đi ngủ lúc 10h' -> tiếng Trung 'tôi 10h đi ngủ').",
+        "trap_wrong": "我去学校早上八点。",
+        "trap_correct": "我早上八点去学校。",
+        "trap_why": "Từ chỉ thời gian tuyệt đối không đứng ở cuối câu sau động từ trong tiếng Trung."
+      },
+      "en": {
+        "title": "Time before Verb word order",
+        "quick_rule": "Golden Rule: Time phrases must come BEFORE the action verb (opposite to English 'I go to bed at 10 PM').",
+        "trap_wrong": "我去学校早上八点。",
+        "trap_correct": "我早上八点去学校。",
+        "trap_why": "In Chinese, time expressions can never be tacked on at the end after the verb."
+      },
+      "ja": {
+        "title": "時間詞の位置（時間の後に動作）",
+        "quick_rule": "時間詞は必ず動詞の「前」に置きます（日本語と同じで『私は8時に学校へ行く』の語順です）。",
+        "trap_wrong": "我去学校早上八点。",
+        "trap_correct": "我早上八点去学校。",
+        "trap_why": "時間表現を動詞の後に置くことはできません。必ず動詞の前に置きます。"
+      }
+    },
+    "lego_slots": [
+      {
+        "slot_label": {
+          "vi": "🧑 Ai?",
+          "en": "🧑 Who?",
+          "ja": "🧑 誰が？"
+        },
+        "options": [
+          {
+            "zh": "我",
+            "py": "wǒ",
+            "tr": {
+              "vi": "Tôi",
+              "en": "I",
+              "ja": "私"
+            }
+          },
+          {
+            "zh": "他",
+            "py": "tā",
+            "tr": {
+              "vi": "Anh ấy",
+              "en": "He",
+              "ja": "彼"
+            }
+          },
+          {
+            "zh": "老师",
+            "py": "lǎoshī",
+            "tr": {
+              "vi": "Thầy giáo",
+              "en": "Teacher",
+              "ja": "先生"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "⏰ Khi nào?",
+          "en": "⏰ When?",
+          "ja": "⏰ いつ？"
+        },
+        "options": [
+          {
+            "zh": "早上八点",
+            "py": "zǎoshang bā diǎn",
+            "tr": {
+              "vi": "8h sáng",
+              "en": "8 AM",
+              "ja": "朝8時"
+            }
+          },
+          {
+            "zh": "明天",
+            "py": "míngtiān",
+            "tr": {
+              "vi": "ngày mai",
+              "en": "tomorrow",
+              "ja": "明日"
+            }
+          },
+          {
+            "zh": "星期天",
+            "py": "xīngqītiān",
+            "tr": {
+              "vi": "chủ nhật",
+              "en": "Sunday",
+              "ja": "日曜日"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "🎬 Làm gì?",
+          "en": "🎬 Action?",
+          "ja": "🎬 何をする？"
+        },
+        "options": [
+          {
+            "zh": "去学校",
+            "py": "qù xuéxiào",
+            "tr": {
+              "vi": "đến trường",
+              "en": "go to school",
+              "ja": "学校へ行く"
+            }
+          },
+          {
+            "zh": "去北京",
+            "py": "qù Běijīng",
+            "tr": {
+              "vi": "đi Bắc Kinh",
+              "en": "go to Beijing",
+              "ja": "北京へ行く"
+            }
+          },
+          {
+            "zh": "买东西",
+            "py": "mǎi dōngxi",
+            "tr": {
+              "vi": "mua sắm",
+              "en": "go shopping",
+              "ja": "買い物する"
+            }
+          }
+        ]
+      }
+    ],
+    "dialogue": {
+      "speaker_a": {
+        "speaker": "A",
+        "zh": "你明天去哪儿？",
+        "py": "Nǐ míngtiān qù nǎr?",
+        "tr": {
+          "vi": "Ngày mai bạn đi đâu?",
+          "en": "Where are you going tomorrow?",
+          "ja": "明日はどこへ行きますか？"
+        }
+      },
+      "speaker_b": {
+        "speaker": "B",
+        "zh": "我明天去北京。",
+        "py": "Wǒ míngtiān qù Běijīng.",
+        "tr": {
+          "vi": "Ngày mai tôi đi Bắc Kinh.",
+          "en": "I am going to Beijing tomorrow.",
+          "ja": "明日、北京へ行きます。"
+        }
+      }
+    },
+    "challenge": {
+      "prompt": {
+        "vi": "Sắp xếp câu: 'Tôi ngày mai đi Bắc Kinh'",
+        "en": "Arrange the words to say: 'I go to Beijing tomorrow'",
+        "ja": "並べ替えて「私は明日北京へ行きます」を作ってください"
+      },
+      "tokens": [
+        "去北京",
+        "明天",
+        "我"
+      ],
+      "correct_order": [
+        "我",
+        "明天",
+        "去北京"
+      ]
+    }
+  },
+  {
+    "id": "hsk1_gen_with",
+    "level": "HSK1",
+    "zh_name": "跟……一起 + V",
+    "formula": "[Chủ ngữ] + 跟 [Người] + 一起 + [Hành động]",
+    "localizations": {
+      "vi": {
+        "title": "Cùng ai làm gì? (跟 / 和 + Người + Động từ)",
+        "quick_rule": "Phải nói 'Cùng ai' trước rồi mới nói 'Làm gì' (ngược với tiếng Việt 'tôi xem phim với bạn').",
+        "trap_wrong": "我看电影跟朋友。",
+        "trap_correct": "我跟朋友看电影。",
+        "trap_why": "Cụm giới từ chỉ đối tượng (跟/和 + người) luôn đứng TRƯỚC động từ."
+      },
+      "en": {
+        "title": "Doing actions with someone (跟 / 和 + Someone + Verb)",
+        "quick_rule": "Express 'with whom' BEFORE the action verb (opposite to English 'I watch movies with my friend').",
+        "trap_wrong": "我看电影跟朋友。",
+        "trap_correct": "我跟朋友看电影。",
+        "trap_why": "Prepositional phrases with 跟/和 must precede the verb."
+      },
+      "ja": {
+        "title": "「跟／和＋人＋一起＋動詞」（〜と一緒に〜する）",
+        "quick_rule": "「誰と一緒に」を表す言葉を動詞の「前」に置きます（日本語と同じ語順です）。",
+        "trap_wrong": "我看电影跟朋友。",
+        "trap_correct": "我跟朋友看电影。",
+        "trap_why": "「跟朋友」を動詞の後ろに置くことはできません。"
+      }
+    },
+    "lego_slots": [
+      {
+        "slot_label": {
+          "vi": "🧑 Ai?",
+          "en": "🧑 Who?",
+          "ja": "🧑 誰が？"
+        },
+        "options": [
+          {
+            "zh": "我",
+            "py": "wǒ",
+            "tr": {
+              "vi": "Tôi",
+              "en": "I",
+              "ja": "私"
+            }
+          },
+          {
+            "zh": "妹妹",
+            "py": "mèimei",
+            "tr": {
+              "vi": "Em gái",
+              "en": "Younger sister",
+              "ja": "妹"
+            }
+          },
+          {
+            "zh": "大卫",
+            "py": "Dàwèi",
+            "tr": {
+              "vi": "David",
+              "en": "David",
+              "ja": "デイビッド"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "🤝 Cùng ai?",
+          "en": "🤝 With whom?",
+          "ja": "🤝 誰と？"
+        },
+        "options": [
+          {
+            "zh": "跟朋友",
+            "py": "gēn péngyou",
+            "tr": {
+              "vi": "cùng bạn",
+              "en": "with friends",
+              "ja": "友達と"
+            }
+          },
+          {
+            "zh": "跟妈妈",
+            "py": "gēn māma",
+            "tr": {
+              "vi": "cùng mẹ",
+              "en": "with mom",
+              "ja": "母と"
+            }
+          },
+          {
+            "zh": "跟老师",
+            "py": "gēn lǎoshī",
+            "tr": {
+              "vi": "cùng thầy",
+              "en": "with teacher",
+              "ja": "先生と"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "🎬 Làm gì?",
+          "en": "🎬 Action?",
+          "ja": "🎬 何をする？"
+        },
+        "options": [
+          {
+            "zh": "看电影",
+            "py": "kàn diànyǐng",
+            "tr": {
+              "vi": "xem phim",
+              "en": "watch movies",
+              "ja": "映画を見る"
+            }
+          },
+          {
+            "zh": "去超市",
+            "py": "qù chāoshì",
+            "tr": {
+              "vi": "đi siêu thị",
+              "en": "go to supermarket",
+              "ja": "スーパーに行く"
+            }
+          },
+          {
+            "zh": "学汉语",
+            "py": "xué hànyǔ",
+            "tr": {
+              "vi": "học tiếng Trung",
+              "en": "study Chinese",
+              "ja": "中国語を学ぶ"
+            }
+          }
+        ]
+      }
+    ],
+    "dialogue": {
+      "speaker_a": {
+        "speaker": "A",
+        "zh": "你今天跟谁看电影？",
+        "py": "Nǐ jīntiān gēn shéi kàn diànyǐng?",
+        "tr": {
+          "vi": "Hôm nay bạn xem phim cùng ai?",
+          "en": "Who are you watching movies with today?",
+          "ja": "今日、誰と映画を見るの？"
+        }
+      },
+      "speaker_b": {
+        "speaker": "B",
+        "zh": "我跟朋友看电影。",
+        "py": "Wǒ gēn péngyou kàn diànyǐng.",
+        "tr": {
+          "vi": "Tôi xem phim cùng bạn.",
+          "en": "I am watching movies with my friend.",
+          "ja": "友達と映画を見るよ。"
+        }
+      }
+    },
+    "challenge": {
+      "prompt": {
+        "vi": "Sắp xếp câu: 'Tôi xem phim cùng bạn'",
+        "en": "Arrange the words to say: 'I watch movies with my friend'",
+        "ja": "並べ替えて「私は友達と映画を見ます」を作ってください"
+      },
+      "tokens": [
+        "看电影",
+        "我",
+        "跟朋友"
+      ],
+      "correct_order": [
+        "我",
+        "跟朋友",
+        "看电影"
+      ]
+    }
+  },
+  {
+    "id": "hsk1_ne_question",
+    "level": "HSK1",
+    "zh_name": "……呢？",
+    "formula": "[Người / Đồ vật] + 呢？",
+    "localizations": {
+      "vi": {
+        "title": "Câu hỏi tỉnh lược (Còn... thì sao? / ...đâu rồi?)",
+        "quick_rule": "Dùng để hỏi tiếp ý vừa nhắc: 'Còn... thì sao?' hoặc hỏi vị trí '...đâu rồi?'.",
+        "trap_wrong": "你呢好吗？",
+        "trap_correct": "你呢？",
+        "trap_why": "Chữ 呢 đã tự mang nghĩa câu hỏi tỉnh lược hoàn chỉnh, không ghép thêm tính từ hay trợ từ 吗."
+      },
+      "en": {
+        "title": "Elliptical follow-up questions with 呢 (ne)",
+        "quick_rule": "Ask 'How about...?' or 'Where is...?' simply by placing 呢 after a noun or pronoun.",
+        "trap_wrong": "你呢好吗？",
+        "trap_correct": "你呢？",
+        "trap_why": "呢 already forms a complete bounce-back question; do not attach other question words."
+      },
+      "ja": {
+        "title": "省略疑問文を作る「呢」（〜は？）",
+        "quick_rule": "名詞や代名詞の後に「呢」を添えるだけで、「〜は？」「〜はどこ？」と簡潔に問い返せます。",
+        "trap_wrong": "你呢好吗？",
+        "trap_correct": "你呢？",
+        "trap_why": "「你呢？」だけで完全な質問文なので、余計な言葉を後ろに付け足してはいけません。"
+      }
+    },
+    "lego_slots": [
+      {
+        "slot_label": {
+          "vi": "💬 Vế hỏi",
+          "en": "💬 Target",
+          "ja": "💬 対象"
+        },
+        "options": [
+          {
+            "zh": "我很好，你",
+            "py": "Wǒ hěn hǎo, nǐ",
+            "tr": {
+              "vi": "Tôi rất khỏe, còn bạn",
+              "en": "I'm fine, how about you",
+              "ja": "元気です、あなたは"
+            }
+          },
+          {
+            "zh": "我的手机",
+            "py": "wǒ de shǒujī",
+            "tr": {
+              "vi": "Điện thoại của tôi",
+              "en": "my phone",
+              "ja": "私の携帯"
+            }
+          },
+          {
+            "zh": "你的书",
+            "py": "nǐ de shū",
+            "tr": {
+              "vi": "Sách của bạn",
+              "en": "your book",
+              "ja": "あなたの本"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "❓ Trợ từ 呢",
+          "en": "❓ Particle",
+          "ja": "❓ 助詞"
+        },
+        "options": [
+          {
+            "zh": "呢？",
+            "py": "ne?",
+            "tr": {
+              "vi": "thì sao? / đâu rồi?",
+              "en": "?",
+              "ja": "は？"
+            }
+          }
+        ]
+      }
+    ],
+    "dialogue": {
+      "speaker_a": {
+        "speaker": "A",
+        "zh": "我是越南人，你呢？",
+        "py": "Wǒ shì Yuènánrén, nǐ ne?",
+        "tr": {
+          "vi": "Tôi là người Việt Nam, còn bạn?",
+          "en": "I am Vietnamese, and you?",
+          "ja": "私はベトナム人です、あなたは？"
+        }
+      },
+      "speaker_b": {
+        "speaker": "B",
+        "zh": "我是中国人。",
+        "py": "Wǒ shì Zhōngguórén.",
+        "tr": {
+          "vi": "Tôi là người Trung Quốc.",
+          "en": "I am Chinese.",
+          "ja": "私は中国人です。"
+        }
+      }
+    },
+    "challenge": {
+      "prompt": {
+        "vi": "Ghép câu hỏi: 'Điện thoại của tôi đâu rồi?'",
+        "en": "Arrange the words to ask: 'Where is my phone?'",
+        "ja": "並べ替えて「私の携帯はどこ？」を作ってください"
+      },
+      "tokens": [
+        "呢？",
+        "我的",
+        "手机"
+      ],
+      "correct_order": [
+        "我的",
+        "手机",
+        "呢？"
+      ]
+    }
+  },
+  {
+    "id": "hsk1_hui_ability",
+    "level": "HSK1",
+    "zh_name": "会 + V",
+    "formula": "[Chủ ngữ] + 会 / 不会 + [Kỹ năng]",
+    "localizations": {
+      "vi": {
+        "title": "Diễn tả kỹ năng học mới biết (会 + Động từ)",
+        "quick_rule": "Dùng '会' khi diễn tả kỹ năng phải qua học hỏi, tập luyện mới biết làm (nói tiếng Trung, lái xe, nấu ăn).",
+        "trap_wrong": "我能说汉语。(chỉ khả năng hoàn cảnh)",
+        "trap_correct": "我会说汉语。(học mới biết)",
+        "trap_why": "Để nói về kỹ năng tiếp thu qua học tập, tiếng Trung luôn dùng '会'."
+      },
+      "en": {
+        "title": "Learned skills and abilities with 会 (huì)",
+        "quick_rule": "Use '会' to express skills acquired through practice or study (speaking a language, driving, cooking).",
+        "trap_wrong": "我能说汉语。",
+        "trap_correct": "我会说汉语。",
+        "trap_why": "Skills learned through study require '会', not '能'."
+      },
+      "ja": {
+        "title": "習得能力を表す「会」（〜できる）",
+        "quick_rule": "学習や訓練を通して習得したスキル（外国語、料理、運転など）には「会」を用います。",
+        "trap_wrong": "我能说汉语。",
+        "trap_correct": "我会说汉语。",
+        "trap_why": "勉強して身につけた能力には「能」ではなく必ず「会」を使います。"
+      }
+    },
+    "lego_slots": [
+      {
+        "slot_label": {
+          "vi": "🧑 Ai?",
+          "en": "🧑 Who?",
+          "ja": "🧑 誰が？"
+        },
+        "options": [
+          {
+            "zh": "我",
+            "py": "wǒ",
+            "tr": {
+              "vi": "Tôi",
+              "en": "I",
+              "ja": "私"
+            }
+          },
+          {
+            "zh": "他",
+            "py": "tā",
+            "tr": {
+              "vi": "Anh ấy",
+              "en": "He",
+              "ja": "彼"
+            }
+          },
+          {
+            "zh": "朋友",
+            "py": "péngyou",
+            "tr": {
+              "vi": "Bạn tôi",
+              "en": "Friend",
+              "ja": "友達"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "🧠 Biết / Không biết",
+          "en": "🧠 Can / Cannot",
+          "ja": "🧠 できる／できない"
+        },
+        "options": [
+          {
+            "zh": "会",
+            "py": "huì",
+            "tr": {
+              "vi": "biết",
+              "en": "can",
+              "ja": "できる"
+            }
+          },
+          {
+            "zh": "不会",
+            "py": "bú huì",
+            "tr": {
+              "vi": "không biết",
+              "en": "cannot",
+              "ja": "できない"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "🎯 Kỹ năng gì?",
+          "en": "🎯 Skill?",
+          "ja": "🎯 どんな特技？"
+        },
+        "options": [
+          {
+            "zh": "说汉语",
+            "py": "shuō hànyǔ",
+            "tr": {
+              "vi": "nói tiếng Trung",
+              "en": "speak Chinese",
+              "ja": "中国語を話す"
+            }
+          },
+          {
+            "zh": "开汽车",
+            "py": "kāi qìchē",
+            "tr": {
+              "vi": "lái ô tô",
+              "en": "drive a car",
+              "ja": "車を運転する"
+            }
+          },
+          {
+            "zh": "做中国菜",
+            "py": "zuò zhōngguócài",
+            "tr": {
+              "vi": "nấu món Trung",
+              "en": "cook Chinese food",
+              "ja": "中華料理を作る"
+            }
+          }
+        ]
+      }
+    ],
+    "dialogue": {
+      "speaker_a": {
+        "speaker": "A",
+        "zh": "你会说汉语吗？",
+        "py": "Nǐ huì shuō hànyǔ ma?",
+        "tr": {
+          "vi": "Bạn biết nói tiếng Trung không?",
+          "en": "Can you speak Chinese?",
+          "ja": "中国語を話せますか？"
+        }
+      },
+      "speaker_b": {
+        "speaker": "B",
+        "zh": "我会说一点儿。",
+        "py": "Wǒ huì shuō yìdiǎnr.",
+        "tr": {
+          "vi": "Tôi biết nói một chút.",
+          "en": "I can speak a little.",
+          "ja": "少し話せます。"
+        }
+      }
+    },
+    "challenge": {
+      "prompt": {
+        "vi": "Sắp xếp câu: 'Tôi biết nói tiếng Trung'",
+        "en": "Arrange the words to say: 'I can speak Chinese'",
+        "ja": "並べ替えて「私は中国語を話せます」を作ってください"
+      },
+      "tokens": [
+        "说汉语",
+        "我",
+        "会"
+      ],
+      "correct_order": [
+        "我",
+        "会",
+        "说汉语"
+      ]
+    }
+  },
+  {
+    "id": "hsk1_de_possessive",
+    "level": "HSK1",
+    "zh_name": "……的 + N",
+    "formula": "[Chủ sở hữu / Tính chất] + 的 + [Danh từ]",
+    "localizations": {
+      "vi": {
+        "title": "Sở hữu & Bổ nghĩa danh từ (...的 + Danh từ)",
+        "quick_rule": "Cái gì của ai hoặc tính chất bổ nghĩa cho đồ vật thì đặt '的' ở giữa (Ngược trật tự tiếng Việt: A của B -> B 的 A).",
+        "trap_wrong": "书我的。",
+        "trap_correct": "我的书。",
+        "trap_why": "Người sở hữu hoặc phần bổ nghĩa luôn đứng TRƯỚC danh từ chính."
+      },
+      "en": {
+        "title": "Possession and modification with 的 (de)",
+        "quick_rule": "Attach '的' between the owner/modifier and the noun (Owner + 的 + Noun).",
+        "trap_wrong": "书我的。",
+        "trap_correct": "我的书。",
+        "trap_why": "The modifier/owner must come BEFORE the noun it modifies."
+      },
+      "ja": {
+        "title": "修飾・所有の構造助詞「的」（〜の…）",
+        "quick_rule": "所有者や修飾語の後ろに「的」を置き、名詞を修飾します（日本語の「私の本」と同じ語順です）。",
+        "trap_wrong": "书我的。",
+        "trap_correct": "我的书。",
+        "trap_why": "所有者は必ず名詞の前に置きます。"
+      }
+    },
+    "lego_slots": [
+      {
+        "slot_label": {
+          "vi": "👤 Người sở hữu",
+          "en": "👤 Owner",
+          "ja": "👤 所有者"
+        },
+        "options": [
+          {
+            "zh": "我",
+            "py": "wǒ",
+            "tr": {
+              "vi": "tôi",
+              "en": "my",
+              "ja": "私"
+            }
+          },
+          {
+            "zh": "爸爸",
+            "py": "bàba",
+            "tr": {
+              "vi": "bố",
+              "en": "dad's",
+              "ja": "父"
+            }
+          },
+          {
+            "zh": "红",
+            "py": "hóng",
+            "tr": {
+              "vi": "màu đỏ",
+              "en": "red",
+              "ja": "赤い"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "🔗 Trợ từ 的",
+          "en": "🔗 Particle 的",
+          "ja": "🔗 助詞「的」"
+        },
+        "options": [
+          {
+            "zh": "的",
+            "py": "de",
+            "tr": {
+              "vi": "của",
+              "en": "of / 's",
+              "ja": "の"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "📦 Đồ vật",
+          "en": "📦 Noun",
+          "ja": "📦 名詞"
+        },
+        "options": [
+          {
+            "zh": "书",
+            "py": "shū",
+            "tr": {
+              "vi": "sách",
+              "en": "book",
+              "ja": "本"
+            }
+          },
+          {
+            "zh": "电脑",
+            "py": "diànnǎo",
+            "tr": {
+              "vi": "máy tính",
+              "en": "computer",
+              "ja": "パソコン"
+            }
+          },
+          {
+            "zh": "衣服",
+            "py": "yīfu",
+            "tr": {
+              "vi": "quần áo",
+              "en": "clothes",
+              "ja": "服"
+            }
+          }
+        ]
+      }
+    ],
+    "dialogue": {
+      "speaker_a": {
+        "speaker": "A",
+        "zh": "这是谁的电脑？",
+        "py": "Zhè shì shéi de diànnǎo?",
+        "tr": {
+          "vi": "Đây là máy tính của ai?",
+          "en": "Whose computer is this?",
+          "ja": "これは誰のパソコンですか？"
+        }
+      },
+      "speaker_b": {
+        "speaker": "B",
+        "zh": "这是爸爸的电脑。",
+        "py": "Zhè shì bàba de diànnǎo.",
+        "tr": {
+          "vi": "Đây là máy tính của bố.",
+          "en": "This is dad's computer.",
+          "ja": "これは父のパソコンです。"
+        }
+      }
+    },
+    "challenge": {
+      "prompt": {
+        "vi": "Sắp xếp cụm từ: 'Máy tính của bố'",
+        "en": "Arrange the words to say: 'Dad's computer'",
+        "ja": "並べ替えて「父のパソコン」を作ってください"
+      },
+      "tokens": [
+        "的",
+        "电脑",
+        "爸爸"
+      ],
+      "correct_order": [
+        "爸爸",
+        "的",
+        "电脑"
+      ]
+    }
+  },
+  {
+    "id": "hsk2_guo_experience",
+    "level": "HSK2",
+    "zh_name": "V + 过",
+    "formula": "[Chủ ngữ] + 没/没有 + [V] + 过 + [Tân ngữ]",
+    "localizations": {
+      "vi": {
+        "title": "Đã từng làm việc gì (Động từ + 过)",
+        "quick_rule": "Đặt '过' sau động từ để nói đã từng làm gì. Phủ định là '没/没有...过' (chưa từng).",
+        "trap_wrong": "我不去过北京。",
+        "trap_correct": "我没去过北京。",
+        "trap_why": "Phủ định của trải nghiệm '过' luôn dùng '没' hoặc '没有', không dùng '不'."
+      },
+      "en": {
+        "title": "Past experience with particle 过 (guò)",
+        "quick_rule": "Place '过' right after the verb to express having experienced something. Negate with 没/没有.",
+        "trap_wrong": "我不去过北京。",
+        "trap_correct": "我没去过北京。",
+        "trap_why": "Past experience with 过 must be negated with 没/没有, never 不."
+      },
+      "ja": {
+        "title": "経験を表すアスペクト助詞「过」（〜したことがある）",
+        "quick_rule": "動詞の後ろに「过」を付けて「〜したことがある」と経験を述べます。否定は必ず「没／没有」を用います。",
+        "trap_wrong": "我不去过北京。",
+        "trap_correct": "我没去过北京。",
+        "trap_why": "経験の「过」を否定するときは「不」ではなく必ず「没／没有」を用います。"
+      }
+    },
+    "lego_slots": [
+      {
+        "slot_label": {
+          "vi": "🧑 Ai?",
+          "en": "🧑 Who?",
+          "ja": "🧑 誰が？"
+        },
+        "options": [
+          {
+            "zh": "我",
+            "py": "wǒ",
+            "tr": {
+              "vi": "Tôi",
+              "en": "I",
+              "ja": "私"
+            }
+          },
+          {
+            "zh": "他",
+            "py": "tā",
+            "tr": {
+              "vi": "Anh ấy",
+              "en": "He",
+              "ja": "彼"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "🚀 Đã từng / Chưa từng",
+          "en": "🚀 Experienced?",
+          "ja": "🚀 経験の有無"
+        },
+        "options": [
+          {
+            "zh": "去过",
+            "py": "qù guo",
+            "tr": {
+              "vi": "từng đi",
+              "en": "have been to",
+              "ja": "行ったことがある"
+            }
+          },
+          {
+            "zh": "没去过",
+            "py": "méi qù guo",
+            "tr": {
+              "vi": "chưa từng đi",
+              "en": "have never been to",
+              "ja": "行ったことがない"
+            }
+          },
+          {
+            "zh": "吃过",
+            "py": "chī guo",
+            "tr": {
+              "vi": "từng ăn",
+              "en": "have eaten",
+              "ja": "食べたことがある"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "✨ Nơi / Món gì?",
+          "en": "✨ Place / Food?",
+          "ja": "✨ どこ／何を？"
+        },
+        "options": [
+          {
+            "zh": "北京",
+            "py": "Běijīng",
+            "tr": {
+              "vi": "Bắc Kinh",
+              "en": "Beijing",
+              "ja": "北京"
+            }
+          },
+          {
+            "zh": "中国菜",
+            "py": "zhōngguócài",
+            "tr": {
+              "vi": "món Trung",
+              "en": "Chinese food",
+              "ja": "中華料理"
+            }
+          },
+          {
+            "zh": "烤鸭",
+            "py": "kǎoyā",
+            "tr": {
+              "vi": "vịt quay",
+              "en": "roast duck",
+              "ja": "北京ダック"
+            }
+          }
+        ]
+      }
+    ],
+    "dialogue": {
+      "speaker_a": {
+        "speaker": "A",
+        "zh": "你去过中国吗？",
+        "py": "Nǐ qù guo Zhōngguó ma?",
+        "tr": {
+          "vi": "Bạn từng đi Trung Quốc chưa?",
+          "en": "Have you been to China?",
+          "ja": "中国へ行ったことがありますか？"
+        }
+      },
+      "speaker_b": {
+        "speaker": "B",
+        "zh": "我去过两次。",
+        "py": "Wǒ qù guo liǎng cì.",
+        "tr": {
+          "vi": "Tôi từng đi hai lần rồi.",
+          "en": "I have been there twice.",
+          "ja": "2回行ったことがあります。"
+        }
+      }
+    },
+    "challenge": {
+      "prompt": {
+        "vi": "Sắp xếp câu: 'Tôi từng ăn vịt quay'",
+        "en": "Arrange the words to say: 'I have eaten roast duck'",
+        "ja": "並べ替えて「私は北京ダックを食べたことがあります」を作ってください"
+      },
+      "tokens": [
+        "烤鸭",
+        "吃过",
+        "我"
+      ],
+      "correct_order": [
+        "我",
+        "吃过",
+        "烤鸭"
+      ]
+    }
+  },
+  {
+    "id": "hsk2_bi_comparison",
+    "level": "HSK2",
+    "zh_name": "A + 比 + B + Adj",
+    "formula": "[A] + 比 + [B] + [Tính từ]",
+    "localizations": {
+      "vi": {
+        "title": "Câu so sánh hơn với chữ 比 (A hơn B)",
+        "quick_rule": "Dùng '比' để nói A hơn B. Quy tắc sống còn: Cấm dùng 很/非常 trước tính từ!",
+        "trap_wrong": "他比我很忙。",
+        "trap_correct": "他比我忙。",
+        "trap_why": "Trong câu so sánh '比', trước tính từ không dùng phó từ mức độ như 很, 非常."
+      },
+      "en": {
+        "title": "Comparisons using 比 (bǐ - A is more than B)",
+        "quick_rule": "Use '比' to compare two entities. Critical rule: Degree adverbs like 很/非常 cannot precede the adjective!",
+        "trap_wrong": "他比我很忙。",
+        "trap_correct": "他比我忙。",
+        "trap_why": "In 比 comparisons, degree adverbs like 很 or 非常 are strictly forbidden before the adjective."
+      },
+      "ja": {
+        "title": "「比」を用いた比較文（AはBより〜）",
+        "quick_rule": "「比」を用いて「AはBより〜だ」と比べます。形容詞の前に「很」「非常」などの程度副詞を置いてはいけません！",
+        "trap_wrong": "他比我很忙。",
+        "trap_correct": "他比我忙。",
+        "trap_why": "「比」構文では形容詞の前に「很」や「非常」を置くことはできません。"
+      }
+    },
+    "lego_slots": [
+      {
+        "slot_label": {
+          "vi": "🅰️ Đối tượng A",
+          "en": "🅰️ Item A",
+          "ja": "🅰️ 主体A"
+        },
+        "options": [
+          {
+            "zh": "今天",
+            "py": "jīntiān",
+            "tr": {
+              "vi": "hôm nay",
+              "en": "today",
+              "ja": "今日"
+            }
+          },
+          {
+            "zh": "哥哥",
+            "py": "gēge",
+            "tr": {
+              "vi": "anh trai",
+              "en": "older brother",
+              "ja": "兄"
+            }
+          },
+          {
+            "zh": "西瓜",
+            "py": "xīguā",
+            "tr": {
+              "vi": "dưa hấu",
+              "en": "watermelon",
+              "ja": "スイカ"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "⚖️ So với (比)",
+          "en": "⚖️ Compared to",
+          "ja": "⚖️ 〜より（比）"
+        },
+        "options": [
+          {
+            "zh": "比",
+            "py": "bǐ",
+            "tr": {
+              "vi": "hơn / so với",
+              "en": "than",
+              "ja": "より"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "🅱️ Đối tượng B",
+          "en": "🅱️ Item B",
+          "ja": "🅱️ 比較対象B"
+        },
+        "options": [
+          {
+            "zh": "昨天",
+            "py": "zuótiān",
+            "tr": {
+              "vi": "hôm qua",
+              "en": "yesterday",
+              "ja": "昨日"
+            }
+          },
+          {
+            "zh": "我",
+            "py": "wǒ",
+            "tr": {
+              "vi": "tôi",
+              "en": "me",
+              "ja": "私"
+            }
+          },
+          {
+            "zh": "苹果",
+            "py": "píngguǒ",
+            "tr": {
+              "vi": "táo",
+              "en": "apple",
+              "ja": "リンゴ"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "🎨 Tính từ",
+          "en": "🎨 Adjective",
+          "ja": "🎨 性質"
+        },
+        "options": [
+          {
+            "zh": "冷",
+            "py": "lěng",
+            "tr": {
+              "vi": "lạnh",
+              "en": "cold",
+              "ja": "寒い"
+            }
+          },
+          {
+            "zh": "高",
+            "py": "gāo",
+            "tr": {
+              "vi": "cao",
+              "en": "tall",
+              "ja": "背が高い"
+            }
+          },
+          {
+            "zh": "贵",
+            "py": "guì",
+            "tr": {
+              "vi": "đắt",
+              "en": "expensive",
+              "ja": "高い"
+            }
+          }
+        ]
+      }
+    ],
+    "dialogue": {
+      "speaker_a": {
+        "speaker": "A",
+        "zh": "今天冷不冷？",
+        "py": "Jīntiān lěng bu lěng?",
+        "tr": {
+          "vi": "Hôm nay có lạnh không?",
+          "en": "Is it cold today?",
+          "ja": "今日寒くない？"
+        }
+      },
+      "speaker_b": {
+        "speaker": "B",
+        "zh": "今天比昨天冷多了。",
+        "py": "Jīntiān bǐ zuótiān lěng duō le.",
+        "tr": {
+          "vi": "Hôm nay lạnh hơn hôm qua nhiều.",
+          "en": "Today is much colder than yesterday.",
+          "ja": "今日の方が昨日よりずっと寒いよ。"
+        }
+      }
+    },
+    "challenge": {
+      "prompt": {
+        "vi": "Sắp xếp câu: 'Anh trai cao hơn tôi'",
+        "en": "Arrange the words to say: 'Older brother is taller than me'",
+        "ja": "並べ替えて「兄は私より背が高い」を作ってください"
+      },
+      "tokens": [
+        "我",
+        "哥哥",
+        "比",
+        "高"
+      ],
+      "correct_order": [
+        "哥哥",
+        "比",
+        "我",
+        "高"
+      ]
+    }
+  },
+  {
+    "id": "hsk2_zhe_state",
+    "level": "HSK2",
+    "zh_name": "V + 着",
+    "formula": "[Chủ ngữ / Nơi chốn] + [V] + 着",
+    "localizations": {
+      "vi": {
+        "title": "Trạng thái đang duy trì (Động từ + 着)",
+        "quick_rule": "Diễn tả một trạng thái tĩnh đang duy trì liên tục (cửa đang mở, áo đang mặc, sách đang cầm).",
+        "trap_wrong": "他写着汉字在。",
+        "trap_correct": "门开着呢。",
+        "trap_why": "Trợ từ 着 đứng ngay sát sau động từ để biểu thị trạng thái duy trì."
+      },
+      "en": {
+        "title": "Continuous state particle 着 (zhe)",
+        "quick_rule": "Attach '着' directly after a verb to express an ongoing static state (door is open, wearing clothes).",
+        "trap_wrong": "他写着汉字在。",
+        "trap_correct": "门开着呢。",
+        "trap_why": "The aspect particle 着 must directly follow the verb, indicating an ongoing state."
+      },
+      "ja": {
+        "title": "状態の持続を表す「着」（〜している／〜てある）",
+        "quick_rule": "動詞の直後に「着」を添え、「ドアが開いている」「服を着ている」など状態の持続を表します。",
+        "trap_wrong": "他写着汉字在。",
+        "trap_correct": "门开着呢。",
+        "trap_why": "「着」は必ず動詞の直後に置きます。"
+      }
+    },
+    "lego_slots": [
+      {
+        "slot_label": {
+          "vi": "🚪 Sự vật",
+          "en": "🚪 Subject",
+          "ja": "🚪 主体"
+        },
+        "options": [
+          {
+            "zh": "门",
+            "py": "mén",
+            "tr": {
+              "vi": "Cửa",
+              "en": "Door",
+              "ja": "ドア"
+            }
+          },
+          {
+            "zh": "窗户",
+            "py": "chuānghu",
+            "tr": {
+              "vi": "Cửa sổ",
+              "en": "Window",
+              "ja": "窓"
+            }
+          },
+          {
+            "zh": "老师",
+            "py": "lǎoshī",
+            "tr": {
+              "vi": "Thầy giáo",
+              "en": "Teacher",
+              "ja": "先生"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "🔄 Trạng thái (V + 着)",
+          "en": "🔄 State",
+          "ja": "🔄 状態（V＋着）"
+        },
+        "options": [
+          {
+            "zh": "开着",
+            "py": "kāi zhe",
+            "tr": {
+              "vi": "đang mở",
+              "en": "is open",
+              "ja": "開いている"
+            }
+          },
+          {
+            "zh": "关着",
+            "py": "guān zhe",
+            "tr": {
+              "vi": "đang đóng",
+              "en": "is closed",
+              "ja": "閉まっている"
+            }
+          },
+          {
+            "zh": "笑着",
+            "py": "xiào zhe",
+            "tr": {
+              "vi": "đang mỉm cười",
+              "en": "is smiling",
+              "ja": "笑っている"
+            }
+          }
+        ]
+      }
+    ],
+    "dialogue": {
+      "speaker_a": {
+        "speaker": "A",
+        "zh": "教室的门开着吗？",
+        "py": "Jiàoshì de mén kāi zhe ma?",
+        "tr": {
+          "vi": "Cửa phòng học có đang mở không?",
+          "en": "Is the classroom door open?",
+          "ja": "教室のドアは開いていますか？"
+        }
+      },
+      "speaker_b": {
+        "speaker": "B",
+        "zh": "门开着呢，请进吧。",
+        "py": "Mén kāi zhe ne, qǐng jìn ba.",
+        "tr": {
+          "vi": "Cửa đang mở đấy, xin mời vào.",
+          "en": "The door is open, please come in.",
+          "ja": "開いていますよ、どうぞお入りください。"
+        }
+      }
+    },
+    "challenge": {
+      "prompt": {
+        "vi": "Sắp xếp câu: 'Cửa đang mở'",
+        "en": "Arrange the words to say: 'The door is open'",
+        "ja": "並べ替えて「ドアが開いています」を作ってください"
+      },
+      "tokens": [
+        "着",
+        "门",
+        "开"
+      ],
+      "correct_order": [
+        "门",
+        "开",
+        "着"
+      ]
+    }
+  },
+  {
+    "id": "hsk2_kuai_le",
+    "level": "HSK2",
+    "zh_name": "快要……了！",
+    "formula": "[Chủ ngữ] + 快要 + [Hành động] + 了！",
+    "localizations": {
+      "vi": {
+        "title": "Sắp sửa diễn ra (快要...了 / 要...了)",
+        "quick_rule": "Diễn tả hành động sắp xảy ra trong chốc lát ('sắp... rồi!').",
+        "trap_wrong": "快要下雨昨天。",
+        "trap_correct": "快要下雨了！",
+        "trap_why": "Cấu trúc 快要... bắt buộc phải có 了 ở cuối câu."
+      },
+      "en": {
+        "title": "Imminent actions: About to happen! (快要...了)",
+        "quick_rule": "Express that an event is about to happen in moments (about to / soon).",
+        "trap_wrong": "快要下雨昨天。",
+        "trap_correct": "快要下雨了！",
+        "trap_why": "The construction 快要... must pair with 了 at sentence end."
+      },
+      "ja": {
+        "title": "近未来を表す「快要…了」（もうすぐ〜する）",
+        "quick_rule": "事態が間もなく発生することを「快要…了」（もうすぐ〜する）と表します。",
+        "trap_wrong": "快要下雨昨天。",
+        "trap_correct": "快要下雨了！",
+        "trap_why": "「快要…」構文では文末に「了」が不可欠です。"
+      }
+    },
+    "lego_slots": [
+      {
+        "slot_label": {
+          "vi": "✈️ Sự việc / Xe",
+          "en": "✈️ Subject",
+          "ja": "✈️ 主体"
+        },
+        "options": [
+          {
+            "zh": "飞机",
+            "py": "fēijī",
+            "tr": {
+              "vi": "Máy bay",
+              "en": "Airplane",
+              "ja": "飛行機"
+            }
+          },
+          {
+            "zh": "火车",
+            "py": "huǒchē",
+            "tr": {
+              "vi": "Tàu hỏa",
+              "en": "Train",
+              "ja": "電車"
+            }
+          },
+          {
+            "zh": "天",
+            "py": "tiān",
+            "tr": {
+              "vi": "Trời",
+              "en": "Sky/Weather",
+              "ja": "空"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "⚡ Sắp sửa",
+          "en": "⚡ Soon",
+          "ja": "⚡ まもなく"
+        },
+        "options": [
+          {
+            "zh": "快要",
+            "py": "kuàiyào",
+            "tr": {
+              "vi": "sắp sửa",
+              "en": "about to",
+              "ja": "もうすぐ"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "🎬 Hành động + 了",
+          "en": "🎬 Action + 了",
+          "ja": "🎬 動作＋了"
+        },
+        "options": [
+          {
+            "zh": "起飞了",
+            "py": "qǐfēi le",
+            "tr": {
+              "vi": "cất cánh rồi",
+              "en": "take off",
+              "ja": "離陸する"
+            }
+          },
+          {
+            "zh": "开走了",
+            "py": "kāi zǒu le",
+            "tr": {
+              "vi": "chạy rồi",
+              "en": "depart",
+              "ja": "出発する"
+            }
+          },
+          {
+            "zh": "下雨了",
+            "py": "xiàyǔ le",
+            "tr": {
+              "vi": "mưa rồi",
+              "en": "rain",
+              "ja": "雨が降る"
+            }
+          }
+        ]
+      }
+    ],
+    "dialogue": {
+      "speaker_a": {
+        "speaker": "A",
+        "zh": "快点儿，火车快要开了！",
+        "py": "Kuài diǎnr, huǒchē kuàiyào kāi le!",
+        "tr": {
+          "vi": "Nhanh lên, tàu hỏa sắp chạy rồi!",
+          "en": "Hurry up, the train is about to depart!",
+          "ja": "急いで、電車がもうすぐ出ちゃうよ！"
+        }
+      },
+      "speaker_b": {
+        "speaker": "B",
+        "zh": "好，我马上来！",
+        "py": "Hǎo, wǒ mǎshàng lái!",
+        "tr": {
+          "vi": "Được, tôi đến ngay đây!",
+          "en": "Okay, I'm coming right away!",
+          "ja": "分かった、すぐ行く！"
+        }
+      }
+    },
+    "challenge": {
+      "prompt": {
+        "vi": "Sắp xếp câu: 'Trời sắp mưa rồi!'",
+        "en": "Arrange the words to say: 'It is about to rain!'",
+        "ja": "並べ替えて「もうすぐ雨が降るよ！」を作ってください"
+      },
+      "tokens": [
+        "快要",
+        "了",
+        "天",
+        "下雨"
+      ],
+      "correct_order": [
+        "天",
+        "快要",
+        "下雨",
+        "了"
+      ]
+    }
+  },
+  {
+    "id": "hsk2_yue_lai_yue",
+    "level": "HSK2",
+    "zh_name": "越来越 + Adj",
+    "formula": "[Sự vật] + 越来越 + [Tính từ]",
+    "localizations": {
+      "vi": {
+        "title": "Càng ngày càng... (越来越 + Tính từ)",
+        "quick_rule": "Biểu thị mức độ biến chuyển tăng dần theo thời gian ('càng ngày càng...'). Cấm dùng 很 sau 越来越.",
+        "trap_wrong": "中文越来越很难。",
+        "trap_correct": "中文越来越难。",
+        "trap_why": "Bản thân '越来越' đã mang nghĩa so sánh tăng tiến cao độ, cấm chèn thêm '很'."
+      },
+      "en": {
+        "title": "More and more with 越来越 (yuèláiyuè)",
+        "quick_rule": "Express an increasing degree over time (more and more). Never add 很 after 越来越.",
+        "trap_wrong": "中文越来越很难。",
+        "trap_correct": "中文越来越难。",
+        "trap_why": "越来越 already conveys increasing intensity; degree adverbs like 很 are prohibited."
+      },
+      "ja": {
+        "title": "漸進を表す「越来越…」（ますます〜）",
+        "quick_rule": "時間の経過とともに度合いが増すことを「越来越…」（ますます〜）と表します。「很」を後ろに付けてはいけません。",
+        "trap_wrong": "中文越来越很难。",
+        "trap_correct": "中文越来越难。",
+        "trap_why": "「越来越」自体が強調を含んでいるため、「很」を重ねることは禁物です。"
+      }
+    },
+    "lego_slots": [
+      {
+        "slot_label": {
+          "vi": "📈 Sự vật",
+          "en": "📈 Subject",
+          "ja": "📈 主体"
+        },
+        "options": [
+          {
+            "zh": "天气",
+            "py": "tiānqì",
+            "tr": {
+              "vi": "Thời tiết",
+              "en": "Weather",
+              "ja": "天気"
+            }
+          },
+          {
+            "zh": "汉语",
+            "py": "hànyǔ",
+            "tr": {
+              "vi": "Tiếng Trung",
+              "en": "Chinese",
+              "ja": "中国語"
+            }
+          },
+          {
+            "zh": "他",
+            "py": "tā",
+            "tr": {
+              "vi": "Anh ấy",
+              "en": "He",
+              "ja": "彼"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "🔄 Càng ngày càng",
+          "en": "🔄 More and more",
+          "ja": "🔄 ますます"
+        },
+        "options": [
+          {
+            "zh": "越来越",
+            "py": "yuèláiyuè",
+            "tr": {
+              "vi": "càng ngày càng",
+              "en": "more and more",
+              "ja": "ますます"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "🎨 Tính chất",
+          "en": "🎨 Adjective",
+          "ja": "🎨 性質"
+        },
+        "options": [
+          {
+            "zh": "冷",
+            "py": "lěng",
+            "tr": {
+              "vi": "lạnh",
+              "en": "cold",
+              "ja": "寒く"
+            }
+          },
+          {
+            "zh": "有意思",
+            "py": "yǒu yìsi",
+            "tr": {
+              "vi": "thú vị",
+              "en": "interesting",
+              "ja": "面白く"
+            }
+          },
+          {
+            "zh": "帅",
+            "py": "shuài",
+            "tr": {
+              "vi": "đẹp trai",
+              "en": "handsome",
+              "ja": "かっこよく"
+            }
+          }
+        ]
+      }
+    ],
+    "dialogue": {
+      "speaker_a": {
+        "speaker": "A",
+        "zh": "你觉得学汉语难吗？",
+        "py": "Nǐ juéde xué hànyǔ nán ma?",
+        "tr": {
+          "vi": "Bạn thấy học tiếng Trung có khó không?",
+          "en": "Do you find learning Chinese difficult?",
+          "ja": "中国語を学ぶのは難しいと思いますか？"
+        }
+      },
+      "speaker_b": {
+        "speaker": "B",
+        "zh": "我觉得越来越有意思了！",
+        "py": "Wǒ juéde yuèláiyuè yǒu yìsi le!",
+        "tr": {
+          "vi": "Tôi thấy càng ngày càng thú vị rồi!",
+          "en": "I think it gets more and more interesting!",
+          "ja": "ますます面白くなってきたと思います！"
+        }
+      }
+    },
+    "challenge": {
+      "prompt": {
+        "vi": "Sắp xếp câu: 'Thời tiết càng ngày càng lạnh'",
+        "en": "Arrange the words to say: 'The weather is getting colder and colder'",
+        "ja": "並べ替えて「天気はますます寒くなってきた」を作ってください"
+      },
+      "tokens": [
+        "天气",
+        "冷",
+        "越来越"
+      ],
+      "correct_order": [
+        "天气",
+        "越来越",
+        "冷"
+      ]
+    }
+  },
+  {
+    "id": "hsk2_dong_jie_guo",
+    "level": "HSK2",
+    "zh_name": "V + 结果补语 (完/懂/见/到)",
+    "formula": "[Chủ ngữ] + [V] + 完/懂/见/到 + [Tân ngữ]",
+    "localizations": {
+      "vi": {
+        "title": "Bổ ngữ kết quả: Làm xong, hiểu, nhìn thấy (V + 完/懂/见/到)",
+        "quick_rule": "Thêm '完' (xong), '懂' (hiểu), '见' (thấy), '到' (được) ngay sau động từ để chỉ kết quả của hành động.",
+        "trap_wrong": "我没做完不了作业。",
+        "trap_correct": "我没做完作业。",
+        "trap_why": "Phủ định của bổ ngữ kết quả đặt '没' hoặc '没有' trước động từ, không dùng '不'."
+      },
+      "en": {
+        "title": "Resultative Verb Complements (完, 懂, 见, 到)",
+        "quick_rule": "Attach result words like 完 (finish), 懂 (understand), 见 (perceive), 到 (reach) directly after verbs.",
+        "trap_wrong": "我没做完不了作业。",
+        "trap_correct": "我没做完作业。",
+        "trap_why": "Negate resultative complements with 没/没有 before the verb, never 不."
+      },
+      "ja": {
+        "title": "結果補語「完・懂・见・到」（〜し終わる／分かる／見える）",
+        "quick_rule": "動詞の直後に結果補語（完・懂・见・到など）を置いて動作の結果を表します。",
+        "trap_wrong": "我没做完不了作业。",
+        "trap_correct": "我没做完作业。",
+        "trap_why": "結果補語の否定文は動詞の前に「没／没有」を置き、「不」は使いません。"
+      }
+    },
+    "lego_slots": [
+      {
+        "slot_label": {
+          "vi": "🧑 Ai?",
+          "en": "🧑 Who?",
+          "ja": "🧑 誰が？"
+        },
+        "options": [
+          {
+            "zh": "我",
+            "py": "wǒ",
+            "tr": {
+              "vi": "Tôi",
+              "en": "I",
+              "ja": "私"
+            }
+          },
+          {
+            "zh": "他",
+            "py": "tā",
+            "tr": {
+              "vi": "Anh ấy",
+              "en": "He",
+              "ja": "彼"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "⚡ Hành động & Kết quả",
+          "en": "⚡ Action & Result",
+          "ja": "⚡ 動作と結果"
+        },
+        "options": [
+          {
+            "zh": "做完了",
+            "py": "zuò wán le",
+            "tr": {
+              "vi": "làm xong rồi",
+              "en": "finished doing",
+              "ja": "やり終えた"
+            }
+          },
+          {
+            "zh": "听懂了",
+            "py": "tīng dǒng le",
+            "tr": {
+              "vi": "nghe hiểu rồi",
+              "en": "understood by listening",
+              "ja": "聞いて理解した"
+            }
+          },
+          {
+            "zh": "看到了",
+            "py": "kàn dào le",
+            "tr": {
+              "vi": "nhìn thấy rồi",
+              "en": "saw/spotted",
+              "ja": "目に入った"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "🎯 Đối tượng?",
+          "en": "🎯 Target / Object?",
+          "ja": "🎯 何を？"
+        },
+        "options": [
+          {
+            "zh": "作业",
+            "py": "zuòyè",
+            "tr": {
+              "vi": "bài tập",
+              "en": "homework",
+              "ja": "宿題"
+            }
+          },
+          {
+            "zh": "老师的话",
+            "py": "lǎoshī de huà",
+            "tr": {
+              "vi": "lời thầy cô",
+              "en": "teacher's words",
+              "ja": "先生の言葉"
+            }
+          },
+          {
+            "zh": "那个字",
+            "py": "nà ge zì",
+            "tr": {
+              "vi": "chữ đó",
+              "en": "that character",
+              "ja": "その文字"
+            }
+          }
+        ]
+      }
+    ],
+    "dialogue": {
+      "speaker_a": {
+        "speaker": "A",
+        "zh": "你作业做完了吗？",
+        "py": "Nǐ zuòyè zuò wán le ma?",
+        "tr": {
+          "vi": "Bạn làm xong bài tập chưa?",
+          "en": "Have you finished your homework?",
+          "ja": "宿題はもう終わりましたか？"
+        }
+      },
+      "speaker_b": {
+        "speaker": "B",
+        "zh": "我已经做完了。",
+        "py": "Wǒ yǐjīng zuò wán le.",
+        "tr": {
+          "vi": "Tôi đã làm xong rồi.",
+          "en": "I have already finished it.",
+          "ja": "もう終わりました。"
+        }
+      }
+    },
+    "challenge": {
+      "prompt": {
+        "vi": "Sắp xếp câu: 'Tôi đã làm xong bài tập'",
+        "en": "Arrange the words to say: 'I finished my homework'",
+        "ja": "並べ替えて「私は宿題をやり終えました」を作ってください"
+      },
+      "tokens": [
+        "作业",
+        "做完了",
+        "我"
+      ],
+      "correct_order": [
+        "我",
+        "做完了",
+        "作业"
+      ]
+    }
+  },
+  {
+    "id": "hsk2_lai_qu_direction",
+    "level": "HSK2",
+    "zh_name": "V + 来 / 去",
+    "formula": "[Chủ ngữ] + [V] + (Nơi chốn) + 来 / 去",
+    "localizations": {
+      "vi": {
+        "title": "Bổ ngữ xu hướng đơn: Lại đây / Đi ra xa (V + 来/去)",
+        "quick_rule": "Dùng '来' khi hành động hướng về phía người nói; dùng '去' khi rời xa người nói.",
+        "trap_wrong": "他回家去来。",
+        "trap_correct": "他回家去了。",
+        "trap_why": "Nếu người nói đang ở ngoài nhà, phải dùng '去'; nếu ở trong nhà đón, dùng '来'."
+      },
+      "en": {
+        "title": "Simple Directional Complements with 来 (lái) & 去 (qù)",
+        "quick_rule": "Use 来 when movement is towards the speaker; use 去 when movement is away from the speaker.",
+        "trap_wrong": "他回家去来。",
+        "trap_correct": "他回家去了。",
+        "trap_why": "Direction words 来 and 去 indicate orientation relative to where the speaker is located."
+      },
+      "ja": {
+        "title": "単純方向補語「来／去」（話者に近づくか遠ざかるか）",
+        "quick_rule": "動作が話者に近づくときは「来」、遠ざかるときは「去」を動詞の後ろに付けます。",
+        "trap_wrong": "他回家去来。",
+        "trap_correct": "他回家去了。",
+        "trap_why": "話者の現在位置を基準にして、「来」か「去」の一方を選びます。"
+      }
+    },
+    "lego_slots": [
+      {
+        "slot_label": {
+          "vi": "🧑 Ai?",
+          "en": "🧑 Who?",
+          "ja": "🧑 誰が？"
+        },
+        "options": [
+          {
+            "zh": "他",
+            "py": "tā",
+            "tr": {
+              "vi": "Anh ấy",
+              "en": "He",
+              "ja": "彼"
+            }
+          },
+          {
+            "zh": "朋友",
+            "py": "péngyou",
+            "tr": {
+              "vi": "Bạn bè",
+              "en": "Friend",
+              "ja": "友人"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "🚶 Hành động",
+          "en": "🚶 Action",
+          "ja": "🚶 動作"
+        },
+        "options": [
+          {
+            "zh": "走",
+            "py": "zǒu",
+            "tr": {
+              "vi": "đi bộ",
+              "en": "walk",
+              "ja": "歩く"
+            }
+          },
+          {
+            "zh": "跑",
+            "py": "pǎo",
+            "tr": {
+              "vi": "chạy",
+              "en": "run",
+              "ja": "走る"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "🧭 Xu hướng",
+          "en": "🧭 Direction",
+          "ja": "🧭 方向"
+        },
+        "options": [
+          {
+            "zh": "进来了",
+            "py": "jìn lai le",
+            "tr": {
+              "vi": "vào trong này",
+              "en": "came in (here)",
+              "ja": "入ってきた"
+            }
+          },
+          {
+            "zh": "出去了",
+            "py": "chū qù le",
+            "tr": {
+              "vi": "ra ngoài kia",
+              "en": "went out (away)",
+              "ja": "出て行った"
+            }
+          },
+          {
+            "zh": "上来了",
+            "py": "shàng lai le",
+            "tr": {
+              "vi": "lên trên này",
+              "en": "came up (here)",
+              "ja": "上がってきた"
+            }
+          }
+        ]
+      }
+    ],
+    "dialogue": {
+      "speaker_a": {
+        "speaker": "A",
+        "zh": "请进，快进来坐！",
+        "py": "Qǐng jìn, kuài jìn lai zuò!",
+        "tr": {
+          "vi": "Mời vào, mau vào đây ngồi!",
+          "en": "Please come in, have a seat!",
+          "ja": "どうぞ、早く入ってお座りください！"
+        }
+      },
+      "speaker_b": {
+        "speaker": "B",
+        "zh": "好的，谢谢你！",
+        "py": "Hǎode, xièxie nǐ!",
+        "tr": {
+          "vi": "Vâng, cảm ơn bạn nhé!",
+          "en": "Sure, thank you!",
+          "ja": "はい、ありがとうございます！"
+        }
+      }
+    },
+    "challenge": {
+      "prompt": {
+        "vi": "Sắp xếp câu: 'Anh ấy đi vào rồi'",
+        "en": "Arrange the words to say: 'He walked in'",
+        "ja": "並べ替えて「彼は歩いて入ってきました」を作ってください"
+      },
+      "tokens": [
+        "进来了",
+        "他",
+        "走"
+      ],
+      "correct_order": [
+        "他",
+        "走",
+        "进来了"
+      ]
+    }
+  },
+  {
+    "id": "hsk2_shi_de_emphasis",
+    "level": "HSK2",
+    "zh_name": "是……的 (强调句)",
+    "formula": "[Chủ ngữ] + 是 + [Thời gian/Địa điểm/Phương thức] + [V] + 的",
+    "localizations": {
+      "vi": {
+        "title": "Cấu trúc nhấn mạnh thời gian, nơi chốn: 是……的",
+        "quick_rule": "Dùng '是...的' khi sự việc đã xảy ra, nhằm nhấn mạnh 'khi nào', 'ở đâu' hoặc 'bằng cách nào'.",
+        "trap_wrong": "我是明天来的。",
+        "trap_correct": "我是昨天来的。",
+        "trap_why": "Cấu trúc '是...的' chỉ dùng để nhấn mạnh sự việc ĐÃ XẢY RA, không dùng cho tương lai."
+      },
+      "en": {
+        "title": "The 是……的 (shì...de) construction for emphasis",
+        "quick_rule": "Used to emphasize WHEN, WHERE, or HOW a past completed event took place.",
+        "trap_wrong": "我是明天来的。",
+        "trap_correct": "我是昨天来的。",
+        "trap_why": "The 是...的 structure only emphasizes events that ALREADY happened in the past."
+      },
+      "ja": {
+        "title": "時間・場所・方式を強調する「是…的」構文",
+        "quick_rule": "既に行われた出来事について、時間・場所・手段などを強調するときに「是…的」で挟みます。",
+        "trap_wrong": "我是明天来的。",
+        "trap_correct": "我是昨天来的。",
+        "trap_why": "「是…的」構文はすでに完了した過去の事柄にのみ使い、未来のことには使えません。"
+      }
+    },
+    "lego_slots": [
+      {
+        "slot_label": {
+          "vi": "🧑 Ai?",
+          "en": "🧑 Who?",
+          "ja": "🧑 誰が？"
+        },
+        "options": [
+          {
+            "zh": "我",
+            "py": "wǒ",
+            "tr": {
+              "vi": "Tôi",
+              "en": "I",
+              "ja": "私"
+            }
+          },
+          {
+            "zh": "他",
+            "py": "tā",
+            "tr": {
+              "vi": "Anh ấy",
+              "en": "He",
+              "ja": "彼"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "🔦 Là khi nào / ở đâu?",
+          "en": "🔦 When / Where?",
+          "ja": "🔦 いつ／どこで？"
+        },
+        "options": [
+          {
+            "zh": "是昨天",
+            "py": "shì zuótiān",
+            "tr": {
+              "vi": "là hôm qua",
+              "en": "was yesterday",
+              "ja": "昨日"
+            }
+          },
+          {
+            "zh": "是在北京",
+            "py": "shì zài Běijīng",
+            "tr": {
+              "vi": "là ở Bắc Kinh",
+              "en": "was in Beijing",
+              "ja": "北京で"
+            }
+          },
+          {
+            "zh": "是坐飞机",
+            "py": "shì zuò fēijī",
+            "tr": {
+              "vi": "là đi máy bay",
+              "en": "was by plane",
+              "ja": "飛行機で"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "✈️ Làm gì + 的",
+          "en": "✈️ Action + 的",
+          "ja": "✈️ 動作＋的"
+        },
+        "options": [
+          {
+            "zh": "来的",
+            "py": "lái de",
+            "tr": {
+              "vi": "đến đây",
+              "en": "came",
+              "ja": "来たのだ"
+            }
+          },
+          {
+            "zh": "买的",
+            "py": "mǎi de",
+            "tr": {
+              "vi": "mua",
+              "en": "bought",
+              "ja": "買ったのだ"
+            }
+          },
+          {
+            "zh": "认识的",
+            "py": "rènshi de",
+            "tr": {
+              "vi": "quen biết nhau",
+              "en": "met/got acquainted",
+              "ja": "知り合ったのだ"
+            }
+          }
+        ]
+      }
+    ],
+    "dialogue": {
+      "speaker_a": {
+        "speaker": "A",
+        "zh": "你是坐飞机来的吗？",
+        "py": "Nǐ shì zuò fēijī lái de ma?",
+        "tr": {
+          "vi": "Bạn đến đây bằng máy bay à?",
+          "en": "Did you come by plane?",
+          "ja": "飛行機で来たのですか？"
+        }
+      },
+      "speaker_b": {
+        "speaker": "B",
+        "zh": "不是，我是坐高铁来的。",
+        "py": "Bú shì, wǒ shì zuò gāotiě lái de.",
+        "tr": {
+          "vi": "Không, tôi đi tàu cao tốc đến.",
+          "en": "No, I came by high-speed rail.",
+          "ja": "いいえ、高速鉄道で来ました。"
+        }
+      }
+    },
+    "challenge": {
+      "prompt": {
+        "vi": "Sắp xếp câu: 'Tôi đến vào hôm qua'",
+        "en": "Arrange the words to say: 'It was yesterday that I arrived'",
+        "ja": "並べ替えて「私が来たのは昨日です」を作ってください"
+      },
+      "tokens": [
+        "来的",
+        "是昨天",
+        "我"
+      ],
+      "correct_order": [
+        "我",
+        "是昨天",
+        "来的"
+      ]
+    }
+  },
+  {
+    "id": "hsk2_shi_jian_duan",
+    "level": "HSK2",
+    "zh_name": "V + 了 + 时间段 (时量补语)",
+    "formula": "[Chủ ngữ] + [V] + 了 + [Khoảng thời gian] + (的 + [Tân ngữ])",
+    "localizations": {
+      "vi": {
+        "title": "Bổ ngữ thời lượng: Làm gì trong bao lâu (V + 了 + Khoảng thời gian)",
+        "quick_rule": "Nêu khoảng thời gian hành động diễn ra (ví dụ: 'ngủ 8 tiếng', 'học 2 năm').",
+        "trap_wrong": "我学了汉语两年。",
+        "trap_correct": "我学了两年汉语。",
+        "trap_why": "Khoảng thời gian đặt trước tân ngữ (V + 了 + Thời gian + 的 + Tân ngữ) hoặc lặp lại động từ."
+      },
+      "en": {
+        "title": "Duration of action: Verb + 了 + Time Duration",
+        "quick_rule": "Specify how long an action lasted (e.g. 'slept for 8 hours', 'studied for 2 years').",
+        "trap_wrong": "我学了汉语两年。",
+        "trap_correct": "我学了两年汉语。",
+        "trap_why": "Duration comes before the object (V + 了 + Duration + 的 + Object) or repeat the verb."
+      },
+      "ja": {
+        "title": "動作の継続時間を表す時量補語（〜時間〜した）",
+        "quick_rule": "動作が行われた時間の長さを表すときは、動詞の後ろに時量詞（〜時間など）を置きます。",
+        "trap_wrong": "我学了汉语两年。",
+        "trap_correct": "我学了两年汉语。",
+        "trap_why": "目的語がある場合、時量詞は目的語の前に入れるか、動詞を重ねて繰り返します。"
+      }
+    },
+    "lego_slots": [
+      {
+        "slot_label": {
+          "vi": "🧑 Ai?",
+          "en": "🧑 Who?",
+          "ja": "🧑 誰が？"
+        },
+        "options": [
+          {
+            "zh": "我",
+            "py": "wǒ",
+            "tr": {
+              "vi": "Tôi",
+              "en": "I",
+              "ja": "私"
+            }
+          },
+          {
+            "zh": "他",
+            "py": "tā",
+            "tr": {
+              "vi": "Anh ấy",
+              "en": "He",
+              "ja": "彼"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "💤 Làm gì rồi?",
+          "en": "💤 Action done?",
+          "ja": "💤 何をした？"
+        },
+        "options": [
+          {
+            "zh": "睡了",
+            "py": "shuì le",
+            "tr": {
+              "vi": "đã ngủ",
+              "en": "slept",
+              "ja": "寝た"
+            }
+          },
+          {
+            "zh": "学了",
+            "py": "xué le",
+            "tr": {
+              "vi": "đã học",
+              "en": "studied",
+              "ja": "勉強した"
+            }
+          },
+          {
+            "zh": "看了",
+            "py": "kàn le",
+            "tr": {
+              "vi": "đã xem",
+              "en": "watched/read",
+              "ja": "見た"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "⏱️ Bao lâu?",
+          "en": "⏱️ How long?",
+          "ja": "⏱️ どのくらい？"
+        },
+        "options": [
+          {
+            "zh": "八个小时",
+            "py": "bā ge xiǎoshí",
+            "tr": {
+              "vi": "8 tiếng",
+              "en": "8 hours",
+              "ja": "8時間"
+            }
+          },
+          {
+            "zh": "三年汉语",
+            "py": "sān nián Hànyǔ",
+            "tr": {
+              "vi": "3 năm tiếng Trung",
+              "en": "Chinese for 3 years",
+              "ja": "3年間中国語を"
+            }
+          },
+          {
+            "zh": "一个小时书",
+            "py": "yí ge xiǎoshí shū",
+            "tr": {
+              "vi": "1 tiếng sách",
+              "en": "book for 1 hour",
+              "ja": "1時間本を"
+            }
+          }
+        ]
+      }
+    ],
+    "dialogue": {
+      "speaker_a": {
+        "speaker": "A",
+        "zh": "你学汉语学了多久了？",
+        "py": "Nǐ xué Hànyǔ xué le duō jiǔ le?",
+        "tr": {
+          "vi": "Bạn học tiếng Trung được bao lâu rồi?",
+          "en": "How long have you been studying Chinese?",
+          "ja": "中国語をどのくらい勉強していますか？"
+        }
+      },
+      "speaker_b": {
+        "speaker": "B",
+        "zh": "我已经学了两年了。",
+        "py": "Wǒ yǐjīng xué le liǎng nián le.",
+        "tr": {
+          "vi": "Tôi đã học được 2 năm rồi.",
+          "en": "I have been studying for 2 years.",
+          "ja": "もう2年間勉強しています。"
+        }
+      }
+    },
+    "challenge": {
+      "prompt": {
+        "vi": "Sắp xếp câu: 'Tôi đã ngủ 8 tiếng'",
+        "en": "Arrange the words to say: 'I slept for eight hours'",
+        "ja": "並べ替えて「私は8時間寝ました」を作ってください"
+      },
+      "tokens": [
+        "睡了",
+        "八个小时",
+        "我"
+      ],
+      "correct_order": [
+        "我",
+        "睡了",
+        "八个小时"
+      ]
+    }
+  },
+  {
+    "id": "hsk2_yao_le_immediate",
+    "level": "HSK2",
+    "zh_name": "就要……了 (即将发生)",
+    "formula": "[Chủ ngữ] + (Thời gian cụ thể) + 就要 + [V] + 了",
+    "localizations": {
+      "vi": {
+        "title": "Sắp sửa diễn ra ngay (就要...了 / 快要...了)",
+        "quick_rule": "Dùng để báo hiệu hành động sắp xảy ra. Khi có mốc thời gian cụ thể (ngày mai, tuần sau), PHẢI dùng '就要...了'.",
+        "trap_wrong": "明天快要考试了。",
+        "trap_correct": "明天就要考试了。",
+        "trap_why": "Khi có từ chỉ thời gian cụ thể như '明天' (ngày mai), bắt buộc dùng '就要...了', không dùng '快要...了'."
+      },
+      "en": {
+        "title": "Imminent action with 就要……了 / 快要……了",
+        "quick_rule": "Expresses that something is about to happen soon. When an exact time is given, use 就要...了.",
+        "trap_wrong": "明天快要考试了。",
+        "trap_correct": "明天就要考试了。",
+        "trap_why": "When a specific time adverbial like 明天 is present, use 就要...了 instead of 快要...了."
+      },
+      "ja": {
+        "title": "近未来「就要…了」（時間が明示される場合にも使える）",
+        "quick_rule": "「もうすぐ〜する」と間近に迫った事柄を表します。具体的な時間（明日、来週など）がある時は「就要…了」を用います。",
+        "trap_wrong": "明天快要考试了。",
+        "trap_correct": "明天就要考试了。",
+        "trap_why": "「明天」のような具体的な時間詞がある場合、「快要…了」は使えず「就要…了」を用います。"
+      }
+    },
+    "lego_slots": [
+      {
+        "slot_label": {
+          "vi": "🧑 Ai / Cái gì?",
+          "en": "🧑 Who / What?",
+          "ja": "🧑 誰／何が？"
+        },
+        "options": [
+          {
+            "zh": "火车",
+            "py": "huǒchē",
+            "tr": {
+              "vi": "Tàu hỏa",
+              "en": "Train",
+              "ja": "電車"
+            }
+          },
+          {
+            "zh": "我们",
+            "py": "wǒmen",
+            "tr": {
+              "vi": "Chúng ta",
+              "en": "We",
+              "ja": "私たち"
+            }
+          },
+          {
+            "zh": "电影",
+            "py": "diànyǐng",
+            "tr": {
+              "vi": "Bộ phim",
+              "en": "Movie",
+              "ja": "映画"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "⚡ Sắp sửa",
+          "en": "⚡ About to",
+          "ja": "⚡ まもなく"
+        },
+        "options": [
+          {
+            "zh": "快要",
+            "py": "kuàiyào",
+            "tr": {
+              "vi": "sắp sửa",
+              "en": "soon",
+              "ja": "もうすぐ"
+            }
+          },
+          {
+            "zh": "明天就要",
+            "py": "míngtiān jiù yào",
+            "tr": {
+              "vi": "ngày mai sẽ",
+              "en": "tomorrow will",
+              "ja": "明日には"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "🎬 Hành động + 了",
+          "en": "🎬 Action + 了",
+          "ja": "🎬 動作＋了"
+        },
+        "options": [
+          {
+            "zh": "开了",
+            "py": "kāi le",
+            "tr": {
+              "vi": "chạy rồi",
+              "en": "depart",
+              "ja": "発車する"
+            }
+          },
+          {
+            "zh": "出发了",
+            "py": "chūfā le",
+            "tr": {
+              "vi": "xuất phát rồi",
+              "en": "leave",
+              "ja": "出発する"
+            }
+          },
+          {
+            "zh": "开始了",
+            "py": "kāishǐ le",
+            "tr": {
+              "vi": "bắt đầu rồi",
+              "en": "start",
+              "ja": "始まる"
+            }
+          }
+        ]
+      }
+    ],
+    "dialogue": {
+      "speaker_a": {
+        "speaker": "A",
+        "zh": "火车快要开了吗？",
+        "py": "Huǒchē kuàiyào kāi le ma?",
+        "tr": {
+          "vi": "Tàu sắp chạy rồi à?",
+          "en": "Is the train about to leave?",
+          "ja": "電車はもうすぐ発車しますか？"
+        }
+      },
+      "speaker_b": {
+        "speaker": "B",
+        "zh": "对，还有五分钟就要开了。",
+        "py": "Duì, hái yǒu wǔ fēnzhōng jiù yào kāi le.",
+        "tr": {
+          "vi": "Đúng rồi, còn 5 phút nữa là chạy.",
+          "en": "Yes, it leaves in 5 minutes.",
+          "ja": "はい、あと5分で発車します。"
+        }
+      }
+    },
+    "challenge": {
+      "prompt": {
+        "vi": "Sắp xếp câu: 'Chúng ta sắp ăn cơm rồi'",
+        "en": "Arrange the words to say: 'We are about to eat'",
+        "ja": "並べ替えて「私たちはもうすぐご飯を食べます」を作ってください"
+      },
+      "tokens": [
+        "快要",
+        "吃饭了",
+        "我们"
+      ],
+      "correct_order": [
+        "我们",
+        "快要",
+        "吃饭了"
+      ]
+    }
+  },
+  {
+    "id": "hsk3_ba_sentence",
+    "level": "HSK3",
+    "zh_name": "把字句 (处置式)",
+    "formula": "[Chủ ngữ] + 把 + [Tân ngữ] + [V] + [Kết quả/Thành phần khác]",
+    "localizations": {
+      "vi": {
+        "title": "Câu chữ 把: Tác động xử lý vật (S + 把 + O + V + Kết quả)",
+        "quick_rule": "Dùng để diễn tả chủ ngữ tác động làm thay đổi vị trí, trạng thái của một vật cụ thể.",
+        "trap_wrong": "我把书看了。",
+        "trap_correct": "我把书看完了。",
+        "trap_why": "Động từ trong câu chữ 把 không bao giờ đứng trơ trọi một mình, phải có bổ ngữ kết quả, '了', hoặc phương hướng."
+      },
+      "en": {
+        "title": "The 把 (bǎ) disposal sentence structure",
+        "quick_rule": "Focuses on how an action affects or handles a specific object and what happens to it.",
+        "trap_wrong": "我把书看了。",
+        "trap_correct": "我把书看完了。",
+        "trap_why": "The verb in a 把 sentence cannot stand bare; it requires an outcome, completion marker, or direction."
+      },
+      "ja": {
+        "title": "処置を表す「把」構文（〜を…する）",
+        "quick_rule": "特定の対象に対して働きかけ、その結果や位置の変化をもたらすときに用います。",
+        "trap_wrong": "我把书看了。",
+        "trap_correct": "我把书看完了。",
+        "trap_why": "「把」構文の動詞は単独では使えず、後ろに結果補語や「了」などの成分が必須です。"
+      }
+    },
+    "lego_slots": [
+      {
+        "slot_label": {
+          "vi": "🧑 Ai?",
+          "en": "🧑 Who?",
+          "ja": "🧑 誰が？"
+        },
+        "options": [
+          {
+            "zh": "我",
+            "py": "wǒ",
+            "tr": {
+              "vi": "Tôi",
+              "en": "I",
+              "ja": "私"
+            }
+          },
+          {
+            "zh": "请你",
+            "py": "qǐng nǐ",
+            "tr": {
+              "vi": "Xin bạn",
+              "en": "Please",
+              "ja": "どうぞあなた"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "📦 把 + Vật gì?",
+          "en": "📦 把 + Object",
+          "ja": "📦 把＋対象"
+        },
+        "options": [
+          {
+            "zh": "把作业",
+            "py": "bǎ zuòyè",
+            "tr": {
+              "vi": "bài tập",
+              "en": "homework",
+              "ja": "宿題を"
+            }
+          },
+          {
+            "zh": "把门",
+            "py": "bǎ mén",
+            "tr": {
+              "vi": "cánh cửa",
+              "en": "the door",
+              "ja": "ドアを"
+            }
+          },
+          {
+            "zh": "把苹果",
+            "py": "bǎ píngguǒ",
+            "tr": {
+              "vi": "quả táo",
+              "en": "the apple",
+              "ja": "りんごを"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "✨ Làm gì với nó?",
+          "en": "✨ Action + Result",
+          "ja": "✨ 処置結果"
+        },
+        "options": [
+          {
+            "zh": "做完了",
+            "py": "zuò wán le",
+            "tr": {
+              "vi": "làm xong rồi",
+              "en": "finished",
+              "ja": "やり終えた"
+            }
+          },
+          {
+            "zh": "关上",
+            "py": "guān shàng",
+            "tr": {
+              "vi": "đóng lại",
+              "en": "close tight",
+              "ja": "閉める"
+            }
+          },
+          {
+            "zh": "洗干净了",
+            "py": "xǐ gānjìng le",
+            "tr": {
+              "vi": "rửa sạch rồi",
+              "en": "washed clean",
+              "ja": "きれいに洗った"
+            }
+          }
+        ]
+      }
+    ],
+    "dialogue": {
+      "speaker_a": {
+        "speaker": "A",
+        "zh": "你把药吃了吗？",
+        "py": "Nǐ bǎ yào chī le ma?",
+        "tr": {
+          "vi": "Bạn uống thuốc chưa?",
+          "en": "Did you take the medicine?",
+          "ja": "薬はもう飲みましたか？"
+        }
+      },
+      "speaker_b": {
+        "speaker": "B",
+        "zh": "我已经把药吃了。",
+        "py": "Wǒ yǐjīng bǎ yào chī le.",
+        "tr": {
+          "vi": "Tôi uống thuốc rồi.",
+          "en": "I already took it.",
+          "ja": "もう飲みました。"
+        }
+      }
+    },
+    "challenge": {
+      "prompt": {
+        "vi": "Sắp xếp câu: 'Xin hãy đóng cửa lại'",
+        "en": "Arrange the words to say: 'Please close the door'",
+        "ja": "並べ替えて「ドアを閉めてください」を作ってください"
+      },
+      "tokens": [
+        "关上",
+        "请你把",
+        "门"
+      ],
+      "correct_order": [
+        "请你把",
+        "门",
+        "关上"
+      ]
+    }
+  },
+  {
+    "id": "hsk3_bei_passive",
+    "level": "HSK3",
+    "zh_name": "被字句 (被动句)",
+    "formula": "[Chủ ngữ] + 被 + (Tác nhân) + [V] + (Kết quả/了)",
+    "localizations": {
+      "vi": {
+        "title": "Câu bị động chữ 被: Bị / Được tác động (S + 被 + Tác nhân + V)",
+        "quick_rule": "Dùng để diễn đạt chủ ngữ là nạn nhân hoặc tiếp nhận hành động (thường mang nghĩa không may mắn).",
+        "trap_wrong": "蛋糕不被他吃了。",
+        "trap_correct": "蛋糕没被他吃。",
+        "trap_why": "Phủ định của câu chữ 被 dùng '没' hoặc '没有' đặt trước '被', không dùng '不'."
+      },
+      "en": {
+        "title": "Passive voice with 被 (bèi)",
+        "quick_rule": "Expresses that the subject is acted upon by an agent (often with adverse consequences).",
+        "trap_wrong": "蛋糕不被他吃了。",
+        "trap_correct": "蛋糕没被他吃。",
+        "trap_why": "Negate 被 passive sentences with 没/没有 placed BEFORE 被, never 不."
+      },
+      "ja": {
+        "title": "受身（パッシブ）を表す「被」構文（〜に…される）",
+        "quick_rule": "主語が動作を受ける受身文を作ります。好ましくない事態に用いられることが多いです。",
+        "trap_wrong": "蛋糕不被他吃了。",
+        "trap_correct": "蛋糕没被他吃。",
+        "trap_why": "「被」構文の否定は「被」の前に「没／没有」を置きます。"
+      }
+    },
+    "lego_slots": [
+      {
+        "slot_label": {
+          "vi": "🍰 Cái gì bị?",
+          "en": "🍰 What was affected?",
+          "ja": "🍰 何が？"
+        },
+        "options": [
+          {
+            "zh": "蛋糕",
+            "py": "dàngāo",
+            "tr": {
+              "vi": "Bánh kem",
+              "en": "Cake",
+              "ja": "ケーキ"
+            }
+          },
+          {
+            "zh": "我的手机",
+            "py": "wǒ de shǒujī",
+            "tr": {
+              "vi": "Điện thoại tôi",
+              "en": "My phone",
+              "ja": "私のスマホ"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "🧑 Bị ai?",
+          "en": "🧑 By whom?",
+          "ja": "🧑 誰に？"
+        },
+        "options": [
+          {
+            "zh": "被弟弟",
+            "py": "bèi dìdi",
+            "tr": {
+              "vi": "bị em trai",
+              "en": "by younger brother",
+              "ja": "弟に"
+            }
+          },
+          {
+            "zh": "被他",
+            "py": "bèi tā",
+            "tr": {
+              "vi": "bị anh ấy",
+              "en": "by him",
+              "ja": "彼に"
+            }
+          },
+          {
+            "zh": "被大家",
+            "py": "bèi dàjiā",
+            "tr": {
+              "vi": "được mọi người",
+              "en": "by everyone",
+              "ja": "みんなに"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "⚡ Kết quả thế nào?",
+          "en": "⚡ What happened?",
+          "ja": "⚡ どうなった？"
+        },
+        "options": [
+          {
+            "zh": "吃掉了",
+            "py": "chī diào le",
+            "tr": {
+              "vi": "ăn sạch rồi",
+              "en": "eaten up",
+              "ja": "食べられた"
+            }
+          },
+          {
+            "zh": "借走了",
+            "py": "jiè zǒu le",
+            "tr": {
+              "vi": "mượn mất rồi",
+              "en": "borrowed away",
+              "ja": "借りていかれた"
+            }
+          },
+          {
+            "zh": "看完了",
+            "py": "kàn wán le",
+            "tr": {
+              "vi": "xem xong rồi",
+              "en": "read finished",
+              "ja": "読まれた"
+            }
+          }
+        ]
+      }
+    ],
+    "dialogue": {
+      "speaker_a": {
+        "speaker": "A",
+        "zh": "我的苹果去哪儿了？",
+        "py": "Wǒ de píngguǒ qù nǎr le?",
+        "tr": {
+          "vi": "Quả táo của tôi đâu rồi?",
+          "en": "Where is my apple?",
+          "ja": "私のりんごはどこ？"
+        }
+      },
+      "speaker_b": {
+        "speaker": "B",
+        "zh": "被弟弟吃掉了。",
+        "py": "Bèi dìdi chī diào le.",
+        "tr": {
+          "vi": "Bị em trai ăn mất rồi.",
+          "en": "It was eaten by little brother.",
+          "ja": "弟に食べられちゃったよ。"
+        }
+      }
+    },
+    "challenge": {
+      "prompt": {
+        "vi": "Sắp xếp câu: 'Bánh kem bị anh ấy ăn mất rồi'",
+        "en": "Arrange the words to say: 'The cake was eaten by him'",
+        "ja": "並べ替えて「ケーキは彼に食べられました」を作ってください"
+      },
+      "tokens": [
+        "被他",
+        "吃掉了",
+        "蛋糕"
+      ],
+      "correct_order": [
+        "蛋糕",
+        "被他",
+        "吃掉了"
+      ]
+    }
+  },
+  {
+    "id": "hsk3_you_you",
+    "level": "HSK3",
+    "zh_name": "又……又……",
+    "formula": "[Chủ ngữ] + 又 + [Tính từ 1] + 又 + [Tính từ 2]",
+    "localizations": {
+      "vi": {
+        "title": "Vừa... lại vừa... (Cùng lúc có 2 đặc tính: 又...又...)",
+        "quick_rule": "Dùng để miêu tả người hoặc sự vật đồng thời có cả 2 tính chất (cùng tốt hoặc cùng xấu).",
+        "trap_wrong": "这个西瓜又大又贵。",
+        "trap_correct": "这个西瓜又大又甜。",
+        "trap_why": "Hai tính từ sau '又...又...' phải đồng điệu (cùng khen ngợi hoặc cùng chê bai)."
+      },
+      "en": {
+        "title": "Both... and... with 又……又……",
+        "quick_rule": "Describes two characteristics coexisting simultaneously (both positive or both negative).",
+        "trap_wrong": "这个西瓜又大又贵。",
+        "trap_correct": "这个西瓜又大又甜。",
+        "trap_why": "The two adjectives in 又...又... should match in sentiment (both positive or both negative)."
+      },
+      "ja": {
+        "title": "並列を表す「又…又…」（〜でもあり〜でもある）",
+        "quick_rule": "二つの性質が同時に存在することを表します（良い面同士、または悪い面同士を並べます）。",
+        "trap_wrong": "这个西瓜又大又贵。",
+        "trap_correct": "这个西瓜又大又甜。",
+        "trap_why": "「又…又…」の形容詞は通常、プラス同士かマイナス同士で感情を揃えます。"
+      }
+    },
+    "lego_slots": [
+      {
+        "slot_label": {
+          "vi": "🍉 Sự vật gì?",
+          "en": "🍉 What?",
+          "ja": "🍉 何が？"
+        },
+        "options": [
+          {
+            "zh": "这个西瓜",
+            "py": "zhè ge xīguā",
+            "tr": {
+              "vi": "Quả dưa hấu này",
+              "en": "This watermelon",
+              "ja": "このスイカ"
+            }
+          },
+          {
+            "zh": "这件衣服",
+            "py": "zhè jiàn yīfu",
+            "tr": {
+              "vi": "Chiếc áo này",
+              "en": "This dress",
+              "ja": "この服"
+            }
+          },
+          {
+            "zh": "他",
+            "py": "tā",
+            "tr": {
+              "vi": "Anh ấy",
+              "en": "He",
+              "ja": "彼"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "✨ Vừa thế nào...",
+          "en": "✨ Both...",
+          "ja": "✨ 〜でもあり"
+        },
+        "options": [
+          {
+            "zh": "又大",
+            "py": "yòu dà",
+            "tr": {
+              "vi": "vừa to",
+              "en": "both big",
+              "ja": "大きくて"
+            }
+          },
+          {
+            "zh": "又便宜",
+            "py": "yòu piányi",
+            "tr": {
+              "vi": "vừa rẻ",
+              "en": "both cheap",
+              "ja": "安くて"
+            }
+          },
+          {
+            "zh": "又聪明",
+            "py": "yòu cōngming",
+            "tr": {
+              "vi": "vừa thông minh",
+              "en": "both smart",
+              "ja": "賢くて"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "✨ Lại vừa thế nào?",
+          "en": "✨ And...",
+          "ja": "✨ 〜でもある"
+        },
+        "options": [
+          {
+            "zh": "又甜",
+            "py": "yòu tián",
+            "tr": {
+              "vi": "lại vừa ngọt",
+              "en": "and sweet",
+              "ja": "甘い"
+            }
+          },
+          {
+            "zh": "又好看",
+            "py": "yòu hǎokàn",
+            "tr": {
+              "vi": "lại vừa đẹp",
+              "en": "and good-looking",
+              "ja": "見栄えも良い"
+            }
+          },
+          {
+            "zh": "又热情",
+            "py": "yòu rèqíng",
+            "tr": {
+              "vi": "lại vừa nhiệt tình",
+              "en": "and warm-hearted",
+              "ja": "情熱的でもある"
+            }
+          }
+        ]
+      }
+    ],
+    "dialogue": {
+      "speaker_a": {
+        "speaker": "A",
+        "zh": "这家超市的水果怎么样？",
+        "py": "Zhè jiā chāoshì de shuǐguǒ zěnmeyàng?",
+        "tr": {
+          "vi": "Hoa quả ở siêu thị này thế nào?",
+          "en": "How is the fruit in this supermarket?",
+          "ja": "このスーパーの果物はいかがですか？"
+        }
+      },
+      "speaker_b": {
+        "speaker": "B",
+        "zh": "这里的苹果又大又甜！",
+        "py": "Zhèlǐ de píngguǒ yòu dà yòu tián!",
+        "tr": {
+          "vi": "Táo ở đây vừa to lại vừa ngọt!",
+          "en": "The apples here are both big and sweet!",
+          "ja": "ここのりんごは大きくて甘いです！"
+        }
+      }
+    },
+    "challenge": {
+      "prompt": {
+        "vi": "Sắp xếp câu: 'Dưa hấu này vừa to vừa ngọt'",
+        "en": "Arrange the words to say: 'This watermelon is both big and sweet'",
+        "ja": "並べ替えて「このスイカは大きくて甘いです」を作ってください"
+      },
+      "tokens": [
+        "又大",
+        "这个西瓜",
+        "又甜"
+      ],
+      "correct_order": [
+        "这个西瓜",
+        "又大",
+        "又甜"
+      ]
+    }
+  },
+  {
+    "id": "hsk3_sui_ran_dan_shi",
+    "level": "HSK3",
+    "zh_name": "虽然……但是……",
+    "formula": "虽然 + [Vế 1]，但是 + [Vế 2]",
+    "localizations": {
+      "vi": {
+        "title": "Tuy rằng... nhưng mà... (Quan hệ chuyển ngoặt: 虽然...但是...)",
+        "quick_rule": "Nối 2 mệnh đề có ý nghĩa tương phản hoặc nhượng bộ (mặc dù A, nhưng thực tế B).",
+        "trap_wrong": "虽然下雨，但是我们不去。",
+        "trap_correct": "虽然下雨，但是我们还是去了。",
+        "trap_why": "Vế '但是' phải mang nghĩa tương phản/vượt qua trở ngại, không dùng để khẳng định thuận chiều."
+      },
+      "en": {
+        "title": "Although... but... with 虽然……但是……",
+        "quick_rule": "Connects contrasting clauses where the second clause introduces an unexpected counterpoint.",
+        "trap_wrong": "虽然下雨，但是我们不去。",
+        "trap_correct": "虽然下雨，但是我们还是去了。",
+        "trap_why": "The second clause must present a contrasting or unexpected result."
+      },
+      "ja": {
+        "title": "逆接を表す「虽然…但是…」（〜だけれども…）",
+        "quick_rule": "譲歩と逆接を表し、「〜であるけれども、しかし…」と前後の対比を強調します。",
+        "trap_wrong": "虽然下雨，但是我们不去。",
+        "trap_correct": "虽然下雨，但是我们还是去了。",
+        "trap_why": "「但是」の後ろには、前の条件に反する意外な結果や強い意志が続きます。"
+      }
+    },
+    "lego_slots": [
+      {
+        "slot_label": {
+          "vi": "🌧️ Tuy rằng...",
+          "en": "🌧️ Although...",
+          "ja": "🌧️ 虽然（〜だけれど）"
+        },
+        "options": [
+          {
+            "zh": "虽然外面很冷",
+            "py": "suīrán wàimiàn hěn lěng",
+            "tr": {
+              "vi": "Tuy bên ngoài rất lạnh",
+              "en": "Although it is cold outside",
+              "ja": "外はとても寒いけれど"
+            }
+          },
+          {
+            "zh": "虽然学汉语很难",
+            "py": "suīrán xué Hànyǔ hěn nán",
+            "tr": {
+              "vi": "Tuy học tiếng Trung rất khó",
+              "en": "Although Chinese is hard",
+              "ja": "中国語は難しいけれど"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "☀️ Nhưng mà...",
+          "en": "☀️ But...",
+          "ja": "☀️ 但是（しかし）"
+        },
+        "options": [
+          {
+            "zh": "但是屋里",
+            "py": "dànshì wūli",
+            "tr": {
+              "vi": "nhưng trong phòng",
+              "en": "but inside the room",
+              "ja": "しかし部屋の中は"
+            }
+          },
+          {
+            "zh": "但是我",
+            "py": "dànshì wǒ",
+            "tr": {
+              "vi": "nhưng tôi",
+              "en": "but I",
+              "ja": "しかし私は"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "🔥 Thực tế là gì?",
+          "en": "🔥 What actually happens?",
+          "ja": "🔥 実際は？"
+        },
+        "options": [
+          {
+            "zh": "非常暖和",
+            "py": "fēicháng nuǎnhuo",
+            "tr": {
+              "vi": "rất ấm áp",
+              "en": "is very warm",
+              "ja": "とても暖かい"
+            }
+          },
+          {
+            "zh": "很感兴趣",
+            "py": "hěn gǎn xìngqù",
+            "tr": {
+              "vi": "rất hứng thú",
+              "en": "am very interested",
+              "ja": "とても興味がある"
+            }
+          }
+        ]
+      }
+    ],
+    "dialogue": {
+      "speaker_a": {
+        "speaker": "A",
+        "zh": "你今天工作累不累？",
+        "py": "Nǐ jīntiān gōngzuò lèi bu lèi?",
+        "tr": {
+          "vi": "Hôm nay đi làm có mệt không?",
+          "en": "Are you tired from work today?",
+          "ja": "今日の仕事は疲れましたか？"
+        }
+      },
+      "speaker_b": {
+        "speaker": "B",
+        "zh": "虽然很累，但是学到了很多。",
+        "py": "Suīrán hěn lèi, dànshì xué dào le hěn duō.",
+        "tr": {
+          "vi": "Tuy mệt nhưng học được rất nhiều.",
+          "en": "Although tired, I learned a lot.",
+          "ja": "疲れましたが、多くを学びました。"
+        }
+      }
+    },
+    "challenge": {
+      "prompt": {
+        "vi": "Sắp xếp câu: 'Tuy mệt nhưng tôi rất vui'",
+        "en": "Arrange the words to say: 'Although tired, I am very happy'",
+        "ja": "並べ替えて「疲れたけれど、私はとても嬉しいです」を作ってください"
+      },
+      "tokens": [
+        "但是我",
+        "很高兴",
+        "虽然很累"
+      ],
+      "correct_order": [
+        "虽然很累",
+        "但是我",
+        "很高兴"
+      ]
+    }
+  },
+  {
+    "id": "hsk3_bu_dan_er_qie",
+    "level": "HSK3",
+    "zh_name": "不但……而且……",
+    "formula": "[Chủ ngữ] + 不但 + [Vế 1]，而且 + [Vế 2]",
+    "localizations": {
+      "vi": {
+        "title": "Không những... mà còn... (Tăng tiến: 不但...而且...)",
+        "quick_rule": "Dùng để bổ sung thêm một tầng thông tin sâu sắc hoặc ấn tượng hơn vế trước.",
+        "trap_wrong": "不但他会中文，而且会英语。",
+        "trap_correct": "他不但会中文，而且会英语。",
+        "trap_why": "Nếu cùng 1 chủ ngữ, chủ ngữ phải đặt TRƯỚC chữ '不但'."
+      },
+      "en": {
+        "title": "Not only... but also... with 不但……而且……",
+        "quick_rule": "Adds an additional progressive point that reinforces the first statement.",
+        "trap_wrong": "不但他会中文，而且会英语。",
+        "trap_correct": "他不但会中文，而且会英语。",
+        "trap_why": "When both clauses share the same subject, place the subject BEFORE 不但."
+      },
+      "ja": {
+        "title": "累加を表す「不但…而且…」（〜だけでなく…も）",
+        "quick_rule": "前述の内容にさらに情報を付け加え、「〜だけでなく、その上…」と累加を表します。",
+        "trap_wrong": "不但他会中文，而且会英语。",
+        "trap_correct": "他不但会中文，而且会英语。",
+        "trap_why": "主語が共通の場合、主語は「不但」の前に置きます。"
+      }
+    },
+    "lego_slots": [
+      {
+        "slot_label": {
+          "vi": "🧑 Ai?",
+          "en": "🧑 Who?",
+          "ja": "🧑 誰が？"
+        },
+        "options": [
+          {
+            "zh": "他",
+            "py": "tā",
+            "tr": {
+              "vi": "Anh ấy",
+              "en": "He",
+              "ja": "彼"
+            }
+          },
+          {
+            "zh": "李老师",
+            "py": "Lǐ lǎoshī",
+            "tr": {
+              "vi": "Thầy Lý",
+              "en": "Teacher Li",
+              "ja": "李先生"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "💡 Không những...",
+          "en": "💡 Not only...",
+          "ja": "💡 不但（〜だけでなく）"
+        },
+        "options": [
+          {
+            "zh": "不但很聪明",
+            "py": "búdàn hěn cōngming",
+            "tr": {
+              "vi": "không những rất thông minh",
+              "en": "not only very smart",
+              "ja": "頭が良いだけでなく"
+            }
+          },
+          {
+            "zh": "不但会说汉语",
+            "py": "búdàn huì shuō Hànyǔ",
+            "tr": {
+              "vi": "không những biết nói tiếng Trung",
+              "en": "not only speaks Chinese",
+              "ja": "中国語を話せるだけでなく"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "🚀 Mà còn...",
+          "en": "🚀 But also...",
+          "ja": "🚀 而且（その上〜も）"
+        },
+        "options": [
+          {
+            "zh": "而且非常努力",
+            "py": "érqiě fēicháng nǔlì",
+            "tr": {
+              "vi": "mà còn rất chăm chỉ",
+              "en": "but also very hardworking",
+              "ja": "非常に努力家でもある"
+            }
+          },
+          {
+            "zh": "而且写得很好",
+            "py": "érqiě xiě de hěn hǎo",
+            "tr": {
+              "vi": "mà còn viết rất đẹp",
+              "en": "but also writes well",
+              "ja": "書くのも上手だ"
+            }
+          }
+        ]
+      }
+    ],
+    "dialogue": {
+      "speaker_a": {
+        "speaker": "A",
+        "zh": "你觉得小明怎么样？",
+        "py": "Nǐ juéde Xiǎomíng zěnmeyàng?",
+        "tr": {
+          "vi": "Bạn thấy Tiểu Minh thế nào?",
+          "en": "What do you think of Xiaoming?",
+          "ja": "小明をどう思いますか？"
+        }
+      },
+      "speaker_b": {
+        "speaker": "B",
+        "zh": "他不但聪明，而且很热情。",
+        "py": "Tā búdàn cōngming, érqiě hěn rèqíng.",
+        "tr": {
+          "vi": "Cậu ấy không những thông minh mà còn rất nhiệt tình.",
+          "en": "He is not only smart, but also very warm.",
+          "ja": "彼は頭が良いだけでなく、とても親切です。"
+        }
+      }
+    },
+    "challenge": {
+      "prompt": {
+        "vi": "Sắp xếp câu: 'Anh ấy không những thông minh mà còn chăm chỉ'",
+        "en": "Arrange the words to say: 'He is not only smart but also hardworking'",
+        "ja": "並べ替えて「彼は頭が良いだけでなく、非常に努力家です」を作ってください"
+      },
+      "tokens": [
+        "而且非常努力",
+        "他不但很聪明"
+      ],
+      "correct_order": [
+        "他不但很聪明",
+        "而且非常努力"
+      ]
+    }
+  },
+  {
+    "id": "hsk3_de_degree",
+    "level": "HSK3",
+    "zh_name": "动词 + 得 (状态补语)",
+    "formula": "[Chủ ngữ] + [V] + 得 + 很 / 非常 + [Tính từ]",
+    "localizations": {
+      "vi": {
+        "title": "Bổ ngữ trạng thái: Đánh giá cách làm (V + 得 + Tính từ)",
+        "quick_rule": "Dùng '得' sau động từ để miêu tả, đánh giá kết quả hoặc trạng thái thực hiện hành động.",
+        "trap_wrong": "他说汉语得很好。",
+        "trap_correct": "他说汉语说得很好。",
+        "trap_why": "Nếu có tân ngữ, bắt buộc phải lặp lại động từ trước chữ '得' (S + V + O + V + 得 + Adj)."
+      },
+      "en": {
+        "title": "State/Degree Complements with 得 (V + 得 + Adj)",
+        "quick_rule": "Use 得 after a verb to evaluate or describe how well/in what manner an action is done.",
+        "trap_wrong": "他说汉语得很好。",
+        "trap_correct": "他说汉语说得很好。",
+        "trap_why": "When an object is present, repeat the verb before 得 (S + V + O + V + 得 + Adj)."
+      },
+      "ja": {
+        "title": "様態補語「動詞＋得＋形容詞」（〜の仕方が…だ）",
+        "quick_rule": "動詞の後ろに「得」を置き、その動作の仕上がりや様子を評価・描写します。",
+        "trap_wrong": "他说汉语得很好。",
+        "trap_correct": "他说汉语说得很好。",
+        "trap_why": "目的語がある場合は動詞を繰り返し、「動詞＋目的語＋動詞＋得…」の形にします。"
+      }
+    },
+    "lego_slots": [
+      {
+        "slot_label": {
+          "vi": "🧑 Ai làm gì?",
+          "en": "🧑 Who does what?",
+          "ja": "🧑 誰が何を？"
+        },
+        "options": [
+          {
+            "zh": "他说汉语",
+            "py": "tā shuō Hànyǔ",
+            "tr": {
+              "vi": "Anh ấy nói tiếng Trung",
+              "en": "He speaks Chinese",
+              "ja": "彼は中国語を話す"
+            }
+          },
+          {
+            "zh": "她跑步",
+            "py": "tā pǎobù",
+            "tr": {
+              "vi": "Cô ấy chạy bộ",
+              "en": "She runs",
+              "ja": "彼女は走る"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "🔄 Lặp ĐT + 得",
+          "en": "🔄 Verb + 得",
+          "ja": "🔄 動詞＋得"
+        },
+        "options": [
+          {
+            "zh": "说得",
+            "py": "shuō de",
+            "tr": {
+              "vi": "nói",
+              "en": "speaks",
+              "ja": "話すのが"
+            }
+          },
+          {
+            "zh": "跑得",
+            "py": "pǎo de",
+            "tr": {
+              "vi": "chạy",
+              "en": "runs",
+              "ja": "走るのが"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "🌟 Đánh giá thế nào?",
+          "en": "🌟 Evaluation",
+          "ja": "🌟 評価"
+        },
+        "options": [
+          {
+            "zh": "非常流利",
+            "py": "fēicháng liúlì",
+            "tr": {
+              "vi": "cực kỳ lưu loát",
+              "en": "very fluently",
+              "ja": "非常に流暢だ"
+            }
+          },
+          {
+            "zh": "特别快",
+            "py": "tèbié kuài",
+            "tr": {
+              "vi": "đặc biệt nhanh",
+              "en": "exceptionally fast",
+              "ja": "格別に速い"
+            }
+          }
+        ]
+      }
+    ],
+    "dialogue": {
+      "speaker_a": {
+        "speaker": "A",
+        "zh": "你汉语说得真好！",
+        "py": "Nǐ Hànyǔ shuō de zhēn hǎo!",
+        "tr": {
+          "vi": "Tiếng Trung bạn nói hay quá!",
+          "en": "You speak Chinese really well!",
+          "ja": "中国語を話すのが本当にお上手ですね！"
+        }
+      },
+      "speaker_b": {
+        "speaker": "B",
+        "zh": "哪里哪里，还在学呢。",
+        "py": "Nǎlǐ nǎlǐ, hái zài xué ne.",
+        "tr": {
+          "vi": "Đâu có, tôi vẫn đang học thôi.",
+          "en": "Not at all, I am still learning.",
+          "ja": "とんでもない、まだ勉強中です。"
+        }
+      }
+    },
+    "challenge": {
+      "prompt": {
+        "vi": "Sắp xếp câu: 'Anh ấy nói tiếng Trung rất lưu loát'",
+        "en": "Arrange the words to say: 'He speaks Chinese very fluently'",
+        "ja": "並べ替えて「彼は中国語を話すのがとても流暢です」を作ってください"
+      },
+      "tokens": [
+        "说得",
+        "非常流利",
+        "他说汉语"
+      ],
+      "correct_order": [
+        "他说汉语",
+        "说得",
+        "非常流利"
+      ]
+    }
+  },
+  {
+    "id": "hsk3_yi_bian_yi_bian",
+    "level": "HSK3",
+    "zh_name": "一边……一边……",
+    "formula": "[Chủ ngữ] + 一边 + [V1]，一边 + [V2]",
+    "localizations": {
+      "vi": {
+        "title": "Vừa làm việc này vừa làm việc kia: 一边...一边...",
+        "quick_rule": "Dùng để diễn tả một người đang đồng thời thực hiện hai hành động song song.",
+        "trap_wrong": "我一边睡觉一边吃饭。",
+        "trap_correct": "我一边吃饭一边看电视。",
+        "trap_why": "Hai hành động phải có tính khả thi diễn ra cùng lúc ngoài thực tế."
+      },
+      "en": {
+        "title": "Doing two actions simultaneously with 一边……一边……",
+        "quick_rule": "Expresses doing two activities at the exact same time.",
+        "trap_wrong": "我一边睡觉一边吃饭。",
+        "trap_correct": "我一边吃饭一边看电视。",
+        "trap_why": "The two activities must be realistically feasible to perform concurrently."
+      },
+      "ja": {
+        "title": "動作の同時進行「一边…一边…」（〜しながら…する）",
+        "quick_rule": "同一人物が同時に二つの動作を並行して行うことを表します。",
+        "trap_wrong": "我一边睡觉一边吃饭。",
+        "trap_correct": "我一边吃饭一边看电视。",
+        "trap_why": "二つの動作は常識的に同時に行える組み合わせである必要があります。"
+      }
+    },
+    "lego_slots": [
+      {
+        "slot_label": {
+          "vi": "🧑 Ai?",
+          "en": "🧑 Who?",
+          "ja": "🧑 誰が？"
+        },
+        "options": [
+          {
+            "zh": "我喜欢",
+            "py": "wǒ xǐhuan",
+            "tr": {
+              "vi": "Tôi thích",
+              "en": "I like",
+              "ja": "私は〜が好き"
+            }
+          },
+          {
+            "zh": "他经常",
+            "py": "tā jīngcháng",
+            "tr": {
+              "vi": "Anh ấy thường",
+              "en": "He often",
+              "ja": "彼はよく"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "🎧 Vừa làm 1...",
+          "en": "🎧 Doing action 1...",
+          "ja": "🎧 一边〜（しながら）"
+        },
+        "options": [
+          {
+            "zh": "一边听音乐",
+            "py": "yìbiān tīng yīnyuè",
+            "tr": {
+              "vi": "vừa nghe nhạc",
+              "en": "listening to music",
+              "ja": "音楽を聴きながら"
+            }
+          },
+          {
+            "zh": "一边喝咖啡",
+            "py": "yìbiān hē kāfēi",
+            "tr": {
+              "vi": "vừa uống cà phê",
+              "en": "drinking coffee",
+              "ja": "コーヒーを飲みながら"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "📖 Lại vừa làm 2?",
+          "en": "📖 While action 2?",
+          "ja": "📖 一边〜（…する）"
+        },
+        "options": [
+          {
+            "zh": "一边做作业",
+            "py": "yìbiān zuò zuòyè",
+            "tr": {
+              "vi": "vừa làm bài tập",
+              "en": "doing homework",
+              "ja": "宿題をする"
+            }
+          },
+          {
+            "zh": "一边看书",
+            "py": "yìbiān kàn shū",
+            "tr": {
+              "vi": "vừa đọc sách",
+              "en": "reading books",
+              "ja": "本を読む"
+            }
+          }
+        ]
+      }
+    ],
+    "dialogue": {
+      "speaker_a": {
+        "speaker": "A",
+        "zh": "你在做什么呢？",
+        "py": "Nǐ zài zuò shénme ne?",
+        "tr": {
+          "vi": "Bạn đang làm gì thế?",
+          "en": "What are you doing?",
+          "ja": "何をしているのですか？"
+        }
+      },
+      "speaker_b": {
+        "speaker": "B",
+        "zh": "我一边听音乐，一边看书。",
+        "py": "Wǒ yìbiān tīng yīnyuè, yìbiān kàn shū.",
+        "tr": {
+          "vi": "Tôi vừa nghe nhạc vừa đọc sách.",
+          "en": "I am listening to music while reading a book.",
+          "ja": "音楽を聴きながら本を読んでいます。"
+        }
+      }
+    },
+    "challenge": {
+      "prompt": {
+        "vi": "Sắp xếp câu: 'Tôi vừa nghe nhạc vừa làm bài tập'",
+        "en": "Arrange the words to say: 'I listen to music while doing homework'",
+        "ja": "並べ替えて「私は音楽を聴きながら宿題をします」を作ってください"
+      },
+      "tokens": [
+        "一边听音乐",
+        "我",
+        "一边做作业"
+      ],
+      "correct_order": [
+        "我",
+        "一边听音乐",
+        "一边做作业"
+      ]
+    }
+  },
+  {
+    "id": "hsk3_yue_yue",
+    "level": "HSK3",
+    "zh_name": "越……越……",
+    "formula": "[Chủ ngữ] + 越 + [V1] + 越 + [Tính từ / V2]",
+    "localizations": {
+      "vi": {
+        "title": "Càng... càng... (Tương quan tăng dần: 越...越...)",
+        "quick_rule": "Dùng để diễn tả một mức độ tăng tiến theo sự gia tăng của hành động.",
+        "trap_wrong": "他越学越很好。",
+        "trap_correct": "他越学越好。",
+        "trap_why": "Sau '越...越...' không dùng các phó từ chỉ mức độ như '很', '非常'."
+      },
+      "en": {
+        "title": "The more... the more... with 越……越……",
+        "quick_rule": "Describes two conditions changing proportionally in degree.",
+        "trap_wrong": "他越学越很好。",
+        "trap_correct": "他越学越好。",
+        "trap_why": "Do not use degree adverbs like 很 or 非常 after 越."
+      },
+      "ja": {
+        "title": "相関を表す「越…越…」（〜すればするほど…）",
+        "quick_rule": "ある条件の深まりに比例して、もう一方の程度が増すことを表します。",
+        "trap_wrong": "他越学越很好。",
+        "trap_correct": "他越学越好。",
+        "trap_why": "「越」の後ろには「很」や「非常」などの程度副詞を付けてはいけません。"
+      }
+    },
+    "lego_slots": [
+      {
+        "slot_label": {
+          "vi": "🌧️ Chủ ngữ",
+          "en": "🌧️ Subject",
+          "ja": "🌧️ 主語"
+        },
+        "options": [
+          {
+            "zh": "雨",
+            "py": "yǔ",
+            "tr": {
+              "vi": "Mưa",
+              "en": "Rain",
+              "ja": "雨"
+            }
+          },
+          {
+            "zh": "汉语",
+            "py": "Hànyǔ",
+            "tr": {
+              "vi": "Tiếng Trung",
+              "en": "Chinese",
+              "ja": "中国語"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "📈 Càng làm 1...",
+          "en": "📈 The more 1...",
+          "ja": "📈 越〜（すればするほど）"
+        },
+        "options": [
+          {
+            "zh": "越下",
+            "py": "yuè xià",
+            "tr": {
+              "vi": "càng rơi",
+              "en": "falls more",
+              "ja": "降れば降るほど"
+            }
+          },
+          {
+            "zh": "越学",
+            "py": "yuè xué",
+            "tr": {
+              "vi": "càng học",
+              "en": "study more",
+              "ja": "勉強すればするほど"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "🚀 Lại càng 2!",
+          "en": "🚀 The more 2!",
+          "ja": "🚀 越〜（ますます…）"
+        },
+        "options": [
+          {
+            "zh": "越大了",
+            "py": "yuè dà le",
+            "tr": {
+              "vi": "càng to rồi",
+              "en": "heavier",
+              "ja": "激しくなる"
+            }
+          },
+          {
+            "zh": "越有意思",
+            "py": "yuè yǒu yìsi",
+            "tr": {
+              "vi": "càng thú vị",
+              "en": "more interesting",
+              "ja": "面白くなる"
+            }
+          }
+        ]
+      }
+    ],
+    "dialogue": {
+      "speaker_a": {
+        "speaker": "A",
+        "zh": "我们什么时候走？",
+        "py": "Wǒmen shénme shíhou zǒu?",
+        "tr": {
+          "vi": "Khi nào chúng ta đi?",
+          "en": "When do we leave?",
+          "ja": "いつ出発しますか？"
+        }
+      },
+      "speaker_b": {
+        "speaker": "B",
+        "zh": "雨越下越大了，等一下吧。",
+        "py": "Yǔ yuè xià yuè dà le, děng yíxià ba.",
+        "tr": {
+          "vi": "Mưa càng lúc càng to rồi, đợi chút đi.",
+          "en": "The rain is getting heavier, let's wait a bit.",
+          "ja": "雨がますます強くなってきたので、少し待ちましょう。"
+        }
+      }
+    },
+    "challenge": {
+      "prompt": {
+        "vi": "Sắp xếp câu: 'Mưa càng lúc càng to rồi'",
+        "en": "Arrange the words to say: 'The rain is getting heavier and heavier'",
+        "ja": "並べ替えて「雨がますます強くなってきました」を作ってください"
+      },
+      "tokens": [
+        "越大了",
+        "雨",
+        "越下"
+      ],
+      "correct_order": [
+        "雨",
+        "越下",
+        "越大了"
+      ]
+    }
+  },
+  {
+    "id": "hsk3_chu_le_yi_wai",
+    "level": "HSK3",
+    "zh_name": "除了……以外",
+    "formula": "除了 + [N/V] + 以外，[Chủ ngữ] + 还/都 + [V]",
+    "localizations": {
+      "vi": {
+        "title": "Ngoài... ra (Còn... / Đều...): 除了...以外",
+        "quick_rule": "Đi với '还/也' mang nghĩa bổ sung (ngoài A còn có B); đi với '都' mang nghĩa loại trừ (trừ A ra tất cả đều...).",
+        "trap_wrong": "除了他以外，大家也去了。",
+        "trap_correct": "除了他以外，大家都去了。",
+        "trap_why": "Nghĩa loại trừ (ai cũng... trừ anh ấy) phải dùng '都', không dùng '也'."
+      },
+      "en": {
+        "title": "Besides / Except with 除了……以外",
+        "quick_rule": "Use with 还/也 for inclusion (in addition to A, also B); use with 都 for exclusion (except for A, all...).",
+        "trap_wrong": "除了他以外，大家也去了。",
+        "trap_correct": "除了他以外，大家都去了。",
+        "trap_why": "When indicating exclusion (everyone went EXCEPT him), pair with 都, not 也."
+      },
+      "ja": {
+        "title": "除外・付加を表す「除了…以外」（〜のほかに／〜を除いて）",
+        "quick_rule": "「还／也」と呼応して「〜のほかに…も」（付加）、「都」と呼応して「〜を除いて全て」（除外）を表します。",
+        "trap_wrong": "除了他以外，大家也去了。",
+        "trap_correct": "除了他以外，大家都去了。",
+        "trap_why": "「彼を除いて全員が行った」という除外の文脈では「都」を用います。"
+      }
+    },
+    "lego_slots": [
+      {
+        "slot_label": {
+          "vi": "🎁 Ngoài cái gì ra?",
+          "en": "🎁 Besides what?",
+          "ja": "🎁 除了〜（〜の他に）"
+        },
+        "options": [
+          {
+            "zh": "除了英语以外",
+            "py": "chúle Yīngyǔ yǐwài",
+            "tr": {
+              "vi": "Ngoài tiếng Anh ra",
+              "en": "Besides English",
+              "ja": "英語のほかに"
+            }
+          },
+          {
+            "zh": "除了苹果以外",
+            "py": "chúle píngguǒ yǐwài",
+            "tr": {
+              "vi": "Ngoài táo ra",
+              "en": "Besides apples",
+              "ja": "りんごのほかに"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "🧑 Ai?",
+          "en": "🧑 Who?",
+          "ja": "🧑 誰が？"
+        },
+        "options": [
+          {
+            "zh": "我还",
+            "py": "wǒ hái",
+            "tr": {
+              "vi": "tôi còn",
+              "en": "I also",
+              "ja": "私はさらに"
+            }
+          },
+          {
+            "zh": "大家",
+            "py": "dàjiā",
+            "tr": {
+              "vi": "mọi người",
+              "en": "everyone",
+              "ja": "みんな"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "✨ Còn / Đều thế nào?",
+          "en": "✨ Additional / Excluded action",
+          "ja": "✨ 動作"
+        },
+        "options": [
+          {
+            "zh": "会说汉语",
+            "py": "huì shuō Hànyǔ",
+            "tr": {
+              "vi": "biết nói tiếng Trung",
+              "en": "can speak Chinese",
+              "ja": "中国語も話せる"
+            }
+          },
+          {
+            "zh": "都喜欢吃香蕉",
+            "py": "dōu xǐhuan chī xiāngjiāo",
+            "tr": {
+              "vi": "đều thích ăn chuối",
+              "en": "all like eating bananas",
+              "ja": "みんなバナナが好きだ"
+            }
+          }
+        ]
+      }
+    ],
+    "dialogue": {
+      "speaker_a": {
+        "speaker": "A",
+        "zh": "除了英语，你还会什么外语？",
+        "py": "Chúle Yīngyǔ, nǐ hái huì shénme wàiyǔ?",
+        "tr": {
+          "vi": "Ngoài tiếng Anh, bạn còn biết ngoại ngữ nào nữa?",
+          "en": "Besides English, what other languages can you speak?",
+          "ja": "英語のほかに、何か外国語が話せますか？"
+        }
+      },
+      "speaker_b": {
+        "speaker": "B",
+        "zh": "除了英语以外，我还会说汉语。",
+        "py": "Chúle Yīngyǔ yǐwài, wǒ hái huì shuō Hànyǔ.",
+        "tr": {
+          "vi": "Ngoài tiếng Anh ra, tôi còn biết nói tiếng Trung.",
+          "en": "Besides English, I can also speak Chinese.",
+          "ja": "英語のほかに、中国語も話せます。"
+        }
+      }
+    },
+    "challenge": {
+      "prompt": {
+        "vi": "Sắp xếp câu: 'Ngoài tiếng Anh ra tôi còn biết tiếng Trung'",
+        "en": "Arrange the words to say: 'Besides English, I can also speak Chinese'",
+        "ja": "並べ替えて「英語のほかに、私は中国語も話せます」を作ってください"
+      },
+      "tokens": [
+        "我还会说汉语",
+        "除了英语以外"
+      ],
+      "correct_order": [
+        "除了英语以外",
+        "我还会说汉语"
+      ]
+    }
+  },
+  {
+    "id": "hsk3_yi_jiu",
+    "level": "HSK3",
+    "zh_name": "一……就……",
+    "formula": "[Chủ ngữ] + 一 + [V1]，就 + [V2]",
+    "localizations": {
+      "vi": {
+        "title": "Hễ... là liền... (Hành động vừa xảy ra là kế tiếp ngay: 一...就...)",
+        "quick_rule": "Dùng để diễn tả hành động 2 xảy ra ngay lập tức sau khi hành động 1 diễn ra.",
+        "trap_wrong": "我下班一回家就。",
+        "trap_correct": "我一下班就回家。",
+        "trap_why": "'一' đứng trước động từ 1 (tan sở), '就' đứng trước động từ 2 (về nhà)."
+      },
+      "en": {
+        "title": "As soon as... then... with 一……就……",
+        "quick_rule": "Indicates that action 2 occurs immediately upon the completion of action 1.",
+        "trap_wrong": "我下班一回家就。",
+        "trap_correct": "我一下班就回家。",
+        "trap_why": "Place 一 before the first action and 就 before the second action."
+      },
+      "ja": {
+        "title": "即時完了「一…就…」（〜するとすぐ…）",
+        "quick_rule": "第1の動作が終わると即座に第2の動作が行われることを表します（〜するとすぐ…）。",
+        "trap_wrong": "我下班一回家就。",
+        "trap_correct": "我一下班就回家。",
+        "trap_why": "「一」は第1動作の直前に、「就」は第2動作の直前に置きます。"
+      }
+    },
+    "lego_slots": [
+      {
+        "slot_label": {
+          "vi": "🧑 Ai?",
+          "en": "🧑 Who?",
+          "ja": "🧑 誰が？"
+        },
+        "options": [
+          {
+            "zh": "我",
+            "py": "wǒ",
+            "tr": {
+              "vi": "Tôi",
+              "en": "I",
+              "ja": "私"
+            }
+          },
+          {
+            "zh": "他",
+            "py": "tā",
+            "tr": {
+              "vi": "Anh ấy",
+              "en": "He",
+              "ja": "彼"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "⚡ Vừa làm 1...",
+          "en": "⚡ As soon as 1...",
+          "ja": "⚡ 一〜（すると）"
+        },
+        "options": [
+          {
+            "zh": "一下班",
+            "py": "yí xiàbān",
+            "tr": {
+              "vi": "vừa tan làm",
+              "en": "as soon as getting off work",
+              "ja": "仕事が終わると"
+            }
+          },
+          {
+            "zh": "一回到家",
+            "py": "yì huí dào jiā",
+            "tr": {
+              "vi": "vừa về đến nhà",
+              "en": "as soon as reaching home",
+              "ja": "家に帰ると"
+            }
+          }
+        ]
+      },
+      {
+        "slot_label": {
+          "vi": "🚀 Là liền 2!",
+          "en": "🚀 Immediately 2!",
+          "ja": "🚀 就〜（すぐ…する）"
+        },
+        "options": [
+          {
+            "zh": "就回家",
+            "py": "jiù huíjiā",
+            "tr": {
+              "vi": "liền về nhà",
+              "en": "immediately goes home",
+              "ja": "すぐ帰宅する"
+            }
+          },
+          {
+            "zh": "就睡觉",
+            "py": "jiù shuìjiào",
+            "tr": {
+              "vi": "liền đi ngủ",
+              "en": "immediately sleeps",
+              "ja": "すぐ寝る"
+            }
+          }
+        ]
+      }
+    ],
+    "dialogue": {
+      "speaker_a": {
+        "speaker": "A",
+        "zh": "你今天下班后去哪儿？",
+        "py": "Nǐ jīntiān xiàbān hòu qù nǎr?",
+        "tr": {
+          "vi": "Hôm nay tan sở bạn đi đâu?",
+          "en": "Where are you going after work today?",
+          "ja": "今日退勤後はどこへ行きますか？"
+        }
+      },
+      "speaker_b": {
+        "speaker": "B",
+        "zh": "我一下班就回家做饭。",
+        "py": "Wǒ yí xiàbān jiù huíjiā zuòfàn.",
+        "tr": {
+          "vi": "Tôi vừa tan sở là liền về nhà nấu cơm.",
+          "en": "I will go home to cook as soon as I get off work.",
+          "ja": "退勤したらすぐ家に帰ってご飯を作ります。"
+        }
+      }
+    },
+    "challenge": {
+      "prompt": {
+        "vi": "Sắp xếp câu: 'Anh ấy vừa về đến nhà là liền đi ngủ'",
+        "en": "Arrange the words to say: 'He goes to sleep as soon as he gets home'",
+        "ja": "並べ替えて「彼は家に帰るとすぐに寝ました」を作ってください"
+      },
+      "tokens": [
+        "就睡觉了",
+        "一回到家",
+        "他"
+      ],
+      "correct_order": [
+        "他",
+        "一回到家",
+        "就睡觉了"
+      ]
+    }
+  }
+];
 
-  return {
-    HSK_GRAMMAR_CATALOG: HSK_GRAMMAR_CATALOG,
-    HSK_GRAMMAR_SAMPLES: HSK_GRAMMAR_SAMPLES
+if (typeof window !== 'undefined') {
+  window.HSK_GRAMMAR_CATALOG = HSK_GRAMMAR_CATALOG;
+  window.HSK_GRAMMAR_SAMPLES = HSK_GRAMMAR_SAMPLES;
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    HSK_GRAMMAR_CATALOG,
+    HSK_GRAMMAR_SAMPLES
   };
-});
+}
