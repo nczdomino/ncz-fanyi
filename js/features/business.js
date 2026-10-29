@@ -598,7 +598,7 @@
           <div class="bc-doc-header-card">
             <div class="bc-doc-badge-row">
               <span class="bc-badge bc-badge-cat">Core Trade Document</span>
-              <button class="bc-audio-btn" onclick="bcPlayAudio('${escapeHtml(currentDoc.nameZh)}', event)" title="Nghe phát âm" style="gap:5px; padding:6px 12px; width:auto;">
+              <button class="bc-audio-btn" onclick="bcPlayAudio('${escapeQuotes(currentDoc.nameZh)}', event)" title="Nghe phát âm" style="gap:5px; padding:6px 12px; width:auto;">
                 <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
                 <span>Nghe tên chứng từ</span>
               </button>
@@ -630,7 +630,7 @@
                   <div class="bc-field-card-header">
                     <span class="bc-field-tag">Box 0${fIdx + 1}</span>
                     <span class="bc-field-zh">${escapeHtml(fld.fieldZh)}</span>
-                    <button class="bc-mini-speaker" onclick="bcPlayAudio('${escapeHtml(fld.fieldZh.split('(')[0])}', event)" title="Nghe phát âm" aria-label="Phát âm">
+                    <button class="bc-mini-speaker" onclick="bcPlayAudio('${escapeQuotes(fld.fieldZh.split('(')[0])}', event)" title="Nghe phát âm" aria-label="Phát âm">
                       <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
                     </button>
                   </div>
@@ -882,12 +882,37 @@
     const stepIdx = businessState.scenarioStepIndex;
     const currentStep = scenario.steps[stepIdx] || scenario.steps[0];
     const userChoiceIdx = businessState.scenarioUserChoices[scenario.id + '_' + stepIdx];
+    const selectedOpt = userChoiceIdx !== undefined && userChoiceIdx !== null ? currentStep.options[userChoiceIdx] : null;
+
+    let nextStepActionHtml = '';
+    if (selectedOpt) {
+      if (selectedOpt.nextStepIndex !== null && selectedOpt.nextStepIndex !== undefined && scenario.steps[selectedOpt.nextStepIndex]) {
+        nextStepActionHtml = `
+          <div class="bc-scenario-action-bar" style="margin-top:18px; text-align:right;">
+            <button class="btn btn-primary" onclick="bcAdvanceScenarioStep(${selectedOpt.nextStepIndex})" style="border-radius:var(--radius-pill); padding:10px 22px; font-weight:700; font-size:13px; display:inline-flex; align-items:center; gap:6px;">
+              <span>${lang === 'vi' ? 'Tiếp tục bước đối thoại tiếp theo' : (lang === 'ja' ? '次の対話へ進む' : 'Continue to Next Step')}</span>
+              <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            </button>
+          </div>
+        `;
+      } else {
+        nextStepActionHtml = `
+          <div class="bc-scenario-action-bar" style="margin-top:18px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; padding:12px 16px; background:rgba(217,45,67,0.06); border:1px solid rgba(217,45,67,0.18); border-radius:12px;">
+            <span style="font-size:13px; font-weight:700; color:var(--accent);">🎉 ${lang === 'vi' ? 'Bạn đã hoàn thành tình huống đàm phán này!' : (lang === 'ja' ? 'ロールプレイ完了！' : 'Negotiation Scenario Completed!')}</span>
+            <button class="btn btn-secondary btn-sm" onclick="bcRestartScenario('${scenario.id}')" style="border-radius:var(--radius-pill); font-weight:600;">
+              ↺ ${lang === 'vi' ? 'Làm lại tình huống' : (lang === 'ja' ? '最初からやり直す' : 'Practice Again')}
+            </button>
+          </div>
+        `;
+      }
+    }
 
     return `
       <div class="bc-scenario-box">
         <div class="bc-scen-meta">
           <span class="bc-badge bc-badge-cat">Scenario #${scenario.id.split('_')[1]}</span>
           <span class="bc-badge bc-badge-tag">${escapeHtml(scenario.category)}</span>
+          <span class="bc-badge bc-badge-step" style="background:var(--bg-muted); color:var(--text-secondary); font-weight:700;">${lang === 'vi' ? 'Bước' : (lang === 'ja' ? 'ステップ' : 'Step')} ${stepIdx + 1}/${scenario.steps.length}</span>
         </div>
 
         <h3 class="bc-scen-title">${escapeHtml(getLocText(scenario.title, lang))}</h3>
@@ -932,6 +957,8 @@
             `;
           }).join('')}
         </div>
+
+        ${nextStepActionHtml}
       </div>
     `;
   }
@@ -939,6 +966,19 @@
   window.bcSelectScenario = function (id) {
     businessState.activeScenarioId = id;
     businessState.scenarioStepIndex = 0;
+    renderActiveSubView();
+  };
+
+  window.bcAdvanceScenarioStep = function (nextIdx) {
+    businessState.scenarioStepIndex = nextIdx;
+    renderActiveSubView();
+  };
+
+  window.bcRestartScenario = function (scenId) {
+    businessState.scenarioStepIndex = 0;
+    delete businessState.scenarioUserChoices[scenId + '_0'];
+    delete businessState.scenarioUserChoices[scenId + '_1'];
+    delete businessState.scenarioUserChoices[scenId + '_2'];
     renderActiveSubView();
   };
 
@@ -999,10 +1039,16 @@
         ${userAnswer !== null ? `
           <div class="bc-quiz-explanation">
             <div class="bc-exp-header">
-              ${quiz.options[userAnswer].isCorrect ? '✅ Chính xác!' : '❌ Chưa chính xác!'}
+              ${quiz.options[userAnswer].isCorrect ? '✅ ' + (lang === 'vi' ? 'Chính xác tuyệt vời!' : (lang === 'ja' ? '正解です！' : 'Correct!')) : '❌ ' + (lang === 'vi' ? 'Chưa chính xác!' : (lang === 'ja' ? '不正解です' : 'Incorrect'))}
             </div>
             <div class="bc-exp-body">
               ${escapeHtml(getLocText(quiz.explanation, lang))}
+            </div>
+            <div style="margin-top:14px; text-align:right;">
+              <button class="btn btn-primary" onclick="bcNextQuiz()" style="border-radius:var(--radius-pill); padding:8px 20px; font-weight:700; font-size:13px; display:inline-flex; align-items:center; gap:6px;">
+                <span>${lang === 'vi' ? 'Câu tiếp theo' : (lang === 'ja' ? '次の問題へ' : 'Next Quiz')}</span>
+                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+              </button>
             </div>
           </div>
         ` : ''}
@@ -1013,6 +1059,19 @@
   window.bcSelectQuiz = function (id) {
     businessState.activeQuizId = id;
     businessState.quizUserAnswer = null;
+    renderActiveSubView();
+  };
+
+  window.bcNextQuiz = function () {
+    const quizzes = BusinessService.getQuizzes();
+    const curIdx = quizzes.findIndex(q => q.id === businessState.activeQuizId);
+    if (curIdx > -1 && curIdx + 1 < quizzes.length) {
+      businessState.activeQuizId = quizzes[curIdx + 1].id;
+      businessState.quizUserAnswer = null;
+    } else {
+      businessState.activeQuizId = quizzes[0].id;
+      businessState.quizUserAnswer = null;
+    }
     renderActiveSubView();
   };
 

@@ -1,10 +1,10 @@
 /**
  * js/data/business-data.js
  * Auto-generated 商务中文 (Business Chinese) Complete Learning & Reference Dataset
- * Generated: 2026-10-29T04:25:58.370Z
+ * Generated: 2026-10-29T12:26:06.312Z
  * Total Categories: 12
  * Total Vocabulary: 144
- * Total Email Templates: 11
+ * Total Email Templates: 12
  * Total Trade Documents: 10
  * Total Scenarios: 10
  * Total Quizzes: 24
@@ -22,11 +22,11 @@
   return {
   "meta": {
     "version": "1.0.0",
-    "generatedAt": "2026-10-29T04:25:58.370Z",
+    "generatedAt": "2026-10-29T12:26:06.312Z",
     "counts": {
       "categories": 12,
       "vocabulary": 144,
-      "emailTemplates": 11,
+      "emailTemplates": 12,
       "tradeDocuments": 10,
       "scenarios": 10,
       "quizzes": 24
@@ -7153,6 +7153,129 @@
           "vi": "Chào [ClientName], do giá [MaterialType] đợt này tăng cao, công ty mình sẽ điều chỉnh tăng [IncreasePercentage] từ ngày [EffectiveDate]. Trước ngày [GraceDeadline] chốt đơn vẫn giữ giá cũ nhé. Gửi bạn bảng giá mới đính kèm!",
           "ja": "[ClientName] 様、[MaterialType] の高騰に伴い、[EffectiveDate] より [IncreasePercentage] の価格改定を実施いたします。[GraceDeadline] までの発注は旧価格を適用いたします。",
           "en": "Hi [ClientName], due to surging [MaterialType] costs, prices will adjust by [IncreasePercentage] on [EffectiveDate]. Orders placed before [GraceDeadline] will enjoy current rates. Price list attached!"
+        }
+      }
+    },
+    {
+      "id": "email_012_contract_signing",
+      "category": "emails",
+      "subject": {
+        "zh": "【合同确认】关于 [ProjectName] 的正式外贸销售合同（第 [ContractNo] 号）签署与定金安排",
+        "vi": "【Xác nhận hợp đồng】Về việc ký kết hợp đồng ngoại thương chính thức (Số [ContractNo]) cho dự án [ProjectName] & thu xếp tiền cọc",
+        "ja": "【契約締結のご確認】[ProjectName] に関する正式売買契約書（契約番号：[ContractNo]）の締結および前払金について",
+        "en": "Contract Finalization: Sales & Purchase Agreement No. [ContractNo] for [ProjectName]"
+      },
+      "recipientType": {
+        "zh": "客户方法定代表 / 采购总监",
+        "vi": "Đại diện pháp luật / Giám đốc mua hàng đối tác",
+        "ja": "代表権者 / 調達・法務責任者",
+        "en": "Authorized Signatory / Purchasing Director"
+      },
+      "purpose": {
+        "zh": "完成价格与条款谈判后，向客户发送正式双方盖章签字的外贸销售合同（Sales Contract），并指导签署回传与定金汇款流程。",
+        "vi": "Sau khi thống nhất đàm phán, gửi hợp đồng ngoại thương (Sales Contract) chính thức có đóng dấu chữ ký, hướng dẫn đối tác ký gửi lại và tiến hành thanh toán tiền cọc.",
+        "ja": "商談妥結後、社印捺印済みの正式売買契約書（Sales Contract）を送付し、署名返送および手付金（前受金）送金手続きを案内する。",
+        "en": "Transmit officially signed/sealed Sales Contract following negotiations, advising countersigning and deposit wire instructions."
+      },
+      "placeholders": [
+        {
+          "key": "ClientName",
+          "label": {
+            "vi": "Tên đối tác",
+            "en": "Partner Name",
+            "ja": "相手先担当者名"
+          },
+          "example": "张总 (Director Zhang)"
+        },
+        {
+          "key": "ProjectName",
+          "label": {
+            "vi": "Tên dự án / sản phẩm",
+            "en": "Project / Product Name",
+            "ja": "プロジェクト・品名"
+          },
+          "example": "5000台高精度工业传感器 (Industrial Sensors)"
+        },
+        {
+          "key": "ContractNo",
+          "label": {
+            "vi": "Số hợp đồng",
+            "en": "Contract Number",
+            "ja": "契約番号"
+          },
+          "example": "SC-2026-VN889"
+        },
+        {
+          "key": "DepositPercentage",
+          "label": {
+            "vi": "Tỷ lệ tiền cọc",
+            "en": "Deposit Percentage",
+            "ja": "手付金比率"
+          },
+          "example": "30%"
+        },
+        {
+          "key": "BankDeadline",
+          "label": {
+            "vi": "Hạn chuyển tiền cọc",
+            "en": "Deposit Deadline",
+            "ja": "送金期限"
+          },
+          "example": "2026年11月15日"
+        }
+      ],
+      "keyPhrases": [
+        {
+          "zh": "签字盖章",
+          "pinyin": "qiānzì gàizhāng",
+          "translations": {
+            "vi": "ký tên và đóng dấu",
+            "ja": "署名捺印",
+            "en": "sign and seal"
+          }
+        },
+        {
+          "zh": "电汇定金",
+          "pinyin": "diànhuì dìngjīn",
+          "translations": {
+            "vi": "chuyển khoản cọc bằng điện T/T",
+            "ja": "電信送金による手付金支払",
+            "en": "wire transfer deposit"
+          }
+        },
+        {
+          "zh": "各执一份",
+          "pinyin": "gè zhí yī fèn",
+          "translations": {
+            "vi": "mỗi bên giữ một bản",
+            "ja": "各自一通を保有する",
+            "en": "each party holds one copy"
+          }
+        },
+        {
+          "zh": "如期交货",
+          "pinyin": "rúqī jiāohuò",
+          "translations": {
+            "vi": "giao hàng đúng thời hạn đã định",
+            "ja": "期日通りの納品",
+            "en": "deliver on schedule"
+          }
+        }
+      ],
+      "bodyFormal": {
+        "zh": "尊敬的 [ClientName]：\n\n您好！\n\n非常荣幸能与贵司达成关于 [ProjectName] 的合作共识。根据双方在前期会谈中所最终确认的产品规格、单价、交货期以及相关商务条款，我司已正式拟定外贸销售合同（Sales Contract, 编号：[ContractNo]）。\n\n随信附上我司已签字并加盖公章的合同高清扫描件（PDF格式）以及正本银行公户汇款信息（PI & Banking Details）。\n\n为确保后续备料和生产进度能如期推进，烦请贵司协助办理以下后续事宜：\n1. 请贵司授权代表在合同上签字盖章，并在签署后将扫描件回传我司留档；\n2. 请贵司财务部门根据合同约定条款，于 [BankDeadline] 前安排支付 [DepositPercentage] 的预付定金，并在电汇完成后将水单（Bank Slip）发予我们以便我司财务查账锁定汇率。\n\n收到定金水单后，我司将立即启动车间备料与批量生产流程，并按周向贵司汇报排产进展，全力保障如期交付优质产品。\n\n如有任何条款疑问或需要调整之处，请随时与我们保持沟通。再次感谢贵司的信任，期待我们长久共赢的合作！\n\n顺祝商祺！",
+        "translations": {
+          "vi": "Kính gửi [ClientName],\n\nXin chào quý vị!\n\nChúng tôi rất vinh hạnh được đồng hành và đạt được thỏa thuận hợp tác cùng quý công ty đối với dự án [ProjectName]. Dựa trên các thông số kỹ thuật, đơn giá, thời hạn giao hàng và các điều khoản thương mại đã được hai bên thống nhất, công ty chúng tôi đã chính thức lập Hợp đồng Mua bán Ngoại thương (Sales Contract, Số hiệu: [ContractNo]).\n\nĐính kèm thư này là bản scan độ phân giải cao của Hợp đồng đã có chữ ký đại diện và đóng dấu mộc của công ty chúng tôi (định dạng PDF), cùng thông tin tài khoản ngân hàng chính thức (PI & Banking Details).\n\nNhằm bảo đảm tiến độ chuẩn bị nguyên vật liệu và kế hoạch sản xuất diễn ra đúng thời hạn, kính đề nghị quý công ty hỗ trợ thực hiện các bước sau:\n1. Đại diện có thẩm quyền của quý công ty vui lòng ký tên, đóng dấu lên hợp đồng và gửi lại bản scan qua email để chúng tôi lưu hồ sơ;\n2. Bộ phận tài chính quý công ty thu xếp thanh toán khoản tiền cọc [DepositPercentage] trước ngày [BankDeadline], đồng thời gửi lại điện chuyển tiền (Bank Slip) để chúng tôi theo dõi ghi nhận tài khoản.\n\nNgay khi nhận được xác nhận thanh toán cọc, chúng tôi sẽ lập tức kích hoạt quy trình chuẩn bị vật tư và sản xuất hàng loạt, định kỳ cập nhật tiến độ mỗi tuần để bảo đảm giao hàng đúng hẹn và đạt chất lượng cao nhất.\n\nTrân trọng và kính chúc việc kinh doanh phát đạt!",
+          "ja": "[ClientName] 様\n\n平素は大変お世話になっております。\n\nこのたびは [ProjectName] に関する商談が合意に達しましたこと、心より光栄に存じます。事前協議にて双方が合意いたしました製品仕様、単価、納期および諸条件に基づき、正式な売買契約書（Sales Contract、契約番号：[ContractNo]）を作成いたしました。\n\n添付ファイルにて、弊社代表者署名・社印捺印済みの契約書スキャン（PDF）および正式銀行送金口座情報（PI & Banking Details）をお送りいたします。\n\n今後の部材手配および生産スケジュールの遅延を防ぐため、誠に恐縮ではございますが、以下の手続きをお願い申し上げます：\n1. 貴社の権限者様にて署名捺印の上、スキャンPDFをご返送くださいますようお願い申し上げます。\n2. 契約条項に基づき、[BankDeadline] までに [DepositPercentage] の手付金（前受金）のお振込み手続きをいただき、送金受領証（Bank Slip）をご送付ください。\n\n手付金の確認が取れ次第、直ちに生産ラインを稼働させ、週次で進捗をご報告いたします。今後とも何卒よろしくお願い申し上げます。",
+          "en": "Dear [ClientName],\n\nGreetings!\n\nIt is our great pleasure to partner with your esteemed company on [ProjectName]. Based on our mutually finalized technical specifications, unit prices, delivery schedule, and trade terms, we have executed the formal Sales Contract (Contract No.: [ContractNo]).\n\nAttached please find the high-resolution scanned copy of the contract, signed and sealed by our authorized representative, along with our official Proforma Invoice and Banking Instructions.\n\nTo ensure our production scheduling and material procurement proceed without delay, please kindly assist with the following next steps:\n1. Have your authorized signatory countersign and seal the contract, returning a scanned copy for our official records;\n2. Instruct your finance team to remit the [DepositPercentage] advance deposit prior to [BankDeadline] and share the bank swift slip for accounting confirmation.\n\nUpon deposit receipt, mass production will commence immediately, and weekly status updates will follow to ensure punctual delivery. Thank you again for your trust and collaboration!"
+        }
+      },
+      "bodyConcise": {
+        "zh": "[ClientName] 您好：\n双方确认的 [ProjectName] 正式销售合同（第 [ContractNo] 号）已拟好附在信中，请查阅签字盖章并回传。烦请于 [BankDeadline] 前安排 [DepositPercentage] 定金以便排单生产，祝合作愉快！",
+        "translations": {
+          "vi": "Chào [ClientName], hợp đồng chính thức cho [ProjectName] (Số [ContractNo]) đã được chuẩn bị xong đính kèm email. Bạn kiểm tra, ký đóng dấu gửi lại giúp mình nhé. Nhờ bên bạn thu xếp [DepositPercentage] tiền cọc trước [BankDeadline] để xưởng bắt đầu chạy sản xuất nhé!",
+          "ja": "[ClientName] 様、[ProjectName] の正式売買契約書（番号：[ContractNo]）を添付いたします。ご確認の上、署名捺印をご返送ください。また [BankDeadline] までに [DepositPercentage] の前受金お手続きをお願いいたします。",
+          "en": "Hi [ClientName], the finalized Sales Contract No. [ContractNo] for [ProjectName] is attached. Please sign, seal and return a copy. Kindly arrange the [DepositPercentage] deposit before [BankDeadline] so we can kick off production!"
         }
       }
     }

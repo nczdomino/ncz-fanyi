@@ -48,7 +48,7 @@ test('Dataset has valid meta and expected counts', () => {
   assert.ok(dataset.meta, 'meta object should exist');
   assert.strictEqual(dataset.categories.length, 12, 'Must have exactly 12 categories');
   assert.strictEqual(dataset.vocabulary.length, 144, 'Must have exactly 144 vocabulary items');
-  assert.strictEqual(dataset.emailTemplates.length, 11, 'Must have exactly 11 email templates');
+  assert.strictEqual(dataset.emailTemplates.length, 12, 'Must have exactly 12 email templates');
   assert.strictEqual(dataset.tradeDocuments.length, 10, 'Must have exactly 10 trade documents');
   assert.strictEqual(dataset.scenarios.length, 10, 'Must have exactly 10 scenarios');
   assert.strictEqual(dataset.quizzes.length, 24, 'Must have exactly 24 situational quizzes');
