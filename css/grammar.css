@@ -1357,61 +1357,197 @@
   }
 }
 
-/* --- Chinese Grammar Canvas (Lego Story) Styles --- */
-.grammar-stage-banner {
+/* --- Chinese Grammar Canvas (Lego Story & Stage Accordions) Styles --- */
+.grammar-master-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
-  border-left: 4px solid var(--accent);
   border-radius: var(--radius-lg, 16px);
-  padding: 16px 20px;
+  padding: 14px 20px;
   margin-bottom: 24px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
   flex-wrap: wrap;
   gap: 12px;
 }
 
-.stage-tag {
-  font-size: 11.5px;
+.master-progress-label {
+  font-size: 14px;
   font-weight: 700;
-  text-transform: uppercase;
+  color: var(--text-primary);
+}
+
+.master-progress-label b {
   color: var(--accent);
-  letter-spacing: 0.5px;
+}
+
+.master-bar-right {
+  display: flex;
+  gap: 8px;
+}
+
+/* Stage Accordion Container & Boxes */
+.grammar-stages-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.stage-accordion-box {
+  background: var(--bg-surface);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-xl, 20px);
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.stage-accordion-box.is-open {
+  border-color: rgba(217, 45, 67, 0.35);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+}
+
+.stage-accordion-header {
+  padding: 18px 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  background: var(--bg-surface);
+  user-select: none;
+  transition: background 0.15s ease;
+  gap: 14px;
+}
+
+.stage-accordion-header:hover {
+  background: var(--bg-muted);
+}
+
+.stage-header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+}
+
+.stage-icon-circle {
+  font-size: 24px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.stage-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
   margin-bottom: 4px;
 }
 
-.stage-title {
+.stage-main-title {
   font-size: 17px;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+.stage-level-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  background: rgba(217, 45, 67, 0.08);
+  color: var(--accent);
+  border: 1px solid var(--accent-border);
+}
+
+.stage-desc-text {
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+.stage-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.stage-progress-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  font-size: 13px;
   font-weight: 800;
   color: var(--text-primary);
 }
 
-.stage-progress-pill {
-  font-size: 13px;
-  font-weight: 700;
+.stage-mini-bar {
+  width: 54px;
+  height: 5px;
+  background: var(--border-color);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.stage-mini-fill {
+  height: 100%;
+  background: #10B981;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.stage-toggle-btn {
   background: var(--bg-muted);
   border: 1px solid var(--border-color);
-  padding: 6px 14px;
-  border-radius: var(--radius-pill);
-  color: var(--text-primary);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 11px;
+  transition: all 0.18s ease;
+}
+
+.stage-accordion-header:hover .stage-toggle-btn {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--bg-surface);
+}
+
+.stage-accordion-body {
+  padding: 0 22px 22px;
+  border-top: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  animation: fadeInStage 0.25s ease-out;
+}
+
+@keyframes fadeInStage {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .grammar-canvas-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 14px;
+  padding-top: 18px;
 }
 
 .grammar-canvas-card {
-  background: var(--bg-surface);
+  background: var(--bg-muted);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-xl, 20px);
-  padding: 22px 24px;
+  border-radius: 16px;
+  padding: 18px 20px;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
   display: flex;
   flex-direction: column;
   position: relative;
@@ -1419,108 +1555,114 @@
 
 .grammar-canvas-card:hover {
   transform: translateY(-2px);
+  background: var(--bg-surface);
   border-color: var(--accent);
-  box-shadow: 0 10px 24px rgba(217, 45, 67, 0.08);
+  box-shadow: 0 8px 20px rgba(217, 45, 67, 0.08);
 }
 
 .grammar-canvas-card.is-completed {
   border-color: rgba(16, 185, 129, 0.35);
-  background: linear-gradient(to right, rgba(16, 185, 129, 0.02), var(--bg-surface));
+  background: linear-gradient(to right, rgba(16, 185, 129, 0.03), var(--bg-surface));
 }
 
 .canvas-card-top {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 12px;
+  gap: 8px;
+  margin-bottom: 10px;
 }
 
 .canvas-order-badge {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 800;
   color: var(--accent);
   background: rgba(217, 45, 67, 0.1);
-  padding: 2px 8px;
+  padding: 2px 7px;
   border-radius: 6px;
 }
 
 .canvas-level-pill {
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 700;
-  padding: 2px 9px;
+  padding: 2px 8px;
   border-radius: var(--radius-pill);
-  background: var(--bg-muted);
+  background: var(--bg-surface);
   color: var(--text-muted);
   border: 1px solid var(--border-subtle);
 }
 
 .canvas-done-badge {
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 700;
   color: #059669;
   margin-left: auto;
 }
 
 .canvas-card-zh {
-  font-size: 26px;
+  font-size: 22px;
   font-weight: 800;
   color: var(--text-primary);
   font-family: var(--font-hanzi);
   line-height: 1.25;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .canvas-card-title {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--text-secondary);
   line-height: 1.4;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 .canvas-lego-preview {
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .lego-pill {
   display: inline-block;
-  background: var(--bg-muted);
+  background: var(--bg-surface);
   border: 1px dashed var(--border-color);
-  padding: 6px 12px;
-  border-radius: 8px;
+  padding: 5px 10px;
+  border-radius: 6px;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 13.5px;
+  font-size: 12.5px;
   font-weight: 700;
   color: var(--accent);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .canvas-card-footer {
   display: flex;
   justify-content: flex-end;
-  padding-top: 12px;
+  padding-top: 10px;
   border-top: 1px solid var(--border-subtle);
+  margin-top: auto;
 }
 
 .canvas-start-btn {
   background: none;
   border: none;
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 700;
   color: var(--accent);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   padding: 0;
   transition: gap 0.15s ease;
 }
 
 .grammar-canvas-card:hover .canvas-start-btn {
-  gap: 10px;
+  gap: 8px;
 }
 
-/* --- Canvas Stepper & Detail View --- */
+/* --- Detail Canvas Navigation & Mode Toggle --- */
 .canvas-nav-row {
   display: flex;
   justify-content: space-between;
@@ -1530,16 +1672,51 @@
   gap: 10px;
 }
 
+.canvas-top-right-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.canvas-mode-toggle {
+  display: inline-flex;
+  background: var(--bg-muted);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-pill);
+  padding: 3px;
+  gap: 3px;
+}
+
+.mode-toggle-btn {
+  background: none;
+  border: none;
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.mode-toggle-btn.active {
+  background: var(--bg-surface);
+  color: var(--accent);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
 .canvas-item-pill {
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 700;
   color: var(--text-secondary);
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
-  padding: 6px 16px;
+  padding: 5px 14px;
   border-radius: var(--radius-pill);
 }
 
+/* Stepper Tabs Bar */
 .canvas-stepper-bar {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -1591,12 +1768,20 @@
   color: var(--accent);
 }
 
+/* Step Card */
 .canvas-step-card {
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-xl, 20px);
-  padding: 30px 24px;
+  padding: 28px 24px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+  margin-bottom: 20px;
+}
+
+.canvas-accordion-all {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .canvas-step-badge {
@@ -1665,7 +1850,7 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
 }
 
 .dialogue-sec-label {
@@ -1831,7 +2016,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 14px;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
 }
 
 .lego-slot-column {
@@ -1962,7 +2147,7 @@
   border-left: 4px solid #D97706;
   border-radius: 10px;
   padding: 14px 16px;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
   font-size: 14.5px;
   line-height: 1.5;
   color: var(--text-primary);
@@ -2101,14 +2286,118 @@
   border-radius: var(--radius-pill);
 }
 
+/* =========================================
+   RESPONSIVE DESIGN: MOBILE, IPAD, DESKTOP
+   ========================================= */
+
+/* Tablets / iPad (Portrait & Landscape: 601px -> 1024px) */
+@media (min-width: 601px) and (max-width: 1024px) {
+  .grammar-container {
+    max-width: 100%;
+    padding: 16px 20px 80px;
+  }
+  .grammar-canvas-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .lego-slots-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .stage-accordion-header {
+    padding: 16px 18px;
+  }
+}
+
+/* Mobile Phones (Max width: 600px) */
 @media (max-width: 600px) {
+  .grammar-container {
+    padding: 12px 10px 80px;
+  }
+  .grammar-master-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 12px 14px;
+    gap: 10px;
+  }
+  .master-bar-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .master-bar-right .btn {
+    flex: 1;
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+  .stage-accordion-header {
+    padding: 14px 14px;
+    align-items: flex-start;
+  }
+  .stage-icon-circle {
+    font-size: 20px;
+  }
+  .stage-main-title {
+    font-size: 15.5px;
+  }
+  .stage-desc-text {
+    font-size: 12.5px;
+  }
+  .stage-header-right {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+  }
+  .stage-accordion-body {
+    padding: 0 12px 16px;
+  }
+  .grammar-canvas-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .grammar-canvas-card {
+    padding: 16px 16px;
+  }
+  .canvas-card-zh {
+    font-size: 20px;
+  }
+  .canvas-card-title {
+    font-size: 13.5px;
+  }
+  .canvas-nav-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .canvas-top-right-group {
+    justify-content: space-between;
+    width: 100%;
+  }
   .canvas-stepper-bar {
     grid-template-columns: repeat(2, 1fr);
+    gap: 4px;
+  }
+  .canvas-step-tab {
+    padding: 8px 6px;
+    font-size: 12px;
+  }
+  .canvas-step-card {
+    padding: 20px 16px;
+  }
+  .canvas-hero-title {
+    font-size: 21px;
   }
   .lego-slots-grid {
     grid-template-columns: 1fr;
   }
   .assembled-zh-line {
-    font-size: 24px;
+    font-size: 22px;
+  }
+  .assembled-tr-line {
+    font-size: 14px;
+  }
+  .challenge-actions-bar {
+    width: 100%;
+  }
+  .challenge-actions-bar .btn {
+    flex: 1;
   }
 }

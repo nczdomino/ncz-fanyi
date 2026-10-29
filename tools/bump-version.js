@@ -83,11 +83,22 @@ if (fs.existsSync(indexHtmlPath)) {
       versionRegex,
       `<div id="app-version-badge" style="font-size:12px; font-weight:600; color:var(--accent); margin-top:4px;">Version ${newVersion} Pro</div>`
     );
-    fs.writeFileSync(indexHtmlPath, html, 'utf8');
     console.log(`  ✅ index.html updated: #app-version-badge -> Version ${newVersion} Pro`);
   } else {
     console.warn(`  ⚠️ Warning: #app-version-badge element not found in index.html`);
   }
+
+  const railVersionRegex = /<div class="rail-version">Halou · v[^<]*<\/div>/;
+  if (railVersionRegex.test(html)) {
+    html = html.replace(
+      railVersionRegex,
+      `<div class="rail-version">Halou · v${newVersion}</div>`
+    );
+    console.log(`  ✅ index.html updated: .rail-version -> Halou · v${newVersion}`);
+  } else {
+    console.warn(`  ⚠️ Warning: .rail-version element not found in index.html`);
+  }
+  fs.writeFileSync(indexHtmlPath, html, 'utf8');
 }
 
 // 5. Update sw.js (Ensures browsers purge stale caches immediately upon new deployment)

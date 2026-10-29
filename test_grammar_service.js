@@ -18,7 +18,7 @@ const path = require('path');
 console.log('\n🧪 Starting Halou HSK Grammar Master & Multi-Tier Service Test Suite...\n');
 
 // 1. Dataset Verification
-console.log('--- 1. Datasets & Raw JSON Integrity (Stage 1 Canvas) ---');
+console.log('--- 1. Datasets & Raw JSON Integrity (Stages 1, 2 & 3 Canvas) ---');
 const catalogPath = path.join(__dirname, 'js/data/hsk_catalog_2.0_3.0_all_levels.json');
 const samplesPath = path.join(__dirname, 'js/data/hsk_grammar_generated_samples.json');
 const grammarDataJsPath = path.join(__dirname, 'js/data/grammar-data.js');
@@ -31,17 +31,17 @@ const catalogRaw = JSON.parse(fs.readFileSync(catalogPath, 'utf8'));
 const samplesRaw = JSON.parse(fs.readFileSync(samplesPath, 'utf8'));
 
 assert(Array.isArray(catalogRaw), 'Catalog is an array');
-assert.strictEqual(catalogRaw.length, 5, 'Catalog has exactly 5 Stage 1 items');
-console.log(`  ✅ Catalog contains ${catalogRaw.length} Stage 1 items`);
+assert.strictEqual(catalogRaw.length, 15, 'Catalog has exactly 15 items across Stages 1, 2 & 3');
+console.log(`  ✅ Catalog contains ${catalogRaw.length} items across Stages 1, 2 & 3`);
 
 assert(Array.isArray(samplesRaw), 'Samples is an array');
-assert.strictEqual(samplesRaw.length, 5, 'Samples has exactly 5 Stage 1 blueprints');
+assert.strictEqual(samplesRaw.length, 15, 'Samples has exactly 15 detailed interactive blueprints');
 console.log(`  ✅ Samples contain ${samplesRaw.length} detailed interactive blueprints`);
 
 // Verify grammar-data.js exports
 const bundledData = require('./js/data/grammar-data.js');
-assert.strictEqual(bundledData.HSK_GRAMMAR_CATALOG.length, 5, 'grammar-data.js catalog loaded 5 items');
-assert.strictEqual(bundledData.HSK_GRAMMAR_SAMPLES.length, 5, 'grammar-data.js samples loaded 5 items');
+assert.strictEqual(bundledData.HSK_GRAMMAR_CATALOG.length, 15, 'grammar-data.js catalog loaded 15 items');
+assert.strictEqual(bundledData.HSK_GRAMMAR_SAMPLES.length, 15, 'grammar-data.js samples loaded 15 items');
 console.log('  ✅ grammar-data.js bundle verified valid in Node.js runtime');
 
 // 2. TypeScript Types Schema Audit
@@ -105,11 +105,15 @@ assert.strictEqual(getLocalizedText('Plain String', 'vi'), 'Plain String', 'Hand
 assert.strictEqual(getLocalizedText(null, 'vi'), '', 'Handles null gracefully');
 console.log('  ✅ getLocalizedText handles all 3 locales and edge cases');
 
-// 4. Filtering Engine on Stage 1 Data
+// 4. Filtering Engine on Stages 1, 2, 3 Data
 console.log('\n--- 4. Grammar Catalog Filtering & Search ---');
 const hsk1Items = filterGrammarCatalog({ level: 'HSK1' });
-assert.strictEqual(hsk1Items.length, 5, 'HSK1 returns all 5 items');
+assert.strictEqual(hsk1Items.length, 10, 'HSK1 returns 10 items (Stages 1 & 2)');
 console.log(`  ✅ HSK1 level filter returns ${hsk1Items.length} items`);
+
+const hsk2Items = filterGrammarCatalog({ level: 'HSK2' });
+assert.strictEqual(hsk2Items.length, 5, 'HSK2 returns 5 items (Stage 3)');
+console.log(`  ✅ HSK2 level filter returns ${hsk2Items.length} items`);
 
 const searchShi = filterGrammarCatalog({ query: '是' });
 assert(searchShi.some(x => x.id === 'hsk1_shi'), 'Search "是" finds hsk1_shi');
@@ -118,7 +122,7 @@ console.log('  ✅ Search "是" finds hsk1_shi');
 // 5. Joining Catalog with Detailed Rules
 console.log('\n--- 5. Joining Catalog and Detailed Rules ---');
 const joinedAll = getJoinedGrammarList();
-assert.strictEqual(joinedAll.length, 5, 'Joined list contains all 5 Stage 1 items');
+assert.strictEqual(joinedAll.length, 15, 'Joined list contains all 15 items across Stages 1, 2, 3');
 
 joinedAll.forEach(item => {
   assert(item.detail, `${item.catalog.id} has detail attached`);
@@ -128,7 +132,7 @@ joinedAll.forEach(item => {
   assert(item.detail.challenge && item.detail.challenge.correct_order, `${item.catalog.id} has challenge`);
   assert(item.detail.localizations && item.detail.localizations.vi.trap_wrong, `${item.catalog.id} has trap info`);
 });
-console.log('  ✅ JoinedGrammarPoint verifies 100% of Stage 1 Lego Canvas blueprints');
+console.log('  ✅ JoinedGrammarPoint verifies 100% of Stages 1, 2, 3 Lego Canvas blueprints');
 
 // 6. UI Components Rendering Verification
 console.log('\n--- 6. UI Components Rendering ---');
@@ -156,6 +160,9 @@ assert(typeof window.openGrammarCanvas === 'function', 'openGrammarCanvas is exp
 assert(typeof window.setCanvasStep === 'function', 'setCanvasStep is exposed');
 assert(typeof window.selectLegoOption === 'function', 'selectLegoOption is exposed');
 assert(typeof window.checkChallengeAnswer === 'function', 'checkChallengeAnswer is exposed');
+assert(typeof window.toggleStageAccordion === 'function', 'toggleStageAccordion is exposed');
+assert(typeof window.expandAllStages === 'function', 'expandAllStages is exposed');
+assert(typeof window.setDetailViewMode === 'function', 'setDetailViewMode is exposed');
 
 // Test Mock Formula and TokenizedSentence
 const sampleItem = joinedAll[0].detail;
