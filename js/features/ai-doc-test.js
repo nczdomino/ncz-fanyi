@@ -79,6 +79,56 @@
     }
   }
 
+  // --- Pinyin-Pro Loader (Local vendor first, then window/global fallback) ---
+  let localPinyinPro = null;
+  if (typeof window !== 'undefined' && window.pinyinPro) {
+    localPinyinPro = window.pinyinPro;
+  } else if (typeof global !== 'undefined' && global.pinyinPro) {
+    localPinyinPro = global.pinyinPro;
+  } else if (typeof require === 'function') {
+    try {
+      localPinyinPro = require('../vendor/pinyin-pro.min.js');
+    } catch (e1) {
+      try {
+        localPinyinPro = require('./js/vendor/pinyin-pro.min.js');
+      } catch (e2) {}
+    }
+  }
+
+  function getWordPinyin(word) {
+    if (!word) return '';
+
+    // 1. Try local pinyin-pro engine (covers 100% of Chinese text with tones)
+    const pPro = localPinyinPro || 
+                 (typeof window !== 'undefined' && window.pinyinPro) ||
+                 (typeof global !== 'undefined' && global.pinyinPro);
+    if (pPro && typeof pPro.pinyin === 'function') {
+      try {
+        const py = pPro.pinyin(word, { toneType: 'symbol' });
+        if (py && py !== word && !/[\u4e00-\u9fa5]/.test(py)) {
+          return py;
+        }
+      } catch (e) {}
+    }
+
+    // 2. Embedded core dictionary lookup
+    if (typeof MINI_DICT !== 'undefined' && MINI_DICT[word] && MINI_DICT[word].pinyin) {
+      return MINI_DICT[word].pinyin;
+    }
+    if (typeof COMMON_WORDS !== 'undefined' && COMMON_WORDS[word] && COMMON_WORDS[word].pinyin) {
+      return COMMON_WORDS[word].pinyin;
+    }
+    if (typeof HSK789_WORDS !== 'undefined' && HSK789_WORDS[word] && HSK789_WORDS[word].pinyin) {
+      return HSK789_WORDS[word].pinyin;
+    }
+    if (typeof HALOU_LEARN_DATA !== 'undefined' && HALOU_LEARN_DATA.vocabulary) {
+      const found = HALOU_LEARN_DATA.vocabulary.find(v => v.hanzi === word);
+      if (found && found.pinyin) return found.pinyin;
+    }
+
+    return '';
+  }
+
   // --- Normalization & Pinyin Matching Helpers ---
   const VI_DIACRITICS_MAP = {
     'a': /[àáảãạăắằẳẵặâấầẩẫậ]/gi,
@@ -87,12 +137,14 @@
     'o': /[òóỏõọôốồổỗộơớờởỡợ]/gi,
     'u': /[ùúủũụưứừửữựüǖǘǚǜ]/gi,
     'y': /[ỳýỷỹỵ]/gi,
-    'd': /[đ]/gi
+    'd': /[đĐ]/gi
   };
 
   function stripPinyinTones(str) {
     if (!str) return '';
     let res = String(str).toLowerCase().trim();
+    // Vietnamese Telex auto-compound fixes for mobile keyboards
+    res = res.replace(/ưa/gi, 'wa').replace(/ươ/gi, 'wo').replace(/ưo/gi, 'wo');
     for (const [char, regex] of Object.entries(VI_DIACRITICS_MAP)) {
       res = res.replace(regex, char);
     }
@@ -100,7 +152,7 @@
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
       .replace(/v/g, 'u')
-      .replace(/[^a-z0-9]/g, '');
+      .replace(/[^a-z]/g, ''); // Strips all tone numbers (1-5), punctuation, and spaces
   }
 
   function convertNumericPinyin(str) {
@@ -117,21 +169,22 @@
 
   function verifyPinyinInput(userInput, targetPinyin) {
     if (!userInput || !targetPinyin) return { correct: false, exactTone: false };
-    const rawClean = userInput.trim().toLowerCase();
-    const convertedClean = convertNumericPinyin(rawClean).trim().toLowerCase();
-    const targetClean = targetPinyin.trim().toLowerCase();
+    const userClean = stripPinyinTones(userInput);
+    if (!userClean) return { correct: false, exactTone: false };
 
-    // 1. Exact match with accent marks or converted tone numbers
-    if (convertedClean === targetClean || rawClean === targetClean) {
-      return { correct: true, exactTone: true, pinyin: targetPinyin };
-    }
+    // Target may contain multiple valid variants separated by slash, comma or semicolon (e.g. "nǐ hǎo / ní hǎo")
+    const rawTarget = String(targetPinyin);
+    const variants = rawTarget.split(/[\/,;]+/).map(t => t.trim()).filter(Boolean);
 
-    // 2. Toneless match (PRIMARY for effortless mobile typing)
-    const stripUser = stripPinyinTones(rawClean);
-    const stripTarget = stripPinyinTones(targetClean);
-
-    if (stripUser === stripTarget && stripUser.length > 0) {
-      return { correct: true, exactTone: false, pinyin: targetPinyin };
+    for (const variant of variants) {
+      const targetClean = stripPinyinTones(variant);
+      if (userClean === targetClean && targetClean.length > 0) {
+        const rawClean = userInput.trim().toLowerCase();
+        const convClean = convertNumericPinyin(rawClean).trim().toLowerCase();
+        const varClean = variant.toLowerCase().trim();
+        const isExact = (rawClean === varClean || convClean === varClean);
+        return { correct: true, exactTone: isExact, pinyin: variant };
+      }
     }
 
     return { correct: false, exactTone: false, target: targetPinyin };
@@ -241,16 +294,22 @@
           if (word.length === 1 && /^[一二三四五六七八九十百千万]$/.test(word)) {
             return;
           }
+
+          // Lookup real accurate pinyin
+          const pinyin = getWordPinyin(word);
+          // CRITICAL: Ensure every single word has valid pinyin; never fallback to Hanzi characters
+          if (!pinyin || pinyin === word || /[\u4e00-\u9fa5]/.test(pinyin)) {
+            return;
+          }
+
           seen.add(word);
 
           // Find dictionary entry
-          let pinyin = '';
           let hanviet = '';
           let meaning = '';
 
           if (typeof MINI_DICT !== 'undefined' && MINI_DICT[word]) {
             const d = MINI_DICT[word];
-            pinyin = d.pinyin || '';
             hanviet = d.hanviet || '';
             meaning = (loc === 'ja' && d.ja) ? d.ja : ((loc === 'en' && d.en) ? (Array.isArray(d.en) ? d.en.join('; ') : d.en) : d.vi);
           }
@@ -258,7 +317,6 @@
           if (!meaning && typeof HALOU_LEARN_DATA !== 'undefined' && HALOU_LEARN_DATA.vocabulary) {
             const found = HALOU_LEARN_DATA.vocabulary.find(v => v.hanzi === word);
             if (found) {
-              pinyin = pinyin || found.pinyin || '';
               hanviet = hanviet || found.hanviet || '';
               meaning = (found.meanings && found.meanings[loc]) || found.meanings?.vi || '';
             }
@@ -300,7 +358,7 @@
           extractedWords.push({
             id: `dw_${extractedWords.length + 1}`,
             word: word,
-            pinyin: pinyin || word,
+            pinyin: pinyin,
             hanviet: hanviet || '',
             meaning: meaning,
             contextSentence: sentence,
@@ -519,23 +577,21 @@
         <!-- Top Status & Progress Bar -->
         <div class="drill-progress-card">
           <div class="drill-progress-top">
-            <div class="drill-step-indicator">
+            <div id="aidoc-step-indicator" class="drill-step-indicator">
               ${loc === 'ja' ? '進捗' : (loc === 'en' ? 'Progress' : 'Tiến độ')}: 
               <b>${loc === 'ja' ? `第 ${currentWordNum} / ${totalWords} 単語` : (loc === 'en' ? `Word ${currentWordNum} / ${totalWords}` : `Từ ${currentWordNum} / ${totalWords}`)}</b>
             </div>
             <div class="drill-stats-pills">
               <span class="pill-stat">🎯 ${loc === 'ja' ? '合計' : (loc === 'en' ? 'Total' : 'Tổng')}: <b>${totalWords}</b></span>
-              <span class="pill-stat pill-mastered">✅ ${loc === 'ja' ? '習得' : (loc === 'en' ? 'Mastered' : 'Đã thuộc')}: <b>${session.masteredCount}</b></span>
-              ${session.reviewQueue.length > 0 ? `
-                <span class="pill-stat pill-review">🔄 ${loc === 'ja' ? '要復習' : (loc === 'en' ? 'Review' : 'Cần ôn lại')}: <b>${session.reviewQueue.length}</b></span>
-              ` : ''}
+              <span id="aidoc-stat-mastered" class="pill-stat pill-mastered">✅ ${loc === 'ja' ? '習得' : (loc === 'en' ? 'Mastered' : 'Đã thuộc')}: <b>${session.masteredCount}</b></span>
+              <span id="aidoc-stat-review" class="pill-stat pill-review" style="${session.reviewQueue.length > 0 ? '' : 'display:none;'}">🔄 ${loc === 'ja' ? '要復習' : (loc === 'en' ? 'Review' : 'Cần ôn lại')}: <b>${session.reviewQueue.length}</b></span>
               <button type="button" class="btn-drill-exit" onclick="aiDocTestResetToInput()" title="${loc === 'ja' ? '別の文章を入力' : (loc === 'en' ? 'New text' : 'Nạp bài mới')}">✕</button>
             </div>
           </div>
           <div class="drill-progress-bar">
-            <div class="drill-progress-fill" style="width: ${progressPercent}%;"></div>
+            <div id="aidoc-progress-fill" class="drill-progress-fill" style="width: ${progressPercent}%;"></div>
           </div>
-          <div class="drill-chips-scroller">
+          <div id="aidoc-chips-scroller" class="drill-chips-scroller">
             ${wordChipsHtml}
           </div>
         </div>
@@ -611,18 +667,43 @@
       </div>
     `;
 
-    // Auto-focus input in pinyin mode & auto-scroll active chip into view for 200-300 words
+    // Safe horizontal scrolling without page jumping
     setTimeout(() => {
       if (typeof document === 'undefined') return;
-      const input = document.getElementById('aidoc-pinyin-input');
-      if (input && !resultState?.pinyinOk) {
-        input.focus();
+      const scroller = document.getElementById('aidoc-chips-scroller');
+      const activeChip = scroller ? scroller.querySelector('.drill-word-chip.chip-active') : null;
+      if (scroller && activeChip) {
+        const targetScroll = activeChip.offsetLeft - (scroller.clientWidth / 2) + (activeChip.clientWidth / 2);
+        scroller.scrollTo({ left: Math.max(0, targetScroll), behavior: 'smooth' });
       }
-      const activeChip = container.querySelector('.drill-word-chip.chip-active');
-      if (activeChip && activeChip.scrollIntoView) {
-        activeChip.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-      }
-    }, 100);
+    }, 50);
+  }
+
+  function renderFeedbackBanner(resultState, word, loc) {
+    if (!resultState) return '';
+    return `
+      <div class="drill-feedback-banner ${resultState.pinyinOk ? 'feedback-success' : 'feedback-error'}">
+        ${resultState.pinyinOk ? `
+          <span class="feedback-icon">✓</span>
+          <span class="feedback-msg">
+            ${loc === 'ja' 
+              ? `正解！ピンイン: [${escapeHtml(word.pinyin)}]` 
+              : (loc === 'en' 
+                ? `Correct! Pinyin: [${escapeHtml(word.pinyin)}]` 
+                : `Chính xác! Pinyin: [${escapeHtml(word.pinyin)}]`)}
+          </span>
+        ` : `
+          <span class="feedback-icon">✕</span>
+          <span class="feedback-msg">
+            ${loc === 'ja' 
+              ? `未正解。正解は: [${escapeHtml(word.pinyin)}] です。もう一度タップまたは入力してみてください！` 
+              : (loc === 'en' 
+                ? `Incorrect. Correct is: [${escapeHtml(word.pinyin)}]. Try again!` 
+                : `Chưa đúng! Đáp án chuẩn: [${escapeHtml(word.pinyin)}]. Bạn có thể bấm chọn nhanh ở trên nhé!`)}
+          </span>
+        `}
+      </div>
+    `;
   }
 
   // Render the specific drill input area depending on active mode
@@ -718,29 +799,9 @@
           </div>
         ` : ''}
 
-        ${resultState ? `
-          <div class="drill-feedback-banner ${resultState.pinyinOk ? 'feedback-success' : 'feedback-error'}">
-            ${resultState.pinyinOk ? `
-              <span class="feedback-icon">✓</span>
-              <span class="feedback-msg">
-                ${loc === 'ja' 
-                  ? `正解！ピンイン: [${escapeHtml(word.pinyin)}]` 
-                  : (loc === 'en' 
-                    ? `Correct! Pinyin: [${escapeHtml(word.pinyin)}]` 
-                    : `Chính xác! Pinyin: [${escapeHtml(word.pinyin)}]`)}
-              </span>
-            ` : `
-              <span class="feedback-icon">✕</span>
-              <span class="feedback-msg">
-                ${loc === 'ja' 
-                  ? `未正解。正解は: [${escapeHtml(word.pinyin)}] です。もう一度タップまたは入力してみてください！` 
-                  : (loc === 'en' 
-                    ? `Incorrect. Correct is: [${escapeHtml(word.pinyin)}]. Try again!` 
-                    : `Chưa đúng! Đáp án chuẩn: [${escapeHtml(word.pinyin)}]. Bạn có thể bấm chọn nhanh ở trên nhé!`)}
-              </span>
-            `}
-          </div>
-        ` : ''}
+        <div id="aidoc-feedback-container">
+          ${renderFeedbackBanner(resultState, word, loc)}
+        </div>
       </div>
     `;
   }
@@ -857,6 +918,8 @@
       exactTone: verified.exactTone
     };
 
+    const loc = getLang();
+
     if (verified.correct) {
       playAudio(word.word);
       // If it was in review queue, remove it
@@ -867,6 +930,39 @@
       // Re-calculate mastered count
       session.masteredCount = Object.values(session.results).filter(r => r.pinyinOk).length;
 
+      // In-place UI update without full DOM destruction (prevents mobile page jumping & keyboard flashing)
+      if (typeof document !== 'undefined') {
+        if (input) {
+          input.classList.remove('input-incorrect');
+          input.classList.add('input-correct');
+          input.readOnly = true;
+        }
+        const checkBtn = document.querySelector('.aidoc-check-btn');
+        if (checkBtn) checkBtn.textContent = '✓';
+
+        const fb = document.getElementById('aidoc-feedback-container');
+        if (fb) {
+          fb.innerHTML = renderFeedbackBanner(session.results[wordId], word, loc);
+        }
+
+        const progFill = document.getElementById('aidoc-progress-fill');
+        if (progFill && words.length > 0) {
+          const pct = Math.round((session.masteredCount / words.length) * 100);
+          progFill.style.width = `${pct}%`;
+        }
+
+        const statMastered = document.getElementById('aidoc-stat-mastered');
+        if (statMastered) {
+          statMastered.innerHTML = `✅ ${loc === 'ja' ? '習得' : (loc === 'en' ? 'Mastered' : 'Đã thuộc')}: <b>${session.masteredCount}</b>`;
+        }
+
+        const scroller = document.getElementById('aidoc-chips-scroller');
+        if (scroller) {
+          const activeChip = scroller.querySelector('.drill-word-chip.chip-active');
+          if (activeChip) activeChip.classList.add('chip-done');
+        }
+      }
+
       // Auto advance smoothly after 700ms
       setTimeout(() => {
         globalScope.aiDocTestNextWord();
@@ -876,9 +972,23 @@
       if (!session.reviewQueue.includes(session.currentIndex)) {
         session.reviewQueue.push(session.currentIndex);
       }
-    }
 
-    renderAIDocTest();
+      // In-place error feedback without page jumping
+      if (typeof document !== 'undefined') {
+        if (input) {
+          input.classList.add('input-incorrect');
+        }
+        const fb = document.getElementById('aidoc-feedback-container');
+        if (fb) {
+          fb.innerHTML = renderFeedbackBanner(session.results[wordId], word, loc);
+        }
+        const statReview = document.getElementById('aidoc-stat-review');
+        if (statReview) {
+          statReview.style.display = 'inline-flex';
+          statReview.innerHTML = `🔄 ${loc === 'ja' ? '要復習' : (loc === 'en' ? 'Review' : 'Cần ôn lại')}: <b>${session.reviewQueue.length}</b>`;
+        }
+      }
+    }
   };
 
   globalScope.aiDocTestSelectPinyinChoice = function (pinyinText, wordId) {

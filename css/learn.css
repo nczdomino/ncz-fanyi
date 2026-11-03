@@ -1953,6 +1953,12 @@
   color: #065F46;
 }
 
+.aidoc-pinyin-input.input-incorrect {
+  border-color: #EF4444;
+  background: #FEF2F2;
+  color: #991B1B;
+}
+
 .aidoc-check-btn {
   padding: 0 20px;
   font-size: 14px;

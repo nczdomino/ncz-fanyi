@@ -113,6 +113,19 @@ test('Extracts comprehensive vocabulary and binds original context sentence', ()
   assert.ok(firstWord.mnemonic, 'Word must have mnemonic hint');
 });
 
+test('Every extracted word has valid non-Hanzi pinyin that can be typed and verified', () => {
+  const sampleDoc = AiDocTest.SAMPLE_PRESETS.news.text;
+  const result = AiDocTest.extractLocalVocabFromText(sampleDoc, 'vi');
+  assert.ok(result.totalWords > 0);
+  result.words.forEach(w => {
+    assert.ok(w.pinyin, `Word ${w.word} must have non-empty pinyin`);
+    assert.strictEqual(/[\u4e00-\u9fa5]/.test(w.pinyin), false, `Word ${w.word} pinyin must not contain Hanzi characters`);
+    // Verify that typing its toneless pinyin is accepted 100%
+    const check = AiDocTest.verifyPinyinInput(w.pinyin, w.pinyin);
+    assert.strictEqual(check.correct, true, `Pinyin verification must pass for ${w.word}`);
+  });
+});
+
 test('Does not artificially truncate list to 12 words when document has more', () => {
   // A text containing many words
   const longDoc = "北京、上海、广州、深圳是中国的大城市。科技、经济、文化、艺术、教育、医疗、交通和旅游都很繁荣。工人和学生努力工作与学习，为了美好未来而奋斗。每天清晨大家跑步运动，晚上看书听音乐。";
