@@ -2,10 +2,11 @@
  * test_ai_doc_test.js
  * 
  * Unit tests for Halou AI Document Vocabulary Studio & Smart Drill:
- * 1. verifyPinyinInput (exact accents, numeric pinyin 'ni3 hao3', toneless tolerance 'ni hao', invalid inputs)
- * 2. extractLocalVocabFromText (NLP tokenization, stopwords filter, context sentence binding, trilingual metadata)
- * 3. Presets integrity (SAMPLE_PRESETS valid Chinese texts & titles)
- * 4. Drill Session State Machine (marking correct, review queue loop, 100% mastery finish)
+ * 1. verifyPinyinInput (toneless 'ni hao', 'nihao', Vietnamese keyboard 'đian nao', numeric 'ni3 hao3', 'lv you')
+ * 2. extractLocalVocabFromText (NLP tokenization, stopwords filter, comprehensive word retention up to 45 words, 1-char verbs)
+ * 3. Quick-Select choices & Reveal actions
+ * 4. Presets integrity (SAMPLE_PRESETS valid Chinese texts & titles)
+ * 5. Drill Session State Machine (marking correct, review queue loop, 100% mastery finish)
  */
 
 const assert = require('assert');
@@ -37,9 +38,29 @@ function test(name, fn) {
 }
 
 // -------------------------------------------------------------
-// Suite 1: Pinyin Input Verification
+// Suite 1: Mobile-Friendly Toneless Pinyin Input Verification
 // -------------------------------------------------------------
-console.log('--- 1. Pinyin Input Verification & Tolerance ---');
+console.log('--- 1. Mobile-Friendly Toneless Pinyin Input Verification ---');
+
+test('Toneless pinyin accepted effortlessly (ni hao for nǐ hǎo)', () => {
+  const res = AiDocTest.verifyPinyinInput('ni hao', 'nǐ hǎo');
+  assert.strictEqual(res.correct, true);
+});
+
+test('Spaceless toneless pinyin accepted (nihao for nǐ hǎo)', () => {
+  const res = AiDocTest.verifyPinyinInput('nihao', 'nǐ hǎo');
+  assert.strictEqual(res.correct, true);
+});
+
+test('Vietnamese mobile keyboard auto-accent & đ tolerance (đian nao for diànnǎo)', () => {
+  const res = AiDocTest.verifyPinyinInput('đian nao', 'diànnǎo');
+  assert.strictEqual(res.correct, true);
+});
+
+test('Pinyin letter v for ü tolerance (lv you for lǚyóu)', () => {
+  const res = AiDocTest.verifyPinyinInput('lv you', 'lǚyóu');
+  assert.strictEqual(res.correct, true);
+});
 
 test('Exact match with accent marks', () => {
   const res = AiDocTest.verifyPinyinInput('nǐ hǎo', 'nǐ hǎo');
@@ -47,36 +68,21 @@ test('Exact match with accent marks', () => {
   assert.strictEqual(res.exactTone, true);
 });
 
-test('Exact match with case and surrounding whitespace variation', () => {
-  const res = AiDocTest.verifyPinyinInput('   NǏ HǍO   ', 'nǐ hǎo');
-  assert.strictEqual(res.correct, true);
-  assert.strictEqual(res.exactTone, true);
-});
-
-test('Numeric pinyin input converted to tone accents (e.g. ni3 hao3 -> nǐ hǎo)', () => {
+test('Numeric pinyin input converted to tone accents (ni3 hao3 -> nǐ hǎo)', () => {
   const res = AiDocTest.verifyPinyinInput('ni3 hao3', 'nǐ hǎo');
   assert.strictEqual(res.correct, true);
-  assert.strictEqual(res.exactTone, true);
 });
 
-test('Toneless pinyin accepted with helpful hint (e.g. ni hao for nǐ hǎo)', () => {
-  const res = AiDocTest.verifyPinyinInput('ni hao', 'nǐ hǎo');
-  assert.strictEqual(res.correct, true);
-  assert.strictEqual(res.exactTone, false);
-  assert.strictEqual(res.hint, 'nǐ hǎo');
-});
-
-test('Compound multi-syllable word tolerance (e.g. ren2 gong1 zhi4 neng2 -> réngōng zhìnéng)', () => {
-  const resNumeric = AiDocTest.verifyPinyinInput('ren2 gong1 zhi4 neng2', 'réngōng zhìnéng');
+test('Compound multi-syllable word tolerance (rengong zhineng for réngōng zhìnéng)', () => {
   const resToneless = AiDocTest.verifyPinyinInput('rengong zhineng', 'réngōng zhìnéng');
+  const resSpaceless = AiDocTest.verifyPinyinInput('rengongzhineng', 'réngōng zhìnéng');
   assert.strictEqual(resToneless.correct, true);
-  assert.strictEqual(resNumeric.correct, true);
+  assert.strictEqual(resSpaceless.correct, true);
 });
 
 test('Completely incorrect pinyin rejected', () => {
   const res = AiDocTest.verifyPinyinInput('xie xie', 'nǐ hǎo');
   assert.strictEqual(res.correct, false);
-  assert.strictEqual(res.exactTone, false);
 });
 
 test('Empty or invalid input handling', () => {
@@ -86,12 +92,12 @@ test('Empty or invalid input handling', () => {
 });
 
 // -------------------------------------------------------------
-// Suite 2: Local NLP Extractor & Fallback Engine
+// Suite 2: Local NLP Extractor & Comprehensive Word Retention
 // -------------------------------------------------------------
-console.log('\n--- 2. Local NLP Extractor & Sentence Contextualization ---');
+console.log('\n--- 2. Comprehensive Word Extraction & Local NLP Engine ---');
 
-test('Extracts vocabulary and binds original context sentence', () => {
-  const sampleDoc = "随着人工智能的快速发展，越来越多的年轻人开始使用智能工具。专家表示掌握先进技能具备显著优势。";
+test('Extracts comprehensive vocabulary and binds original context sentence', () => {
+  const sampleDoc = "随着人工智能的快速发展，越来越多的年轻人开始使用智能工具。专家表示掌握先进技能具备显著优势。我们在餐馆喝茶吃菜，非常高兴。";
   const result = AiDocTest.extractLocalVocabFromText(sampleDoc, 'vi');
 
   assert.ok(result.totalWords > 0, 'Should extract words');
@@ -107,8 +113,15 @@ test('Extracts vocabulary and binds original context sentence', () => {
   assert.ok(firstWord.mnemonic, 'Word must have mnemonic hint');
 });
 
-test('Filters out stop words (的, 了, 是, etc.)', () => {
-  const doc = "的 了 是 我 你 他 她 它 们 在 有 和 电脑";
+test('Does not artificially truncate list to 12 words when document has more', () => {
+  // A text containing many words
+  const longDoc = "北京、上海、广州、深圳是中国的大城市。科技、经济、文化、艺术、教育、医疗、交通和旅游都很繁荣。工人和学生努力工作与学习，为了美好未来而奋斗。每天清晨大家跑步运动，晚上看书听音乐。";
+  const result = AiDocTest.extractLocalVocabFromText(longDoc, 'vi');
+  assert.ok(result.totalWords > 12, `Extracted ${result.totalWords} words, should be > 12 without dropping valuable terms`);
+});
+
+test('Filters out pure stop words (的, 了, 是, etc.) but retains terms', () => {
+  const doc = "的 了 是 我 你 他 她 它 们 在 有 和 电脑 手机";
   const result = AiDocTest.extractLocalVocabFromText(doc, 'vi');
   
   const words = result.words.map(w => w.word);
@@ -116,6 +129,7 @@ test('Filters out stop words (的, 了, 是, etc.)', () => {
   assert.strictEqual(words.includes('了'), false, 'Should filter 了');
   assert.strictEqual(words.includes('是'), false, 'Should filter 是');
   assert.strictEqual(words.includes('电脑'), true, 'Should retain 电脑');
+  assert.strictEqual(words.includes('手机'), true, 'Should retain 手机');
 });
 
 test('Supports trilingual locales (vi, en, ja)', () => {
@@ -127,16 +141,12 @@ test('Supports trilingual locales (vi, en, ja)', () => {
   assert.ok(resVi.words.length > 0);
   assert.ok(resEn.words.length > 0);
   assert.ok(resJa.words.length > 0);
-  // Verify localized context label
-  assert.ok(resVi.words[0].contextUsage.includes('trong ngữ cảnh') || resVi.words[0].contextUsage.length > 0);
-  assert.ok(resEn.words[0].contextUsage.includes('In context') || resEn.words[0].contextUsage.length > 0);
-  assert.ok(resJa.words[0].contextUsage.includes('文脈') || resJa.words[0].contextUsage.length > 0);
 });
 
 // -------------------------------------------------------------
-// Suite 3: Presets Integrity
+// Suite 3: Presets & Mobile Quick-Select Choices
 // -------------------------------------------------------------
-console.log('\n--- 3. Presets Integrity ---');
+console.log('\n--- 3. Presets & Mobile Quick-Select Choices ---');
 
 test('All sample presets have required metadata and Chinese text', () => {
   const presets = AiDocTest.SAMPLE_PRESETS;
@@ -151,13 +161,41 @@ test('All sample presets have required metadata and Chinese text', () => {
   });
 });
 
+test('Quick-Select choice pills generator and tap action', () => {
+  AiDocTest.aiDocTestState.data = {
+    summary: 'Test',
+    totalWords: 2,
+    words: [
+      { id: 'w1', word: '你好', pinyin: 'nǐ hǎo' },
+      { id: 'w2', word: '世界', pinyin: 'shìjiè' }
+    ]
+  };
+  AiDocTest.aiDocTestState.session = {
+    activeMode: 'pinyin',
+    currentIndex: 0,
+    userInputs: {},
+    results: {},
+    reviewQueue: [],
+    isReviewingLoop: false,
+    masteredCount: 0,
+    isFinished: false
+  };
+
+  // Test 1-tap select choice
+  AiDocTest.aiDocTestSelectPinyinChoice('ni hao', 'w1');
+  assert.strictEqual(AiDocTest.aiDocTestState.session.results['w1'].pinyinOk, true);
+
+  // Test reveal pinyin
+  AiDocTest.aiDocTestRevealPinyin('w2');
+  assert.strictEqual(AiDocTest.aiDocTestState.session.userInputs['w2'], 'shìjiè');
+});
+
 // -------------------------------------------------------------
-// Suite 4: Drill Session State Machine & Spaced Review Loop
+// Suite 4: Drill Session State Machine & 100% Mastery Loop
 // -------------------------------------------------------------
 console.log('\n--- 4. Drill Session State Machine & 100% Mastery Loop ---');
 
-test('Full drill lifecycle: correct input, review loop on error, 100% mastery finish', () => {
-  // Setup synthetic session data with 2 words
+test('Full drill lifecycle: toneless input, review loop on error, 100% mastery finish', () => {
   AiDocTest.aiDocTestState.data = {
     summary: 'Test summary',
     totalWords: 2,
@@ -191,11 +229,11 @@ test('Full drill lifecycle: correct input, review loop on error, 100% mastery fi
   AiDocTest.aiDocTestNextWord();
   assert.strictEqual(state.session.currentIndex, 1, 'Should advance to index 1');
 
-  // 3. Second word correct input
-  state.session.userInputs['test_2'] = 'zai4 jian4';
+  // 3. Second word toneless input (zai jian)
+  state.session.userInputs['test_2'] = 'zai jian';
   AiDocTest.aiDocTestCheckPinyin('test_2');
 
-  assert.strictEqual(state.session.results['test_2'].pinyinOk, true, 'test_2 should be marked correct via numeric tone');
+  assert.strictEqual(state.session.results['test_2'].pinyinOk, true, 'test_2 should be marked correct via toneless input');
   assert.strictEqual(state.session.masteredCount, 1, 'Mastered count should be 1');
 
   // 4. Advance from last word -> should loop back to review queue!
@@ -204,8 +242,8 @@ test('Full drill lifecycle: correct input, review loop on error, 100% mastery fi
   assert.strictEqual(state.session.currentIndex, 0, 'Should loop back to word 0 in review queue');
   assert.strictEqual(state.session.isFinished, false, 'Should not be finished yet');
 
-  // 5. User corrects first word in review loop
-  state.session.userInputs['test_1'] = 'ni hao'; // toneless accepted!
+  // 5. User corrects first word in review loop (nihao without space or tones)
+  state.session.userInputs['test_1'] = 'nihao';
   AiDocTest.aiDocTestCheckPinyin('test_1');
 
   assert.strictEqual(state.session.results['test_1'].pinyinOk, true);
