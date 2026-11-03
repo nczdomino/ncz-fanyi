@@ -157,6 +157,9 @@
             <button type="button" class="learn-subnav-btn ${learnState.activeSubTab === 'flashcards' ? 'active' : ''}" onclick="learnSwitchSubTab('flashcards')">
               <span>🎴</span> ${loc === 'ja' ? 'フラッシュカード' : (loc === 'en' ? 'Flashcards' : 'Thẻ ghi nhớ')}
             </button>
+            <button type="button" class="learn-subnav-btn ${learnState.activeSubTab === 'doc-test' ? 'active' : ''}" onclick="learnSwitchSubTab('doc-test')">
+              <span>🤖</span> ${loc === 'ja' ? 'AI文章テスト' : (loc === 'en' ? 'AI Doc Drill' : 'AI Luyện Tài Liệu')}
+            </button>
             <button type="button" class="learn-subnav-btn ${learnState.activeSubTab === 'quiz' ? 'active' : ''}" onclick="learnSwitchSubTab('quiz')">
               <span>⚡</span> ${loc === 'ja' ? 'スピードクイズ' : (loc === 'en' ? 'Speed Quiz' : 'Trắc nghiệm')}
             </button>
@@ -207,6 +210,12 @@
     switch (learnState.activeSubTab) {
       case 'flashcards':
         renderFlashcardsTab(subContainer);
+        break;
+      case 'doc-test':
+        subContainer.innerHTML = '<div id="aidoc-mount-point"></div>';
+        if (typeof renderAIDocTestView === 'function') {
+          renderAIDocTestView(document.getElementById('aidoc-mount-point'));
+        }
         break;
       case 'quiz':
         renderQuizTab(subContainer);
@@ -1086,3 +1095,4 @@
     }
   }
 })();
+

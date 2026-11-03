@@ -275,3 +275,4 @@ test('resetAllProgress wipes SRS records and stats cleanly', () => {
 });
 
 console.log(`\n🎉 All ${passedTests} Halou Smart Study Hub unit tests passed with 100% success!\n`);
+

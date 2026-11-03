@@ -5,7 +5,7 @@ import { applyCors, rejectDisallowedOrigin, enforceRateLimit, readBody, noStore,
 const RATE_LIMIT = 30;          // requests
 const RATE_WINDOW_MS = 60_000;  // per minute
 const MAX_TEXT_LENGTH = 25_000;
-const ALLOWED_TYPES = new Set(['lenses', 'full', 'analyze_word', 'dict_lookup']);
+const ALLOWED_TYPES = new Set(['lenses', 'full', 'analyze_word', 'dict_lookup', 'doc_vocab_test']);
 
 // Best-effort per-instance cache for the automatic dictionary fallback. Serverless
 // instances do not share memory, but a warm instance serves every repeat lookup for
@@ -294,6 +294,103 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG VÀ DUY NHẤT một chuỗi JSON h�
   "memoryTip": "mẹo ghi nhớ từ vựng"
 }`;
       }
+    } else if (type === 'doc_vocab_test') {
+      if (isJa) {
+        prompt = `あなたは中国語教育のAI専門家です。
+次の中国語の文章を分析し、学習者が覚えるべき重要単語・表現を5〜12個抽出して、テスト・学習用データを生成してください:
+
+"""
+${text}
+"""
+
+各単語について以下を含めてください:
+1. "word": 単語（漢字）
+2. "pinyin": 正確なピンイン（声調付き）
+3. "meaning": 文章の文脈に即した自然な日本語訳
+4. "contextSentence": 文章中での実際の使用文（抜粋）
+5. "contextUsage": 文脈での使い方とニュアンスの解説
+6. "mnemonic": 漢字の部首やイメージを活用した覚え方のコツ
+
+必ず以下の有効なJSONスキーマのみを出力してください:
+{
+  "summary": "文章の簡潔な要約（1〜2文）",
+  "totalWords": 10,
+  "words": [
+    {
+      "word": "単語",
+      "pinyin": "ピンイン",
+      "meaning": "日本語訳",
+      "contextSentence": "本文の例文",
+      "contextUsage": "文脈での使い方の解説",
+      "mnemonic": "覚え方のコツ"
+    }
+  ]
+}`;
+      } else if (isEn) {
+        prompt = `You are an expert Chinese language teacher and linguist.
+Analyze the following Chinese text and extract 5 to 12 essential vocabulary words or idioms for the learner to study and drill:
+
+"""
+${text}
+"""
+
+For each extracted word, provide:
+1. "word": Chinese word
+2. "pinyin": standard tone-marked pinyin
+3. "meaning": accurate contextual English meaning
+4. "contextSentence": exact sentence excerpted from the text
+5. "contextUsage": concise explanation of how this word functions in this context
+6. "mnemonic": memorable trick or component breakdown to remember easily
+
+Return ONLY a valid JSON object matching this schema:
+{
+  "summary": "brief 1-2 sentence summary of text",
+  "totalWords": 10,
+  "words": [
+    {
+      "word": "word",
+      "pinyin": "pinyin",
+      "meaning": "English meaning",
+      "contextSentence": "context sentence",
+      "contextUsage": "contextual usage explanation",
+      "mnemonic": "memory mnemonic"
+    }
+  ]
+}`;
+      } else {
+        prompt = `Bạn là chuyên gia giảng dạy tiếng Trung ứng dụng AI.
+Hãy phân tích đoạn văn bản tiếng Trung sau và trích xuất từ 5 đến 12 từ vựng / thành ngữ quan trọng nhất để người học ôn luyện và làm bài kiểm tra:
+
+"""
+${text}
+"""
+
+Với mỗi từ vựng được trích xuất, hãy cung cấp:
+1. "word": chữ Hán
+2. "pinyin": pinyin chuẩn có dấu thanh điệu
+3. "hanviet": âm Hán-Việt
+4. "meaning": nghĩa tiếng Việt chính xác trong ngữ cảnh của bài đọc
+5. "contextSentence": câu trích dẫn nguyên văn từ bài nạp vào có chứa từ đó
+6. "contextUsage": giải thích ngắn gọn cách dùng tự động của từ trong câu đó (ngữ cảnh, sắc thái, cụm cố định)
+7. "mnemonic": phương pháp / mẹo nhớ thần tốc (chiết tự, bộ thủ hoặc liên tưởng dễ nhớ)
+
+CHỈ XUẤT RA DUY NHẤT MỘT ĐỐI TƯỢNG JSON HỢP LỆ THEO ĐÚNG CẤU TRÚC SAU:
+{
+  "summary": "Tóm tắt ngắn gọn nội dung bài đọc (1-2 câu)",
+  "totalWords": 10,
+  "words": [
+    {
+      "word": "chữ Hán",
+      "pinyin": "pinyin",
+      "hanviet": "âm hán việt",
+      "meaning": "nghĩa tiếng Việt chuẩn ngữ cảnh",
+      "contextSentence": "câu ngữ cảnh trích từ bài",
+      "contextUsage": "cách dùng và giải thích ngữ cảnh",
+      "mnemonic": "mẹo nhớ thần tốc"
+    }
+  ]
+}`;
+      }
     } else {
       if (isJa) {
         prompt = `あなたは中国語から日本語へのプロの翻訳者です。次の中国語の文を文脈に応じて3つの異なるレンズ（スタイル）で日本語に翻訳してください:
@@ -458,6 +555,23 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG một chuỗi JSON hợp lệ với c
           },
           model: usedModel,
           usage: data.usageMetadata || null
+        });
+      }
+    }
+
+    if (type === 'doc_vocab_test') {
+      try {
+        const cleanJson = outputText.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
+        const parsed = JSON.parse(cleanJson);
+        return res.status(200).json({
+          testData: parsed,
+          model: usedModel,
+          usage: data.usageMetadata || null
+        });
+      } catch (parseErr) {
+        return res.status(200).json({
+          testData: { summary: text.slice(0, 100), words: [] },
+          rawText: outputText.trim()
         });
       }
     }

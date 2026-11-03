@@ -1397,3 +1397,702 @@
     font-size: 9.5px;
   }
 }
+
+/* ==========================================
+   AI Document Vocabulary Studio & Smart Drill
+   ========================================== */
+.aidoc-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 680px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.aidoc-hero-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg, 18px);
+  padding: 24px 20px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.aidoc-hero-badge {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--accent);
+  background: rgba(217, 45, 67, 0.08);
+  border: 1px solid var(--accent-border);
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  display: inline-block;
+  align-self: flex-start;
+  letter-spacing: 0.6px;
+}
+
+.aidoc-hero-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+.aidoc-hero-desc {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.aidoc-presets-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--bg-muted);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+
+.presets-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.presets-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.preset-chip-btn {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-color);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.preset-chip-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(217, 45, 67, 0.05);
+}
+
+.aidoc-textarea-wrap {
+  width: 100%;
+}
+
+.aidoc-textarea {
+  width: 100%;
+  border-radius: 14px;
+  border: 1.5px solid var(--border-color);
+  background: var(--bg-muted);
+  color: var(--text-primary);
+  padding: 14px;
+  font-size: 14px;
+  line-height: 1.5;
+  outline: none;
+  resize: vertical;
+  min-height: 130px;
+  box-sizing: border-box;
+  font-family: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.aidoc-textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(217, 45, 67, 0.12);
+  background: var(--bg-surface);
+}
+
+.aidoc-action-row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.aidoc-generate-btn {
+  padding: 12px 24px;
+  font-size: 14.5px;
+  font-weight: 700;
+  border-radius: var(--radius-pill);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(217, 45, 67, 0.25);
+  cursor: pointer;
+}
+
+/* Loading Card */
+.aidoc-loading-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 18px;
+  padding: 40px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  max-width: 540px;
+  margin: 20px auto;
+}
+
+.aidoc-loading-spinner {
+  font-size: 38px;
+  animation: pulse-spin 1.8s infinite ease-in-out;
+}
+
+@keyframes pulse-spin {
+  0% { transform: scale(0.9) rotate(0deg); opacity: 0.7; }
+  50% { transform: scale(1.15) rotate(180deg); opacity: 1; }
+  100% { transform: scale(0.9) rotate(360deg); opacity: 0.7; }
+}
+
+.aidoc-loading-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.aidoc-loading-sub {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+  max-width: 400px;
+}
+
+/* Active Drill Studio */
+.aidoc-drill-container {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 620px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.drill-progress-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.drill-progress-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.drill-step-indicator {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.drill-step-indicator b {
+  color: var(--accent);
+}
+
+.drill-stats-pills {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pill-stat {
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-muted);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+.pill-mastered {
+  background: rgba(16, 185, 129, 0.1);
+  color: #065F46;
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.pill-review {
+  background: rgba(245, 158, 11, 0.1);
+  color: #92400E;
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.btn-drill-exit {
+  border: none;
+  background: var(--bg-muted);
+  color: var(--text-muted);
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.btn-drill-exit:hover {
+  background: #FEE2E2;
+  color: #EF4444;
+}
+
+.drill-progress-bar {
+  width: 100%;
+  height: 6px;
+  background: var(--border-color);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.drill-progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 99px;
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.drill-chips-scroller {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+}
+
+.drill-chips-scroller::-webkit-scrollbar {
+  display: none;
+}
+
+.drill-word-chip {
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-muted);
+  color: var(--text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.drill-word-chip.chip-active {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(217, 45, 67, 0.08);
+}
+
+.drill-word-chip.chip-done {
+  border-color: #10B981;
+  color: #065F46;
+  background: rgba(16, 185, 129, 0.1);
+}
+
+/* Drill Mode Tabs */
+.drill-mode-tabs {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.drill-mode-btn {
+  flex: 1;
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 7px 10px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-color);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  min-height: 38px;
+}
+
+.drill-mode-btn.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+  box-shadow: 0 2px 8px rgba(217, 45, 67, 0.25);
+}
+
+/* Drill Main Card */
+.drill-main-card {
+  background: var(--bg-surface);
+  border: 1.5px solid var(--border-color);
+  border-radius: 20px;
+  padding: 24px 20px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.drill-hanzi-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.drill-hanzi {
+  font-size: 54px;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.1;
+  font-family: var(--font-chinese, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif);
+}
+
+.drill-audio-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--border-color);
+  background: var(--bg-muted);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.drill-audio-btn:hover {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.drill-hanviet {
+  text-align: center;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-top: -6px;
+}
+
+/* Context Box */
+.drill-context-box {
+  background: var(--bg-muted);
+  border: 1px solid var(--border-color);
+  border-left: 4px solid var(--accent);
+  border-radius: 12px;
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.drill-context-box:hover {
+  background: rgba(217, 45, 67, 0.03);
+}
+
+.context-box-label {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.context-sentence-text {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.context-highlight {
+  color: var(--accent);
+  font-weight: 800;
+  background: rgba(217, 45, 67, 0.08);
+  padding: 1px 4px;
+  border-radius: 4px;
+}
+
+.context-audio-hint {
+  font-size: 10.5px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* Drill Input Section */
+.drill-input-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 0;
+}
+
+.drill-input-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.drill-input-row {
+  display: flex;
+  gap: 8px;
+}
+
+.aidoc-pinyin-input {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border-color);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font-size: 16px;
+  font-weight: 600;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.aidoc-pinyin-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(217, 45, 67, 0.12);
+}
+
+.aidoc-pinyin-input.input-correct {
+  border-color: #10B981;
+  background: #ECFDF5;
+  color: #065F46;
+}
+
+.aidoc-check-btn {
+  padding: 0 20px;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 12px;
+}
+
+.drill-feedback-banner {
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.feedback-success {
+  background: #D1FAE5;
+  color: #065F46;
+  border: 1px solid #A7F3D0;
+}
+
+.feedback-error {
+  background: #FEE2E2;
+  color: #991B1B;
+  border: 1px solid #FECACA;
+}
+
+/* Meaning Reveal & Context Drawer */
+.meaning-reveal-box {
+  background: var(--bg-muted);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 14px;
+  text-align: center;
+}
+
+.meaning-text-big {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.meaning-pinyin-sub {
+  font-size: 13px;
+  color: var(--accent);
+  margin-top: 4px;
+}
+
+.drill-insights-card {
+  background: var(--bg-muted);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.insight-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--text-primary);
+}
+
+.insight-icon {
+  font-size: 14px;
+}
+
+.insight-mnemonic {
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  padding: 8px 10px;
+  border-radius: 8px;
+}
+
+.drill-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--border-color);
+  padding-top: 14px;
+  margin-top: 4px;
+}
+
+.aidoc-next-btn {
+  padding: 9px 20px;
+  font-size: 13.5px;
+  font-weight: 700;
+  border-radius: var(--radius-pill);
+}
+
+/* Finished 100% Mastery Card */
+.aidoc-finished-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 36px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+  max-width: 620px;
+  margin: 0 auto;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+}
+
+.finished-trophy {
+  font-size: 52px;
+}
+
+.finished-title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.finished-desc {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  max-width: 480px;
+}
+
+.finished-words-table {
+  width: 100%;
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  background: var(--bg-muted);
+  overflow: hidden;
+  margin-top: 6px;
+}
+
+.finished-word-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 13px;
+  text-align: left;
+}
+
+.finished-word-row:last-child {
+  border-bottom: none;
+}
+
+.word-idx {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--text-muted);
+  width: 18px;
+}
+
+.word-hanzi {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-primary);
+  min-width: 80px;
+}
+
+.word-pinyin {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--accent);
+  min-width: 90px;
+}
+
+.word-meaning {
+  flex: 1;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.word-audio-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 2px 4px;
+}
+
+.finished-actions-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+@media (max-width: 600px) {
+  .aidoc-hero-card {
+    padding: 16px 14px;
+  }
+  .aidoc-hero-title {
+    font-size: 17px;
+  }
+  .drill-hanzi {
+    font-size: 44px;
+  }
+  .drill-mode-btn {
+    font-size: 11.5px;
+    padding: 6px 8px;
+  }
+}
+
+
