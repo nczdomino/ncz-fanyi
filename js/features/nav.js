@@ -34,9 +34,10 @@ function renderCurrentView() {
         renderGrammarView();
       }
       break;
+    case 'learn':
     case 'business':
-      if (typeof renderBusinessView === 'function') {
-        renderBusinessView();
+      if (typeof renderLearnView === 'function') {
+        renderLearnView();
       }
       break;
     case 'settings':
