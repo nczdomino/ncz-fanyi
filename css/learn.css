@@ -2089,7 +2089,8 @@
   border: 1px solid var(--border-color);
   border-radius: 14px;
   background: var(--bg-muted);
-  overflow: hidden;
+  max-height: 420px;
+  overflow-y: auto;
   margin-top: 6px;
 }
 

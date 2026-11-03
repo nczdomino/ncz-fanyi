@@ -297,7 +297,7 @@ YÊU CẦU BẮT BUỘC: Trả về ĐÚNG VÀ DUY NHẤT một chuỗi JSON h�
     } else if (type === 'doc_vocab_test') {
       if (isJa) {
         prompt = `あなたは中国語教育のAI専門家です。
-次の中国語の文章を包括的に分析し、本文に含まれるすべての重要単語・表現・熟語を漏れなく抽出して、テスト・学習用データを生成してください（文章の長さに応じて、有益な単語を省略せず最大30〜50語まで包括的に抽出）:
+次の中国語の文章を包括的に分析し、本文に含まれるすべての重要単語・表現・熟語を漏れなく抽出して、テスト・学習用データを生成してください（文章の長さに応じて、有益な単語を省略せず最大200〜300語まで包括的に抽出）:
 
 """
 ${text}
@@ -328,7 +328,7 @@ ${text}
 }`;
       } else if (isEn) {
         prompt = `You are an expert Chinese language teacher and linguist.
-Analyze the Chinese text comprehensively and extract ALL essential vocabulary words, key phrases, and idioms present in the text for the learner to study and drill (be thorough and complete, do NOT drop valuable words, extracting up to 30-50 words depending on text length):
+Analyze the Chinese text comprehensively and extract ALL essential vocabulary words, key phrases, and idioms present in the text for the learner to study and drill (be thorough and complete, do NOT drop valuable words, extracting up to 200-300 words depending on text length):
 
 """
 ${text}
@@ -359,7 +359,7 @@ Return ONLY a valid JSON object matching this schema:
 }`;
       } else {
         prompt = `Bạn là chuyên gia giảng dạy tiếng Trung ứng dụng AI.
-Hãy phân tích toàn diện đoạn văn bản tiếng Trung sau và trích xuất ĐẦY ĐỦ TẤT CẢ các từ vựng, cụm từ, thành ngữ quan trọng và hữu ích cho người học có trong bài (trích xuất phong phú, triệt để, không bỏ sót các từ vựng giá trị từ từ đơn đến từ ghép, trích xuất tối đa lên đến 30-50 từ tùy độ dài bài đọc):
+Hãy phân tích toàn diện đoạn văn bản tiếng Trung sau và trích xuất ĐẦY ĐỦ TẤT CẢ các từ vựng, cụm từ, thành ngữ quan trọng và hữu ích cho người học có trong bài (trích xuất phong phú, triệt để, không bỏ sót các từ vựng giá trị từ từ đơn đến từ ghép, trích xuất tối đa lên đến 200-300 từ tùy độ dài bài đọc):
 
 """
 ${text}

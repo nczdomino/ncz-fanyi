@@ -120,6 +120,23 @@ test('Does not artificially truncate list to 12 words when document has more', (
   assert.ok(result.totalWords > 12, `Extracted ${result.totalWords} words, should be > 12 without dropping valuable terms`);
 });
 
+test('Scales up to 200-300 vocabulary words when large document provided', () => {
+  const commonWords = [
+    '天气', '时间', '朋友', '家庭', '工作', '学习', '旅行', '运动', '音乐', '电影',
+    '春天', '夏天', '秋天', '冬天', '太阳', '月亮', '星星', '白云', '森林', '大海',
+    '飞机', '火车', '汽车', '轮船', '地铁', '单车', '公交', '车站', '码头', '机场',
+    '面包', '米饭', '面条', '水饺', '包子', '牛奶', '咖啡', '果汁', '绿茶', '红茶'
+  ];
+  let doc = '';
+  // Generate multi-sentence document with diverse words
+  commonWords.forEach((w, i) => {
+    doc += `今天我们讨论${w}的相关情况。这个${w}对大家的影响非常重要。`;
+  });
+  const result = AiDocTest.extractLocalVocabFromText(doc, 'vi');
+  assert.ok(result.totalWords >= 40, `Extracted ${result.totalWords} words`);
+  assert.ok(result.totalWords <= 300, `Cap should respect 300 words limit`);
+});
+
 test('Filters out pure stop words (的, 了, 是, etc.) but retains terms', () => {
   const doc = "的 了 是 我 你 他 她 它 们 在 有 和 电脑 手机";
   const result = AiDocTest.extractLocalVocabFromText(doc, 'vi');

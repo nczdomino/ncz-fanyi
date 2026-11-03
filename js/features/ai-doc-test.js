@@ -311,8 +311,8 @@
       });
     });
 
-    // Provide rich vocabulary extraction up to 45 words without dropping terms
-    const finalWords = extractedWords.slice(0, 45);
+    // Provide rich vocabulary extraction up to 300 words without dropping terms
+    const finalWords = extractedWords.slice(0, 300);
     const summary = sentences.length > 0 ? sentences[0] : text.slice(0, 80);
 
     return {
@@ -322,15 +322,18 @@
     };
   }
 
-  // --- Main API Analyzer with Fallback ---
+  // --- Main API Analyzer with Fallback & Merging ---
   async function analyzeDocumentForTest(text, locale) {
     const loc = locale || getLang();
     const cleanText = (text || '').trim();
     if (!cleanText) return { summary: '', totalWords: 0, words: [] };
 
+    // Always prepare full local extraction for up to 300 words
+    const localResult = extractLocalVocabFromText(cleanText, loc);
+
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 12000); // 12s timeout for comprehensive text analysis
+      const timeoutId = setTimeout(() => controller.abort(), 12000); // 12s timeout
 
       const resp = await fetch('/api/translate', {
         method: 'POST',
@@ -348,7 +351,7 @@
       if (resp.ok) {
         const json = await resp.json();
         if (json && json.testData && Array.isArray(json.testData.words) && json.testData.words.length > 0) {
-          const words = json.testData.words.map((w, idx) => ({
+          const aiWords = json.testData.words.map((w, idx) => ({
             id: `dw_${idx + 1}`,
             word: w.word || '',
             pinyin: w.pinyin || '',
@@ -359,11 +362,24 @@
             mnemonic: w.mnemonic || ''
           })).filter(w => w.word);
 
-          if (words.length > 0) {
+          // Merge AI words with local words to ensure up to 200-300 words without omission
+          const seenWords = new Set(aiWords.map(w => w.word));
+          const mergedWords = [...aiWords];
+
+          for (const lw of localResult.words) {
+            if (!seenWords.has(lw.word)) {
+              seenWords.add(lw.word);
+              lw.id = `dw_${mergedWords.length + 1}`;
+              mergedWords.push(lw);
+              if (mergedWords.length >= 300) break;
+            }
+          }
+
+          if (mergedWords.length > 0) {
             return {
-              summary: json.testData.summary || '',
-              totalWords: words.length,
-              words: words
+              summary: json.testData.summary || localResult.summary || '',
+              totalWords: mergedWords.length,
+              words: mergedWords
             };
           }
         }
@@ -372,8 +388,8 @@
       console.warn('[AIDocTest] AI API unavailable or timed out, using local NLP engine:', err.message);
     }
 
-    // Fallback to local NLP
-    return extractLocalVocabFromText(cleanText, loc);
+    // Fallback to local NLP (guaranteed up to 300 words)
+    return localResult;
   }
 
   // ==========================================
@@ -595,12 +611,16 @@
       </div>
     `;
 
-    // Auto-focus input in pinyin mode
+    // Auto-focus input in pinyin mode & auto-scroll active chip into view for 200-300 words
     setTimeout(() => {
       if (typeof document === 'undefined') return;
       const input = document.getElementById('aidoc-pinyin-input');
       if (input && !resultState?.pinyinOk) {
         input.focus();
+      }
+      const activeChip = container.querySelector('.drill-word-chip.chip-active');
+      if (activeChip && activeChip.scrollIntoView) {
+        activeChip.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
       }
     }, 100);
   }
